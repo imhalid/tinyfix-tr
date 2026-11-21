@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
-import { ContextModel, SEQUENCE } from "../src/context.ts";
+import { ContextModel, FEATURE_DIM, SEQUENCE } from "../src/context.ts";
 import { Corrector } from "../src/corrector.ts";
 import { KnownMisspellings } from "../src/known.ts";
 import { Lexicon } from "../src/lexicon.ts";
@@ -80,8 +80,15 @@ let contextModel: ContextModel | undefined;
 if (contextPath) {
   const ort = await import("onnxruntime-node");
   const session = await ort.InferenceSession.create(contextPath);
-  contextModel = new ContextModel(async (tokens, segments, n) => {
-    const feeds = { tokens: new ort.Tensor("int64", tokens, [n, SEQUENCE]), segments: new ort.Tensor("int64", segments, [n, SEQUENCE]) };
+  const wantsFeatures = session.inputNames.includes("features");
+  contextModel = new ContextModel(async (tokens, segments, n, features) => {
+    const feeds: Record<string, import("onnxruntime-node").Tensor> = {
+      tokens: new ort.Tensor("int64", tokens, [n, SEQUENCE]),
+      segments: new ort.Tensor("int64", segments, [n, SEQUENCE]),
+    };
+    if (wantsFeatures) {
+      feeds.features = new ort.Tensor("float32", features ?? new Float32Array(n * FEATURE_DIM), [n, FEATURE_DIM]);
+    }
     const result = await session.run(feeds);
     return result.scores!.data as Float32Array;
   });
@@ -122,6 +129,7 @@ interface Tally {
   fixed: number;
   wrong: number;
   untouched: number;
+  cleanRows: number;
   words: number;
   changes: number;
   examples: string[];
@@ -131,7 +139,7 @@ const checkStarted = performance.now();
 let words = 0;
 for (const row of rows) {
   if (onlyClass && row.class !== onlyClass) continue;
-  const tally = byClass.get(row.class) ?? { good: 0, total: 0, fixed: 0, wrong: 0, untouched: 0, words: 0, changes: 0, examples: [] };
+  const tally = byClass.get(row.class) ?? { good: 0, total: 0, fixed: 0, wrong: 0, untouched: 0, cleanRows: 0, words: 0, changes: 0, examples: [] };
   byClass.set(row.class, tally);
   const { text, corrections } = contextModel ? await corrector.correctAsync(row.wrong, contextModel) : corrector.correct(row.wrong);
   const count = row.wrong.split(/\s+/).length;
@@ -146,6 +154,7 @@ for (const row of rows) {
     if (dumpPath) dumped.push(JSON.stringify({ id: row.id, class: row.class, original: c.original, replacement: c.replacement, kind: c.kind, margin: Number(c.margin.toFixed(2)), sentence: row.wrong }));
   }
   const isClean = row.wrong === row.right;
+  if (isClean) tally.cleanRows++;
   if (text === row.right) tally[isClean ? "untouched" : "fixed"]++;
   else if (text === row.wrong) tally.untouched++;
   else tally.wrong++;
@@ -159,7 +168,7 @@ const elapsed = performance.now() - checkStarted;
 const pct = (part: number, whole: number) => (whole ? `${((100 * part) / whole).toFixed(1)}%` : "-");
 console.log("class            total   fixed   wrong-change   untouched   changed/1000 words   precision");
 for (const [name, t] of [...byClass.entries()].sort()) {
-  const isClean = name === "clean";
+  const isClean = name === "clean" || (t.total > 0 && t.cleanRows === t.total);
   console.log(
     `${name.padEnd(16)} ${String(t.total).padStart(5)}  ${(isClean ? "-" : pct(t.fixed, t.total)).padStart(6)}  ${pct(t.wrong, t.total).padStart(12)}  ${pct(t.untouched, t.total).padStart(10)}  ${((1000 * t.changes) / t.words).toFixed(2).padStart(10)}  ${(isClean ? "-" : pct(t.good, t.changes)).padStart(18)}`,
   );
