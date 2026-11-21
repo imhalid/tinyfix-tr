@@ -17,7 +17,7 @@ export const NO_LOCATIVE_AFTER =
  * Excludes bare "-da/-de/-sa/-se" so OOV compound nouns ("mikromaddede", "multisitede") are not over-split.
  */
 export const STRONG_NO_LOCATIVE_AFTER =
-  /(?:l[ae]rd[ae]|[ıiuü]nd[ae]|s[ıiuü]nd[ae]|s[ıiuü]n[aeıiuü]|l[ae]r[ıi]n[aeıiuü]|l[ae]r[ae]|m[ae]y[ıi]|yl[ae]|s[ae]l[ae]r|[ıiuü]ğ[ıiuü]|yor|m[ıiuü]ş|[ae]c[ae]k|m[ae]l[ıi])$/;
+  /(?:l[ae]rd[ae]|[ıiuü]nd[ae]|s[ıiuü]nd[ae]|s[ıiuü]n[aeıiuü]|l[ae]r[ıi]n[aeıiuü]|l[ae]r[ıi]|l[ae]r[ae]|m[ae]y[ıi]|yl[ae]|s[ae]l[ae]r|[ıiuü]ğ[ıiuü]|yor|m[ıiuü]ş|[ae]c[ae]k|m[ae]l[ıi])$/;
 
 /** Finite verbs and the copula, which "ki" follows as a separate word ("diyor ki", "beceridir ki", "öyle ki"). */
 export const FINITE =
@@ -61,7 +61,65 @@ export const NAME_SUFFIX = /^(?:n?[ıiuü]n|[dt][ae]|[dt][ae]n|[dt][ae]ki|y?l[ae
 const ACRONYM_SUFFIX =
   /^(?:l[ae]r(?:[ıiuü]n|[dt][ae]n?|[dt][ae]ki|l[ae]|[aeıiuü])?|n?[ıiuü]n|[dt][ae]n?|[dt][ae]ki|y?l[ae]|y[aeıiuü]|[dt][ıiuü]r)$/;
 
-const ACRONYM_WORD = /^([A-ZÇĞİÖŞÜ]{3,})([a-zçğıöşü]{2,})$/;
+const ACRONYM_WORD = /^([A-ZÇĞİÖŞÜa-zçğıöşü]*[A-ZÇĞİÖŞÜ]{2,})([a-zçğıöşü]{2,})$/;
+
+/** Turkish honorific titles that take an apostrophe when following a proper name ("Aclan Bey'in", "Ayşe Hanım'a"). */
+export const HONORIFIC_TITLES = new Set(["bey", "hanım", "paşa", "efendi", "ağa"]);
+
+/**
+ * TDK compound verbs that must be written joined across all conjugations (due to vowel drop, consonant doubling,
+ * or lexicalization): maps the separate first word to { auxStem, prefix, strictZeroPair? }.
+ * E.g. "vaz" + "geçtim" -> "vazgeçtim", "kayıp" + "ediyorum" -> "kaybediyorum", "his" + "ettik" -> "hissettik".
+ */
+export interface CompoundVerbJoinRule {
+  readonly auxStem: string;
+  readonly prefix: string;
+  readonly strictZeroPair?: boolean;
+}
+
+export const COMPOUND_VERB_JOINS: ReadonlyMap<string, readonly CompoundVerbJoinRule[]> = new Map([
+  ["vaz", [{ auxStem: "geç", prefix: "vaz" }]],
+  ["baş", [{ auxStem: "vur", prefix: "baş", strictZeroPair: true }]],
+  ["var", [{ auxStem: "say", prefix: "var", strictZeroPair: true }]],
+  ["ön", [{ auxStem: "gör", prefix: "ön", strictZeroPair: true }]],
+  ["alı", [{ auxStem: "koy", prefix: "alı" }]],
+  ["devir", [{ auxStem: "al", prefix: "devr" }, { auxStem: "et", prefix: "devr" }]],
+  ["af", [{ auxStem: "et", prefix: "aff" }]],
+  ["his", [{ auxStem: "et", prefix: "hiss" }]],
+  ["red", [{ auxStem: "et", prefix: "redd" }]],
+  ["ret", [{ auxStem: "et", prefix: "redd" }]],
+  ["hal", [{ auxStem: "et", prefix: "hall" }]],
+  ["zan", [{ auxStem: "et", prefix: "zann" }]],
+  ["kayıp", [{ auxStem: "et", prefix: "kayb" }, { auxStem: "ol", prefix: "kayb" }]],
+  ["kayıt", [{ auxStem: "et", prefix: "kayd" }, { auxStem: "ol", prefix: "kayd" }]],
+  ["seyir", [{ auxStem: "et", prefix: "seyr" }]],
+  ["emir", [{ auxStem: "et", prefix: "emr" }]],
+  ["hapis", [{ auxStem: "et", prefix: "haps" }]],
+  ["nakil", [{ auxStem: "et", prefix: "nakl" }]],
+  ["keşif", [{ auxStem: "et", prefix: "keşf" }]],
+  ["sabır", [{ auxStem: "et", prefix: "sabr" }]],
+  ["şükür", [{ auxStem: "et", prefix: "şükr" }]],
+  ["bahis", [{ auxStem: "et", prefix: "bahs" }]],
+  ["fetih", [{ auxStem: "et", prefix: "feth" }]],
+  ["mahv", [{ auxStem: "et", prefix: "mahv" }, { auxStem: "ol", prefix: "mahv" }]],
+  ["vaat", [{ auxStem: "et", prefix: "vad" }]],
+  ["def", [{ auxStem: "et", prefix: "def" }]],
+  ["men", [{ auxStem: "et", prefix: "men" }]],
+]);
+
+/** Stems whose compound with "etmek" undergoes sound change and must be joined, not split ("hisettiniz" -> "hissettiniz"). */
+export const JOINED_ETMEK_STEMS = new Set([
+  "af", "his", "red", "ret", "hal", "zan", "kayıp", "kayıt", "seyir", "emir",
+  "hapis", "nakil", "keşif", "devir", "sabır", "şükür", "bahis", "fetih", "mahv", "vaat", "def", "men", "kat",
+]);
+
+/** Three-letter noun stems that productively form separate-written compound verbs with "etmek" per TDK. */
+export const SEPARATE_ETMEK_SHORT = new Set(["hak", "arz", "yok", "söz", "not", "göç", "alt"]);
+
+/** Common stems allowed to split before bare 2-letter imperative "et" ("farket" -> "fark et", "meraket" -> "merak et"). */
+export const SEPARATE_ETMEK_BARE_IMPERATIVE = new Set([
+  "fark", "terk", "hak", "park", "devam", "dikkat", "merak", "kabul", "iptal", "kontrol", "takip", "yardım", "rica", "teşekkür",
+]);
 
 /** Standalone month and weekday names take no apostrophe at sentence start ("Ekimde havalar soğur"). */
 export const TIME_NAMES_NO_START_APOSTROPHE = new Set([
@@ -117,12 +175,12 @@ export function isVoicelessFinal(word: string): boolean {
  * - plural stems and inflected plurals ("Türklerin", "Müslümanlara", "Japonların", "Yunanlardan"),
  * - long derivational language/manner stems in -ca/-ce/-ça/-çe and their inflections ("Hırvatçadan", "Türkçeden").
  */
-export function hasBlockedApostropheStem(stem: string): boolean {
+export function hasBlockedApostropheStem(stem: string, skipBareCa = false): boolean {
   if (/[^aeıioöuü](s?[ıiuü])$/.test(stem)) return true;
   if (/l[ae]r$/.test(stem)) return true;
   if (/[aıouâû][^aeıioöuü]*lar(?:ın(?:dan?|a|ı)?|ıyla|dan?|a|la)$/.test(stem)) return true;
   if (/[eiöüî][^aeıioöuü]*ler(?:in(?:den?|e|i)?|iyle|den?|e|le)$/.test(stem)) return true;
-  if (stem.length >= 6 && /[cç][ae]$/.test(stem)) return true;
+  if (!skipBareCa && stem.length >= 6 && /[cç][ae]$/.test(stem)) return true;
   if (stem.length >= 8 && /[cç][ae](?:d[ae]n?|n[ıi]n|y[aeıi]|yl[ae])$/.test(stem)) return true;
   return false;
 }
@@ -131,9 +189,9 @@ export function hasBlockedApostropheStem(stem: string): boolean {
  * Phonological and TDK checks for attaching an unseen suffix to a proper name with an apostrophe.
  * Prevents impossible Turkish splits like "Ankara'in", "Mark'ya", "Zeynep'den", or "Müslümanlar'a".
  */
-export function isValidGenericApostrophe(stem: string, suffix: string): boolean {
+export function isValidGenericApostrophe(stem: string, suffix: string, skipBareCa = false): boolean {
   if (!NAME_SUFFIX.test(suffix)) return false;
-  if (hasBlockedApostropheStem(stem)) return false;
+  if (hasBlockedApostropheStem(stem, skipBareCa)) return false;
   // Buffer "n" (genitive -nın/-nin/-nun/-nün) and buffer "y" (-ya/-ye/-yı/-yle/-ydı/-ymış) follow a vowel or "y".
   if (/^(?:n[ıiuü]n|y)/.test(suffix) && !/[aeıioöuüâîûy]$/.test(stem)) return false;
   // Vowel-initial suffixes follow a consonant (or a silent final "-e" in foreign names like "Google'ın", "Blake'i").
@@ -144,13 +202,13 @@ export function isValidGenericApostrophe(stem: string, suffix: string): boolean 
   return true;
 }
 
-/** Matches an all-caps acronym (3+ uppercase letters) glued to a 2+ letter Turkish suffix ("HEXIMden" -> "HEXIM'den"). */
+/** Matches an all-caps acronym or mixed-case tech/brand name ending in 2+ uppercase letters glued to a Turkish suffix ("HEXIMden", "MacOSdaki"). */
 export function matchAcronymApostrophe(typed: string): { prefix: string; suffix: string; withMark: string } | null {
   const match = ACRONYM_WORD.exec(typed);
   if (!match) return null;
   const prefix = match[1]!;
   const suffix = match[2]!;
-  if (!ACRONYM_SUFFIX.test(suffix)) return null;
+  if (prefix.length < 3 || !ACRONYM_SUFFIX.test(suffix)) return null;
   return { prefix, suffix, withMark: `${lowerTr(prefix)}'${suffix}` };
 }
 

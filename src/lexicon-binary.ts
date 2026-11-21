@@ -819,12 +819,20 @@ export class BinaryLexicon {
   count(form: string): number {
     const id = this.findExactId(form);
     if (id !== -1) return this.quantTable[this.counts[id]!]!;
+    // Apostrophe forms are never stored in Bloom tail filters; skip probing them to prevent phantom matches.
+    if (form.includes("'")) return 0;
     const blooms = this.blooms;
     for (let i = 0; i < blooms.length; i++) {
       const b = blooms[i]!;
       if (bloomHas(b.bits, b.nBits, b.kHashes, form)) return b.returnCount;
     }
     return 0;
+  }
+
+  /** Returns the exact-table count only (skipping protection-only Bloom filters). */
+  exactCount(form: string): number {
+    const id = this.findExactId(form);
+    return id !== -1 ? this.quantTable[this.counts[id]!]! : 0;
   }
 
   capitalShare(form: string): number {

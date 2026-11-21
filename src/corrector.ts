@@ -3,14 +3,19 @@ import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
 import {
   ALSO,
+  COMPOUND_VERB_JOINS,
   FINITE,
+  HONORIFIC_TITLES,
   JOIN_FIRST,
   JOIN_SECOND,
+  JOINED_ETMEK_STEMS,
   MUSIC_AFTER,
   MUSIC_NOTES,
   NEVER_ALONE,
   NO_LOCATIVE_AFTER,
   QUESTION,
+  SEPARATE_ETMEK_BARE_IMPERATIVE,
+  SEPARATE_ETMEK_SHORT,
   SOMBAHCEMI_KI,
   STRONG_NO_LOCATIVE_AFTER,
   TE_TA_SKIP,
@@ -156,8 +161,11 @@ export interface WordContext {
   prevWord?: string;
   /** True when the previous word was a mid-sentence capitalized word (likely a proper name). */
   prevIsName?: boolean;
+  /** True when another word in the same sentence is unmistakably Turkish typed without marks. */
+  sentenceHasAsciiTurkish?: boolean;
 }
 
+const VOICING_PAIRS = new Set(["dt", "td", "bp", "pb", "cç", "çc", "gk", "kg", "gğ", "ğg"]);
 const TOKEN = new RegExp(`[${LETTERS}]+(?:['’][${LETTERS}]+)?|\\s+|.`, "gu");
 const SENTENCE_END = new Set([".", "!", "?", ":", "\n"]);
 const log = (count: number) => Math.log(count + 1);
@@ -244,6 +252,46 @@ export class Corrector {
     );
   }
 
+  /** True when a -ca/-ce/-ça/-çe stem is derived from a proper/nationality stem ("Danimarkaca", "Türkçe", "Hırvatça"). */
+  private isDerivedLanguageStem(stem: string): boolean {
+    if (stem.length < 5 || !/[cç][ae]$/.test(stem)) return false;
+    const analyses = this.morphology?.analyze?.(stem);
+    if (!analyses || analyses.length === 0) return false;
+    return analyses.some(
+      (analysis) =>
+        analysis.morphemes.includes("Equ") &&
+        analysis.stem !== stem &&
+        this.lexicon.capitalShare(analysis.stem) >= 0.45,
+    );
+  }
+
+  /** True when a stem is blocked from taking an apostrophe by TDK rules (respecting morphology for -ca/-ce names like "Karaca"). */
+  private isBlockedApostropheStem(stem: string): boolean {
+    if (this.morphology !== undefined) {
+      if (hasBlockedApostropheStem(stem, true)) return true;
+      return this.isDerivedLanguageStem(stem);
+    }
+    return hasBlockedApostropheStem(stem);
+  }
+
+  /** True when a form has a bare Noun/Adj/Adv root analysis (used for separate Noun+etmek compound verb splits). */
+  private isBareNominalRoot(word: string): boolean {
+    const analyses = this.morphology?.analyze?.(word);
+    if (!analyses || analyses.length === 0) return false;
+    return analyses.some(
+      (a) =>
+        (a.pos === "Noun" || a.pos === "Adj" || a.pos === "Adv") &&
+        (a.morphemes.length === 0 || (a.morphemes.length === 1 && a.morphemes[0] === "A3sg")),
+    );
+  }
+
+  /** True when `word` is an inflected verb form of `auxStem` ("et", "ol", "geç", "vur", ...). */
+  private isVerbFormOf(word: string, auxStem: string): boolean {
+    const analyses = this.morphology?.analyze?.(word);
+    if (!analyses || analyses.length === 0) return false;
+    return analyses.some((a) => a.pos === "Verb" && a.stem === auxStem);
+  }
+
   /**
    * True when morphology only parses a candidate apostrophe stem as an already-inflected or derived form
    * ("japonların", "yunanlardan", "ankaradan", "türkçeden"), never as an uninflected bare root.
@@ -309,6 +357,7 @@ export class Corrector {
       const token = tokens[index]!;
       if (!token.isWord) {
         if (SENTENCE_END.has(token.text) || token.text.includes("\n")) atSentenceStart = true;
+        else if (/\d/.test(token.text)) atSentenceStart = false;
         if (token.text !== " ") {
           prevWord = undefined;
           prevIsName = false;
@@ -316,6 +365,8 @@ export class Corrector {
         continue;
       }
       const next = this.nextWord(tokens, index);
+      const sentenceHasAsciiTurkish =
+        !textHasMarks && asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]);
       const context: WordContext = {
         atSentenceStart,
         textHasMarks:
@@ -325,6 +376,7 @@ export class Corrector {
         questionAhead: this.questionAhead(tokens, index),
         prevWord,
         prevIsName,
+        sentenceHasAsciiTurkish,
       };
       atSentenceStart = false;
       if (!this.isIsolated(tokens, index)) {
@@ -383,6 +435,7 @@ export class Corrector {
       const token = tokens[index]!;
       if (!token.isWord) {
         if (SENTENCE_END.has(token.text) || token.text.includes("\n")) atSentenceStart = true;
+        else if (/\d/.test(token.text)) atSentenceStart = false;
         if (token.text !== " ") {
           prevWord = undefined;
           prevIsName = false;
@@ -390,6 +443,8 @@ export class Corrector {
         continue;
       }
       const next = this.nextWord(tokens, index);
+      const sentenceHasAsciiTurkish =
+        !textHasMarks && asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]);
       const context: WordContext = {
         atSentenceStart,
         textHasMarks:
@@ -399,6 +454,7 @@ export class Corrector {
         questionAhead: this.questionAhead(tokens, index),
         prevWord,
         prevIsName,
+        sentenceHasAsciiTurkish,
       };
       atSentenceStart = false;
       if (!this.isIsolated(tokens, index)) {
@@ -627,7 +683,15 @@ export class Corrector {
     const add: AddCandidate = (text, kind, score, base = typedScore, threshold) => {
       if (!Number.isFinite(score) || !Number.isFinite(base) || text === word) return;
       const existing = found.get(text);
-      if (!existing || score - base > marginOf(existing)) {
+      const newMargin = score - base;
+      const existingMargin = existing ? marginOf(existing) : -Infinity;
+      if (
+        !existing ||
+        newMargin > existingMargin ||
+        (newMargin === existingMargin &&
+          threshold !== undefined &&
+          (existing.threshold === undefined || threshold < existing.threshold))
+      ) {
         found.set(text, { text, kind, score, base, joinsNext: false, threshold });
       }
     };
@@ -661,7 +725,9 @@ export class Corrector {
       variants.some((variant) => this.lexicon.count(variant) > 0 && this.isRealWord(variant));
 
     const forms = [word, ...variants];
+    const typedLowerCount = Math.round(typedCount * (1 - this.lexicon.capitalShare(word)));
     let morphParticleHit = false;
+    let strongAsciiMarkHit = false;
     for (const form of forms) {
       const markCost = form === word ? 0 : cost.marks;
       if (form !== word) {
@@ -672,9 +738,12 @@ export class Corrector {
           const formStem = form.slice(0, formQuote);
           const formSuffix = form.slice(formQuote + 1);
           sameApostropheStem = formStem === wordStem;
+          const onlyLeadingCapitalI =
+            typed[0] === "I" && wordStem[0] === "ı" && formStem[0] === "i" && wordStem.slice(1) === formStem.slice(1);
           if (
             context.textHasMarks &&
             !sameApostropheStem &&
+            !onlyLeadingCapitalI &&
             (this.lexicon.count(wordStem) >= knownMarked || this.isRealWord(wordStem))
           ) {
             blockMark = true;
@@ -690,24 +759,54 @@ export class Corrector {
         if (!blockMark && !(filterInvalidMarks && !this.isRealWord(form))) {
           const count = this.lexicon.count(form);
           const score = log(count) - cost.marks;
+          const formValid = this.morphology !== undefined && this.isRealWord(form);
           if (count > 0 && (!strict || score - typedScore >= override)) {
             const suffixOnlyApostrophe = hasApostrophe && typedCount === 0 && !strict && count >= 7 && sameApostropheStem;
-            const threshold = suffixOnlyApostrophe ? Math.max(1.5, this.settings.threshold.marks - 1.0) : undefined;
+            let threshold = suffixOnlyApostrophe ? Math.max(1.5, this.settings.threshold.marks - 1.0) : undefined;
+            // In sentences proven to be typed in ASCII Turkish, an invalid lowercase form ("yuku", "super", "dali")
+            // restoring to a valid Turkish word needs less log-frequency gap than in normal marked text.
+            if (
+              threshold === undefined &&
+              !context.textHasMarks &&
+              context.sentenceHasAsciiTurkish &&
+              !realTyped
+            ) {
+              if (typed === word && formValid && word.length >= 3 && count >= 10) {
+                threshold = Math.max(0.7, this.settings.threshold.marks - 1.8);
+              } else if (typedCount === 0 && count >= 5 && (!capitalized || !hasApostrophe || sameApostropheStem || this.lexicon.capitalShare(form) >= 0.5)) {
+                // Unseen word in an ASCII-typed Turkish sentence with an attested mark variant ("Gülruh", "Çapari", "Divanı'ndan").
+                threshold = Math.max(1.2, this.settings.threshold.marks - 1.3);
+              }
+            }
             add(form, "marks", score, typedScore, threshold);
+            // Lowercase-vs-lowercase count comparison when the typed lowercase word's corpus count is dominated by a
+            // capitalized proper name ("egrisi", "dali", "makasi", "avi", "karin").
+            if (!strict && typed === word && this.lexicon.capitalShare(word) >= 0.5 && formValid) {
+              const candLower = Math.round(count * (1 - this.lexicon.capitalShare(form)));
+              if (candLower >= 10) {
+                add(form, "marks", log(candLower) - cost.marks, log(typedLowerCount), threshold);
+              }
+            }
+            if (
+              !context.textHasMarks &&
+              !realTyped &&
+              formValid &&
+              score - typedScore >= (threshold ?? this.settings.threshold.marks)
+            ) {
+              strongAsciiMarkHit = true;
+            }
           }
         }
         if (strict) continue;
       }
-      // A real word is not split ("kitabımı" is not "kitabı mı", "öyküsüz" stays). Listed misspellings
-      // ("birşey", "yada") are handled before this, so they still get fixed.
-      if (!(form === word && typedCount < knownWord && realTyped)) {
-        const hit = this.addSplits(form, context, markCost, isName, capitalized, add);
-        if (form === word && hit) morphParticleHit = true;
-      }
+      // A real word is never heuristically particle-split (guarded inside addSplits via formIsReal),
+      // but strongly attested bigram splits (pair >> typedCount, e.g. "ihtimalide" -> "ihtimali de") still apply.
+      const hit = this.addSplits(form, context, markCost, isName, capitalized, add);
+      if (form === word && hit) morphParticleHit = true;
       if (!form.includes("'")) {
-        if (isName) this.addApostrophes(form, word, typedCount, typedScore, markCost, false, add);
+        if (isName) this.addApostrophes(form, word, typedCount, typedScore, markCost, false, context.prevIsName ?? false, add);
         else if (capitalized && context.atSentenceStart) {
-          this.addApostrophes(form, word, typedCount, typedScore, markCost, true, add);
+          this.addApostrophes(form, word, typedCount, typedScore, markCost, true, false, add);
         }
       }
     }
@@ -724,10 +823,10 @@ export class Corrector {
       variants.length <= 128
     ) {
       const validVariants = variants.filter((variant) => this.isRealWord(variant));
+      const uniqueThreshold = Math.max(1.5, this.settings.threshold.marks - 1.0);
       if (validVariants.length === 1) {
         const only = validVariants[0]!;
         const vCount = this.lexicon.count(only);
-        const uniqueThreshold = Math.max(1.5, this.settings.threshold.marks - 1.0);
         if (vCount > 0) {
           const score = typedCount === 0 ? Math.max(log(vCount), 2.5) - cost.marks : log(vCount) - cost.marks;
           add(only, "marks", score, typedScore, uniqueThreshold);
@@ -738,6 +837,15 @@ export class Corrector {
           this.isSafeUnseenMarkVariant(word, only, context)
         ) {
           add(only, "marks", 2.5 - cost.marks, typedScore, uniqueThreshold);
+        }
+      } else if (typedCount === 0 && word.length >= 7 && validVariants.length > 1) {
+        // When multiple theoretical morph variants exist ("ısınmadır" vs "ışınmadır", "eşleşmiyorsa" vs "esleşmiyorsa"),
+        // pick the unique one actually attested in the lexicon (count >= 3).
+        const seenValid = validVariants.filter((variant) => this.lexicon.count(variant) >= 3);
+        if (seenValid.length === 1) {
+          const only = seenValid[0]!;
+          const vCount = this.lexicon.count(only);
+          add(only, "marks", Math.max(log(vCount), 2.5) - cost.marks, typedScore, uniqueThreshold);
         }
       }
     }
@@ -761,12 +869,16 @@ export class Corrector {
       this.addQuestionHarmony(word, context, typedScore, nextTyped, add);
     }
 
-    // All-caps acronyms glued to a Turkish suffix ("HEXIMden" -> "HEXIM'den", "KDAların" -> "KDA'ların", "TLSnin" -> "TLS'nin").
+    // All-caps acronyms or mixed-case brands glued to a Turkish suffix ("HEXIMden" -> "HEXIM'den", "MacOSdaki" -> "MacOS'daki").
     if (typedCount === 0 && !realTyped && !hasApostrophe) {
       const acronym = matchAcronymApostrophe(typed);
       if (acronym) {
         const prefixLower = lowerTr(acronym.prefix);
-        if (this.lexicon.count(prefixLower) < 500 || this.lexicon.capitalShare(prefixLower) >= 0.5) {
+        if (
+          this.lexicon.count(prefixLower) < 500 ||
+          this.lexicon.capitalShare(prefixLower) >= 0.5 ||
+          (this.morphology !== undefined && !this.isRealWord(prefixLower))
+        ) {
           add(acronym.withMark, "apostrophe", 3.5 - cost.apostrophe, typedScore);
         }
       }
@@ -774,11 +886,42 @@ export class Corrector {
 
     // Slips of the fingers are only considered for rare or unseen words that aren't names.
     // A rare form that Turkish suffix rules accept is a real word, not a slip ("getirsek" is not "getirmek").
-    // Do not let single-edit typos hijack or tie a morphologically proven particle split ("boyunuda" -> "boyunu da").
-    if (typedCount < knownWord && word.length >= 4 && !isName && !hasApostrophe && !realTyped && !morphParticleHit) {
-      for (const [text, slipCost] of this.oneEdit(word)) {
-        const count = this.lexicon.count(text);
-        if (count > 0) add(text, "typo", log(count) - cost.typo - slipCost);
+    // Do not let single-edit typos hijack or tie a morphologically proven particle split ("boyunuda" -> "boyunu da")
+    // or a clear mark restoration in an ASCII-typed sentence ("gecenleri" -> "geçenleri" vs "geceleri").
+    if (
+      typedCount < knownWord &&
+      word.length >= 4 &&
+      !isName &&
+      !hasApostrophe &&
+      !realTyped &&
+      !morphParticleHit &&
+      !strongAsciiMarkHit
+    ) {
+      // Do not let single-edit typos mangle an unsplit harmonized question particle ("olurmu", "yaparmı", "varmı").
+      const qMatch = /^(.{3,})(m[iıuü](?:y?[iıuü]m|s[iıuü]n|y?[iıuü]z|s[iıuü]n[iıuü]z|d[iıuü]r|d[iıuü]|ym[iıuü]ş|ys[ae]|yd[iıuü]|yken)?)$/.exec(word);
+      const unsplitQuestion =
+        qMatch !== null &&
+        followsHarmony(qMatch[1]!, qMatch[2]![1]!) &&
+        sameHighVowels(qMatch[2]!) &&
+        this.isRealWord(qMatch[1]!) &&
+        this.lexicon.count(qMatch[1]!) >= 5;
+      if (!unsplitQuestion) {
+        const unseenLowerInvalid = this.morphology !== undefined && typedCount === 0 && typed === word;
+        for (const [text, slipCost] of this.oneEdit(word, unseenLowerInvalid)) {
+          const count = this.lexicon.exactCount(text);
+          if (count === 0) continue;
+          // A lowercase slip shouldn't rewrite into a mostly-capitalized proper name ("krate" -> "kate", "lmre" -> "emre").
+          if (typed === word && this.lexicon.capitalShare(text) >= 0.6) continue;
+          const morphValid = this.morphology !== undefined && this.isRealWord(text);
+          const morphPenalty = this.morphology !== undefined && !morphValid ? 1.5 : 0;
+          // For long unseen lowercase invalid words, a morphologically valid high-confidence keyboard edit
+          // (swap, near-key sub/extra, or missed key) needs less frequency evidence ("gönderdim", "yoğunluklarında").
+          let threshold: number | undefined;
+          if (unseenLowerInvalid && morphValid && word.length >= 7 && slipCost <= 1.25 && count >= 20) {
+            threshold = 0.6;
+          }
+          add(text, "typo", log(count) - cost.typo - slipCost - morphPenalty, typedScore, threshold);
+        }
       }
     }
     return [...found.values()];
@@ -830,9 +973,54 @@ export class Corrector {
     for (let cut = 2; cut <= form.length - 2; cut++) {
       const first = form.slice(0, cut);
       const second = form.slice(cut);
-      if (first.includes("'") || second.includes("'") || NEVER_ALONE.has(second)) continue;
+      if (second.includes("'") || NEVER_ALONE.has(second)) continue;
       const pair = this.lexicon.pair(first, second);
       if (pair > 0) add(`${first} ${second}`, "split", log(pair) - cost.split - markCost);
+      // Glued particles after an apostrophe-inflected proper name ("Çin'dirki", "Ankara'dada", "İstanbul'damı?").
+      if (first.includes("'")) {
+        if (glued === 0 && !formIsReal && this.lexicon.count(first) > 0) {
+          const quoteIdx = first.indexOf("'");
+          const suf = first.slice(quoteIdx + 1);
+          if (second === "ki" && /^(?:[dt][ıiuü]r|y?d[ıiuü])$/.test(suf)) {
+            add(`${first} ${second}`, "split", Math.max(log(this.lexicon.count(first)), 3.2) - cost.split - markCost);
+          } else if (
+            ALSO.test(second) &&
+            followsHarmony(first, second[1]!) &&
+            /^(?:[dt][ae]n?|n[ıiuü]n|y[aeıiuü]|y?l[ae])$/.test(suf)
+          ) {
+            add(`${first} ${second}`, "split", Math.max(log(this.lexicon.count(first)), 3.2) - cost.split - markCost);
+          } else {
+            const q = QUESTION.exec(second);
+            if (q && followsHarmony(first, q[1]![1]!) && sameHighVowels(second) && (context.questionAhead || q[2] !== undefined)) {
+              add(`${first} ${second}`, "split", Math.max(log(this.lexicon.count(first)), 3.2) - cost.split - markCost);
+            }
+          }
+        }
+        continue;
+      }
+      // TDK rule: Noun + etmek compound verbs without sound drop/doubling are always written separate
+      // ("farkettim" -> "fark ettim", "terketti" -> "terk etti", "kabuledildi" -> "kabul edildi", "devamediyor" -> "devam ediyor").
+      // Guarded by !formIsReal (so genuine joined verbs like "affettim", "hissettim", "kaybettim" are never touched).
+      if (
+        !formIsReal &&
+        !isName &&
+        !isProperAtStart &&
+        this.morphology !== undefined &&
+        (second.startsWith("et") || second.startsWith("ed")) &&
+        !JOINED_ETMEK_STEMS.has(first) &&
+        ((second.length >= 4 && (first.length >= 4 || SEPARATE_ETMEK_SHORT.has(first))) ||
+          (second === "et" && SEPARATE_ETMEK_BARE_IMPERATIVE.has(first))) &&
+        this.lexicon.count(first) >= 50 &&
+        this.lexicon.capitalShare(first) < 0.5 &&
+        this.isBareNominalRoot(first) &&
+        this.isVerbFormOf(second, "et")
+      ) {
+        const base = log(glued);
+        const targetScore = Math.max(log(this.lexicon.count(first)), base + this.settings.threshold.split + cost.split + 0.1);
+        add(`${first} ${second}`, "split", targetScore - cost.split - markCost, base);
+        morphParticleHit = true;
+        continue;
+      }
       // A morphologically valid word ("giyside", "güveninde", "kitabımı", "evdeki") is never particle-split.
       if (formIsReal || glued >= this.settings.knownMarked || first.length < 3) continue;
       const stem = this.lexicon.count(first);
@@ -870,6 +1058,7 @@ export class Corrector {
       }
 
       if (ALSO.test(second) && followsHarmony(first, second[1]!) && !isName && !isProperAtStart) {
+        if (capitalized && this.isDerivedLanguageStem(first)) continue;
         const voicingTypo =
           this.morphology !== undefined &&
           isVoicelessFinal(first) &&
@@ -887,11 +1076,19 @@ export class Corrector {
         if (voicingTypo || inverseHarmonyTypo || doubledLocativeTypo) continue;
         if (morphProven && (stem > 0 || first.length >= 6)) {
           const score = (glued === 0 ? Math.max(log(stem), 3.2) : log(stem)) - cost.split - markCost;
-          add(`${first} ${second}`, "split", score);
+          // Morphologically impossible verb/conditional + de/da glues ("üzülsede", "istemesede") with low corpus noise.
+          const impossibleVerbGlue =
+            glued > 0 &&
+            glued < this.settings.knownMarked &&
+            ((pair >= 5 && pair >= glued * 3) || (stem >= glued * 4 && /(?:s[ae]|yor|m[ıiuü]ş|[ae]c[ae]k)$/.test(first)));
+          const threshold = impossibleVerbGlue ? Math.max(0.7, this.settings.threshold.split - 1.8) : undefined;
+          add(`${first} ${second}`, "split", score, undefined, threshold);
           if (first.length >= 4) morphParticleHit = true;
-        } else if (stem > 0 && NO_LOCATIVE_AFTER.test(first)) {
+        } else if ((stem > 0 && NO_LOCATIVE_AFTER.test(first)) || (this.morphology !== undefined && glued === 0 && first.length >= 8 && /l[ae]r[ıi]$/.test(first))) {
           const score =
-            this.morphology !== undefined && glued === 0 && stem >= 3 && STRONG_NO_LOCATIVE_AFTER.test(first)
+            this.morphology !== undefined &&
+            glued === 0 &&
+            ((stem >= 3 && STRONG_NO_LOCATIVE_AFTER.test(first)) || (first.length >= 8 && /l[ae]r[ıi]$/.test(first)))
               ? Math.max(log(stem), 3.2) - cost.split - markCost
               : log(stem) - cost.split - markCost - 1;
           add(`${first} ${second}`, "split", score);
@@ -920,68 +1117,144 @@ export class Corrector {
     typedScore: number,
     markCost: number,
     atSentenceStart: boolean,
+    prevIsName: boolean,
     add: AddCandidate,
   ) {
     const { cost, minName } = this.settings;
+    const hasMorph = this.morphology !== undefined;
     const formCount = form === word ? typedCount : this.lexicon.count(form);
     const typedCaps = Math.round(typedCount * this.lexicon.capitalShare(word));
+    const realWord = this.isRealWord(word);
     for (let cut = 2; cut < form.length; cut++) {
       const stem = form.slice(0, cut);
       const suffix = form.slice(cut);
       const withMark = `${stem}'${suffix}`;
       const seen = this.lexicon.count(withMark);
+      let blockedCached: boolean | undefined;
+      const isBlocked = () => (blockedCached ??= this.isBlockedApostropheStem(stem) || this.isInflectedApostropheStem(stem));
       if (seen > 0) {
+        const markCap = this.lexicon.capitalShare(withMark);
+        const stemCap = this.lexicon.capitalShare(stem);
         if (atSentenceStart) {
           if (
-            this.lexicon.capitalShare(withMark) >= 0.7 &&
-            this.lexicon.capitalShare(stem) >= 0.55 &&
+            markCap >= 0.7 &&
+            stemCap >= 0.55 &&
             !TIME_NAMES_NO_START_APOSTROPHE.has(stem) &&
-            !hasBlockedApostropheStem(stem) &&
-            !this.isInflectedApostropheStem(stem)
+            !isBlocked()
           ) {
             add(withMark, "apostrophe", log(seen) - cost.apostrophe - markCost, typedScore);
           }
           continue;
         }
-        add(withMark, "apostrophe", log(seen) - cost.apostrophe - markCost, typedScore);
+        // Do not inject an apostrophe onto a blocked/inflected stem during mark restoration ("Odullerinde" -> "Ödüllerinde").
+        if (markCost === 0 || !isBlocked()) {
+          let threshold: number | undefined;
+          // Unseen mid-sentence proper name with an attested high-cap apostrophe form ("Discord'u", "Arsenal'ı", "Karaca'dan").
+          if (
+            suffix === word.slice(cut) &&
+            markCap >= 0.8 &&
+            typedCount === 0 &&
+            seen >= 7 &&
+            !isBlocked()
+          ) {
+            threshold = Math.max(1.5, this.settings.threshold.apostrophe - 1.0);
+          } else if (
+            !realWord &&
+            suffix === word.slice(cut) &&
+            markCap >= 0.8 &&
+            typedCount > 0 &&
+            typedCount <= 5 &&
+            seen >= 8 &&
+            seen >= typedCount * 4 &&
+            this.lexicon.count(stem) >= 20 &&
+            stemCap >= 0.55 &&
+            !isBlocked()
+          ) {
+            // Non-Turkish word with tiny typo count in corpus ("Malatyaspora" 5 vs "Malatyaspor'a" 96, "Hessin" 5 vs 64).
+            threshold = Math.max(1.2, this.settings.threshold.apostrophe - 1.3);
+          }
+          add(withMark, "apostrophe", log(seen) - cost.apostrophe - markCost, typedScore, threshold);
+        }
         // Mid-sentence, compare capitalized-mid-sentence counts too so a lowercase homograph ("elifin", "ekimde",
         // "aşilin") does not hide a clear proper-name apostrophe.
-        const seenCaps = Math.round(seen * this.lexicon.capitalShare(withMark));
-        if (
-          seenCaps >= 10 &&
-          seenCaps / seen >= 0.5 &&
-          this.lexicon.capitalShare(stem) >= 0.5 &&
-          !hasBlockedApostropheStem(stem) &&
-          !this.isInflectedApostropheStem(stem)
-        ) {
-          add(withMark, "apostrophe", log(seenCaps) - cost.apostrophe - markCost, log(typedCaps));
+        const seenCaps = Math.round(seen * markCap);
+        if (seenCaps >= 10 && seenCaps / seen >= 0.5 && stemCap >= 0.5 && !isBlocked()) {
+          // Honorific titles after a mid-sentence proper name ("Aclan Bey'in", "Ayşe Hanım'a") take an apostrophe per TDK.
+          const honorificThreshold =
+            prevIsName && HONORIFIC_TITLES.has(stem) ? Math.max(1.2, this.settings.threshold.apostrophe - 1.3) : undefined;
+          add(withMark, "apostrophe", log(seenCaps) - cost.apostrophe - markCost, log(typedCaps), honorificThreshold);
         }
       }
       if (atSentenceStart) continue;
-      // The generic rule only applies to unseen forms of clear names, keeping the suffix as typed so a mark variant
-      // of the suffix cannot compete with itself ("Weeknd'in" vs fake "Weeknd'ın").
+      // The generic rule applies to unseen forms (or tiny Bloom-only non-word noise when attested) of clear names,
+      // keeping the suffix as typed so a mark variant cannot compete with itself ("Weeknd'in" vs fake "Weeknd'ın").
+      const effectiveUnseen = formCount === 0 || (formCount <= 2 && !realWord && seen >= 7);
+      if (!effectiveUnseen || stem.length < 3 || suffix !== word.slice(cut)) continue;
       const stemCount = this.lexicon.count(stem);
-      if (
-        formCount === 0 &&
-        stem.length >= 3 &&
-        stemCount >= minName &&
-        suffix === word.slice(cut) &&
-        isValidGenericApostrophe(stem, suffix) &&
-        !this.isInflectedApostropheStem(stem)
-      ) {
-        const share = this.lexicon.capitalShare(stem);
+      if (stemCount < 5 || !isValidGenericApostrophe(stem, suffix, hasMorph) || isBlocked()) continue;
+      const share = this.lexicon.capitalShare(stem);
+      if (stemCount >= minName) {
         if (suffix.length >= 2 && share >= 0.58) {
           add(withMark, "apostrophe", log(stemCount) - cost.apostrophe - markCost - 0.2, typedScore);
         } else if (suffix.length === 1 && share >= 0.75) {
           add(withMark, "apostrophe", log(stemCount) - cost.apostrophe - markCost - 1.2, typedScore);
+        } else if (
+          hasMorph &&
+          !realWord &&
+          !this.isRealWord(stem) &&
+          stem.length >= 4 &&
+          stemCount >= 25 &&
+          share >= 0.2 &&
+          suffix.length >= 3
+        ) {
+          // Unseen foreign/brand stem with lower cap share + unambiguous 3+ letter Turkish suffix ("Calypso'dan", "Fonte'nin", "Equestria'daki").
+          add(withMark, "apostrophe", log(stemCount) - cost.apostrophe - markCost - 0.2, typedScore);
+        }
+      } else if (
+        hasMorph &&
+        formCount === 0 &&
+        !realWord &&
+        !this.isRealWord(stem) &&
+        stem.length >= 4 &&
+        share >= 0.55 &&
+        suffix.length >= 2
+      ) {
+        // Rare foreign proper name (count 5..19, high cap share) with harmonized 2+ or 3+ letter Turkish suffix
+        // ("Tevet'te", "Salayev'dir", "Tatikios'un", "Morgane'nın", "Tsvangirai'ye").
+        const firstSuffixVowel = [...suffix].find((ch) => "aeıioöuü".includes(ch));
+        if (suffix.length >= 3 || !firstSuffixVowel || followsHarmony(stem, firstSuffixVowel)) {
+          add(withMark, "apostrophe", Math.max(log(stemCount), 3.2) - cost.apostrophe - markCost - 0.2, typedScore);
         }
       }
     }
   }
 
-  /** "hiç bir" -> "hiçbir", "oysa ki" -> "oysaki", "ev de" -> "evde". Compared with how often the two words appear apart. */
+  /** "hiç bir" -> "hiçbir", "oysa ki" -> "oysaki", "ev de" -> "evde", "vaz geçtim" -> "vazgeçtim". */
   private joinCandidate(word: string, next: string): Candidate | null {
     if (word.includes("'") || next.includes("'")) return null;
+    // TDK joined compound verbs across all conjugations ("vaz geçtim" -> "vazgeçtim", "kayıp ettim" -> "kaybettim",
+    // "his ediyorum" -> "hissediyorum", "baş vurdum" -> "başvurdum").
+    const verbRules = COMPOUND_VERB_JOINS.get(word);
+    if (verbRules && this.morphology !== undefined) {
+      for (const rule of verbRules) {
+        const startsAux =
+          next.startsWith(rule.auxStem) || (rule.auxStem === "et" && next.startsWith("ed"));
+        if (!startsAux || !this.isVerbFormOf(next, rule.auxStem)) continue;
+        const joined = rule.prefix + next;
+        if (!this.isRealWord(joined)) continue;
+        const pair = this.lexicon.pair(word, next);
+        if (rule.strictZeroPair ? pair > 0 : pair > 5) continue;
+        const count = this.lexicon.count(joined);
+        if (count === 0) continue;
+        return {
+          text: joined,
+          kind: "join",
+          score: Math.max(log(count), log(pair) + this.settings.threshold.join + 0.5) - this.settings.cost.join,
+          base: log(pair),
+          joinsNext: true,
+        };
+      }
+    }
     if (word === "her" && next !== "hangi" && next !== "kes") return null;
     if (!JOIN_FIRST.has(word) && !JOIN_SECOND.has(next)) return null;
     const joined = word + next;
@@ -1020,33 +1293,43 @@ export class Corrector {
   }
 
   /** Words one edit away, with a cost for edits that are unlikely on a Turkish Q keyboard. */
-  private oneEdit(word: string): Map<string, number> {
+  private oneEdit(word: string, unseenLowerInvalid = false): Map<string, number> {
     const edits = new Map<string, number>();
-    const put = (text: string, slip: number, position: number) => {
+    const endCost = unseenLowerInvalid ? Math.min(this.settings.typoEndCost, 0.5) : this.settings.typoEndCost;
+    const put = (text: string, slip: number, position: number, isFinalDelete = false) => {
       // Changing the end of a word often swaps one real suffix for another ("öyküsüz" is not "öyküsü", "benzeyene"
       // is not "benzeyen"), so edits there cost more.
-      const atEnd = position >= word.length - this.settings.typoEndWindow ? this.settings.typoEndCost : 0;
-      // The last letter of a longer word is almost always a person or case ending: "düşünmüştün" is not a slip for
-      // "düşünmüştüm". Such edits are left to the listed misspellings.
-      if (word.length >= 6 && position >= word.length - 1) return;
+      const atEnd = position >= word.length - this.settings.typoEndWindow ? endCost : 0;
+      // Without morphology (or for capitalized/seen words), block edits on the last letter of 6+ letter words.
+      // With morphology on unseen lowercase invalid words, valid inflections are already excluded via !realTyped.
+      if (!unseenLowerInvalid && word.length >= 6 && position >= word.length - 1) return;
+      // Deleting a non-duplicate final character of a 6+ letter word risks chopping a real suffix ("üzerined" -> "üzerine").
+      const finalDelPenalty = isFinalDelete && word.length >= 6 ? 1.4 : 0;
       const atStart = position === 0 ? 1.5 : 0;
-      const total = slip + atEnd + atStart;
+      const total = slip + atEnd + atStart + finalDelPenalty;
       if (text.length > 0 && (edits.get(text) ?? Infinity) > total) edits.set(text, total);
     };
     for (let i = 0; i <= word.length; i++) {
       const before = word.slice(0, i);
       const at = word[i];
       const after = word.slice(i + 1);
+      const previous = word[i - 1];
       if (at !== undefined) {
-        put(before + after, 1, i); // an extra key
         const following = word[i + 1];
-        if (following !== undefined) put(before + following + at + word.slice(i + 2), 0.8, i); // two keys swapped
+        // An extra key is almost always a duplicate or keyboard neighbor of an adjacent key ("fat-finger").
+        const nearExtra =
+          (previous !== undefined && (at === previous || areNearKeys(at, previous))) ||
+          (following !== undefined && (at === following || areNearKeys(at, following)));
+        const isFinalNonDupDelete = i === word.length - 1 && at !== previous;
+        put(before + after, nearExtra ? 0.9 : 2.3, i, isFinalNonDupDelete); // an extra key
+        if (following !== undefined) put(before + following + at + word.slice(i + 2), 0.7, i); // two keys swapped
       }
       for (const letter of ALPHABET) {
-        if (at !== undefined && letter !== at) put(before + letter + after, areNearKeys(letter, at) ? 0.8 : 1.8, i); // wrong key
-        const previous = word[i - 1];
-        const near = previous !== undefined && (areNearKeys(letter, previous) || letter === previous);
-        put(before + letter + word.slice(i), near ? 1 : 1.6, i); // a missed key
+        if (at !== undefined && letter !== at) {
+          if (areNearKeys(letter, at)) put(before + letter + after, 0.8, i);
+          else if (VOICING_PAIRS.has(at + letter)) put(before + letter + after, 1.8, i);
+        }
+        put(before + letter + word.slice(i), 1.0, i); // a missed key (uniform: omitted letters don't need key proximity)
       }
     }
     edits.delete(word);

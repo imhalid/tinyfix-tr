@@ -39,6 +39,12 @@ export class Lexicon {
     return this.counts.get(form) ?? 0;
   }
 
+  /** Exact-table count only (skips protection-only Bloom filters in binary lexicons for target candidate lookups). */
+  exactCount(form: string): number {
+    if (this.binary !== null) return this.binary.exactCount(form);
+    return this.counts.get(form) ?? 0;
+  }
+
   pair(first: string, second: string): number {
     if (this.binary !== null) return this.binary.pair(first, second);
     return this.pairs.get(first + " " + second) ?? 0;

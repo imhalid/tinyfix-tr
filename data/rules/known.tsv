@@ -806,3 +806,32 @@ bitane	bir tane	42	8184	CONTRACTION
 diyon	diyorsun	3	24	CONTRACTION
 gidiyo	gidiyor	0	476	CONTRACTION
 istiyolar	istiyorlar	0	100	CONTRACTION
+haftasonu	hafta sonu	257	757	SEPARATE_ALWAYS
+yurtiçi	yurt içi	264	1043	SEPARATE_ALWAYS
+kuraldışı	kural dışı	29	98	SEPARATE_ALWAYS
+şehiriçi	şehir içi	124	349	SEPARATE_ALWAYS
+canayakın	cana yakın	8	59	SEPARATE_ALWAYS
+elele	el ele	72	210	SEPARATE_ALWAYS
+baştanbaşa	baştan başa	20	117	SEPARATE_ALWAYS
+ucuca	uç uca	5	39	SEPARATE_ALWAYS
+önkoşul	ön koşul	20	75	SEPARATE_ALWAYS
+üstgeçit	üst geçit	4	30	SEPARATE_ALWAYS
+hoşgeldiniz	hoş geldiniz	36	105	SEPARATE_ALWAYS
+aşkolsun	aşk olsun	13	75	SEPARATE_ALWAYS
+biran	bir an	93	747	SEPARATE_ALWAYS
+elbetteki	elbette ki	10	58	SEPARATE_ALWAYS
+diyelimki	diyelim ki	24	76	SEPARATE_ALWAYS
+bizimde	bizim de	4	43	MINED
+git gide	gitgide	112	507	JOINED_ALWAYS
+sırt üstü	sırtüstü	74	296	JOINED_ALWAYS
+büyük anne	büyükanne	41	360	JOINED_ALWAYS
+büyük baba	büyükbaba	52	214	JOINED_ALWAYS
+anne anne	anneanne	5	30	JOINED_ALWAYS
+bey efendi	beyefendi	21	150	JOINED_ALWAYS
+huzur evi	huzurevi	9	70	JOINED_ALWAYS
+ordu evi	orduevi	6	47	JOINED_ALWAYS
+aç gözlü	açgözlü	21	135	JOINED_ALWAYS
+ağır başlı	ağırbaşlı	13	83	JOINED_ALWAYS
+ana para	anapara	17	58	JOINED_ALWAYS
+güne bakan	günebakan	10	98	JOINED_ALWAYS
+gel gelelim	gelgelelim	4	22	JOINED_ALWAYS

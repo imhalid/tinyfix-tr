@@ -104,6 +104,8 @@ test("Turkish rule helpers", () => {
   assert.equal(hasBlockedApostropheStem("türklerin"), true);
   assert.equal(hasBlockedApostropheStem("türkçeden"), true);
   assert.equal(hasBlockedApostropheStem("hırvatça"), true);
+  assert.equal(hasBlockedApostropheStem("karaca", false), true);
+  assert.equal(hasBlockedApostropheStem("karaca", true), false);
   assert.equal(hasBlockedApostropheStem("bakanlığı"), true);
   assert.equal(hasBlockedApostropheStem("zeynep"), false);
   assert.equal(hasBlockedApostropheStem("clara"), false);
@@ -115,10 +117,13 @@ test("Turkish rule helpers", () => {
   assert.equal(isValidGenericApostrophe("google", "ın"), true);
   assert.equal(isValidGenericApostrophe("mark", "ya"), false);
 
-  // Acronym apostrophe detection
+  // Acronym & mixed-case brand apostrophe detection
   assert.deepEqual(matchAcronymApostrophe("HEXIMden"), { prefix: "HEXIM", suffix: "den", withMark: "hexım'den" });
   assert.deepEqual(matchAcronymApostrophe("KDAların"), { prefix: "KDA", suffix: "ların", withMark: "kda'ların" });
   assert.deepEqual(matchAcronymApostrophe("TLSnin"), { prefix: "TLS", suffix: "nin", withMark: "tls'nin" });
+  assert.deepEqual(matchAcronymApostrophe("MacOSdaki"), { prefix: "MacOS", suffix: "daki", withMark: "macos'daki" });
+  assert.deepEqual(matchAcronymApostrophe("OpenAIden"), { prefix: "OpenAI", suffix: "den", withMark: "openaı'den" });
+  assert.equal(matchAcronymApostrophe("AIde"), null);
   assert.equal(matchAcronymApostrophe("EVde"), null);
   assert.equal(matchAcronymApostrophe("URLs"), null);
 
@@ -219,6 +224,12 @@ test("synthetic regression tests (no full lexicon required)", () => {
     "mısın\t5000\t0",
     "gün\t40000\t200",
     "kim\t20000\t100",
+    "gelecekm\t0\t0",
+    "geleceksin\t5000\t0",
+    "gelecek\t30000\t100",
+    "katıldı\t8000\t10",
+    "katıldımı\t0\t0",
+    "katılımı\t5000\t10",
   ].join("\n");
   const bigrams = [
     "orta okul\t100",
@@ -239,6 +250,7 @@ test("synthetic regression tests (no full lexicon required)", () => {
     "cabası", "çabası", "asil", "suikastçı", "yükleyince", "bağrım", "alveol", "alveolüsün",
     "bre", "bölgelerde", "bölgedeler",
     "var", "varde", "varda", "vardan", "saat", "saatte", "saatten", "gördü", "günde", "kimmiş",
+    "katıldı", "katılımı", "gelecek", "geleceksin",
   ]);
   const analysesMap = new Map<string, readonly WordAnalysis[]>([
     ["japon", [{ stem: "japon", pos: "Noun", morphemes: ["A3sg"] }]],
@@ -282,7 +294,10 @@ test("synthetic regression tests (no full lexicon required)", () => {
   assert.equal(c.correct("Bursadan geldik.").text, "Bursa'dan geldik.");
   assert.equal(c.correct("Ekimde soğuk olur.").text, "Ekimde soğuk olur.");
   assert.equal(c.correct("Bu 6 Ekimde oldu.").text, "Bu 6 Ekim'de oldu.");
+  assert.equal(c.correct("13 Ekimde oldu.").text, "13 Ekim'de oldu.");
+  assert.equal(c.correct("1. Ekimde oldu.").text, "1. Ekimde oldu.");
   assert.equal(c.correct("Veri HEXIMden ve KDAların içinden geldi.").text, "Veri HEXIM'den ve KDA'ların içinden geldi.");
+  assert.equal(c.correct("Güncelleme MacOSdaki sorunu çözdü.").text, "Güncelleme MacOS'daki sorunu çözdü.");
   assert.equal(c.correct("GÜNde iki kez.").text, "GÜNde iki kez.");
 
   // Marks fixes & guards
@@ -299,10 +314,11 @@ test("synthetic regression tests (no full lexicon required)", () => {
   assert.equal(c.correct("gordu mu?").text, "gördü mü?");
   assert.equal(c.correct("saat mi?").text, "saat mi?");
 
-  // Short-stem ki guard & doubled-locative typo guard
+  // Short-stem ki guard & doubled-locative typo guard & unsplit harmonized question typo guard
   assert.equal(c.correct("Bu breki kazandı.").text, "Bu breki kazandı.");
   assert.equal(c.correct("Başka bölgedelerde görüldü.").text, "Başka bölgedelerde görüldü.");
   assert.equal(c.correct("Bu bölgelerdede görüldü.").text, "Bu bölgelerde de görüldü.");
+  assert.equal(c.correct("Toplantıya katıldımı?").text, "Toplantıya katıldı mı?");
 
   // Idempotence on outputs
   for (const sample of [
@@ -339,6 +355,33 @@ const extraFixes: [string, string][] = [
   ["Bu dizustu bilgisayari oyun icin alan var mi?", "Bu dizüstü bilgisayarı oyun için alan var mı?"],
   ["Yüzden fazla kişi biliyorumki bunu gördü.", "Yüzden fazla kişi biliyorum ki bunu gördü."],
   ["Ravenna'nin eski yapıları korunmuştur.", "Ravenna'nın eski yapıları korunmuştur."],
+  // v7 accuracy rules: marks, equal-margin threshold, ASCII sentence, apostrophe, typo channel, compound verbs, splits
+  ["Dün okuldaydi ama hazirliklariyla ilgileniyordu.", "Dün okuldaydı ama hazırlıklarıyla ilgileniyordu."],
+  ["Yarin erken gidecegiz ve bu konuyu kapatacaktir.", "Yarın erken gideceğiz ve bu konuyu kapatacaktır."],
+  ["Bir dogrunun egrisi ve makasi cizildi.", "Bir doğrunun eğrisi ve makası çizildi."],
+  ["Hava isinmadir ama gecenleri unutmadi.", "Hava ısınmadır ama geçenleri unutmadı."],
+  ["Isa'nin dogumu ve Istanbul'da yasam.", "İsa'nın doğumu ve İstanbul'da yaşam."],
+  ["Bu Odullerinde buyuk basari gosterdi.", "Bu Ödüllerinde büyük başarı gösterdi."],
+  ["13 Kasımda toplantı yapıldı.", "13 Kasım'da toplantı yapıldı."],
+  ["Dün Karacadan güzel bir haber geldi.", "Dün Karaca'dan güzel bir haber geldi."],
+  ["Arkadaşım Discordu ve Arsenalı çok seviyor.", "Arkadaşım Discord'u ve Arsenal'ı çok seviyor."],
+  ["Takım Malatyaspora karşı oynadı.", "Takım Malatyaspor'a karşı oynadı."],
+  ["Yazar Aclan Beyin evine gitti.", "Yazar Aclan Bey'in evine gitti."],
+  ["Güncelleme MacOSdaki ve OpenAIden gelen hatayı giderdi.", "Güncelleme MacOS'daki ve OpenAI'den gelen hatayı giderdi."],
+  ["Çok masrflı bir mddesel liste hazırladm.", "Çok masraflı bir maddesel liste hazırladım."],
+  ["Yeni çizien rapou zamanpa inceledik.", "Yeni çizilen raporu zamanla inceledik."],
+  ["Bu kitap üzerined uzun uzun konuştuk.", "Bu kitap üzerinde uzun uzun konuştuk."],
+  ["Çok çalışıyrum ama siparşim henüz gelmedi.", "Çok çalışıyorum ama siparişim henüz gelmedi."],
+  ["Bu fikirden vaz geçtim ama zaman kayıp ettim.", "Bu fikirden vazgeçtim ama zaman kaybettim."],
+  ["Kendimi iyi his ediyorum, bunu ön gördüm.", "Kendimi iyi hissediyorum, bunu öngördüm."],
+  ["Durumu hemen farkettim ama evi terketti.", "Durumu hemen fark ettim ama evi terk etti."],
+  ["Başvuru kabuledildi, çalışma devamediyor.", "Başvuru kabul edildi, çalışma devam ediyor."],
+  ["Bu durumu siz de hisettiniz mi?", "Bu durumu siz de hissettiniz mi?"],
+  ["Haftasonu yurtiçi seyahatimiz git gide uzadı.", "Hafta sonu yurt içi seyahatimiz gitgide uzadı."],
+  ["Mağazaya hoşgeldiniz, bizimde haberimiz oldu.", "Mağazaya hoş geldiniz, bizim de haberimiz oldu."],
+  ["Çok üzülsede istemesede bunu kabullendi.", "Çok üzülse de istemese de bunu kabullendi."],
+  ["Böyle bir ihtimalide göz önünde bulundurduk.", "Böyle bir ihtimali de göz önünde bulundurduk."],
+  ["Burası Ankara'dada bilinir, Çin'dirki meşhurdur.", "Burası Ankara'da da bilinir, Çin'dir ki meşhurdur."],
 ];
 
 const extraKeeps = [
@@ -362,6 +405,14 @@ const extraKeeps = [
   "Akciğerdeki alveolusun yapısı mikroskopla incelendi.",
   "Bu breki maçı belirledi.",
   "Aynı durum başka bölgedelerde görüldü.",
+  // v7 precision guards
+  "Danimarkacada bu sözcük farklı kullanılır.",
+  "Macbeth'inde ve Sözlük'ünde aynı tema işlenir.",
+  "Fatimi devleti tarih kitaplarında anlatılır.",
+  "Dekolmanı ameliyatla tedavi edildi.",
+  "Bu işin olmağı zor görünüyor.",
+  "Yarın akşam görüşrüz.",
+  "İnsan bazen lmre gibi yazımlar görür.",
 ];
 
 for (const [input, want] of extraFixes) {
