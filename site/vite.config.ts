@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { copyFileSync, createReadStream, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { copyFileSync, createReadStream, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
@@ -113,6 +113,16 @@ function ortWasmPlugin(): Plugin {
       mkdirSync(targetDir, { recursive: true });
       for (const file of files) {
         copyFileSync(join(ortDistDir, file), join(targetDir, file));
+      }
+    },
+
+    closeBundle() {
+      // ORT paketi wasm'ı `new URL(..., import.meta.url)` ile andığı için Vite onun bir kopyasını assets/ içine de
+      // çıkarıyor. Site `wasmPaths: "./ort/"` verdiğinden bu kopya hiç istenmez; yalnızca dist'i ~15 MB büyütür.
+      const assetsDir = join(outDir, "assets");
+      if (!existsSync(assetsDir)) return;
+      for (const file of readdirSync(assetsDir)) {
+        if (file.startsWith("ort-wasm") && file.endsWith(".wasm")) rmSync(join(assetsDir, file));
       }
     },
   };

@@ -6,7 +6,7 @@ import { APP_NAME, APP_TAGLINE, MODELS_BASE_URL, ORT_WASM_BASE_URL } from "./bra
 import { DocumentsList } from "./components/DocumentsDrawer";
 import { EditorPane } from "./components/EditorPane";
 import { FixPopover } from "./components/FixPopover";
-import { BoldIcon, HeadingIcon, ItalicIcon, ListIcon, QuoteIcon, UndoIcon } from "./components/Icons";
+import { BoldIcon, HeadingIcon, ItalicIcon, ListIcon, QuoteIcon, ScanIcon, UndoIcon } from "./components/Icons";
 import { Modal, PrivacyDialog } from "./components/PrivacyDialog";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { Drawer } from "./kit/Drawer";
@@ -443,6 +443,20 @@ export function App() {
     editorController?.editor.chain().focus().undo().run();
   };
 
+  /** "Tara": belgenin tamamını yeniden denetler; bulunan düzeltmeler her zamanki gibi bildirilir. */
+  const handleScan = () => {
+    if (!editorController) return;
+    if (engineStatus() !== "ready") {
+      setLastActivity({ text: "Sözlük hazır olunca tarayabilirsiniz", showUndoHint: false });
+      return;
+    }
+    editorController.checkAllText();
+    setLastActivity({
+      text: "Metin tarandı",
+      showUndoHint: false,
+    });
+  };
+
   const exportItems: readonly { label: string; kbd: string; onSelect: () => void }[] = [
     {
       label: "Düz metin",
@@ -583,6 +597,9 @@ export function App() {
             onClick={handleUndo}
           >
             <UndoIcon />
+          </button>
+          <button type="button" class="icon-button" aria-label="Metni yeniden tara" title="Metni yeniden tara" onClick={handleScan}>
+            <ScanIcon />
           </button>
         </div>
 

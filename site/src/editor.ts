@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import {
   AutocorrectExtension,
+  checkAllText,
   checkWaitingText,
   type AppliedFix,
   type AutocorrectRuntime,
@@ -29,6 +30,8 @@ export interface EditorController {
   getDocNode: () => PMNode;
   /** Sözlük yüklenirken yazılan metni denetler (sözlük hazır olunca çağrılır). */
   checkWaitingText: () => void;
+  /** Belgenin tamamını yeniden tarar; tarama başladıysa true döner. */
+  checkAllText: () => boolean;
   destroy: () => void;
 }
 
@@ -79,6 +82,7 @@ export function mountEditor(options: EditorMountOptions): EditorController {
     editor,
     getDocNode: () => editor.state.doc,
     checkWaitingText: () => checkWaitingText(editor.view),
+    checkAllText: () => checkAllText(editor.view),
     destroy: () => editor.destroy(),
   };
 }

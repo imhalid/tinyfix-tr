@@ -280,8 +280,9 @@ code {
 }
 .sidebar .doc-list {
   overflow-y: auto;
-  margin-inline: -4px;
-  padding-inline: 4px;
+  /* Seçili belgenin gölgesi kaydırma alanının kenarında kesilmesin. */
+  margin: -4px;
+  padding: 4px;
   scrollbar-width: thin;
 }
 
@@ -448,6 +449,13 @@ code {
   line-height: 1.05;
   letter-spacing: -0.012em;
   color: var(--ink);
+  resize: none;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+.doc-title.is-long {
+  font-size: clamp(2.1rem, 1.6rem + 1.9vw, 2.85rem);
+  line-height: 1.1;
 }
 .doc-title::placeholder {
   color: var(--faint);
@@ -792,11 +800,6 @@ code {
 .docs-head .section-label {
   margin: 0;
 }
-.docs-count {
-  font-size: 0.75rem;
-  color: var(--faint);
-  font-variant-numeric: tabular-nums;
-}
 .doc-list {
   list-style: none;
   margin: 0;
@@ -819,21 +822,12 @@ code {
   background: var(--paper-raised);
   box-shadow: 0 0 0 1px var(--rule), 0 1px 2px oklch(24% 0.02 60 / 5%);
 }
-.doc-item[aria-current="page"]::before {
-  content: "";
-  position: absolute;
-  inset-block: 12px;
-  inset-inline-start: 0;
-  inline-size: 2px;
-  border-radius: 2px;
-  background: var(--accent);
-}
 .doc-open {
   flex: 1;
   min-inline-size: 0;
   display: grid;
   gap: 2px;
-  padding: 10px 34px 11px 12px;
+  padding: 10px 12px 11px;
   border: 0;
   background: none;
   text-align: left;
@@ -855,16 +849,25 @@ code {
   line-height: 1.45;
   color: var(--muted);
 }
-.doc-meta {
-  margin-top: 2px;
+.doc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  min-inline-size: 0;
+}
+.doc-date {
+  flex: none;
   font-size: 0.7rem;
   letter-spacing: 0.02em;
   color: var(--faint);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
+/* Silme düğmesi tarihin yerinde durur: imleç gelince tarih gizlenir, düğme görünür. */
 .doc-delete {
   position: absolute;
-  top: 8px;
+  top: 6px;
   right: 4px;
   opacity: 0;
 }
@@ -872,9 +875,16 @@ code {
 .doc-delete:focus-visible {
   opacity: 1;
 }
+.doc-item:hover .doc-date,
+.doc-item:has(.doc-delete:focus-visible) .doc-date {
+  visibility: hidden;
+}
 @media (hover: none) {
   .doc-delete {
     opacity: 1;
+  }
+  .doc-open {
+    padding-inline-end: 38px;
   }
 }
 .privacy-note {

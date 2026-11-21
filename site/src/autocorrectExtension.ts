@@ -61,6 +61,8 @@ interface PendingBatch {
   id: number;
   paragraphs: readonly PendingParagraphCheck[];
   totalChars: number;
+  /** "Tara" düğmesiyle başlatıldı: imlecin durduğu kelime de düzeltilir. */
+  scanAll?: boolean;
 }
 
 interface TrackedJobMaps {
@@ -79,6 +81,7 @@ type AutocorrectMeta =
   | { type: "remove"; ids: readonly string[] }
   | { type: "finish-job"; jobId: number }
   | { type: "check-waiting" }
+  | { type: "check-all" }
   | { type: "clear" };
 
 interface PluginState {
@@ -191,6 +194,8 @@ function batchFromSpans(
   spans: ReadonlyArray<readonly [number, number]>,
   newState: EditorState,
   records: readonly AppliedFix[],
+  /** Belgenin tamamını tara: imleçteki ve paragraf sonundaki kelimeler de bitmiş sayılır. */
+  scanAll = false,
 ): PendingBatch | null {
   const doc = newState.doc;
   if (spans.length === 0) return null;
@@ -238,7 +243,7 @@ function batchFromSpans(
       if (wEnd - wStart < 2) continue;
 
       // İmlecin hemen solundaki veya içindeki yarım kelimeye dokunma.
-      if (cursorOffset !== null && cursorOffset > wStart && cursorOffset <= wEnd) continue;
+      if (!scanAll && cursorOffset !== null && cursorOffset > wStart && cursorOffset <= wEnd) continue;
 
       // Bu işlemle eklenen veya tamamlanan bir kelime mi?
       const touched = localSpans.some(
@@ -252,7 +257,7 @@ function batchFromSpans(
       let finished = false;
       if (wEnd < paragraphText.length) {
         finished = WORD_BOUNDARY.test(paragraphText[wEnd] ?? "");
-      } else if (blockClosedByInsert) {
+      } else if (blockClosedByInsert || scanAll) {
         finished = true;
       }
 
@@ -427,6 +432,15 @@ export function checkWaitingText(view: EditorView): void {
   view.dispatch(tr);
 }
 
+/** Belgedeki bütün metni yeniden denetler ("Tara" düğmesi). Sözlük hazır değilse false döner. */
+export function checkAllText(view: EditorView): boolean {
+  const tr = view.state.tr;
+  tr.setMeta("addToHistory", false);
+  tr.setMeta(AUTOCORRECT_META, { type: "check-all" } satisfies AutocorrectMeta);
+  view.dispatch(tr);
+  return AUTOCORRECT_KEY.getState(view.state)?.pendingBatch != null;
+}
+
 /** Kimliği verilen düzeltmeyi geri alır (yazılan biçim geri gelir). Geri alınan kaydı ya da null döner. */
 export function undoAppliedFix(view: EditorView, id: string): AppliedFix | null {
   const record = AUTOCORRECT_KEY.getState(view.state)?.records.find((item) => item.id === id);
@@ -559,7 +573,10 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
             }
 
             let pendingBatch: PendingBatch | null = null;
-            if (ready && meta?.type === "check-waiting") {
+            if (ready && meta?.type === "check-all") {
+              const batch = batchFromSpans([[0, newState.doc.content.size]], newState, records, true);
+              pendingBatch = batch ? { ...batch, scanAll: true } : null;
+            } else if (ready && meta?.type === "check-waiting") {
               pendingBatch = batchFromSpans(prev.waiting.length > 1 ? mergeSpans(prev.waiting) : prev.waiting, newState, records);
             } else if (ready) {
               pendingBatch = detectPendingBatch(tr, newState, records);
@@ -705,7 +722,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                 if (absFrom < 0 || absTo > doc.content.size || absFrom >= absTo) continue;
 
                 // Kullanıcı düzeltilecek kelimenin içine geri döndüyse müdahale etme.
-                if (selection.from <= absTo && selection.to >= absFrom) continue;
+                if (!batch.scanAll && selection.from <= absTo && selection.to >= absFrom) continue;
 
                 // Satır içi kod biçimlendirmesine dokunma.
                 if (codeMarkType && doc.rangeHasMark(absFrom, absTo, codeMarkType)) continue;

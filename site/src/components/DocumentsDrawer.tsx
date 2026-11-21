@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js";
-import { formatNumberTr, formatShortDateTr } from "../kit/format";
+import { formatShortDateTr } from "../kit/format";
 import type { DocRecord } from "../storage";
 import { PlusIcon, ShieldIcon, TrashIcon } from "./Icons";
 
@@ -23,7 +23,6 @@ export function DocumentsList(props: DocumentsListProps) {
 
       <div class="docs-head">
         <span class="section-label">Belgeler</span>
-        <span class="docs-count">{formatNumberTr(props.docs.length)}</span>
       </div>
 
       <ul class="doc-list" aria-label="Belgeler">
@@ -33,14 +32,13 @@ export function DocumentsList(props: DocumentsListProps) {
             return (
               <li class="doc-item" aria-current={doc().id === props.activeDocId ? "page" : undefined}>
                 <button type="button" class="doc-open" onClick={() => props.onSelectDoc(doc().id)}>
-                  <span class="doc-name">{title()}</span>
+                  <span class="doc-head">
+                    <span class="doc-name">{title()}</span>
+                    <span class="doc-date">{formatShortDateTr(doc().updatedAt)}</span>
+                  </span>
                   <Show when={doc().preview}>
                     <span class="doc-preview">{doc().preview}</span>
                   </Show>
-                  <span class="doc-meta">
-                    {formatShortDateTr(doc().updatedAt)}
-                    <Show when={doc().wordCount > 0}> · {formatNumberTr(doc().wordCount)} kelime</Show>
-                  </span>
                 </button>
                 <button
                   type="button"

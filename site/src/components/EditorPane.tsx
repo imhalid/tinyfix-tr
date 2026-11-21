@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 import type { JSX } from "@solidjs/web";
-import { createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 import type { AppliedFix, AutocorrectRuntime, BatchProgress } from "../autocorrectExtension";
 import { mountEditor, type EditorController } from "../editor";
 
@@ -27,7 +27,7 @@ export interface EditorPaneProps {
 
 export function EditorPane(props: EditorPaneProps) {
   const [hostEl, setHostEl] = createSignal<HTMLDivElement | undefined>(undefined);
-  let titleInputEl: HTMLInputElement | undefined;
+  let titleInputEl: HTMLTextAreaElement | undefined;
   let activeController: EditorController | null = null;
 
   // Aktif belge değiştiğinde Tiptap örneğini temizleyip yeniden kurar. Belge nesnesi her kayıtta yenilendiği için
@@ -63,6 +63,28 @@ export function EditorPane(props: EditorPaneProps) {
     }),
   );
 
+  // Başlık uzunsa alt satıra geçer: textarea'nın yüksekliği içeriğe göre ayarlanır.
+  const fitTitle = () => {
+    const el = titleInputEl;
+    if (!el) return;
+    el.style.blockSize = "auto";
+    el.style.blockSize = `${el.scrollHeight}px`;
+  };
+  createEffect(
+    () => props.title,
+    () => {
+      requestAnimationFrame(fitTitle);
+    },
+  );
+  const titleResize = new ResizeObserver(() => fitTitle());
+  // Serif yazı tipi geç yüklenirse yedek yazı tipiyle ölçülen yükseklik yanlış kalır; yüklenince yeniden ölç.
+  document.fonts.addEventListener("loadingdone", fitTitle);
+  void document.fonts.ready.then(fitTitle);
+  onCleanup(() => {
+    titleResize.disconnect();
+    document.fonts.removeEventListener("loadingdone", fitTitle);
+  });
+
   // Yeni belge oluşturulduğunda başlığı seç.
   createEffect(
     () => props.focusTitleSeq,
@@ -76,17 +98,25 @@ export function EditorPane(props: EditorPaneProps) {
 
   return (
     <div class="editor-canvas">
-      <input
+      <textarea
         ref={(el) => {
           titleInputEl = el;
+          titleResize.observe(el);
         }}
-        type="text"
-        class="doc-title"
+        class={props.title.length > 32 ? "doc-title is-long" : "doc-title"}
+        rows={1}
         value={props.title}
         placeholder="Adsız belge"
         aria-label="Belge başlığı"
         autocomplete="off"
-        onInput={(e) => props.onTitleInput(e.currentTarget.value)}
+        spellcheck={false}
+        onInput={(e) => {
+          const el = e.currentTarget;
+          // Başlık tek paragraftır: yapıştırılan satır sonları boşluğa çevrilir.
+          if (/[\r\n]/.test(el.value)) el.value = el.value.replace(/[\r\n]+/g, " ");
+          props.onTitleInput(el.value);
+          fitTitle();
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
