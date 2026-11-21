@@ -1,0 +1,17 @@
+{
+  "name": "autr",
+  "version": "0.0.1",
+  "description": "Turkish autocorrect that runs offline in the browser",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "bench": "node bench/run.ts",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "onnxruntime-node": "^1.20.1",
+    "typescript": "^5.7.0"
+  }
+}

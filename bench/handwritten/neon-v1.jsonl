@@ -1,0 +1,265 @@
+{"id": 1, "class": "ascii", "wrong": "Bugün cok yoruldum, akşam erkenden uyuyacağım.", "right": "Bugün çok yoruldum, akşam erkenden uyuyacağım."}
+{"id": 2, "class": "ascii", "wrong": "Kumaşı gercekten kaliteli, yıkadıktan sonra çekme yapmadı.", "right": "Kumaşı gerçekten kaliteli, yıkadıktan sonra çekme yapmadı."}
+{"id": 3, "class": "ascii", "wrong": "Toplantı nasil geçti, yeni kararlar alındı mı?", "right": "Toplantı nasıl geçti, yeni kararlar alındı mı?"}
+{"id": 4, "class": "ascii", "wrong": "Hızlı dönüşünüz için cok tesekkur ederim, iyi çalışmalar dilerim.", "right": "Hızlı dönüşünüz için çok teşekkür ederim, iyi çalışmalar dilerim."}
+{"id": 5, "class": "ascii", "wrong": "Bu güncellemeyi yükledikten sonra pil ömrü oldukca uzadı.", "right": "Bu güncellemeyi yükledikten sonra pil ömrü oldukça uzadı."}
+{"id": 6, "class": "ascii", "wrong": "Müşteri taleplerini bu haftaki rapora eklemeyi dusunuyorum.", "right": "Müşteri taleplerini bu haftaki rapora eklemeyi düşünüyorum."}
+{"id": 7, "class": "ascii", "wrong": "Sanayi Devrimi, kentlere göçü hızlandırarak toplumsal yapıyı koklu biçimde değiştirdi.", "right": "Sanayi Devrimi, kentlere göçü hızlandırarak toplumsal yapıyı köklü biçimde değiştirdi."}
+{"id": 8, "class": "ascii", "wrong": "Kargo iki günde elime ulaştı, paketleme gayet ozenli yapılmıştı.", "right": "Kargo iki günde elime ulaştı, paketleme gayet özenli yapılmıştı."}
+{"id": 9, "class": "ascii", "wrong": "Yarın öğleden sonra musait olursan kahve içelim mi?", "right": "Yarın öğleden sonra müsait olursan kahve içelim mi?"}
+{"id": 10, "class": "ascii", "wrong": "Aynı hatayı bende de veriyordu, uygulamayı silip tekrar yukleyince düzeldi.", "right": "Aynı hatayı bende de veriyordu, uygulamayı silip tekrar yükleyince düzeldi."}
+{"id": 11, "class": "ascii", "wrong": "Ekteki sözleşme taslağını inceleyip goruslerinizi paylaşabilir misiniz?", "right": "Ekteki sözleşme taslağını inceleyip görüşlerinizi paylaşabilir misiniz?"}
+{"id": 12, "class": "ascii", "wrong": "Sunum dosyasında birkaç küçük degisiklik yaptım, son sürümü paylaşıyorum.", "right": "Sunum dosyasında birkaç küçük değişiklik yaptım, son sürümü paylaşıyorum."}
+{"id": 13, "class": "ascii", "wrong": "Ses kalitesi beklentimin üzerinde ancak kulaklık biraz agir geliyor.", "right": "Ses kalitesi beklentimin üzerinde ancak kulaklık biraz ağır geliyor."}
+{"id": 14, "class": "ascii", "wrong": "Bitkiler fotosentez sırasında güneş ışığını kullanarak besin ve oksijen uretir.", "right": "Bitkiler fotosentez sırasında güneş ışığını kullanarak besin ve oksijen üretir."}
+{"id": 15, "class": "ascii", "wrong": "Eve dönerken marketten ekmek ve yogurt alabilir misin?", "right": "Eve dönerken marketten ekmek ve yoğurt alabilir misin?"}
+{"id": 16, "class": "ascii", "wrong": "Bütçeni biraz daha artırabilirsen üst modeli tercih etmen cok daha mantıklı olur.", "right": "Bütçeni biraz daha artırabilirsen üst modeli tercih etmen çok daha mantıklı olur."}
+{"id": 17, "class": "ascii", "wrong": "Başvurunuz degerlendirme aşamasındadır, sonuçlandığında size bilgi verilecektir.", "right": "Başvurunuz değerlendirme aşamasındadır, sonuçlandığında size bilgi verilecektir."}
+{"id": 18, "class": "ascii", "wrong": "Muhasebe ekibiyle görüştüm, faturaların odemesi cuma günü yapılacakmış.", "right": "Muhasebe ekibiyle görüştüm, faturaların ödemesi cuma günü yapılacakmış."}
+{"id": 19, "class": "ascii", "wrong": "Rengi fotoğraftakinden biraz daha koyu ama durusu oldukça şık.", "right": "Rengi fotoğraftakinden biraz daha koyu ama duruşu oldukça şık."}
+{"id": 20, "class": "ascii", "wrong": "Edebiyatımızda ilk yerli roman örneği olarak Şemsettin Sami'nin eseri gosterilir.", "right": "Edebiyatımızda ilk yerli roman örneği olarak Şemsettin Sami'nin eseri gösterilir."}
+{"id": 21, "class": "ascii", "wrong": "Hava bugün çok soğuk, dışarı çıkarken kalın bir seyler giy.", "right": "Hava bugün çok soğuk, dışarı çıkarken kalın bir şeyler giy."}
+{"id": 22, "class": "ascii", "wrong": "İki yıldır bu markanın kahve makinesini kullaniyorum, şimdiye kadar hiçbir sorun çıkarmadı.", "right": "İki yıldır bu markanın kahve makinesini kullanıyorum, şimdiye kadar hiçbir sorun çıkarmadı."}
+{"id": 23, "class": "ascii", "wrong": "Önümüzdeki hafta izinde olacağım için acil konularda Ahmet Bey'e ulasabilirsiniz.", "right": "Önümüzdeki hafta izinde olacağım için acil konularda Ahmet Bey'e ulaşabilirsiniz."}
+{"id": 24, "class": "ascii", "wrong": "Tasarım ekibi yeni ana sayfa taslağını yarin sabah sunacak.", "right": "Tasarım ekibi yeni ana sayfa taslağını yarın sabah sunacak."}
+{"id": 25, "class": "ascii", "wrong": "Fiyatına göre performansı gayet iyi, gunluk kullanim için kesinlikle tavsiye ederim.", "right": "Fiyatına göre performansı gayet iyi, günlük kullanım için kesinlikle tavsiye ederim."}
+{"id": 26, "class": "ascii", "wrong": "Depremlerin buyuk bolumu yer kabuğundaki levha sınırlarında meydana gelir.", "right": "Depremlerin büyük bölümü yer kabuğundaki levha sınırlarında meydana gelir."}
+{"id": 27, "class": "ascii", "wrong": "Otobüsü kaçırdım, bir sonrakiyle geliyorum, kusura bakmayin.", "right": "Otobüsü kaçırdım, bir sonrakiyle geliyorum, kusura bakmayın."}
+{"id": 28, "class": "ascii", "wrong": "İkinci el araç alırken mutlaka güvenilir bir ustaya gostermek gerekiyor.", "right": "İkinci el araç alırken mutlaka güvenilir bir ustaya göstermek gerekiyor."}
+{"id": 29, "class": "ascii", "wrong": "Eğitim programına katılmak isteyen çalışanların cuma aksamina kadar kayıt yaptırması gerekmektedir.", "right": "Eğitim programına katılmak isteyen çalışanların cuma akşamına kadar kayıt yaptırması gerekmektedir."}
+{"id": 30, "class": "ascii", "wrong": "Depodaki stok sayımı tamamlandı, eksik urunlerin listesini gönderiyorum.", "right": "Depodaki stok sayımı tamamlandı, eksik ürünlerin listesini gönderiyorum."}
+{"id": 31, "class": "ascii", "wrong": "Aksam sinemaya gidecegiz, sen de gelmek ister misin?", "right": "Akşam sinemaya gideceğiz, sen de gelmek ister misin?"}
+{"id": 32, "class": "ascii", "wrong": "Urun cok hizli geldi ama kutunun kosesi biraz ezilmisti.", "right": "Ürün çok hızlı geldi ama kutunun köşesi biraz ezilmişti."}
+{"id": 33, "class": "ascii", "wrong": "Iyi gunler, gecen hafta verdigim siparisin faturasini rica edebilir miyim?", "right": "İyi günler, geçen hafta verdiğim siparişin faturasını rica edebilir miyim?"}
+{"id": 34, "class": "ascii", "wrong": "Arkadaslar, bu dizustu bilgisayari oyun icin alan var mi, isinma yapiyor mu?", "right": "Arkadaşlar, bu dizüstü bilgisayarı oyun için alan var mı, ısınma yapıyor mu?"}
+{"id": 35, "class": "ascii", "wrong": "Yarinki toplanti saat ucte baslayacak, tum arkadaslarin katilimi onemli.", "right": "Yarınki toplantı saat üçte başlayacak, tüm arkadaşların katılımı önemli."}
+{"id": 36, "class": "ascii", "wrong": "Su dongusu, yeryuzundeki canli yasaminin surdurulebilmesi icin vazgecilmez bir surectir.", "right": "Su döngüsü, yeryüzündeki canlı yaşamının sürdürülebilmesi için vazgeçilmez bir süreçtir."}
+{"id": 37, "class": "ascii", "wrong": "Ogleden sonra disari cikacagim, eczaneden istedigin bir sey var mi?", "right": "Öğleden sonra dışarı çıkacağım, eczaneden istediğin bir şey var mı?"}
+{"id": 38, "class": "ascii", "wrong": "Ayakkabi cok rahat fakat bir numara buyuk almanizi oneririm.", "right": "Ayakkabı çok rahat fakat bir numara büyük almanızı öneririm."}
+{"id": 39, "class": "ascii", "wrong": "Istanbul'da hafta sonu gezilecek sakin ve guzel yerler onerebilir misiniz?", "right": "İstanbul'da hafta sonu gezilecek sakin ve güzel yerler önerebilir misiniz?"}
+{"id": 40, "class": "ascii", "wrong": "Gecen ayin satis rakamlarini inceledik, hedeflerin uzerine cikmisiz.", "right": "Geçen ayın satış rakamlarını inceledik, hedeflerin üzerine çıkmışız."}
+{"id": 41, "class": "de_da", "wrong": "Yarınki kahvaltıya bende geliyorum, beni de bekleyin.", "right": "Yarınki kahvaltıya ben de geliyorum, beni de bekleyin."}
+{"id": 42, "class": "de_da", "wrong": "Cüzdanımı yanlışlıkla ev de unutmuşum, geri dönüyorum.", "right": "Cüzdanımı yanlışlıkla evde unutmuşum, geri dönüyorum."}
+{"id": 43, "class": "de_da", "wrong": "Kumaşı güzel, dikişleri sağlam, fiyatıda oldukça uygun.", "right": "Kumaşı güzel, dikişleri sağlam, fiyatı da oldukça uygun."}
+{"id": 44, "class": "de_da", "wrong": "İki farklı renk sipariş ettim, ikisi de kutu da sapasağlam geldi.", "right": "İki farklı renk sipariş ettim, ikisi de kutuda sapasağlam geldi."}
+{"id": 45, "class": "de_da", "wrong": "Konuyu yöneticimizle görüştüm, oda önerinizi çok yerinde buldu.", "right": "Konuyu yöneticimizle görüştüm, o da önerinizi çok yerinde buldu."}
+{"id": 46, "class": "de_da", "wrong": "Gerekli belgeleri sistem de ilgili klasöre yükledim, kontrol edebilirsiniz.", "right": "Gerekli belgeleri sistemde ilgili klasöre yükledim, kontrol edebilirsiniz."}
+{"id": 47, "class": "de_da", "wrong": "Müşteriyle yapılan görüşmenin notlarını bizde incelemek istiyoruz.", "right": "Müşteriyle yapılan görüşmenin notlarını biz de incelemek istiyoruz."}
+{"id": 48, "class": "de_da", "wrong": "Bu maddeyi geçen haftaki toplantı da ayrıntılı olarak konuşmuştuk.", "right": "Bu maddeyi geçen haftaki toplantıda ayrıntılı olarak konuşmuştuk."}
+{"id": 49, "class": "de_da", "wrong": "İlk bölümü beğendim ama ikinci sezonuda merakla bekliyorum.", "right": "İlk bölümü beğendim ama ikinci sezonu da merakla bekliyorum."}
+{"id": 50, "class": "de_da", "wrong": "Bu ayarı uygulama da bulamadım, nereden kapatılıyor?", "right": "Bu ayarı uygulamada bulamadım, nereden kapatılıyor?"}
+{"id": 51, "class": "de_da", "wrong": "İklim değişikliği yalnızca sıcaklığı değil, yağış düzeninide doğrudan etkiliyor.", "right": "İklim değişikliği yalnızca sıcaklığı değil, yağış düzenini de doğrudan etkiliyor."}
+{"id": 52, "class": "de_da", "wrong": "Deney sırasında sıcaklık sabit tutulmuş, ölçüm oda sıcaklığın da yapılmıştır.", "right": "Deney sırasında sıcaklık sabit tutulmuş, ölçüm oda sıcaklığında yapılmıştır."}
+{"id": 53, "class": "de_da", "wrong": "Annem akşam yemeğine gelecek, babamda iş çıkışı uğrayacakmış.", "right": "Annem akşam yemeğine gelecek, babam da iş çıkışı uğrayacakmış."}
+{"id": 54, "class": "de_da", "wrong": "Şu an yol da trafik çok yoğun, on beş dakika gecikebilirim.", "right": "Şu an yolda trafik çok yoğun, on beş dakika gecikebilirim."}
+{"id": 55, "class": "de_da", "wrong": "Kendime almıştım, çok beğenince kardeşimede bir tane sipariş ettim.", "right": "Kendime almıştım, çok beğenince kardeşime de bir tane sipariş ettim."}
+{"id": 56, "class": "de_da", "wrong": "Ürünü mağaza da deneyip internetten daha uygun fiyata aldım.", "right": "Ürünü mağazada deneyip internetten daha uygun fiyata aldım."}
+{"id": 57, "class": "de_da", "wrong": "Toplantı davetini sizede ilettim, katılım durumunuzu bildirebilir misiniz?", "right": "Toplantı davetini size de ilettim, katılım durumunuzu bildirebilir misiniz?"}
+{"id": 58, "class": "de_da", "wrong": "Ekteki tablo da ikinci çeyrek harcamalarının dökümünü bulabilirsiniz.", "right": "Ekteki tabloda ikinci çeyrek harcamalarının dökümünü bulabilirsiniz."}
+{"id": 59, "class": "de_da", "wrong": "Taslak metni güncelledim, görselleride yarın öğlene kadar ekleyeceğim.", "right": "Taslak metni güncelledim, görselleri de yarın öğlene kadar ekleyeceğim."}
+{"id": 60, "class": "de_da", "wrong": "Sözleşmenin son sayfasın da küçük bir tarih hatası var.", "right": "Sözleşmenin son sayfasında küçük bir tarih hatası var."}
+{"id": 61, "class": "de_da", "wrong": "Eski sürüm daha kararlıydı, buda zamanla güncellemelerle düzelir bence.", "right": "Eski sürüm daha kararlıydı, bu da zamanla güncellemelerle düzelir bence."}
+{"id": 62, "class": "de_da", "wrong": "Aynı konuyu geçen ay forum da uzun uzun tartışmıştık.", "right": "Aynı konuyu geçen ay forumda uzun uzun tartışmıştık."}
+{"id": 63, "class": "de_da", "wrong": "Araştırmada anket verilerinin yanında yüz yüze görüşmelerede yer verilmiştir.", "right": "Araştırmada anket verilerinin yanında yüz yüze görüşmelere de yer verilmiştir."}
+{"id": 64, "class": "de_da", "wrong": "Selçuklular döneminde kervansaraylar ticaret yolların da güvenliği sağlamıştır.", "right": "Selçuklular döneminde kervansaraylar ticaret yollarında güvenliği sağlamıştır."}
+{"id": 65, "class": "de_da", "wrong": "Dün yağmur yağdı, bugünde hava oldukça kapalı görünüyor.", "right": "Dün yağmur yağdı, bugün de hava oldukça kapalı görünüyor."}
+{"id": 66, "class": "de_da", "wrong": "Okul da kulüp toplantısı uzayınca eve geç kaldım.", "right": "Okulda kulüp toplantısı uzayınca eve geç kaldım."}
+{"id": 67, "class": "de_da", "wrong": "Büyük boyunu kullanıyordum, seyahatler için küçük boyunuda aldım.", "right": "Büyük boyunu kullanıyordum, seyahatler için küçük boyunu da aldım."}
+{"id": 68, "class": "de_da", "wrong": "Yeni şube de ilk hafta müşteri yoğunluğu beklentinin üzerine çıktı.", "right": "Yeni şubede ilk hafta müşteri yoğunluğu beklentinin üzerine çıktı."}
+{"id": 69, "class": "de_da", "wrong": "Senin önerdiğin kitabı bitirdim, diğerinide bu hafta sonu okuyacağım.", "right": "Senin önerdiğin kitabı bitirdim, diğerini de bu hafta sonu okuyacağım."}
+{"id": 70, "class": "de_da", "wrong": "Anahtarlar masanın üstün de duruyor, çıkarken almayı unutma.", "right": "Anahtarlar masanın üstünde duruyor, çıkarken almayı unutma."}
+{"id": 71, "class": "ki", "wrong": "Annem diyorki akşam yemeğe mutlaka yetişin.", "right": "Annem diyor ki akşam yemeğe mutlaka yetişin."}
+{"id": 72, "class": "ki", "wrong": "İki saat boyunca güncelleme bekledim, halbu ki sorun internet bağlantımdaymış.", "right": "İki saat boyunca güncelleme bekledim, halbuki sorun internet bağlantımdaymış."}
+{"id": 73, "class": "ki", "wrong": "Evde ki kahve bitmiş, gelirken bir paket alabilir misin?", "right": "Evdeki kahve bitmiş, gelirken bir paket alabilir misin?"}
+{"id": 74, "class": "ki", "wrong": "İyiki bu rengi tercih etmişim, gerçekte çok daha güzel duruyor.", "right": "İyi ki bu rengi tercih etmişim, gerçekte çok daha güzel duruyor."}
+{"id": 75, "class": "ki", "wrong": "Madem ki tüm ekipler onayladı, yeni tasarımı bugün yayına alabiliriz.", "right": "Mademki tüm ekipler onayladı, yeni tasarımı bugün yayına alabiliriz."}
+{"id": 76, "class": "ki", "wrong": "Yarın ki yönetim kurulu toplantısının gündem maddelerini ekte paylaşıyorum.", "right": "Yarınki yönetim kurulu toplantısının gündem maddelerini ekte paylaşıyorum."}
+{"id": 77, "class": "ki", "wrong": "Demekki bu hatayı yalnızca eski sürümü kullananlar yaşıyormuş.", "right": "Demek ki bu hatayı yalnızca eski sürümü kullananlar yaşıyormuş."}
+{"id": 78, "class": "ki", "wrong": "Fotoğrafta büyük görünüyordu, oysa ki elime gelince oldukça küçük olduğunu gördüm.", "right": "Fotoğrafta büyük görünüyordu, oysaki elime gelince oldukça küçük olduğunu gördüm."}
+{"id": 79, "class": "ki", "wrong": "Benim telefonun şarjı bitti, senin ki yanındaysa fotoğrafı ondan çekelim.", "right": "Benim telefonun şarjı bitti, seninki yanındaysa fotoğrafı ondan çekelim."}
+{"id": 80, "class": "ki", "wrong": "Gördümki gönderdiğim son dosyada tarih kısmı güncellenmemiş, yenisini ekledim.", "right": "Gördüm ki gönderdiğim son dosyada tarih kısmı güncellenmemiş, yenisini ekledim."}
+{"id": 81, "class": "ki", "wrong": "Yazar dönemin atmosferini o kadar ustaca kurmuş ki san ki o sokaklarda yürüyorsunuz.", "right": "Yazar dönemin atmosferini o kadar ustaca kurmuş ki sanki o sokaklarda yürüyorsunuz."}
+{"id": 82, "class": "ki", "wrong": "Raporda ki grafiklerin renklerini kurumsal kimliğimize uygun olarak güncelledim.", "right": "Rapordaki grafiklerin renklerini kurumsal kimliğimize uygun olarak güncelledim."}
+{"id": 83, "class": "ki", "wrong": "Sen yeterki zamanında haber ver, ben işlerimi ona göre ayarlarım.", "right": "Sen yeter ki zamanında haber ver, ben işlerimi ona göre ayarlarım."}
+{"id": 84, "class": "ki", "wrong": "Bu kadar kısa sürede projeyi bitirmemiz zor, meğer ki hafta sonu da çalışalım.", "right": "Bu kadar kısa sürede projeyi bitirmemiz zor, meğerki hafta sonu da çalışalım."}
+{"id": 85, "class": "ki", "wrong": "Kutuda ki kurulum şeması çok anlaşılır olduğu için tek başıma monte ettim.", "right": "Kutudaki kurulum şeması çok anlaşılır olduğu için tek başıma monte ettim."}
+{"id": 86, "class": "ki", "wrong": "Belliki yeni kampanya özellikle genç kullanıcılar arasında büyük ilgi görmüş.", "right": "Belli ki yeni kampanya özellikle genç kullanıcılar arasında büyük ilgi görmüş."}
+{"id": 87, "class": "ki", "wrong": "Çocuklar illa ki deniz kenarına gidelim diye tutturdu.", "right": "Çocuklar illaki deniz kenarına gidelim diye tutturdu."}
+{"id": 88, "class": "ki", "wrong": "Akşam ki maçı birlikte izlemek için bizim evde toplanıyoruz.", "right": "Akşamki maçı birlikte izlemek için bizim evde toplanıyoruz."}
+{"id": 89, "class": "ki", "wrong": "Tabiiki toplantı saatini sizin programınıza göre yeniden düzenleyebiliriz.", "right": "Tabii ki toplantı saatini sizin programınıza göre yeniden düzenleyebiliriz."}
+{"id": 90, "class": "ki", "wrong": "Deney sonuçları gösterdiki sıcaklık arttıkça tepkime hızı da yükseliyor.", "right": "Deney sonuçları gösterdi ki sıcaklık arttıkça tepkime hızı da yükseliyor."}
+{"id": 91, "class": "mi", "wrong": "Akşamki yemeğe sen de gelecekmisin?", "right": "Akşamki yemeğe sen de gelecek misin?"}
+{"id": 92, "class": "mi", "wrong": "Eve sağ salim geldinmi?", "right": "Eve sağ salim geldin mi?"}
+{"id": 93, "class": "mi", "wrong": "Sözleşme taslağını incelemek için bugün müsaitmisiniz?", "right": "Sözleşme taslağını incelemek için bugün müsait misiniz?"}
+{"id": 94, "class": "mi", "wrong": "Müşteri sunumunu öğleden sonra üçe alsak uygunmudur?", "right": "Müşteri sunumunu öğleden sonra üçe alsak uygun mudur?"}
+{"id": 95, "class": "mi", "wrong": "Bu modelin şarj süresi gerçekten anlatıldığı kadar uzunmu?", "right": "Bu modelin şarj süresi gerçekten anlatıldığı kadar uzun mu?"}
+{"id": 96, "class": "mi", "wrong": "Bu fiyata daha kaliteli bir kahve makinesi bulunabilirmi?", "right": "Bu fiyata daha kaliteli bir kahve makinesi bulunabilir mi?"}
+{"id": 97, "class": "mi", "wrong": "Yarın sabah yürüyüşe çıkmak için hazırmıyız?", "right": "Yarın sabah yürüyüşe çıkmak için hazır mıyız?"}
+{"id": 98, "class": "mi", "wrong": "Gönderdiğim başvuru belgeleri tarafınıza ulaştımı?", "right": "Gönderdiğim başvuru belgeleri tarafınıza ulaştı mı?"}
+{"id": 99, "class": "mi", "wrong": "Son güncellemeyi test ortamına yükledinizmi?", "right": "Son güncellemeyi test ortamına yüklediniz mi?"}
+{"id": 100, "class": "mi", "wrong": "Arkadaşlar bu hatayı çözen oldumu?", "right": "Arkadaşlar bu hatayı çözen oldu mu?"}
+{"id": 101, "class": "mi", "wrong": "Gelirken fırından sıcak ekmek alabilirmisin?", "right": "Gelirken fırından sıcak ekmek alabilir misin?"}
+{"id": 102, "class": "mi", "wrong": "Ekonomik büyüme her zaman toplumsal refah artışı anlamına gelirmi?", "right": "Ekonomik büyüme her zaman toplumsal refah artışı anlamına gelir mi?"}
+{"id": 103, "class": "mi", "wrong": "Kışın soğuk havalarda bu mont yeterince sıcak tutarmı diye tereddüt etmiştim ama harika çıktı.", "right": "Kışın soğuk havalarda bu mont yeterince sıcak tutar mı diye tereddüt etmiştim ama harika çıktı."}
+{"id": 104, "class": "mi", "wrong": "Fatura bilgilerimizi güncelledik, yeni faturayı bu adrese gönderebilirmisiniz?", "right": "Fatura bilgilerimizi güncelledik, yeni faturayı bu adrese gönderebilir misiniz?"}
+{"id": 105, "class": "mi", "wrong": "Bütçe tablosundaki rakamları muhasebeyle teyit ettinmi?", "right": "Bütçe tablosundaki rakamları muhasebeyle teyit ettin mi?"}
+{"id": 106, "class": "mi", "wrong": "Bugün dersten sonra kütüphaneye gidecekmiyiz?", "right": "Bugün dersten sonra kütüphaneye gidecek miyiz?"}
+{"id": 107, "class": "mi", "wrong": "Yeni sezonun ilk bölümünü beğendinizmi?", "right": "Yeni sezonun ilk bölümünü beğendiniz mi?"}
+{"id": 108, "class": "mi", "wrong": "Bu akşam toplantı iptal oldu, haberin yokmuydu?", "right": "Bu akşam toplantı iptal oldu, haberin yok muydu?"}
+{"id": 109, "class": "mi", "wrong": "Staj başvurusu için not dökümü belgesi eklemem gerekiyormu?", "right": "Staj başvurusu için not dökümü belgesi eklemem gerekiyor mu?"}
+{"id": 110, "class": "mi", "wrong": "Müşteriyle yapılan sözleşmenin bir kopyasını benimle paylaşabilirmisiniz?", "right": "Müşteriyle yapılan sözleşmenin bir kopyasını benimle paylaşabilir misiniz?"}
+{"id": 111, "class": "mi", "wrong": "Aldığım tencere takımı gerçekten güzelmi güzel, mutfağa çok yakıştı.", "right": "Aldığım tencere takımı gerçekten güzel mi güzel, mutfağa çok yakıştı."}
+{"id": 112, "class": "mi", "wrong": "Eski bilgisayara bu işletim sistemini kurmak mantıklı olurmu?", "right": "Eski bilgisayara bu işletim sistemini kurmak mantıklı olur mu?"}
+{"id": 113, "class": "mi", "wrong": "Saat beşe doğru ofisten çıkacağım, seni de yoldan alayımmı?", "right": "Saat beşe doğru ofisten çıkacağım, seni de yoldan alayım mı?"}
+{"id": 114, "class": "mi", "wrong": "Bilimsel bir hipotez deneylerle yanlışlanamazsa bilimsel sayılabilirmi?", "right": "Bilimsel bir hipotez deneylerle yanlışlanamazsa bilimsel sayılabilir mi?"}
+{"id": 115, "class": "mi", "wrong": "Tedarikçiden fiyat teklifi henüz gelmedimi?", "right": "Tedarikçiden fiyat teklifi henüz gelmedi mi?"}
+{"id": 116, "class": "apostrophe", "wrong": "Hafta sonu trenle Ankaraya gidip arkadaşlarımla buluşacağım.", "right": "Hafta sonu trenle Ankara'ya gidip arkadaşlarımla buluşacağım."}
+{"id": 117, "class": "apostrophe", "wrong": "Doğum günü hediyesini Ayşeye sürpriz olarak akşam vereceğiz.", "right": "Doğum günü hediyesini Ayşe'ye sürpriz olarak akşam vereceğiz."}
+{"id": 118, "class": "apostrophe", "wrong": "Konferans için yarın sabah İstanbuldan yola çıkacağım.", "right": "Konferans için yarın sabah İstanbul'dan yola çıkacağım."}
+{"id": 119, "class": "apostrophe", "wrong": "Yaz aylarında İzmirde gezilecek sakin sahil kasabaları hangileri?", "right": "Yaz aylarında İzmir'de gezilecek sakin sahil kasabaları hangileri?"}
+{"id": 120, "class": "apostrophe", "wrong": "Bu rapor, Türkiyenin son on yıldaki yenilenebilir enerji üretimini inceliyor.", "right": "Bu rapor, Türkiye'nin son on yıldaki yenilenebilir enerji üretimini inceliyor."}
+{"id": 121, "class": "apostrophe", "wrong": "Proje bütçesinin son onayını almak için Ahmetin geri dönüşünü bekliyoruz.", "right": "Proje bütçesinin son onayını almak için Ahmet'in geri dönüşünü bekliyoruz."}
+{"id": 122, "class": "apostrophe", "wrong": "Notların fotoğrafını Mehmete de gönderdim, akşam çalışacakmış.", "right": "Notların fotoğrafını Mehmet'e de gönderdim, akşam çalışacakmış."}
+{"id": 123, "class": "apostrophe", "wrong": "Akşam iş çıkışı Kadıköyde sessiz bir kafe arıyorum, tavsiyeniz var mı?", "right": "Akşam iş çıkışı Kadıköy'de sessiz bir kafe arıyorum, tavsiyeniz var mı?"}
+{"id": 124, "class": "apostrophe", "wrong": "Vapur saat yedide Beşiktaşta olacak, iskelede görüşürüz.", "right": "Vapur saat yedide Beşiktaş'ta olacak, iskelede görüşürüz."}
+{"id": 125, "class": "apostrophe", "wrong": "Tasarım revizyonlarını Zeynepten teslim alıp müşteriye ilettik.", "right": "Tasarım revizyonlarını Zeynep'ten teslim alıp müşteriye ilettik."}
+{"id": 126, "class": "apostrophe", "wrong": "Siparişim iki günde Antalyaya sorunsuz ulaştı, satıcıya teşekkürler.", "right": "Siparişim iki günde Antalya'ya sorunsuz ulaştı, satıcıya teşekkürler."}
+{"id": 127, "class": "apostrophe", "wrong": "Bursadan gönderdiğimiz numune kolisi bu sabah şubenize teslim edilmiştir.", "right": "Bursa'dan gönderdiğimiz numune kolisi bu sabah şubenize teslim edilmiştir."}
+{"id": 128, "class": "apostrophe", "wrong": "Yüksek lisans için Almanyaya başvuran arkadaşlar dil belgesini nereden aldı?", "right": "Yüksek lisans için Almanya'ya başvuran arkadaşlar dil belgesini nereden aldı?"}
+{"id": 129, "class": "apostrophe", "wrong": "Üniversite yıllarım Eskişehirde geçtiği için orayı çok özlüyorum.", "right": "Üniversite yıllarım Eskişehir'de geçtiği için orayı çok özlüyorum."}
+{"id": 130, "class": "apostrophe", "wrong": "Müşteri sunumu için gerekli verileri Mustafaya sabah ilettim.", "right": "Müşteri sunumu için gerekli verileri Mustafa'ya sabah ilettim."}
+{"id": 131, "class": "apostrophe", "wrong": "Çay tarımı ülkemizde iklim koşulları nedeniyle özellikle Karadenizde yoğunlaşmıştır.", "right": "Çay tarımı ülkemizde iklim koşulları nedeniyle özellikle Karadeniz'de yoğunlaşmıştır."}
+{"id": 132, "class": "apostrophe", "wrong": "Maça gitmeden önce Merti de evinden alalım.", "right": "Maça gitmeden önce Mert'i de evinden alalım."}
+{"id": 133, "class": "apostrophe", "wrong": "Bu yayla balını Trabzondan gelen bir tanıdığımızın tavsiyesiyle aldım, tadı nefis.", "right": "Bu yayla balını Trabzon'dan gelen bir tanıdığımızın tavsiyesiyle aldım, tadı nefis."}
+{"id": 134, "class": "apostrophe", "wrong": "İki günlük hafta sonu gezisinde Gaziantepte mutlaka görülmesi gereken yerler nereler?", "right": "İki günlük hafta sonu gezisinde Gaziantep'te mutlaka görülmesi gereken yerler nereler?"}
+{"id": 135, "class": "apostrophe", "wrong": "Ödevin araştırma bölümünü Elifin hazırladığı kaynakçayla birleştirdik.", "right": "Ödevin araştırma bölümünü Elif'in hazırladığı kaynakçayla birleştirdik."}
+{"id": 136, "class": "split_join", "wrong": "Merak etme, herşey planladığımız gibi yolunda gidiyor.", "right": "Merak etme, her şey planladığımız gibi yolunda gidiyor."}
+{"id": 137, "class": "split_join", "wrong": "İki aydır düzenli kullanıyorum, hiç bir sorun yaşamadım.", "right": "İki aydır düzenli kullanıyorum, hiçbir sorun yaşamadım."}
+{"id": 138, "class": "split_join", "wrong": "Markete gidiyorum, sana lazım olan birşey var mı?", "right": "Markete gidiyorum, sana lazım olan bir şey var mı?"}
+{"id": 139, "class": "split_join", "wrong": "Bu dönemde bir çok bilim insanı yeni deney yöntemleri geliştirmiştir.", "right": "Bu dönemde birçok bilim insanı yeni deney yöntemleri geliştirmiştir."}
+{"id": 140, "class": "split_join", "wrong": "Toplantıyı perşembe yada cuma gününe erteleyebiliriz.", "right": "Toplantıyı perşembe ya da cuma gününe erteleyebiliriz."}
+{"id": 141, "class": "split_join", "wrong": "Konuyla ilgili bir kaç küçük düzeltme önerimi ekteki belgede belirttim.", "right": "Konuyla ilgili birkaç küçük düzeltme önerimi ekteki belgede belirttim."}
+{"id": 142, "class": "split_join", "wrong": "Şuan yoldayım, yirmi dakika içinde kafede olurum.", "right": "Şu an yoldayım, yirmi dakika içinde kafede olurum."}
+{"id": 143, "class": "split_join", "wrong": "Kalıbı bir az dar geldiği için bir beden büyüğüyle değiştirdim.", "right": "Kalıbı biraz dar geldiği için bir beden büyüğüyle değiştirdim."}
+{"id": 144, "class": "split_join", "wrong": "Haftasonu yağmur yağmazsa arkadaşlarla doğa yürüyüşüne çıkacağız.", "right": "Hafta sonu yağmur yağmazsa arkadaşlarla doğa yürüyüşüne çıkacağız."}
+{"id": 145, "class": "split_join", "wrong": "Süreçte her hangi bir aksaklık olursa lütfen doğrudan bana ulaşın.", "right": "Süreçte herhangi bir aksaklık olursa lütfen doğrudan bana ulaşın."}
+{"id": 146, "class": "split_join", "wrong": "Yeni yazılımın hızının yanısıra kullanım kolaylığı da ekibi memnun etti.", "right": "Yeni yazılımın hızının yanı sıra kullanım kolaylığı da ekibi memnun etti."}
+{"id": 147, "class": "split_join", "wrong": "Uzun süredir görüşemedik, bu akşam oturup bir birimize anlatacak çok şeyimiz var.", "right": "Uzun süredir görüşemedik, bu akşam oturup birbirimize anlatacak çok şeyimiz var."}
+{"id": 148, "class": "split_join", "wrong": "Kargoyu açtığımda ürünün renginin yanlış gönderildiğini farkettim.", "right": "Kargoyu açtığımda ürünün renginin yanlış gönderildiğini fark ettim."}
+{"id": 149, "class": "split_join", "wrong": "Sevkiyat sürecinde bir takım gecikmeler yaşandığı için müşteriden özür diledik.", "right": "Sevkiyat sürecinde birtakım gecikmeler yaşandığı için müşteriden özür diledik."}
+{"id": 150, "class": "split_join", "wrong": "Yardımın için çok sağol, sensiz bu işi zamanında bitiremezdim.", "right": "Yardımın için çok sağ ol, sensiz bu işi zamanında bitiremezdim."}
+{"id": 151, "class": "split_join", "wrong": "Oyun oynarken ekran birden bire karardı ve bilgisayar kapandı.", "right": "Oyun oynarken ekran birdenbire karardı ve bilgisayar kapandı."}
+{"id": 152, "class": "split_join", "wrong": "Ekibimize hoşgeldiniz, ilk hafta eğitim programınızı aşağıda paylaşıyorum.", "right": "Ekibimize hoş geldiniz, ilk hafta eğitim programınızı aşağıda paylaşıyorum."}
+{"id": 153, "class": "split_join", "wrong": "Yağmur dinmeyince sahilde yürüyüş yapmaktan vaz geçtim.", "right": "Yağmur dinmeyince sahilde yürüyüş yapmaktan vazgeçtim."}
+{"id": 154, "class": "split_join", "wrong": "Sabahları hergün yarım saat yürüyüş yapmak enerjimi artırıyor.", "right": "Sabahları her gün yarım saat yürüyüş yapmak enerjimi artırıyor."}
+{"id": 155, "class": "split_join", "wrong": "Bu siteden yıllardır alış veriş yapıyorum, şimdiye kadar hiç üzülmedim.", "right": "Bu siteden yıllardır alışveriş yapıyorum, şimdiye kadar hiç üzülmedim."}
+{"id": 156, "class": "split_join", "wrong": "Gözlem sonuçları bu alanda pekçok yeni soruyu gündeme getirmiştir.", "right": "Gözlem sonuçları bu alanda pek çok yeni soruyu gündeme getirmiştir."}
+{"id": 157, "class": "split_join", "wrong": "Staj programı için baş vuru süresinin cuma günü sona erdiğini hatırlatırız.", "right": "Staj programı için başvuru süresinin cuma günü sona erdiğini hatırlatırız."}
+{"id": 158, "class": "split_join", "wrong": "Yurtdışı seyahati için gerekli vize evraklarını insan kaynaklarına teslim ettim.", "right": "Yurt dışı seyahati için gerekli vize evraklarını insan kaynaklarına teslim ettim."}
+{"id": 159, "class": "split_join", "wrong": "Akşam üstü işten çıkınca biraz hava almak için parkta oturdum.", "right": "Akşamüstü işten çıkınca biraz hava almak için parkta oturdum."}
+{"id": 160, "class": "split_join", "wrong": "Destekleriniz ve verimli işbirliğiniz için tüm ekibinize teşekkür ederiz.", "right": "Destekleriniz ve verimli iş birliğiniz için tüm ekibinize teşekkür ederiz."}
+{"id": 161, "class": "split_join", "wrong": "Kitabın anlatımı olağan üstü akıcı, elimden bırakmadan bir günde bitirdim.", "right": "Kitabın anlatımı olağanüstü akıcı, elimden bırakmadan bir günde bitirdim."}
+{"id": 162, "class": "split_join", "wrong": "Sen herzaman dakiksindir, bugünkü gecikmene gerçekten şaşırdım.", "right": "Sen her zaman dakiksindir, bugünkü gecikmene gerçekten şaşırdım."}
+{"id": 163, "class": "split_join", "wrong": "Ankete katılacak kişiler sistem tarafından rast gele seçilmiştir.", "right": "Ankete katılacak kişiler sistem tarafından rastgele seçilmiştir."}
+{"id": 164, "class": "split_join", "wrong": "Son üç maçı artarda kaybedince takımın morali epey düştü.", "right": "Son üç maçı art arda kaybedince takımın morali epey düştü."}
+{"id": 165, "class": "split_join", "wrong": "Kutudan hiçbirşey eksik çıkmadı, kurulum parçaları tamdı.", "right": "Kutudan hiçbir şey eksik çıkmadı, kurulum parçaları tamdı."}
+{"id": 166, "class": "misspelling", "wrong": "Toplantı saatini değiştirdim, herkez yeni saate uyabilecek mi?", "right": "Toplantı saatini değiştirdim, herkes yeni saate uyabilecek mi?"}
+{"id": 167, "class": "misspelling", "wrong": "On dakikaya yanına gelyorum, kapıda bekleme içeri geç.", "right": "On dakikaya yanına geliyorum, kapıda bekleme içeri geç."}
+{"id": 168, "class": "misspelling", "wrong": "Bu konuda yanlız olmadığını bilmek insanı gerçekten rahatlatıyor.", "right": "Bu konuda yalnız olmadığını bilmek insanı gerçekten rahatlatıyor."}
+{"id": 169, "class": "misspelling", "wrong": "Bu değişikliği akşama kadar yapabiliur miyim bilmiyorum ama deneyeceğim.", "right": "Bu değişikliği akşama kadar yapabilir miyim bilmiyorum ama deneyeceğim."}
+{"id": 170, "class": "misspelling", "wrong": "Talep ettiğiniz tarih için malesef uygun randevu saatimiz kalmamıştır.", "right": "Talep ettiğiniz tarih için maalesef uygun randevu saatimiz kalmamıştır."}
+{"id": 171, "class": "misspelling", "wrong": "Ürün kesinlikle orjinal, barkodunu kontrol ettim ve satıcıdan çok memnun kaldım.", "right": "Ürün kesinlikle orijinal, barkodunu kontrol ettim ve satıcıdan çok memnun kaldım."}
+{"id": 172, "class": "misspelling", "wrong": "Güncellenmiş teklif dosyasını az önce muhasebe birimine göndredim.", "right": "Güncellenmiş teklif dosyasını az önce muhasebe birimine gönderdim."}
+{"id": 173, "class": "misspelling", "wrong": "Adres bilgisini yalnış yazmışım, kargoyu şubeden teslim alacağım.", "right": "Adres bilgisini yanlış yazmışım, kargoyu şubeden teslim alacağım."}
+{"id": 174, "class": "misspelling", "wrong": "Hızlı yanıtınız için çok teşekürler, önerdiğiniz yöntem işe yaradı.", "right": "Hızlı yanıtınız için çok teşekkürler, önerdiğiniz yöntem işe yaradı."}
+{"id": 175, "class": "misspelling", "wrong": "Telefonun şarzı yoğun kullanımda bile neredeyse iki gün gidiyor.", "right": "Telefonun şarjı yoğun kullanımda bile neredeyse iki gün gidiyor."}
+{"id": 176, "class": "misspelling", "wrong": "Eğitim için hazırlanan tüm dökümanları ortak sürücüye yükledik.", "right": "Eğitim için hazırlanan tüm dokümanları ortak sürücüye yükledik."}
+{"id": 177, "class": "misspelling", "wrong": "Yarınki toplantya geç kalmamak için sabah erken çıkacağım.", "right": "Yarınki toplantıya geç kalmamak için sabah erken çıkacağım."}
+{"id": 178, "class": "misspelling", "wrong": "Doğum günümde ofiste yaptıkları süpriz beni çok duygulandırdı.", "right": "Doğum günümde ofiste yaptıkları sürpriz beni çok duygulandırdı."}
+{"id": 179, "class": "misspelling", "wrong": "Merhaba arkdaşlar, bu programda grafik ayarlarını nasıl sıfırlayabilirim?", "right": "Merhaba arkadaşlar, bu programda grafik ayarlarını nasıl sıfırlayabilirim?"}
+{"id": 180, "class": "misspelling", "wrong": "Acil bir durumda insiyatif alarak karar verebilmek ekip çalışmasında önemlidir.", "right": "Acil bir durumda inisiyatif alarak karar verebilmek ekip çalışmasında önemlidir."}
+{"id": 181, "class": "misspelling", "wrong": "Geçen hafta verdiğim siparşim bugün eksiksiz şekilde elime ulaştı.", "right": "Geçen hafta verdiğim siparişim bugün eksiksiz şekilde elime ulaştı."}
+{"id": 182, "class": "misspelling", "wrong": "Akşamki antreman çok yorucu geçti, eve gelir gelmez dinlendim.", "right": "Akşamki antrenman çok yorucu geçti, eve gelir gelmez dinlendim."}
+{"id": 183, "class": "misspelling", "wrong": "Yaz dönemi için ekibimize katılan stajer arkadaşımız yarın göreve başlıyor.", "right": "Yaz dönemi için ekibimize katılan stajyer arkadaşımız yarın göreve başlıyor."}
+{"id": 184, "class": "misspelling", "wrong": "Şu an dersteyim, çıkınca hemen sana yazıoyrum.", "right": "Şu an dersteyim, çıkınca hemen sana yazıyorum."}
+{"id": 185, "class": "misspelling", "wrong": "Kutudan Türkçe kullanım klavuzu da çıktığı için kurulumu kolayca yaptım.", "right": "Kutudan Türkçe kullanım kılavuzu da çıktığı için kurulumu kolayca yaptım."}
+{"id": 186, "class": "misspelling", "wrong": "İki gündür teknik servisten geri dönüş bekilyorum ama kimse aramadı.", "right": "İki gündür teknik servisten geri dönüş bekliyorum ama kimse aramadı."}
+{"id": 187, "class": "misspelling", "wrong": "Sahil kenarında fiyatları makul ve yemekleri lezzetli bir restorant önerebilir misiniz?", "right": "Sahil kenarında fiyatları makul ve yemekleri lezzetli bir restoran önerebilir misiniz?"}
+{"id": 188, "class": "misspelling", "wrong": "Sabah açtığımdan beri bilgisayrım çok yavaş çalışıyor, bir kontrol ettireceğim.", "right": "Sabah açtığımdan beri bilgisayarım çok yavaş çalışıyor, bir kontrol ettireceğim."}
+{"id": 189, "class": "misspelling", "wrong": "Bu eşortman takımının kumaşı yumuşacık, evde giymek için harika.", "right": "Bu eşofman takımının kumaşı yumuşacık, evde giymek için harika."}
+{"id": 190, "class": "misspelling", "wrong": "Müsait olunca beni ara, telfonum sürekli yanımda açık duruyor.", "right": "Müsait olunca beni ara, telefonum sürekli yanımda açık duruyor."}
+{"id": 191, "class": "misspelling", "wrong": "Servis şöförü trafik yoğun olduğu için farklı bir yoldan gitti.", "right": "Servis şoförü trafik yoğun olduğu için farklı bir yoldan gitti."}
+{"id": 192, "class": "misspelling", "wrong": "İstediğiniz sunumu hazırladm ve incelemeniz için ekte paylaştım.", "right": "İstediğiniz sunumu hazırladım ve incelemeniz için ekte paylaştım."}
+{"id": 193, "class": "misspelling", "wrong": "Filmin diyalogları çok doğal, özellikle başroldeki oyuncunun espiri anlayışı harika.", "right": "Filmin diyalogları çok doğal, özellikle başroldeki oyuncunun espri anlayışı harika."}
+{"id": 194, "class": "misspelling", "wrong": "Ne zmaan müsait olursan haber ver, ona göre plan yapalım.", "right": "Ne zaman müsait olursan haber ver, ona göre plan yapalım."}
+{"id": 195, "class": "misspelling", "wrong": "Tedarik süreciyle ilgili doğru muhattap bulmakta biraz zorlandık.", "right": "Tedarik süreciyle ilgili doğru muhatap bulmakta biraz zorlandık."}
+{"id": 196, "class": "misspelling", "wrong": "Sipariş ettiğim karog iki gün içinde sorunsuz şekilde kapıma kadar geldi.", "right": "Sipariş ettiğim kargo iki gün içinde sorunsuz şekilde kapıma kadar geldi."}
+{"id": 197, "class": "misspelling", "wrong": "Toplantı bitince ofise uğramadan direk eve geçeceğim.", "right": "Toplantı bitince ofise uğramadan direkt eve geçeceğim."}
+{"id": 198, "class": "misspelling", "wrong": "Yapılan gözlemler sonucunda su kirliliğinin temel kaynağı tesbit edilmiştir.", "right": "Yapılan gözlemler sonucunda su kirliliğinin temel kaynağı tespit edilmiştir."}
+{"id": 199, "class": "misspelling", "wrong": "Projenin ikinci aşamasını bitirmek için bu hafta yoğun çalışıyrum.", "right": "Projenin ikinci aşamasını bitirmek için bu hafta yoğun çalışıyorum."}
+{"id": 200, "class": "misspelling", "wrong": "Afedersiniz, bir önceki e-postada dosya ekini unutmuşum, şimdi gönderiyorum.", "right": "Affedersiniz, bir önceki e-postada dosya ekini unutmuşum, şimdi gönderiyorum."}
+{"id": 201, "class": "misspelling", "wrong": "Rengini ve dokusunu çok beğnedim, diğer renginden de sipariş edeceğim.", "right": "Rengini ve dokusunu çok beğendim, diğer renginden de sipariş edeceğim."}
+{"id": 202, "class": "misspelling", "wrong": "Bu kahve makinası çok sessiz çalışıyor ve temizlemesi oldukça pratik.", "right": "Bu kahve makinesi çok sessiz çalışıyor ve temizlemesi oldukça pratik."}
+{"id": 203, "class": "misspelling", "wrong": "Herhangi bir sorunuz olursa bana bu numaradan ulaşabailirsiniz.", "right": "Herhangi bir sorunuz olursa bana bu numaradan ulaşabilirsiniz."}
+{"id": 204, "class": "misspelling", "wrong": "Kimya dersinde yapılan laboratuar deneyinde asit ve baz tepkimeleri incelendi.", "right": "Kimya dersinde yapılan laboratuvar deneyinde asit ve baz tepkimeleri incelendi."}
+{"id": 205, "class": "misspelling", "wrong": "Yarın öğleden sonra görüşrüz, kendine çok iyi bak.", "right": "Yarın öğleden sonra görüşürüz, kendine çok iyi bak."}
+{"id": 206, "class": "clean", "wrong": "Anahtarın yedeği şu an bende, akşam gelirken sana bırakırım.", "right": "Anahtarın yedeği şu an bende, akşam gelirken sana bırakırım."}
+{"id": 207, "class": "clean", "wrong": "Oteldeki oda beklediğimizden çok daha ferah ve temizdi.", "right": "Oteldeki oda beklediğimizden çok daha ferah ve temizdi."}
+{"id": 208, "class": "clean", "wrong": "Kimi kullanıcılar yeni güncellemeden sonra pil ömrünün uzadığını yazmış.", "right": "Kimi kullanıcılar yeni güncellemeden sonra pil ömrünün uzadığını yazmış."}
+{"id": 209, "class": "clean", "wrong": "Aileme duyduğum sevgimi kelimelerle anlatmam gerçekten çok zor.", "right": "Aileme duyduğum sevgimi kelimelerle anlatmam gerçekten çok zor."}
+{"id": 210, "class": "clean", "wrong": "Evdeki eski kitapları düzenleyip mahalle kütüphanesine bağışladık.", "right": "Evdeki eski kitapları düzenleyip mahalle kütüphanesine bağışladık."}
+{"id": 211, "class": "clean", "wrong": "Kardeşim sınava çok çalıştı, o da istediği bölümü kazandı.", "right": "Kardeşim sınava çok çalıştı, o da istediği bölümü kazandı."}
+{"id": 212, "class": "clean", "wrong": "Bugün hava o kadar güzel ki sanki bahar erken gelmiş.", "right": "Bugün hava o kadar güzel ki sanki bahar erken gelmiş."}
+{"id": 213, "class": "clean", "wrong": "Not defterim sende kalmış olabilir mi?", "right": "Not defterim sende kalmış olabilir mi?"}
+{"id": 214, "class": "clean", "wrong": "Ekip toplantısı tam onda başlayacak, lütfen birkaç dakika erken katılın.", "right": "Ekip toplantısı tam onda başlayacak, lütfen birkaç dakika erken katılın."}
+{"id": 215, "class": "clean", "wrong": "Bu modelin lacivert rengi bizde mevcut değil, gelecek hafta stoklara girecek.", "right": "Bu modelin lacivert rengi bizde mevcut değil, gelecek hafta stoklara girecek."}
+{"id": 216, "class": "clean", "wrong": "Sözleşmenin ıslak imzalı kopyası sizde duruyor mu?", "right": "Sözleşmenin ıslak imzalı kopyası sizde duruyor mu?"}
+{"id": 217, "class": "clean", "wrong": "Yedek şarj kablosu onlarda varmış, akşam uğrayıp alacağım.", "right": "Yedek şarj kablosu onlarda varmış, akşam uğrayıp alacağım."}
+{"id": 218, "class": "clean", "wrong": "Bu oda gün boyu güneş aldığı için kışın bile oldukça sıcak oluyor.", "right": "Bu oda gün boyu güneş aldığı için kışın bile oldukça sıcak oluyor."}
+{"id": 219, "class": "clean", "wrong": "Sözde büyük indirim yapmışlar ama fiyat geçen haftayla tamamen aynı.", "right": "Sözde büyük indirim yapmışlar ama fiyat geçen haftayla tamamen aynı."}
+{"id": 220, "class": "clean", "wrong": "Ankete katılan öğrencilerin yüzde yetmişi çevrim içi dersleri verimli bulduğunu belirtti.", "right": "Ankete katılan öğrencilerin yüzde yetmişi çevrim içi dersleri verimli bulduğunu belirtti."}
+{"id": 221, "class": "clean", "wrong": "Kumaşı hassas olduğu için soğuk suda elde yıkamanızı tavsiye ederim.", "right": "Kumaşı hassas olduğu için soğuk suda elde yıkamanızı tavsiye ederim."}
+{"id": 222, "class": "clean", "wrong": "Raporu ayrıntılı biçimde inceledim, ben de aynı noktalarda düzeltme gerektiğini düşünüyorum.", "right": "Raporu ayrıntılı biçimde inceledim, ben de aynı noktalarda düzeltme gerektiğini düşünüyorum."}
+{"id": 223, "class": "clean", "wrong": "Bu da yeni sürümde çözülen hatalardan biri olarak kayda geçti.", "right": "Bu da yeni sürümde çözülen hatalardan biri olarak kayda geçti."}
+{"id": 224, "class": "clean", "wrong": "Müsait olursan akşamki yemeğe sen de katıl lütfen.", "right": "Müsait olursan akşamki yemeğe sen de katıl lütfen."}
+{"id": 225, "class": "clean", "wrong": "Matematik ödevimi bitirip hocaya e-posta ile gönderdim.", "right": "Matematik ödevimi bitirip hocaya e-posta ile gönderdim."}
+{"id": 226, "class": "clean", "wrong": "Ürünü iki hafta kullandıktan sonra yorumumu güncelledim, kesinlikle öneriyorum.", "right": "Ürünü iki hafta kullandıktan sonra yorumumu güncelledim, kesinlikle öneriyorum."}
+{"id": 227, "class": "clean", "wrong": "Ofisteki işimi erken bitirirsem sahilde biraz yürüyüş yapacağım.", "right": "Ofisteki işimi erken bitirirsem sahilde biraz yürüyüş yapacağım."}
+{"id": 228, "class": "clean", "wrong": "Yeni ödeme sistemi hem hızlı hem de oldukça güvenli çalışıyor.", "right": "Yeni ödeme sistemi hem hızlı hem de oldukça güvenli çalışıyor."}
+{"id": 229, "class": "clean", "wrong": "Bahar dönemi ders kayıtları pazartesi sabahı saat dokuzda başlıyor.", "right": "Bahar dönemi ders kayıtları pazartesi sabahı saat dokuzda başlıyor."}
+{"id": 230, "class": "clean", "wrong": "Müşteri hizmetlerindeki temsilci çok samimi ve çözüm odaklıydı.", "right": "Müşteri hizmetlerindeki temsilci çok samimi ve çözüm odaklıydı."}
+{"id": 231, "class": "clean", "wrong": "Yeni klavyeye alışana kadar elimi koyduğum açıyı biraz değiştirmem gerekti.", "right": "Yeni klavyeye alışana kadar elimi koyduğum açıyı biraz değiştirmem gerekti."}
+{"id": 232, "class": "clean", "wrong": "Yarınki sunum için gerekli tüm grafikleri ortak klasöre ekledim.", "right": "Yarınki sunum için gerekli tüm grafikleri ortak klasöre ekledim."}
+{"id": 233, "class": "clean", "wrong": "Dünkü toplantıda alınan kararları özetleyip tüm ekibe ilettim.", "right": "Dünkü toplantıda alınan kararları özetleyip tüm ekibe ilettim."}
+{"id": 234, "class": "clean", "wrong": "Bugünkü derste Osmanlı ekonomisinin temel kavramlarını ayrıntılı biçimde işledik.", "right": "Bugünkü derste Osmanlı ekonomisinin temel kavramlarını ayrıntılı biçimde işledik."}
+{"id": 235, "class": "clean", "wrong": "Senin kahven şekersiz, benimki ise orta şekerli olsun.", "right": "Senin kahven şekersiz, benimki ise orta şekerli olsun."}
+{"id": 236, "class": "clean", "wrong": "Sendeki ders notlarının fotoğrafını çekip gruptan paylaşabilir misin?", "right": "Sendeki ders notlarının fotoğrafını çekip gruptan paylaşabilir misin?"}
+{"id": 237, "class": "clean", "wrong": "Sipariş iki günde gelir sanmıştım, halbuki teslimat bir hafta sürdü.", "right": "Sipariş iki günde gelir sanmıştım, halbuki teslimat bir hafta sürdü."}
+{"id": 238, "class": "clean", "wrong": "Dosyayı doğru klasöre kaydettiğimi sanıyordum, oysaki masaüstünde unutmuşum.", "right": "Dosyayı doğru klasöre kaydettiğimi sanıyordum, oysaki masaüstünde unutmuşum."}
+{"id": 239, "class": "clean", "wrong": "Mademki tüm birimler onay verdi, projeyi bu planla başlatalım.", "right": "Mademki tüm birimler onay verdi, projeyi bu planla başlatalım."}
+{"id": 240, "class": "clean", "wrong": "Belki hafta sonu hep birlikte şehrin dışına çıkıp biraz dinleniriz.", "right": "Belki hafta sonu hep birlikte şehrin dışına çıkıp biraz dinleniriz."}
+{"id": 241, "class": "clean", "wrong": "Bu telefonu tercih ettim çünkü kamerası gece çekiminde çok başarılı.", "right": "Bu telefonu tercih ettim çünkü kamerası gece çekiminde çok başarılı."}
+{"id": 242, "class": "clean", "wrong": "Tatile giderken illaki deniz kenarı şart değil, yayla gezisi de çok keyifli oluyor.", "right": "Tatile giderken illaki deniz kenarı şart değil, yayla gezisi de çok keyifli oluyor."}
+{"id": 243, "class": "clean", "wrong": "Türk Dil Kurumunun yayımladığı sözlükten kelimenin kökenine baktım.", "right": "Türk Dil Kurumunun yayımladığı sözlükten kelimenin kökenine baktım."}
+{"id": 244, "class": "clean", "wrong": "Türkiye Büyük Millet Meclisinde yeni eğitim düzenlemesi görüşüldü.", "right": "Türkiye Büyük Millet Meclisinde yeni eğitim düzenlemesi görüşüldü."}
+{"id": 245, "class": "clean", "wrong": "Türkçenin doğru ve özenli kullanımı konusunda bu kaynak çok faydalı.", "right": "Türkçenin doğru ve özenli kullanımı konusunda bu kaynak çok faydalı."}
+{"id": 246, "class": "clean", "wrong": "İstanbullular hafta sonu güneşli havayı fırsat bilip sahillere akın etti.", "right": "İstanbullular hafta sonu güneşli havayı fırsat bilip sahillere akın etti."}
+{"id": 247, "class": "clean", "wrong": "Akşam yemeği için Ahmetler de bize katılacakmış.", "right": "Akşam yemeği için Ahmetler de bize katılacakmış."}
+{"id": 248, "class": "clean", "wrong": "Yaz tatilinde ailece Sinop'a gidip birkaç gün dinleneceğiz.", "right": "Yaz tatilinde ailece Sinop'a gidip birkaç gün dinleneceğiz."}
+{"id": 249, "class": "clean", "wrong": "Ödevin son bölümünü kontrol etmesi için Burak'a gönderdim.", "right": "Ödevin son bölümünü kontrol etmesi için Burak'a gönderdim."}
+{"id": 250, "class": "clean", "wrong": "Maçtan sonra Beşiktaş'tan vapura binip karşıya geçtik.", "right": "Maçtan sonra Beşiktaş'tan vapura binip karşıya geçtik."}
+{"id": 251, "class": "clean", "wrong": "Tarih ödevimizde Çanakkale Boğazı'nın stratejik önemini inceledik.", "right": "Tarih ödevimizde Çanakkale Boğazı'nın stratejik önemini inceledik."}
+{"id": 252, "class": "clean", "wrong": "Konumu WhatsApp'tan paylaştım, navigasyonla kolayca bulursun.", "right": "Konumu WhatsApp'tan paylaştım, navigasyonla kolayca bulursun."}
+{"id": 253, "class": "clean", "wrong": "Satış verilerini Excel'de düzenleyip özet tabloya dönüştürdüm.", "right": "Satış verilerini Excel'de düzenleyip özet tabloya dönüştürdüm."}
+{"id": 254, "class": "clean", "wrong": "Veri analizi ödevini Python'da yazıp grafikleri rapora ekledim.", "right": "Veri analizi ödevini Python'da yazıp grafikleri rapora ekledim."}
+{"id": 255, "class": "clean", "wrong": "YouTube'daki kurulum videosunu izleyince ayarları on dakikada tamamladım.", "right": "YouTube'daki kurulum videosunu izleyince ayarları on dakikada tamamladım."}
+{"id": 256, "class": "clean", "wrong": "Şirketin yeni iş ilanını LinkedIn'de görünce hemen özgeçmişimi gönderdim.", "right": "Şirketin yeni iş ilanını LinkedIn'de görünce hemen özgeçmişimi gönderdim."}
+{"id": 257, "class": "clean", "wrong": "Açık kaynak projenin kodlarını GitHub'daki depodan indirip inceledim.", "right": "Açık kaynak projenin kodlarını GitHub'daki depodan indirip inceledim."}
+{"id": 258, "class": "clean", "wrong": "Kutunun içinden orijinal şarj adaptörü ve Türkçe kullanım kılavuzu çıktı.", "right": "Kutunun içinden orijinal şarj adaptörü ve Türkçe kullanım kılavuzu çıktı."}
+{"id": 259, "class": "clean", "wrong": "İnisiyatif alıp gerekli tüm dokümanları toplantıdan önce hazırladım.", "right": "İnisiyatif alıp gerekli tüm dokümanları toplantıdan önce hazırladım."}
+{"id": 260, "class": "clean", "wrong": "Yalnız bu formda telefon numaranızı yanlış yazmışsınız.", "right": "Yalnız bu formda telefon numaranızı yanlış yazmışsınız."}
+{"id": 261, "class": "clean", "wrong": "Dün geceki fırtınada sokağın başındaki elektrik direği devrilmiş.", "right": "Dün geceki fırtınada sokağın başındaki elektrik direği devrilmiş."}
+{"id": 262, "class": "clean", "wrong": "Mutfak için porselen bir takım kahve fincanı aldım, deseni çok zarif.", "right": "Mutfak için porselen bir takım kahve fincanı aldım, deseni çok zarif."}
+{"id": 263, "class": "clean", "wrong": "Projede birtakım teknik aksaklıklar yaşandı ama ekip kısa sürede çözdü.", "right": "Projede birtakım teknik aksaklıklar yaşandı ama ekip kısa sürede çözdü."}
+{"id": 264, "class": "clean", "wrong": "Saat dokuzda ofiste ol, yeni dosyalar masada seni bekliyor.", "right": "Saat dokuzda ofiste ol, yeni dosyalar masada seni bekliyor."}
+{"id": 265, "class": "clean", "wrong": "Yeni stajyer arkadaşımız bugün laboratuvar güvenlik protokollerini tamamladı.", "right": "Yeni stajyer arkadaşımız bugün laboratuvar güvenlik protokollerini tamamladı."}

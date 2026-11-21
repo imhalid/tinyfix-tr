@@ -1,0 +1,226 @@
+# wrong	right	wrong_count	right_count	section	reason
+hiç bir şey	hiçbir şey			MISSPELLINGS	more than two words: can't count
+makina	makine	564	4548	MISSPELLINGS	wrong form too common in corpus
+sardalye	sardalya	14	97	MISSPELLINGS	wrong form too common in corpus
+şurdan	şuradan	0	14	MISSPELLINGS	right form too rare in corpus
+içerden	içeriden	49	284	MISSPELLINGS	wrong form too common in corpus
+beyenmek	beğenmek	0	12	MISSPELLINGS	right form too rare in corpus
+leyen	leğen	71	90	MISSPELLINGS	wrong form too common in corpus
+öğe	öge	349	264	MISSPELLINGS	wrong form too common in corpus
+postahane	postane	39	265	MISSPELLINGS	wrong form too common in corpus
+dersane	dershane	51	86	MISSPELLINGS	wrong form too common in corpus
+dolanbaç	dolambaç	0	3	MISSPELLINGS	right form too rare in corpus
+anbar	ambar	90	223	MISSPELLINGS	wrong form too common in corpus
+canbaz	cambaz	101	109	MISSPELLINGS	wrong form too common in corpus
+sünbül	sümbül	40	155	MISSPELLINGS	wrong form too common in corpus
+tenbih	tembih	20	32	MISSPELLINGS	wrong form too common in corpus
+tesbih	tespih	79	164	MISSPELLINGS	wrong form too common in corpus
+nisbet	nispet	39	43	MISSPELLINGS	wrong form too common in corpus
+müsbet	müspet	7	60	MISSPELLINGS	wrong form too common in corpus
+metod	metot	75	525	MISSPELLINGS	wrong form too common in corpus
+etüd	etüt	103	209	MISSPELLINGS	wrong form too common in corpus
+üstad	üstat	151	304	MISSPELLINGS	wrong form too common in corpus
+vaad	vaat	31	237	MISSPELLINGS	wrong form too common in corpus
+şevkat	şefkat	41	323	MISSPELLINGS	wrong form too common in corpus
+mahfolmak	mahvolmak	0	0	MISSPELLINGS	right form too rare in corpus
+teferuat	teferruat	0	4	MISSPELLINGS	right form too rare in corpus
+zücaciye	züccaciye	0	17	MISSPELLINGS	right form too rare in corpus
+zaafiyet	zafiyet	12	45	MISSPELLINGS	wrong form too common in corpus
+ızdırap	ıstırap	165	151	MISSPELLINGS	wrong form too common in corpus
+eşkiya	eşkıya	114	385	MISSPELLINGS	wrong form too common in corpus
+zerafet	zarafet	13	91	MISSPELLINGS	wrong form too common in corpus
+aperatif	aperitif	16	58	MISSPELLINGS	wrong form too common in corpus
+kontür	kontör	62	25	MISSPELLINGS	wrong form too common in corpus
+komidin	komodin	2	6	MISSPELLINGS	right form too rare in corpus
+gardrop	gardırop	13	24	MISSPELLINGS	wrong form too common in corpus
+pardesü	pardösü	9	13	MISSPELLINGS	right form too rare in corpus
+pardüsü	pardösü	0	13	MISSPELLINGS	right form too rare in corpus
+repertuar	repertuvar	45	237	MISSPELLINGS	wrong form too common in corpus
+tretuar	tretuvar	0	9	MISSPELLINGS	right form too rare in corpus
+pisuar	pisuvar	8	15	MISSPELLINGS	right form too rare in corpus
+arefe	arife	25	77	MISSPELLINGS	wrong form too common in corpus
+aferim	aferin	5	38	MISSPELLINGS	wrong form too common in corpus
+faranjit	farenjit	6	43	MISSPELLINGS	wrong form too common in corpus
+tetanoz	tetanos	62	82	MISSPELLINGS	wrong form too common in corpus
+silahşör	silahşor	40	82	MISSPELLINGS	wrong form too common in corpus
+silüet	siluet	50	19	MISSPELLINGS	right form too rare in corpus
+peştamal	peştemal	43	8	MISSPELLINGS	right form too rare in corpus
+kapşon	kapüşon	0	9	MISSPELLINGS	right form too rare in corpus
+kapişon	kapüşon	0	9	MISSPELLINGS	right form too rare in corpus
+konjektür	konjonktür	15	36	MISSPELLINGS	wrong form too common in corpus
+şohben	şofben	0	2	MISSPELLINGS	right form too rare in corpus
+civata	cıvata	13	116	MISSPELLINGS	wrong form too common in corpus
+randuman	randıman	0	17	MISSPELLINGS	right form too rare in corpus
+ritm	ritim	153	1401	MISSPELLINGS	wrong form too common in corpus
+galba	galiba	103	52	MISSPELLINGS	wrong form too common in corpus
+buluz	bluz	26	45	MISSPELLINGS	wrong form too common in corpus
+ayrıyetten	ayriyeten	11	46	MISSPELLINGS	wrong form too common in corpus
+ayriyetten	ayriyeten	18	46	MISSPELLINGS	wrong form too common in corpus
+tirbüşon	tirbuşon	0	15	MISSPELLINGS	right form too rare in corpus
+dejavü	dejavu	0	14	MISSPELLINGS	right form too rare in corpus
+müsibet	musibet	4	27	MISSPELLINGS	wrong form too common in corpus
+başkaşey	başka şey	0	19	SEPARATE_ALWAYS	right form too rare in corpus
+buşey	bu şey	0	15	SEPARATE_ALWAYS	right form too rare in corpus
+şuşey	şu şey	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+oşey	o şey	0	17	SEPARATE_ALWAYS	right form too rare in corpus
+herhangibirşey	herhangi bir şey			SEPARATE_ALWAYS	more than two words: can't count
+oysada	oysa da	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+keşkede	keşke de	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+zatende	zaten de	0	4	SEPARATE_ALWAYS	right form too rare in corpus
+bilsede	bilse de	0	12	SEPARATE_ALWAYS	right form too rare in corpus
+elbetteki	elbette ki	10	58	SEPARATE_ALWAYS	wrong form too common in corpus
+diyelimki	diyelim ki	24	76	SEPARATE_ALWAYS	wrong form too common in corpus
+tutki	tut ki	0	4	SEPARATE_ALWAYS	right form too rare in corpus
+neyazıkki	ne yazık ki			SEPARATE_ALWAYS	more than two words: can't count
+nevarki	ne var ki			SEPARATE_ALWAYS	more than two words: can't count
+gelgörki	gel gör ki			SEPARATE_ALWAYS	more than two words: can't count
+lazımmı	lazım mı	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+gereklimi	gerekli mi	0	9	SEPARATE_ALWAYS	right form too rare in corpus
+yeterlimi	yeterli mi	0	4	SEPARATE_ALWAYS	right form too rare in corpus
+hazırmı	hazır mı	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+ciddimi	ciddi mi	0	2	SEPARATE_ALWAYS	right form too rare in corpus
+nasılmı	nasıl mı	0	3	SEPARATE_ALWAYS	right form too rare in corpus
+nedenmi	neden mi	0	5	SEPARATE_ALWAYS	right form too rare in corpus
+senmi	sen mi	0	13	SEPARATE_ALWAYS	right form too rare in corpus
+bizmi	biz mi	0	6	SEPARATE_ALWAYS	right form too rare in corpus
+sizmi	siz mi	0	3	SEPARATE_ALWAYS	right form too rare in corpus
+onlarmı	onlar mı	0	3	SEPARATE_ALWAYS	right form too rare in corpus
+buan	bu an	2	16	SEPARATE_ALWAYS	right form too rare in corpus
+biran	bir an	93	747	SEPARATE_ALWAYS	wrong form too common in corpus
+hiçbirzaman	hiçbir zaman	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+herneyse	her neyse	6	31	SEPARATE_ALWAYS	wrong form too common in corpus
+hernekadar	her ne kadar			SEPARATE_ALWAYS	more than two words: can't count
+şukadar	şu kadar	0	7	SEPARATE_ALWAYS	right form too rare in corpus
+peşpeşe	peş peşe	81	195	SEPARATE_ALWAYS	wrong form too common in corpus
+elele	el ele	72	210	SEPARATE_ALWAYS	wrong form too common in corpus
+kolkola	kol kola	11	23	SEPARATE_ALWAYS	wrong form too common in corpus
+başbaşa	baş başa	102	163	SEPARATE_ALWAYS	wrong form too common in corpus
+ucuca	uç uca	5	39	SEPARATE_ALWAYS	wrong form too common in corpus
+dizdize	diz dize	0	4	SEPARATE_ALWAYS	right form too rare in corpus
+burunburuna	burun buruna	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+baştanbaşa	baştan başa	20	117	SEPARATE_ALWAYS	wrong form too common in corpus
+aşağıyukarı	aşağı yukarı	11	0	SEPARATE_ALWAYS	right form too rare in corpus
+ergeç	er geç	45	20	SEPARATE_ALWAYS	wrong form too common in corpus
+sıradışı	sıra dışı	137	928	SEPARATE_ALWAYS	wrong form too common in corpus
+olağandışı	olağan dışı	515	152	SEPARATE_ALWAYS	wrong form too common in corpus
+yasadışı	yasa dışı	1603	1242	SEPARATE_ALWAYS	wrong form too common in corpus
+çağdışı	çağ dışı	19	18	SEPARATE_ALWAYS	right form too rare in corpus
+akıldışı	akıl dışı	17	30	SEPARATE_ALWAYS	wrong form too common in corpus
+kuraldışı	kural dışı	29	98	SEPARATE_ALWAYS	wrong form too common in corpus
+yurtdışı	yurt dışı	407	1075	SEPARATE_ALWAYS	wrong form too common in corpus
+yurtiçi	yurt içi	264	1043	SEPARATE_ALWAYS	wrong form too common in corpus
+haftasonu	hafta sonu	257	757	SEPARATE_ALWAYS	wrong form too common in corpus
+aklısıra	aklı sıra	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+önyargı	ön yargı	335	55	SEPARATE_ALWAYS	wrong form too common in corpus
+önsöz	ön söz	396	6	SEPARATE_ALWAYS	right form too rare in corpus
+önizleme	ön izleme	340	7	SEPARATE_ALWAYS	right form too rare in corpus
+önkoşul	ön koşul	20	75	SEPARATE_ALWAYS	wrong form too common in corpus
+işbirliği	iş birliği	7703	2341	SEPARATE_ALWAYS	wrong form too common in corpus
+işbölümü	iş bölümü	44	93	SEPARATE_ALWAYS	wrong form too common in corpus
+işgücü	iş gücü	618	250	SEPARATE_ALWAYS	wrong form too common in corpus
+işyeri	iş yeri	343	223	SEPARATE_ALWAYS	wrong form too common in corpus
+özgeçmiş	öz geçmiş	154	16	SEPARATE_ALWAYS	right form too rare in corpus
+özgüven	öz güven	172	16	SEPARATE_ALWAYS	right form too rare in corpus
+özeleştiri	öz eleştiri	40	7	SEPARATE_ALWAYS	right form too rare in corpus
+özsaygı	öz saygı	18	23	SEPARATE_ALWAYS	wrong form too common in corpus
+altyazı	alt yazı	403	50	SEPARATE_ALWAYS	wrong form too common in corpus
+altyapı	alt yapı	4037	172	SEPARATE_ALWAYS	wrong form too common in corpus
+üstyapı	üst yapı	86	73	SEPARATE_ALWAYS	wrong form too common in corpus
+altgeçit	alt geçit	15	28	SEPARATE_ALWAYS	wrong form too common in corpus
+üstgeçit	üst geçit	4	30	SEPARATE_ALWAYS	wrong form too common in corpus
+anasayfa	ana sayfa	267	310	SEPARATE_ALWAYS	wrong form too common in corpus
+anadil	ana dil	156	163	SEPARATE_ALWAYS	wrong form too common in corpus
+anayol	ana yol	60	104	SEPARATE_ALWAYS	wrong form too common in corpus
+anabilim	ana bilim	1833	613	SEPARATE_ALWAYS	wrong form too common in corpus
+dilbilgisi	dil bilgisi	796	385	SEPARATE_ALWAYS	wrong form too common in corpus
+dilbilimi	dil bilimi	147	187	SEPARATE_ALWAYS	wrong form too common in corpus
+sözgelimi	söz gelimi	51	89	SEPARATE_ALWAYS	wrong form too common in corpus
+sözgelişi	söz gelişi	14	7	SEPARATE_ALWAYS	right form too rare in corpus
+kulakardı	kulak ardı	0	4	SEPARATE_ALWAYS	right form too rare in corpus
+gözbebeği	göz bebeği	65	82	SEPARATE_ALWAYS	wrong form too common in corpus
+kuruyemiş	kuru yemiş	56	26	SEPARATE_ALWAYS	wrong form too common in corpus
+çiğköfte	çiğ köfte	6	37	SEPARATE_ALWAYS	wrong form too common in corpus
+şehiriçi	şehir içi	124	349	SEPARATE_ALWAYS	wrong form too common in corpus
+şehirlerarası	şehirler arası	361	0	SEPARATE_ALWAYS	right form too rare in corpus
+canayakın	cana yakın	8	59	SEPARATE_ALWAYS	wrong form too common in corpus
+alçakgönüllü	alçak gönüllü	101	0	SEPARATE_ALWAYS	right form too rare in corpus
+haketmek	hak etmek	3	5	SEPARATE_ALWAYS	right form too rare in corpus
+arzetmek	arz etmek	0	7	SEPARATE_ALWAYS	right form too rare in corpus
+parketmek	park etmek	0	16	SEPARATE_ALWAYS	right form too rare in corpus
+sevketmek	sevk etmek	6	29	SEPARATE_ALWAYS	wrong form too common in corpus
+sarfetmek	sarf etmek	6	13	SEPARATE_ALWAYS	right form too rare in corpus
+kabuletmek	kabul etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+ricaetmek	rica etmek	0	3	SEPARATE_ALWAYS	right form too rare in corpus
+teşekküretmek	teşekkür etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+devametmek	devam etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+yardımetmek	yardım etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+dikkatetmek	dikkat etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+meraketmek	merak etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+iptaletmek	iptal etmek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+varolmak	var olmak	11	52	SEPARATE_ALWAYS	wrong form too common in corpus
+hoşgeldin	hoş geldin	146	126	SEPARATE_ALWAYS	wrong form too common in corpus
+hoşgeldiniz	hoş geldiniz	36	105	SEPARATE_ALWAYS	wrong form too common in corpus
+hoşbulduk	hoş bulduk	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+hoşçakal	hoşça kal	141	47	SEPARATE_ALWAYS	wrong form too common in corpus
+hoşçakalın	hoşça kalın	14	0	SEPARATE_ALWAYS	right form too rare in corpus
+sağol	sağ ol	10	4	SEPARATE_ALWAYS	right form too rare in corpus
+sağolun	sağ olun	3	5	SEPARATE_ALWAYS	right form too rare in corpus
+sağolasın	sağ olasın	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+varol	var ol	283	6	SEPARATE_ALWAYS	right form too rare in corpus
+boşver	boş ver	118	18	SEPARATE_ALWAYS	right form too rare in corpus
+boşvermek	boş vermek	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+aşkolsun	aşk olsun	13	75	SEPARATE_ALWAYS	wrong form too common in corpus
+helalolsun	helal olsun	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+geçmişolsun	geçmiş olsun	0	0	SEPARATE_ALWAYS	right form too rare in corpus
+iyibayramlar	iyi bayramlar	0	8	SEPARATE_ALWAYS	right form too rare in corpus
+meğer ki	meğerki	0	4	JOINED_ALWAYS	right form too rare in corpus
+illa ki	illaki			JOINED_ALWAYS	not verified against TDK
+git gide	gitgide	112	507	JOINED_ALWAYS	wrong form too common in corpus
+gün be gün	günbegün			JOINED_ALWAYS	more than two words: can't count
+an be an	anbean			JOINED_ALWAYS	more than two words: can't count
+gel gelelim	gelgelelim	4	22	JOINED_ALWAYS	wrong form too common in corpus
+alt üst etmek	altüst etmek			JOINED_ALWAYS	more than two words: can't count
+alt üst olmak	altüst olmak			JOINED_ALWAYS	more than two words: can't count
+çep çevre	çepçevre	0	7	JOINED_ALWAYS	right form too rare in corpus
+kup kuru	kupkuru	0	5	JOINED_ALWAYS	right form too rare in corpus
+kos kocaman	koskocaman	0	8	JOINED_ALWAYS	right form too rare in corpus
+up uzun	upuzun	0	15	JOINED_ALWAYS	right form too rare in corpus
+mos mor	mosmor	0	9	JOINED_ALWAYS	right form too rare in corpus
+zan etmek	zannetmek	0	5	JOINED_ALWAYS	right form too rare in corpus
+sabır etmek	sabretmek	0	9	JOINED_ALWAYS	right form too rare in corpus
+şükür etmek	şükretmek	0	13	JOINED_ALWAYS	right form too rare in corpus
+def etmek	defetmek	6	13	JOINED_ALWAYS	right form too rare in corpus
+men etmek	menetmek	3	16	JOINED_ALWAYS	right form too rare in corpus
+kat etmek	katetmek	8	22	JOINED_ALWAYS	wrong form too common in corpus
+vaat etmek	vadetmek	0	7	JOINED_ALWAYS	right form too rare in corpus
+mahv olmak	mahvolmak	0	0	JOINED_ALWAYS	right form too rare in corpus
+akşam üstü	akşamüstü	40	52	JOINED_ALWAYS	wrong form too common in corpus
+akşam üzeri	akşamüzeri	0	7	JOINED_ALWAYS	right form too rare in corpus
+öğle üstü	öğleüstü	0	0	JOINED_ALWAYS	right form too rare in corpus
+öğle üzeri	öğleüzeri	3	7	JOINED_ALWAYS	right form too rare in corpus
+sırt üstü	sırtüstü	74	296	JOINED_ALWAYS	wrong form too common in corpus
+orta öğretim	ortaöğretim	256	473	JOINED_ALWAYS	wrong form too common in corpus
+yüksek okul	yüksekokul	128	315	JOINED_ALWAYS	wrong form too common in corpus
+ana para	anapara	17	58	JOINED_ALWAYS	wrong form too common in corpus
+baş yazar	başyazar	77	57	JOINED_ALWAYS	wrong form too common in corpus
+baş kahraman	başkahraman	59	53	JOINED_ALWAYS	wrong form too common in corpus
+baş köşe	başköşe	3	0	JOINED_ALWAYS	right form too rare in corpus
+öğretmen evi	öğretmenevi	26	38	JOINED_ALWAYS	wrong form too common in corpus
+huzur evi	huzurevi	9	70	JOINED_ALWAYS	wrong form too common in corpus
+bakım evi	bakımevi	16	24	JOINED_ALWAYS	wrong form too common in corpus
+doğum evi	doğumevi	11	24	JOINED_ALWAYS	wrong form too common in corpus
+polis evi	polisevi	5	0	JOINED_ALWAYS	right form too rare in corpus
+ordu evi	orduevi	6	47	JOINED_ALWAYS	wrong form too common in corpus
+konuk evi	konukevi	24	54	JOINED_ALWAYS	wrong form too common in corpus
+deprem zede	depremzede	0	9	JOINED_ALWAYS	right form too rare in corpus
+afet zede	afetzede	0	6	JOINED_ALWAYS	right form too rare in corpus
+ağır başlı	ağırbaşlı	13	83	JOINED_ALWAYS	wrong form too common in corpus
+aç gözlü	açgözlü	21	135	JOINED_ALWAYS	wrong form too common in corpus
+boş boğaz	boşboğaz	0	18	JOINED_ALWAYS	right form too rare in corpus
+dik başlı	dikbaşlı	27	11	JOINED_ALWAYS	right form too rare in corpus
+dik kafalı	dikkafalı	12	5	JOINED_ALWAYS	right form too rare in corpus
+büyük anne	büyükanne	41	360	JOINED_ALWAYS	wrong form too common in corpus
+büyük baba	büyükbaba	52	214	JOINED_ALWAYS	wrong form too common in corpus
+anne anne	anneanne	5	30	JOINED_ALWAYS	wrong form too common in corpus
+bey efendi	beyefendi	21	150	JOINED_ALWAYS	wrong form too common in corpus
+güne bakan	günebakan	10	98	JOINED_ALWAYS	wrong form too common in corpus

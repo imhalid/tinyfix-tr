@@ -1,0 +1,808 @@
+# wrong	right	wrong_count	right_count	section   (verified: right >= 20 and >= 10x wrong)
+herkez	herkes	0	3709	MISSPELLINGS
+yanlız	yalnız	5	5056	MISSPELLINGS
+yalnış	yanlış	0	7343	MISSPELLINGS
+malesef	maalesef	3	242	MISSPELLINGS
+orjinal	orijinal	28	15652	MISSPELLINGS
+egzos	egzoz	4	498	MISSPELLINGS
+eşortman	eşofman	0	40	MISSPELLINGS
+sarmısak	sarımsak	11	663	MISSPELLINGS
+yada	ya da	95	87678	MISSPELLINGS
+şuan	şu an	62	2873	MISSPELLINGS
+birşey	bir şey	4	5325	MISSPELLINGS
+herşey	her şey	110	2540	MISSPELLINGS
+hiç bir	hiçbir	45	20772	MISSPELLINGS
+bir çok	birçok	143	72545	MISSPELLINGS
+bir kaç	birkaç	81	38049	MISSPELLINGS
+yanlızca	yalnızca	6	21351	MISSPELLINGS
+yanlızlık	yalnızlık	3	624	MISSPELLINGS
+yalnışlık	yanlışlık	0	138	MISSPELLINGS
+yalnışlıkla	yanlışlıkla	2	1509	MISSPELLINGS
+hiçbirşey	hiçbir şey	0	2072	MISSPELLINGS
+hiç birşey	hiçbir şey	0	2072	MISSPELLINGS
+tabiki	tabii ki	2	511	MISSPELLINGS
+tabiiki	tabii ki	0	511	MISSPELLINGS
+çünki	çünkü	6	19818	MISSPELLINGS
+eksoz	egzoz	0	498	MISSPELLINGS
+ekzos	egzoz	0	498	MISSPELLINGS
+egsoz	egzoz	6	498	MISSPELLINGS
+eşorfman	eşofman	0	40	MISSPELLINGS
+aşortman	eşofman	0	40	MISSPELLINGS
+şarz	şarj	0	1894	MISSPELLINGS
+şars	şarj	0	1894	MISSPELLINGS
+şöför	şoför	0	463	MISSPELLINGS
+şöfer	şoför	0	463	MISSPELLINGS
+şofer	şoför	0	463	MISSPELLINGS
+espiri	espri	0	183	MISSPELLINGS
+süpriz	sürpriz	0	1367	MISSPELLINGS
+sürpiriz	sürpriz	0	1367	MISSPELLINGS
+klavuz	kılavuz	3	621	MISSPELLINGS
+klüp	kulüp	11	19167	MISSPELLINGS
+traş	tıraş	28	470	MISSPELLINGS
+heykeltraş	heykeltıraş	56	2218	MISSPELLINGS
+döküman	doküman	0	231	MISSPELLINGS
+dökümantasyon	dokümantasyon	6	248	MISSPELLINGS
+dinazor	dinozor	3	1027	MISSPELLINGS
+meyva	meyve	23	4255	MISSPELLINGS
+maydonoz	maydanoz	0	245	MISSPELLINGS
+karnıbahar	karnabahar	0	51	MISSPELLINGS
+fasülye	fasulye	0	861	MISSPELLINGS
+poaça	poğaça	0	21	MISSPELLINGS
+puaça	poğaça	0	21	MISSPELLINGS
+sandiviç	sandviç	0	336	MISSPELLINGS
+sandöviç	sandviç	0	336	MISSPELLINGS
+çukulata	çikolata	19	1921	MISSPELLINGS
+çikulata	çikolata	0	1921	MISSPELLINGS
+patetes	patates	0	1312	MISSPELLINGS
+domatis	domates	0	1084	MISSPELLINGS
+patlican	patlıcan	8	408	MISSPELLINGS
+mayanez	mayonez	0	102	MISSPELLINGS
+keççap	ketçap	0	77	MISSPELLINGS
+sütlaş	sütlaç	0	60	MISSPELLINGS
+mahallebi	muhallebi	0	123	MISSPELLINGS
+sahlep	salep	5	51	MISSPELLINGS
+pisküvi	bisküvi	0	439	MISSPELLINGS
+bisküvit	bisküvi	0	439	MISSPELLINGS
+pisküvit	bisküvi	0	439	MISSPELLINGS
+greyfrut	greyfurt	0	135	MISSPELLINGS
+grayfurt	greyfurt	0	135	MISSPELLINGS
+marmalat	marmelat	0	45	MISSPELLINGS
+spageti	spagetti	0	221	MISSPELLINGS
+ispagetti	spagetti	0	221	MISSPELLINGS
+kavhaltı	kahvaltı	0	411	MISSPELLINGS
+kafaltı	kahvaltı	0	411	MISSPELLINGS
+kirbit	kibrit	2	168	MISSPELLINGS
+kiprik	kirpik	0	70	MISSPELLINGS
+eşki	ekşi	7	901	MISSPELLINGS
+torpak	toprak	4	11628	MISSPELLINGS
+yarpak	yaprak	0	2893	MISSPELLINGS
+çılpak	çıplak	0	2627	MISSPELLINGS
+körpü	köprü	7	4290	MISSPELLINGS
+melmeket	memleket	0	1250	MISSPELLINGS
+gölmek	gömlek	0	481	MISSPELLINGS
+çölmek	çömlek	3	1121	MISSPELLINGS
+nalet	lanet	13	370	MISSPELLINGS
+pelhivan	pehlivan	0	533	MISSPELLINGS
+pehriz	perhiz	2	92	MISSPELLINGS
+harfiyat	hafriyat	0	108	MISSPELLINGS
+flitre	filtre	0	687	MISSPELLINGS
+çarpraz	çapraz	9	2445	MISSPELLINGS
+şartel	şalter	0	24	MISSPELLINGS
+menmun	memnun	0	1703	MISSPELLINGS
+menmuniyet	memnuniyet	0	189	MISSPELLINGS
+tehçizat	teçhizat	0	506	MISSPELLINGS
+tektik	tetkik	3	561	MISSPELLINGS
+mücehver	mücevher	3	676	MISSPELLINGS
+cehver	cevher	3	609	MISSPELLINGS
+krolonoji	kronoloji	0	704	MISSPELLINGS
+teklonoji	teknoloji	3	9887	MISSPELLINGS
+burda	burada	107	33292	CONTRACTION
+şurda	şurada	2	39	CONTRACTION
+orda	orada	834	10644	CONTRACTION
+nerde	nerede	118	2018	CONTRACTION
+burdan	buradan	69	4359	CONTRACTION
+ordan	oradan	20	3387	CONTRACTION
+nerden	nereden	39	882	CONTRACTION
+içerde	içeride	69	839	CONTRACTION
+dışarda	dışarıda	2	1063	CONTRACTION
+dışardan	dışarıdan	55	1601	CONTRACTION
+yukarda	yukarıda	5	2581	CONTRACTION
+yukardan	yukarıdan	2	670	CONTRACTION
+ilerde	ileride	10	1568	CONTRACTION
+deyil	değil	9	21100	MISSPELLINGS
+diil	değil	0	21100	CONTRACTION
+deynek	değnek	2	161	MISSPELLINGS
+deyişik	değişik	0	7445	MISSPELLINGS
+eyitim	eğitim	0	44558	MISSPELLINGS
+eylence	eğlence	6	4496	MISSPELLINGS
+öyretmen	öğretmen	0	5624	MISSPELLINGS
+öyrenmek	öğrenmek	0	1137	MISSPELLINGS
+düyün	düğün	0	2040	MISSPELLINGS
+düyme	düğme	0	473	MISSPELLINGS
+göyüs	göğüs	0	2220	MISSPELLINGS
+diyer	diğer	0	128215	MISSPELLINGS
+yeyen	yeğen	0	229	MISSPELLINGS
+miğde	mide	0	1675	MISSPELLINGS
+siğorta	sigorta	0	2114	MISSPELLINGS
+proğram	program	3	7665	MISSPELLINGS
+parağraf	paragraf	0	155	MISSPELLINGS
+tomoğrafi	tomografi	0	209	MISSPELLINGS
+fotoraf	fotoğraf	0	6459	MISSPELLINGS
+corafya	coğrafya	0	36768	MISSPELLINGS
+mağza	mağaza	2	1054	MISSPELLINGS
+mağra	mağara	0	2128	MISSPELLINGS
+madur	mağdur	21	377	MISSPELLINGS
+malup	mağlup	10	7469	MISSPELLINGS
+marur	mağrur	0	84	MISSPELLINGS
+meraba	merhaba	7	744	MISSPELLINGS
+meşur	meşhur	0	2628	MISSPELLINGS
+şüpe	şüphe	0	1292	MISSPELLINGS
+tuaf	tuhaf	4	1859	MISSPELLINGS
+hastahane	hastane	46	2084	MISSPELLINGS
+pastahane	pastane	4	67	MISSPELLINGS
+eczahane	eczane	2	271	MISSPELLINGS
+kütüpane	kütüphane	0	3019	MISSPELLINGS
+hapisane	hapishane	6	1251	MISSPELLINGS
+penbe	pembe	42	2913	MISSPELLINGS
+tenbel	tembel	2	412	MISSPELLINGS
+çenber	çember	3	1109	MISSPELLINGS
+perşenbe	perşembe	6	1234	MISSPELLINGS
+çarşanba	çarşamba	2	1757	MISSPELLINGS
+saklanbaç	saklambaç	6	74	MISSPELLINGS
+kanbur	kambur	21	255	MISSPELLINGS
+tonbul	tombul	8	142	MISSPELLINGS
+zanbak	zambak	2	144	MISSPELLINGS
+lanba	lamba	0	373	MISSPELLINGS
+bonba	bomba	0	2452	MISSPELLINGS
+tranvay	tramvay	0	1894	MISSPELLINGS
+kanpanya	kampanya	0	1873	MISSPELLINGS
+senbol	sembol	0	1198	MISSPELLINGS
+senpati	sempati	0	559	MISSPELLINGS
+senpatik	sempatik	0	387	MISSPELLINGS
+senpozyum	sempozyum	0	246	MISSPELLINGS
+senptom	semptom	0	289	MISSPELLINGS
+konbinasyon	kombinasyon	0	412	MISSPELLINGS
+konpozisyon	kompozisyon	0	1464	MISSPELLINGS
+konpleks	kompleks	0	1372	MISSPELLINGS
+konple	komple	0	241	MISSPELLINGS
+sombahar	sonbahar	16	1303	MISSPELLINGS
+ombaşı	onbaşı	0	413	MISSPELLINGS
+bimbaşı	binbaşı	0	1636	MISSPELLINGS
+komfor	konfor	0	128	MISSPELLINGS
+komferans	konferans	0	3334	MISSPELLINGS
+emflasyon	enflasyon	0	998	MISSPELLINGS
+semfoni	senfoni	4	2010	MISSPELLINGS
+tesbit	tespit	15	18430	MISSPELLINGS
+isbat	ispat	9	779	MISSPELLINGS
+nisbeten	nispeten	6	4324	MISSPELLINGS
+sehba	sehpa	0	63	MISSPELLINGS
+tastik	tasdik	5	443	MISSPELLINGS
+tehtit	tehdit	8	6566	MISSPELLINGS
+tehtid	tehdit	9	6566	MISSPELLINGS
+detektif	dedektif	116	1703	MISSPELLINGS
+periyod	periyot	27	318	MISSPELLINGS
+teyid	teyit	56	1043	MISSPELLINGS
+vücud	vücut	169	4612	MISSPELLINGS
+mevcud	mevcut	6	15631	MISSPELLINGS
+asvalt	asfalt	0	648	MISSPELLINGS
+tafsiye	tavsiye	0	2679	MISSPELLINGS
+mahfetmek	mahvetmek	0	22	MISSPELLINGS
+meçbur	mecbur	0	524	MISSPELLINGS
+meçburen	mecburen	0	148	MISSPELLINGS
+viçdan	vicdan	0	514	MISSPELLINGS
+bütce	bütçe	0	2412	MISSPELLINGS
+candarma	jandarma	5	2557	MISSPELLINGS
+picama	pijama	0	51	MISSPELLINGS
+cilet	jilet	0	99	MISSPELLINGS
+ahçı	aşçı	0	358	MISSPELLINGS
+şemşiye	şemsiye	0	370	MISSPELLINGS
+elbetde	elbette	0	657	MISSPELLINGS
+entellektüel	entelektüel	3	1752	MISSPELLINGS
+kollektif	kolektif	48	1156	MISSPELLINGS
+kolleksiyon	koleksiyon	0	1370	MISSPELLINGS
+allerji	alerji	0	213	MISSPELLINGS
+allerjik	alerjik	12	411	MISSPELLINGS
+ilüzyon	illüzyon	0	159	MISSPELLINGS
+ilüstrasyon	illüstrasyon	10	189	MISSPELLINGS
+mütahit	müteahhit	0	225	MISSPELLINGS
+müteahit	müteahhit	0	225	MISSPELLINGS
+muhattap	muhatap	0	130	MISSPELLINGS
+seyyahat	seyahat	0	6064	MISSPELLINGS
+taahüt	taahhüt	3	674	MISSPELLINGS
+tahüt	taahhüt	0	674	MISSPELLINGS
+taaruz	taarruz	92	2857	MISSPELLINGS
+teşekür	teşekkür	0	1149	MISSPELLINGS
+teşşekür	teşekkür	0	1149	MISSPELLINGS
+tenefüs	teneffüs	0	68	MISSPELLINGS
+teredüt	tereddüt	0	373	MISSPELLINGS
+telafuz	telaffuz	17	1328	MISSPELLINGS
+telaffi	telafi	0	756	MISSPELLINGS
+mükemel	mükemmel	2	3505	MISSPELLINGS
+müfetiş	müfettiş	3	754	MISSPELLINGS
+muazam	muazzam	0	1361	MISSPELLINGS
+muhabet	muhabbet	0	457	MISSPELLINGS
+muhakak	muhakkak	0	139	MISSPELLINGS
+tahamül	tahammül	0	203	MISSPELLINGS
+tasaruf	tasarruf	2	820	MISSPELLINGS
+mütefik	müttefik	0	3736	MISSPELLINGS
+zatüre	zatürre	2	368	MISSPELLINGS
+rakkam	rakam	2	1162	MISSPELLINGS
+faliyet	faaliyet	5	7905	MISSPELLINGS
+icrat	icraat	0	59	MISSPELLINGS
+inşat	inşaat	7	7283	MISSPELLINGS
+müracat	müracaat	2	192	MISSPELLINGS
+müsade	müsaade	12	429	MISSPELLINGS
+müdafa	müdafaa	38	750	MISSPELLINGS
+mütala	mütalaa	2	51	MISSPELLINGS
+matba	matbaa	0	473	MISSPELLINGS
+nükler	nükleer	2	8808	MISSPELLINGS
+kordinasyon	koordinasyon	0	1169	MISSPELLINGS
+kordine	koordine	6	981	MISSPELLINGS
+koperatif	kooperatif	0	530	MISSPELLINGS
+inkilap	inkılap	4	496	MISSPELLINGS
+haraket	hareket	9	29403	MISSPELLINGS
+insiyatif	inisiyatif	0	184	MISSPELLINGS
+inisyatif	inisiyatif	0	184	MISSPELLINGS
+kareografi	koreografi	2	393	MISSPELLINGS
+halisünasyon	halüsinasyon	0	163	MISSPELLINGS
+halüsilasyon	halüsinasyon	0	163	MISSPELLINGS
+provakasyon	provokasyon	0	102	MISSPELLINGS
+provakatör	provokatör	0	31	MISSPELLINGS
+propoganda	propaganda	0	2302	MISSPELLINGS
+profösör	profesör	3	6706	MISSPELLINGS
+profosyonel	profesyonel	5	29224	MISSPELLINGS
+profösyonel	profesyonel	3	29224	MISSPELLINGS
+prosüdür	prosedür	0	407	MISSPELLINGS
+katolog	katalog	10	753	MISSPELLINGS
+protakol	protokol	0	1452	MISSPELLINGS
+komser	komiser	25	965	MISSPELLINGS
+kominist	komünist	0	13558	MISSPELLINGS
+kominizm	komünizm	0	1252	MISSPELLINGS
+kolanya	kolonya	0	140	MISSPELLINGS
+kanape	kanepe	2	87	MISSPELLINGS
+gardolap	gardırop	0	24	MISSPELLINGS
+motorsiklet	motosiklet	11	1313	MISSPELLINGS
+elektirik	elektrik	9	13822	MISSPELLINGS
+pisikoloji	psikoloji	0	4052	MISSPELLINGS
+pisikolog	psikolog	0	1052	MISSPELLINGS
+tiren	tren	151	5970	MISSPELLINGS
+kıral	kral	160	17562	MISSPELLINGS
+pilan	plan	0	9485	MISSPELLINGS
+sıpor	spor	0	32268	MISSPELLINGS
+sitres	stres	0	1259	MISSPELLINGS
+fülüt	flüt	3	1030	MISSPELLINGS
+kıravat	kravat	2	115	MISSPELLINGS
+tıraktör	traktör	0	537	MISSPELLINGS
+tırafik	trafik	0	3992	MISSPELLINGS
+laboratuar	laboratuvar	18	2005	MISSPELLINGS
+labaratuvar	laboratuvar	2	2005	MISSPELLINGS
+konservatuar	konservatuvar	18	459	MISSPELLINGS
+rezervuvar	rezervuar	0	266	MISSPELLINGS
+aksesuvar	aksesuar	0	377	MISSPELLINGS
+ampül	ampul	11	189	MISSPELLINGS
+antreman	antrenman	0	882	MISSPELLINGS
+antröner	antrenör	0	2442	MISSPELLINGS
+acenta	acente	2	37	MISSPELLINGS
+aliminyum	alüminyum	0	1930	MISSPELLINGS
+ambülans	ambulans	15	319	MISSPELLINGS
+apandist	apandisit	0	105	MISSPELLINGS
+laranjit	larenjit	0	52	MISSPELLINGS
+kolestrol	kolesterol	16	447	MISSPELLINGS
+menüsküs	menisküs	4	89	MISSPELLINGS
+vejeteryan	vejetaryen	15	250	MISSPELLINGS
+sezeryan	sezaryen	0	123	MISSPELLINGS
+erezyon	erozyon	9	581	MISSPELLINGS
+meteroloji	meteoroloji	11	727	MISSPELLINGS
+folklör	folklor	26	1140	MISSPELLINGS
+restorant	restoran	9	1304	MISSPELLINGS
+stajer	stajyer	0	363	MISSPELLINGS
+röpörtaj	röportaj	0	2248	MISSPELLINGS
+rötüş	rötuş	0	26	MISSPELLINGS
+pörtföy	portföy	2	162	MISSPELLINGS
+similasyon	simülasyon	0	989	MISSPELLINGS
+manüpülasyon	manipülasyon	0	201	MISSPELLINGS
+deklere	deklare	5	166	MISSPELLINGS
+deklerasyon	deklarasyon	8	122	MISSPELLINGS
+karekter	karakter	0	10098	MISSPELLINGS
+katagori	kategori	2	2073	MISSPELLINGS
+mazaret	mazeret	0	80	MISSPELLINGS
+menejer	menajer	2	591	MISSPELLINGS
+parlemento	parlamento	25	5139	MISSPELLINGS
+kurdela	kurdele	5	378	MISSPELLINGS
+pantalon	pantolon	7	495	MISSPELLINGS
+kavonoz	kavanoz	0	144	MISSPELLINGS
+panaroma	panorama	3	455	MISSPELLINGS
+tölerans	tolerans	2	323	MISSPELLINGS
+tölere	tolere	4	274	MISSPELLINGS
+kolidor	koridor	0	419	MISSPELLINGS
+pararel	paralel	0	4694	MISSPELLINGS
+santranç	satranç	0	4142	MISSPELLINGS
+kontejan	kontenjan	0	203	MISSPELLINGS
+jenaratör	jeneratör	7	293	MISSPELLINGS
+hoperlör	hoparlör	0	427	MISSPELLINGS
+kalorüfer	kalorifer	0	54	MISSPELLINGS
+lavobo	lavabo	0	66	MISSPELLINGS
+palyanço	palyaço	0	304	MISSPELLINGS
+minübüs	minibüs	0	427	MISSPELLINGS
+mozayik	mozaik	4	815	MISSPELLINGS
+müsayit	müsait	0	315	MISSPELLINGS
+layiklik	laiklik	0	500	MISSPELLINGS
+müdahele	müdahale	118	3835	MISSPELLINGS
+muyane	muayene	0	647	MISSPELLINGS
+bahçivan	bahçıvan	13	176	MISSPELLINGS
+hükumet	hükümet	10	2455	MISSPELLINGS
+meşgül	meşgul	0	1096	MISSPELLINGS
+kabül	kabul	8	66811	MISSPELLINGS
+makül	makul	5	818	MISSPELLINGS
+randevü	randevu	0	317	MISSPELLINGS
+süikast	suikast	18	3768	MISSPELLINGS
+vürüs	virüs	0	1855	MISSPELLINGS
+tiribün	tribün	0	426	MISSPELLINGS
+trübün	tribün	0	426	MISSPELLINGS
+teyip	teyp	8	158	MISSPELLINGS
+istiraat	istirahat	0	128	MISSPELLINGS
+istatislik	istatistik	0	4431	MISSPELLINGS
+heycan	heyecan	0	801	MISSPELLINGS
+dakka	dakika	275	8781	CONTRACTION
+gaste	gazete	21	7549	CONTRACTION
+hanfendi	hanımefendi	0	214	CONTRACTION
+beyfendi	beyefendi	3	150	CONTRACTION
+ananne	anneanne	0	30	CONTRACTION
+babanne	babaanne	0	64	CONTRACTION
+bilader	birader	0	119	MISSPELLINGS
+bilimum	bilumum	0	27	MISSPELLINGS
+buroşür	broşür	0	284	MISSPELLINGS
+bankonot	banknot	0	205	MISSPELLINGS
+pramit	piramit	0	661	MISSPELLINGS
+rasgele	rastgele	16	2531	MISSPELLINGS
+raslamak	rastlamak	2	284	MISSPELLINGS
+serbes	serbest	43	22675	MISSPELLINGS
+çifçi	çiftçi	5	1529	MISSPELLINGS
+çiflik	çiftlik	10	1845	MISSPELLINGS
+seramoni	seremoni	0	80	MISSPELLINGS
+materyel	materyal	0	799	MISSPELLINGS
+metaryal	materyal	4	799	MISSPELLINGS
+matamatik	matematik	0	7915	MISSPELLINGS
+ukela	ukala	0	32	MISSPELLINGS
+keşki	keşke	0	158	MISSPELLINGS
+fites	vites	0	705	MISSPELLINGS
+vidyo	video	49	40502	MISSPELLINGS
+tazik	tazyik	0	20	MISSPELLINGS
+vukat	vukuat	0	35	MISSPELLINGS
+gidişhat	gidişat	0	44	MISSPELLINGS
+şindi	şimdi	2	7553	MISSPELLINGS
+namkör	nankör	0	56	MISSPELLINGS
+filcan	fincan	0	234	MISSPELLINGS
+töbe	tövbe	2	432	MISSPELLINGS
+uslup	üslup	3	520	MISSPELLINGS
+yömiye	yevmiye	0	38	MISSPELLINGS
+puvan	puan	0	16230	MISSPELLINGS
+fuvar	fuar	0	739	MISSPELLINGS
+kavçuk	kauçuk	0	725	MISSPELLINGS
+mütabık	mutabık	0	102	MISSPELLINGS
+mühteşem	muhteşem	2	2072	MISSPELLINGS
+mühtemel	muhtemel	0	1702	MISSPELLINGS
+mühtemelen	muhtemelen	0	9619	MISSPELLINGS
+müamele	muamele	0	915	MISSPELLINGS
+müsafir	misafir	6	1970	MISSPELLINGS
+haşare	haşere	3	138	MISSPELLINGS
+çokşey	çok şey	0	555	SEPARATE_ALWAYS
+aynışey	aynı şey	0	208	SEPARATE_ALWAYS
+birşeyler	bir şeyler	13	940	SEPARATE_ALWAYS
+yinede	yine de	0	5966	SEPARATE_ALWAYS
+genede	gene de	0	166	SEPARATE_ALWAYS
+dahada	daha da	0	7930	SEPARATE_ALWAYS
+hemde	hem de	39	27279	SEPARATE_ALWAYS
+hiçde	hiç de	0	377	SEPARATE_ALWAYS
+belkide	belki de	10	2678	SEPARATE_ALWAYS
+nasılda	nasıl da	2	34	SEPARATE_ALWAYS
+olsada	olsa da	23	10048	SEPARATE_ALWAYS
+olmasada	olmasa da	0	2339	SEPARATE_ALWAYS
+gelsede	gelse de	2	289	SEPARATE_ALWAYS
+gitsede	gitse de	0	72	SEPARATE_ALWAYS
+yapsada	yapsa da	2	237	SEPARATE_ALWAYS
+iyiki	iyi ki	3	67	SEPARATE_ALWAYS
+demekki	demek ki	0	122	SEPARATE_ALWAYS
+yeterki	yeter ki	0	53	SEPARATE_ALWAYS
+kaldıki	kaldı ki	0	86	SEPARATE_ALWAYS
+belliki	belli ki	0	62	SEPARATE_ALWAYS
+nasılki	nasıl ki	0	77	SEPARATE_ALWAYS
+öyleki	öyle ki	3	1259	SEPARATE_ALWAYS
+şöyleki	şöyle ki	4	183	SEPARATE_ALWAYS
+eğerki	eğer ki	10	122	SEPARATE_ALWAYS
+şüphesizki	şüphesiz ki	0	72	SEPARATE_ALWAYS
+değilmi	değil mi	3	205	SEPARATE_ALWAYS
+varmı	var mı	13	306	SEPARATE_ALWAYS
+yokmu	yok mu	0	93	SEPARATE_ALWAYS
+olurmu	olur mu	0	104	SEPARATE_ALWAYS
+öylemi	öyle mi	0	27	SEPARATE_ALWAYS
+hiçmi	hiç mi	0	25	SEPARATE_ALWAYS
+gerçekmi	gerçek mi	0	36	SEPARATE_ALWAYS
+mümkünmü	mümkün mü	0	35	SEPARATE_ALWAYS
+tamammı	tamam mı	0	35	SEPARATE_ALWAYS
+kimmi	kim mi	0	57	SEPARATE_ALWAYS
+benmi	ben mi	0	68	SEPARATE_ALWAYS
+heran	her an	8	369	SEPARATE_ALWAYS
+hergün	her gün	38	2138	SEPARATE_ALWAYS
+birgün	bir gün	243	5521	SEPARATE_ALWAYS
+herzaman	her zaman	0	7296	SEPARATE_ALWAYS
+çoğuzaman	çoğu zaman	0	2509	SEPARATE_ALWAYS
+kimizaman	kimi zaman	0	1084	SEPARATE_ALWAYS
+ozaman	o zaman	0	3308	SEPARATE_ALWAYS
+nezaman	ne zaman	3	1854	SEPARATE_ALWAYS
+heryer	her yer	0	134	SEPARATE_ALWAYS
+heryerde	her yerde	3	1293	SEPARATE_ALWAYS
+hertürlü	her türlü	2	3866	SEPARATE_ALWAYS
+birtürlü	bir türlü	0	660	SEPARATE_ALWAYS
+herbiri	her biri	8	4152	SEPARATE_ALWAYS
+hiçkimse	hiç kimse	7	578	SEPARATE_ALWAYS
+herhangibir	herhangi bir	0	22472	SEPARATE_ALWAYS
+pekçok	pek çok	10	15822	SEPARATE_ALWAYS
+pekaz	pek az	0	274	SEPARATE_ALWAYS
+pekçoğu	pek çoğu	0	408	SEPARATE_ALWAYS
+buyüzden	bu yüzden	2	9371	SEPARATE_ALWAYS
+oyüzden	o yüzden	0	308	SEPARATE_ALWAYS
+buarada	bu arada	9	5341	SEPARATE_ALWAYS
+bukadar	bu kadar	0	2183	SEPARATE_ALWAYS
+okadar	o kadar	0	4171	SEPARATE_ALWAYS
+nekadar	ne kadar	0	8650	SEPARATE_ALWAYS
+bunedenle	bu nedenle	3	18014	SEPARATE_ALWAYS
+busebeple	bu sebeple	0	2328	SEPARATE_ALWAYS
+birarada	bir arada	3	2550	SEPARATE_ALWAYS
+biraraya	bir araya	21	9349	SEPARATE_ALWAYS
+enaz	en az	9	10884	SEPARATE_ALWAYS
+enazından	en azından	0	2362	SEPARATE_ALWAYS
+ençok	en çok	14	23817	SEPARATE_ALWAYS
+yüzdeyüz	yüzde yüz	4	125	SEPARATE_ALWAYS
+yanyana	yan yana	22	1065	SEPARATE_ALWAYS
+yüzyüze	yüz yüze	35	642	SEPARATE_ALWAYS
+artarda	art arda	0	1507	SEPARATE_ALWAYS
+ardarda	art arda	2	1507	SEPARATE_ALWAYS
+gözgöze	göz göze	0	38	SEPARATE_ALWAYS
+omuzomuza	omuz omuza	0	73	SEPARATE_ALWAYS
+içiçe	iç içe	18	1143	SEPARATE_ALWAYS
+üstüste	üst üste	41	3546	SEPARATE_ALWAYS
+altalta	alt alta	0	36	SEPARATE_ALWAYS
+arkaarkaya	arka arkaya	6	1048	SEPARATE_ALWAYS
+uçuca	uç uca	3	39	SEPARATE_ALWAYS
+sırtsırta	sırt sırta	0	23	SEPARATE_ALWAYS
+gündengüne	günden güne	0	222	SEPARATE_ALWAYS
+teketek	teke tek	0	291	SEPARATE_ALWAYS
+sıkısıkıya	sıkı sıkıya	0	274	SEPARATE_ALWAYS
+haftaiçi	hafta içi	3	515	SEPARATE_ALWAYS
+arasıra	ara sıra	0	1164	SEPARATE_ALWAYS
+yanısıra	yanı sıra	27	25309	SEPARATE_ALWAYS
+ardısıra	ardı sıra	0	32	SEPARATE_ALWAYS
+peşisıra	peşi sıra	0	76	SEPARATE_ALWAYS
+önşart	ön şart	0	22	SEPARATE_ALWAYS
+önödeme	ön ödeme	0	28	SEPARATE_ALWAYS
+sözkonusu	söz konusu	79	6053	SEPARATE_ALWAYS
+gözardı	göz ardı	70	1183	SEPARATE_ALWAYS
+kurufasulye	kuru fasulye	0	79	SEPARATE_ALWAYS
+farketmek	fark etmek	0	40	SEPARATE_ALWAYS
+terketmek	terk etmek	8	701	SEPARATE_ALWAYS
+şarjetmek	şarj etmek	0	57	SEPARATE_ALWAYS
+yokolmak	yok olmak	0	78	SEPARATE_ALWAYS
+iyigeceler	iyi geceler	0	77	SEPARATE_ALWAYS
+iyigünler	iyi günler	0	44	SEPARATE_ALWAYS
+iyiakşamlar	iyi akşamlar	0	20	SEPARATE_ALWAYS
+hiç biri	hiçbiri	18	1333	JOINED_ALWAYS
+bir çoğu	birçoğu	26	2563	JOINED_ALWAYS
+bir kaçı	birkaçı	4	596	JOINED_ALWAYS
+bir az	biraz	25	8724	JOINED_ALWAYS
+bir biri	birbiri	12	930	JOINED_ALWAYS
+her hangi	herhangi	53	24381	JOINED_ALWAYS
+oysa ki	oysaki	0	183	JOINED_ALWAYS
+halbu ki	halbuki	0	310	JOINED_ALWAYS
+madem ki	mademki	2	33	JOINED_ALWAYS
+san ki	sanki	0	1231	JOINED_ALWAYS
+bel ki	belki	0	3805	JOINED_ALWAYS
+birden bire	birdenbire	17	439	JOINED_ALWAYS
+rast gele	rastgele	0	2531	JOINED_ALWAYS
+üstün körü	üstünkörü	0	44	JOINED_ALWAYS
+ap açık	apaçık	0	168	JOINED_ALWAYS
+bem beyaz	bembeyaz	0	59	JOINED_ALWAYS
+sım sıkı	sımsıkı	0	65	JOINED_ALWAYS
+çırıl çıplak	çırılçıplak	0	81	JOINED_ALWAYS
+sırıl sıklam	sırılsıklam	0	91	JOINED_ALWAYS
+mas mavi	masmavi	2	63	JOINED_ALWAYS
+düpe düz	düpedüz	0	51	JOINED_ALWAYS
+güpe gündüz	güpegündüz	0	22	JOINED_ALWAYS
+kıp kırmızı	kıpkırmızı	0	69	JOINED_ALWAYS
+dos doğru	dosdoğru	0	47	JOINED_ALWAYS
+büs bütün	büsbütün	0	100	JOINED_ALWAYS
+kos koca	koskoca	0	28	JOINED_ALWAYS
+dim dik	dimdik	0	66	JOINED_ALWAYS
+darma dağın	darmadağın	0	64	JOINED_ALWAYS
+af etmek	affetmek	3	51	JOINED_ALWAYS
+his etmek	hissetmek	2	139	JOINED_ALWAYS
+red etmek	reddetmek	2	218	JOINED_ALWAYS
+ret etmek	reddetmek	0	218	JOINED_ALWAYS
+hal etmek	halletmek	2	69	JOINED_ALWAYS
+kayıp etmek	kaybetmek	0	195	JOINED_ALWAYS
+kayıp olmak	kaybolmak	0	36	JOINED_ALWAYS
+kayıt etmek	kaydetmek	0	477	JOINED_ALWAYS
+kayıt olmak	kaydolmak	0	51	JOINED_ALWAYS
+seyir etmek	seyretmek	0	78	JOINED_ALWAYS
+emir etmek	emretmek	0	49	JOINED_ALWAYS
+hapis etmek	hapsetmek	0	49	JOINED_ALWAYS
+nakil etmek	nakletmek	0	67	JOINED_ALWAYS
+keşif etmek	keşfetmek	0	500	JOINED_ALWAYS
+devir etmek	devretmek	0	121	JOINED_ALWAYS
+devir almak	devralmak	0	75	JOINED_ALWAYS
+mahv etmek	mahvetmek	0	22	JOINED_ALWAYS
+vaz geçmek	vazgeçmek	0	205	JOINED_ALWAYS
+var saymak	varsaymak	0	87	JOINED_ALWAYS
+ön görmek	öngörmek	0	37	JOINED_ALWAYS
+baş vurmak	başvurmak	0	149	JOINED_ALWAYS
+alı koymak	alıkoymak	0	39	JOINED_ALWAYS
+alış veriş	alışveriş	100	2659	JOINED_ALWAYS
+bilinç altı	bilinçaltı	0	115	JOINED_ALWAYS
+olağan üstü	olağanüstü	4	4452	JOINED_ALWAYS
+doğa üstü	doğaüstü	15	1459	JOINED_ALWAYS
+gerçek üstü	gerçeküstü	6	178	JOINED_ALWAYS
+insan üstü	insanüstü	24	289	JOINED_ALWAYS
+suç üstü	suçüstü	0	34	JOINED_ALWAYS
+yüz üstü	yüzüstü	7	91	JOINED_ALWAYS
+gün aydın	günaydın	0	685	JOINED_ALWAYS
+gök kuşağı	gökkuşağı	6	617	JOINED_ALWAYS
+gök yüzü	gökyüzü	0	960	JOINED_ALWAYS
+yer yüzü	yeryüzü	0	1684	JOINED_ALWAYS
+göz yaşı	gözyaşı	11	478	JOINED_ALWAYS
+hoş görü	hoşgörü	0	460	JOINED_ALWAYS
+hoş görülü	hoşgörülü	6	212	JOINED_ALWAYS
+sağ duyu	sağduyu	2	156	JOINED_ALWAYS
+sağ duyulu	sağduyulu	3	60	JOINED_ALWAYS
+ön görü	öngörü	0	170	JOINED_ALWAYS
+ön sezi	önsezi	0	34	JOINED_ALWAYS
+öz veri	özveri	0	54	JOINED_ALWAYS
+var sayım	varsayım	0	525	JOINED_ALWAYS
+baş vuru	başvuru	0	1678	JOINED_ALWAYS
+kamu oyu	kamuoyu	13	1107	JOINED_ALWAYS
+uluslar arası	uluslararası	0	59826	JOINED_ALWAYS
+milletler arası	milletlerarası	0	342	JOINED_ALWAYS
+ana okulu	anaokulu	27	483	JOINED_ALWAYS
+ilk öğretim	ilköğretim	70	3966	JOINED_ALWAYS
+orta okul	ortaokul	100	1549	JOINED_ALWAYS
+yüksek öğretim	yükseköğretim	0	1461	JOINED_ALWAYS
+ana yasa	anayasa	2	6762	JOINED_ALWAYS
+baş bakan	başbakan	10	9967	JOINED_ALWAYS
+baş hekim	başhekim	0	123	JOINED_ALWAYS
+baş öğretmen	başöğretmen	3	37	JOINED_ALWAYS
+baş rol	başrol	5	3471	JOINED_ALWAYS
+baş yapıt	başyapıt	9	141	JOINED_ALWAYS
+baş komutan	başkomutan	16	377	JOINED_ALWAYS
+baş savcı	başsavcı	8	328	JOINED_ALWAYS
+baş kent	başkent	0	5150	JOINED_ALWAYS
+baş parmak	başparmak	4	184	JOINED_ALWAYS
+yıl başı	yılbaşı	4	721	JOINED_ALWAYS
+usta başı	ustabaşı	0	76	JOINED_ALWAYS
+aşçı başı	aşçıbaşı	2	49	JOINED_ALWAYS
+yayın evi	yayınevi	23	3462	JOINED_ALWAYS
+kitap evi	kitabevi	11	1526	JOINED_ALWAYS
+gözlem evi	gözlemevi	24	1171	JOINED_ALWAYS
+basım evi	basımevi	12	504	JOINED_ALWAYS
+ceza evi	cezaevi	4	811	JOINED_ALWAYS
+misafir perver	misafirperver	0	60	JOINED_ALWAYS
+kaza zede	kazazede	0	47	JOINED_ALWAYS
+soğuk kanlı	soğukkanlı	0	166	JOINED_ALWAYS
+sıcak kanlı	sıcakkanlı	0	73	JOINED_ALWAYS
+vurdum duymaz	vurdumduymaz	0	26	JOINED_ALWAYS
+bilir kişi	bilirkişi	4	181	JOINED_ALWAYS
+ilk bahar	ilkbahar	19	1112	JOINED_ALWAYS
+son bahar	sonbahar	30	1303	JOINED_ALWAYS
+pazar ertesi	pazartesi	0	1007	JOINED_ALWAYS
+cuma ertesi	cumartesi	3	1755	JOINED_ALWAYS
+baba anne	babaanne	0	64	JOINED_ALWAYS
+hanım efendi	hanımefendi	0	214	JOINED_ALWAYS
+büyük elçi	büyükelçi	0	1537	JOINED_ALWAYS
+bilgi sayar	bilgisayar	0	14282	JOINED_ALWAYS
+gök delen	gökdelen	0	318	JOINED_ALWAYS
+birak	bırak	0	388	MINED
+seninde	senin de	0	1449	MINED
+heralde	herhalde	415	98	MINED
+bunlari	bunları	3	4011	MINED
+söyliyeyim	söyleyeyim	290	61	MINED
+ahpap	ahbap	252	94	MINED
+benide	beni de	3	5496	MINED
+sizinde	sizin de	3	756	MINED
+hizli	hızlı	5	17402	MINED
+biryer	bir yer	186	3931	MINED
+tipki	tıpkı	3	2440	MINED
+seyin	şeyin	2	3011	MINED
+bırakta	bırak da	4	388	MINED
+teşekürler	teşekkürler	0	182	MINED
+plânın	planın	131	580	MINED
+oruspu	orospu	127	33	MINED
+bunuda	bunu da	0	19280	MINED
+lüften	lütfen	123	379	MINED
+kizim	kızım	3	301	MINED
+onuda	onu da	3	36493	MINED
+felan	falan	117	89	MINED
+annemim	annemin	113	133	MINED
+cürret	cüret	110	43	MINED
+babamım	babamın	108	275	MINED
+ozur	özür	0	1393	MINED
+seyehat	seyahat	106	6064	MINED
+insanlari	insanları	4	11170	MINED
+kesinlike	kesinlikle	106	2434	MINED
+içinmi	için mi	0	507248	MINED
+kizin	kızın	2	1744	MINED
+oldumu	oldu mu	0	139405	MINED
+gelde	gel de	4	1595	MINED
+nehiri	nehri	102	12073	MINED
+icki	içki	2	1441	MINED
+ihtimâlle	ihtimalle	100	836	MINED
+herkezin	herkesin	0	2341	MINED
+aşşağılık	aşağılık	98	155	MINED
+nakiti	nakdi	98	80	MINED
+sizede	size de	0	7642	MINED
+böylemi	böyle mi	2	9544	MINED
+silahlari	silahları	0	1848	MINED
+bügün	bugün	92	13162	MINED
+aradi	aradı	0	482	MINED
+traşı	tıraşı	4	42	MINED
+nedersin	ne dersin	88	20	MINED
+yapıcaksın	yapacaksın	88	20	MINED
+diyin	deyin	88	37	MINED
+sahimi	sahi mi	0	26	MINED
+intahar	intihar	85	5843	MINED
+seyahata	seyahate	81	173	MINED
+tarafi	tarafı	3	2828	MINED
+güsel	güzel	79	14390	MINED
+müretebat	mürettebat	79	2196	MINED
+sandim	sandım	3	32	MINED
+burayi	burayı	0	942	MINED
+söylecek	söyleyecek	77	130	MINED
+tehditi	tehdidi	75	1091	MINED
+kontol	kontrol	75	19624	MINED
+değilki	değil ki	0	21100	MINED
+hissetim	hissettim	75	131	MINED
+söyliyeceğim	söyleyeceğim	75	40	MINED
+ihânet	ihanet	75	1834	MINED
+lüfen	lütfen	73	379	MINED
+yapin	yapın	0	129	MINED
+iddaya	iddiaya	73	641	MINED
+yanit	yanıt	2	4114	MINED
+insalar	insanlar	69	73938	MINED
+adamlari	adamları	2	4444	MINED
+öenmli	önemli	67	80551	MINED
+herkesden	herkesten	67	320	MINED
+seyden	şeyden	0	1166	MINED
+karısık	karışık	0	3961	MINED
+bizide	bizi de	0	1330	MINED
+gordum	gördüm	0	574	MINED
+başlıyacak	başlayacak	65	645	MINED
+ceheneme	cehenneme	65	337	MINED
+yogun	yoğun	5	12521	MINED
+tübü	tüpü	63	444	MINED
+isityorum	istiyorum	63	920	MINED
+değlim	değilim	63	489	MINED
+açin	açın	3	60	MINED
+yapabilirm	yapabilirim	0	30	MINED
+aşşağıya	aşağıya	0	1314	MINED
+hissetiğini	hissettiğini	60	275	MINED
+bütüm	bütün	5	24481	MINED
+kaybi	kaybı	2	3113	MINED
+olduğunumu	olduğunu mu	0	71542	MINED
+üzünüm	üzgünüm	0	147	MINED
+aptalllık	aptallık	58	52	MINED
+şiymdi	şimdi	0	7553	MINED
+kıcını	kıçını	0	6640	MINED
+kagıt	kâğıt	0	2140	MINED
+mesaji	mesajı	4	1313	MINED
+sizide	sizi de	0	674	MINED
+senmi	sen mi	0	4930	MINED
+lânetli	lanetli	54	271	MINED
+raslantı	rastlantı	54	162	MINED
+mükemmmel	mükemmel	0	3505	MINED
+olucaksın	olacaksın	0	87	MINED
+hisettiğim	hissettiğim	54	29	MINED
+görünmüor	görünmüyor	0	102	MINED
+sanırın	sanırım	0	241	MINED
+yapmayi	yapmayı	0	2576	MINED
+olani	olanı	5	1548	MINED
+iligili	ilgili	2	55792	MINED
+gordun	gördün	0	83	MINED
+menun	memnun	0	1703	MINED
+seyhat	seyahat	3	6064	MINED
+kilot	külot	0	57	MINED
+yeyin	yiyin	4	45	MINED
+dertde	dertte	0	39	MINED
+nundan	bundan	3	10844	MINED
+ceseti	cesedi	0	1195	MINED
+tarfından	tarafından	2	359813	MINED
+yapıcak	yapacak	0	1513	MINED
+babami	babamı	0	76	MINED
+omadı	olmadı	0	2223	MINED
+verisen	verirsen	0	3182	MINED
+büftek	biftek	50	96	MINED
+hanımfendi	hanımefendi	0	214	CONTRACTION
+harhangi	herhangi	2	24381	MINED
+ögren	öğren	0	35	MINED
+teşkkürler	teşekkürler	0	182	MINED
+olucaktır	olacaktır	5	5735	MINED
+hipi	hippi	0	128	MINED
+sinif	sınıf	5	10890	MINED
+görüs	görüş	2	4739	MINED
+kalıcak	kalacak	5	832	MINED
+hepsiniz	hepiniz	0	64	MINED
+şeymi	şey mi	0	14493	MINED
+aşağlık	aşağılık	0	155	MINED
+olduda	oldu da	0	139405	MINED
+isiyorum	istiyorum	0	920	MINED
+gezeteler	gazeteler	0	2077	MINED
+geldinler	geldiler	0	1467	MINED
+hırsıs	hırsız	0	811	MINED
+dolari	doları	0	2901	MINED
+parani	paranı	0	3924	MINED
+olabilirmi	olabilir mi	0	21774	MINED
+aşşağıda	aşağıda	0	4238	MINED
+olanlari	olanları	0	1405	MINED
+buları	bunları	3	4011	MINED
+iyidi	iyiydi	0	185	MINED
+kiza	kıza	3	557	MINED
+herkezi	herkesi	0	998	MINED
+fikire	fikre	2	303	MINED
+etrafda	etrafta	0	247	MINED
+gittimi	gitti mi	0	10777	MINED
+gecer	geçer	4	8617	MINED
+iddaaya	iddiaya	0	641	MINED
+geçis	geçiş	0	8169	MINED
+düvüş	dövüş	0	2846	MINED
+plânları	planları	0	1828	MINED
+bagla	bağla	0	83	MINED
+pakala	pekâlâ	0	22	MINED
+başkalarıda	başkaları da	0	619	MINED
+çilgin	çılgın	0	1274	MINED
+kayıdı	kaydı	0	3537	MINED
+mektuplari	mektupları	0	891	MINED
+yaşyor	yaşıyor	0	1498	MINED
+pasam	paşam	0	44	MINED
+buradyım	buradayım	0	52	MINED
+şimid	şimdi	0	7553	MINED
+kiçini	kıçını	0	6640	MINED
+teşşekkür	teşekkür	0	1149	MINED
+kiyim	kıyım	0	57	MINED
+demişki	demiş ki	0	313	MINED
+üzügünüm	üzgünüm	0	147	MINED
+filimleri	filmleri	0	56859	MINED
+kanita	kanıta	0	152	MINED
+yien	yine	2	30075	MINED
+burdaki	buradaki	0	3786	CONTRACTION
+noldu	ne oldu	369	36783	CONTRACTION
+napıyorsun	ne yapıyorsun	296	36	CONTRACTION
+saol	sağ ol	288	1660	CONTRACTION
+nolmuş	ne olmuş	144	14039	CONTRACTION
+sktir	siktir	133	22	CONTRACTION
+istiyon	istiyorsun	131	52	CONTRACTION
+ordaydı	oradaydı	0	103	CONTRACTION
+bikaç	birkaç	113	38049	CONTRACTION
+napacağız	ne yapacağız	98	68	CONTRACTION
+noluyor	ne oluyor	92	1375	CONTRACTION
+diyosun	diyorsun	88	24	CONTRACTION
+yapıyosun	yapıyorsun	77	36	CONTRACTION
+kalmayım	kalmayayım	73	77	CONTRACTION
+diyecem	diyeceğim	73	6859	CONTRACTION
+biliyon	biliyorsun	73	83	CONTRACTION
+oluyo	oluyor	71	1375	CONTRACTION
+geliyon	geliyorsun	67	4412	CONTRACTION
+diyim	diyeyim	65	2521	CONTRACTION
+istiyom	istiyorum	0	920	CONTRACTION
+atacam	atacağım	58	1476	CONTRACTION
+burdaydı	buradaydı	0	28	CONTRACTION
+şeysini	şeyini	56	105	CONTRACTION
+napayım	ne yapayım	0	30	CONTRACTION
+yapacam	yapacağım	0	123	CONTRACTION
+nolacak	ne olacak	0	8856	CONTRACTION
+bişe	bir şey	4	14493	CONTRACTION
+burdayken	buradayken	2	72	CONTRACTION
+istiyo	istiyor	0	664	CONTRACTION
+gidiyon	gidiyorsun	0	53	CONTRACTION
+gidecem	gideceğim	0	56	CONTRACTION
+napıyorsunuz	ne yapıyorsunuz	0	26	CONTRACTION
+biliyosun	biliyorsun	0	83	CONTRACTION
+bitane	bir tane	42	8184	CONTRACTION
+diyon	diyorsun	3	24	CONTRACTION
+gidiyo	gidiyor	0	476	CONTRACTION
+istiyolar	istiyorlar	0	100	CONTRACTION

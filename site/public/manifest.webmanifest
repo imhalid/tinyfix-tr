@@ -1,0 +1,19 @@
+{
+  "name": "autr",
+  "short_name": "autr",
+  "description": "Tarayıcıda internetsiz çalışan Türkçe yazı alanı",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
