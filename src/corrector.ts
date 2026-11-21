@@ -1,7 +1,12 @@
 import { buildContextFeatures, type ContextKind, type ContextModel, type TypoCandidateMeta } from "./context.ts";
 import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
-import { applySentenceRules } from "./sentence.ts";
+import { ABBREVIATIONS, NOT_A_SENTENCE_START, applySentenceRules } from "./sentence.ts";
+import {
+  PROPER_INFLECTIONAL_SUFFIX_RE,
+  isPhonologicallyValidProperSuffix,
+  splitHonorific,
+} from "./rules/proper-names.ts";
 import { turkishEditCost, type FuzzyMorphCandidate } from "./morphology/fuzzy.ts";
 import {
   ALSO,
@@ -458,7 +463,61 @@ export class Corrector {
         const analyses = this.morphology?.analyze?.(lower);
         return analyses ? analyses.map((analysis) => lowerTr(analysis.stem)) : null;
       },
+      {
+        known: this.known,
+        capitalShare: (lower) => this.lexicon.capitalShare(lower),
+        count: (lower) => this.lexicon.count(lower),
+        pair: (a, b) => this.lexicon.pair(a, b),
+        isMorphWord: (lower) => this.isRealWord(lower),
+      },
     );
+  }
+
+  /**
+   * True when `word` (when `sentenceCase` is enabled) is an unseen lowercase proper name or honorific with an
+   * inflectional suffix ("nerminin", "emrenin", "kocaelide", "orhan beyde", "gönül hanımda") that should be
+   * handled by TDK proper-name rules instead of being overwritten by a typo/split fix ("merminin", "emrinin", "bey de").
+   */
+  private isLowercaseProperForSentence(word: string, typed: string, context: WordContext): boolean {
+    if (!this.settings.sentenceCase || !this.known?.hasProperData) return false;
+    if (typed !== word || word.includes("'")) return false;
+    // Honorific + suffix after a person name ("orhan beyde", "gönül hanımda")
+    if (context.prevWord && splitHonorific(word)?.suffix) {
+      if (
+        this.known.nameEntry(context.prevWord) ||
+        this.known.givenNameFor(context.prevWord) ||
+        this.known.ambigNameFor(context.prevWord) ||
+        context.prevCapitalized
+      ) {
+        return true;
+      }
+    }
+    // Check if `word` is an acronym + suffix ("tbmmde", "abye", "natonun") or proper name + suffix ("nerminin", "kocaelide", "emrenin")
+    if (!this.isRealWord(word)) {
+      if (word.length >= 4) {
+        for (let cut = Math.min(word.length - 1, 8); cut >= 2; cut--) {
+          const base = word.slice(0, cut);
+          const suf = word.slice(cut);
+          if (this.known.acronymFor(base) && isPhonologicallyValidProperSuffix(base, suf, { acronym: true })) {
+            return true;
+          }
+        }
+      }
+      for (let cut = word.length - 1; cut >= 3; cut--) {
+        const base = word.slice(0, cut);
+        const suf = word.slice(cut);
+        if (!PROPER_INFLECTIONAL_SUFFIX_RE.test(suf)) continue;
+        if (
+          (this.known.nameEntry(base) || this.known.givenNameFor(base) || this.known.ambigNameFor(base)) &&
+          isPhonologicallyValidProperSuffix(base, suf)
+        ) {
+          return true;
+        }
+      }
+      // Classic book title stem + suffix ("ince memedini")
+      if (context.prevWord === "ince" && word.startsWith("memed")) return true;
+    }
+    return false;
   }
 
   /** Returns the corrected text and the list of changes made. */
@@ -1372,7 +1431,27 @@ export class Corrector {
     if (/[@/#_\\\d-]/.test(before) || /[@/#_\\\d-]/.test(after)) return false;
     // Part of a word with letters Turkish doesn't use ("skrælingi", Cyrillic): not ours to judge.
     if (/\p{L}/u.test(before) || /\p{L}/u.test(after)) return false;
-    if (after === "." && afterNext?.isWord) return false;
+    if (after === "." && afterNext?.isWord) {
+      // When sentenceCase is on, a missing space after a full stop ("gonderdim.bir", "yasiyor.her")
+      // is NOT an address/domain when neither side is an abbreviation/TLD and there is no second dot.
+      if (!this.settings.sentenceCase) return false;
+      const cur = tokens[index]!;
+      const curLow = lowerTr(cur.text);
+      const nextLow = lowerTr(afterNext.text);
+      const prevDot = before === "." || tokens[index - 2]?.text === ".";
+      const nextDot = tokens[index + 3]?.text === ".";
+      if (
+        prevDot ||
+        nextDot ||
+        cur.text.length < 2 ||
+        afterNext.text.length < 2 ||
+        ABBREVIATIONS.has(curLow) ||
+        NOT_A_SENTENCE_START.has(nextLow)
+      ) {
+        return false;
+      }
+      return true;
+    }
     return true;
   }
 
@@ -1384,6 +1463,7 @@ export class Corrector {
   ): { replacement: string; kind: CandidateKind; margin: number; joinsNext: boolean } | null {
     if (isAllUpper(typed) || typed.length < 2) return null;
     const word = lowerTr(typed);
+    if (this.isLowercaseProperForSentence(word, typed, context)) return null;
     const typedCount = this.lexicon.count(word);
     const listed = this.knownFix(typed, word, context, nextTyped);
     if (listed === "keep") return null;
