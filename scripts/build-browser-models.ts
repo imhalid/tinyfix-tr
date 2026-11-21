@@ -9,7 +9,7 @@
  *   node scripts/build-browser-models.ts [--out site/public/models]
  */
 
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { brotliCompressSync, constants, gzipSync } from "node:zlib";
@@ -53,6 +53,13 @@ const CONFIG = {
 function parseOutDir(argv: readonly string[]): string {
   const idx = argv.indexOf("--out");
   return idx !== -1 && argv[idx + 1] ? argv[idx + 1]! : "site/public/models";
+}
+
+function parseContextPath(argv: readonly string[]): string | null {
+  if (argv.includes("--no-context")) return null;
+  const idx = argv.indexOf("--context");
+  if (idx !== -1 && argv[idx + 1]) return argv[idx + 1]!;
+  return "data/work/context/model/context.onnx";
 }
 
 function buildKnownPairMatcher(knownTsv: string): (w1: string, w2: string) => boolean {
@@ -225,6 +232,18 @@ function main(): void {
     "lexicon.bin": lexiconBytes.byteLength,
     "morph.bin": morphBytes.byteLength,
   };
+
+  // Optional context model: copied when present so the site exposes the setting and downloads it only when toggled on.
+  const contextSrc = parseContextPath(process.argv.slice(2));
+  const contextDst = join(outDir, "context.onnx");
+  let contextBytes: Uint8Array | null = null;
+  if (contextSrc && existsSync(contextSrc)) {
+    copyFileSync(contextSrc, contextDst);
+    contextBytes = readFileSync(contextDst);
+    manifest["context.onnx"] = contextBytes.byteLength;
+  } else {
+    rmSync(contextDst, { force: true });
+  }
   writeFileSync(join(outDir, "manifest.json"), JSON.stringify(manifest));
 
   console.log(`\nWritten to ${outDir}/ in ${((performance.now() - started) / 1000).toFixed(2)}s:`);
@@ -235,9 +254,12 @@ function main(): void {
   const totGz = sLex.gz + sMorph.gz + sKnown.gz;
   const totBr = sLex.br + sMorph.br + sKnown.br;
   console.log(
-    `  ${"TOTAL MODELS".padEnd(16)} raw=${(totRaw / 1e6).toFixed(3).padStart(7)} MB (${String(totRaw).padStart(9)} B)  ` +
+    `  ${"CORE MODELS".padEnd(16)} raw=${(totRaw / 1e6).toFixed(3).padStart(7)} MB (${String(totRaw).padStart(9)} B)  ` +
       `gzip=${(totGz / 1e6).toFixed(3).padStart(7)} MB  brotli=${(totBr / 1e6).toFixed(3).padStart(7)} MB`,
   );
+  if (contextBytes) {
+    formatSizes("context.onnx", contextBytes);
+  }
 }
 
 main();

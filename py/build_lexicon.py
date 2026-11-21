@@ -65,6 +65,17 @@ def clean_text(text: str, cut_tail: bool = True) -> str:
     return "\n".join(lines)
 SENTENCE_END = {".", "!", "?", ":", "\n"}
 PARTICLE = re.compile(r"^(m[iıuü](y?[iıuü]m|s[iıuü]n|y?[iıuü]z|s[iıuü]n[iıuü]z|d[iıuü]r|d[iıuü]|ym[iıuü]ş|ys[ae])?|d[ae]|k[iı]|t[ae])$")
+# Inflected auxiliary verb forms of et-, ol-, eyle-, kıl- (5+ letters; shorter forms are already kept by len <= 4).
+# Excludes lexicalized/unrelated stems like edin-, edirne, oluş-, eylem, kılıç.
+AUX_VERB = re.compile(
+    r"^(?:"
+    r"et(?:t[iı]|m[aeıi]|s[aei])"
+    r"|ed(?:i(?:l|p|ş|yor)|e(?:c[ae][kğ]|rek|m[ae]|n(?:l[ae]r(?:[aei]|d[ae]n?|[iı]n)?|[aei]|d[ae]n?)?$|r(?:[iı]m|[iı]z|s[iı]n|l[ae]r|d[iı]|k[ae]n|m[iı]ş|s[ae])?|y[iı][mz]|bil|l[iı]m|s[iı]n))"
+    r"|ol(?:du(?:[kğmnsy]|l[ae]r|$)|m[au]|s[au]|u(?:p|r|n|yor)|a(?:c[ae][kğ]|m[au]|n(?:l[ae]r(?:[ıia]|d[ae]n?|[ıi]n)?|[ıia]|d[ae]n?)?$|r(?:ak)?$|y[ıi][mz]|bil|l[ıi]m|s[ıi]n))"
+    r"|eyle(?:d[iı]|m[ae](?:k|y|d|s|l|z|n|m|ğ|$)|r|s[aei]|y[aei]|n)"
+    r"|kıl(?:d[ıi]|m[aı]|s[aı]|a(?:c[ae][kğ]|n|r|y[ıi][mz]|bil|l[ıi]m|s[ıi]n)|ı(?:n|p|yor))"
+    r")"
+)
 
 
 def lower_tr(word: str) -> str:
@@ -88,6 +99,19 @@ def count(text: str, counts, capitalized, pairs, clean: bool) -> int:
             pairs[previous + " " + word] += 1
         previous = word
     return words
+
+
+def count_glued_pairs(text: str, glued_forms: set[str], pairs, clean: bool) -> None:
+    """Second pass: counts 5+5 pairs not matched by wanted_pair whose glued form (first+second) was seen in the corpus."""
+    previous = None
+    for item in words_with_flags(text, clean=clean):
+        if item is None:
+            previous = None
+            continue
+        word, _ = item
+        if previous is not None and not wanted_pair(previous, word) and (previous + word) in glued_forms:
+            pairs[previous + " " + word] += 1
+        previous = word
 
 
 def is_heldout(doc_id: str, every: int) -> bool:
@@ -135,7 +159,7 @@ def words_with_flags(text: str, clean: bool = False):
 
 
 def wanted_pair(first: str, second: str) -> bool:
-    return len(first) <= 4 or len(second) <= 4 or bool(PARTICLE.match(second))
+    return len(first) <= 4 or len(second) <= 4 or bool(PARTICLE.match(second)) or bool(AUX_VERB.match(second))
 
 
 PAGE_NUMBER = re.compile(r"^\s*[-–—]?\s*\d{1,4}\s*[-–—]?\s*$")
@@ -171,45 +195,70 @@ def main():
     counts: collections.Counter = collections.Counter()
     capitalized: collections.Counter = collections.Counter()
     pairs: collections.Counter = collections.Counter()
-    docs = kept = tokens = 0
-    with open(out / "heldout.jsonl", "w") as heldout:
+    docs = kept = tokens = held_docs = 0
+    heldout_path = out / "heldout.jsonl"
+    heldout_file = None
+    try:
         for doc_id, text in documents(paths):
             docs += 1
             if is_heldout(doc_id, args.heldout_every):
-                heldout.write(json.dumps({"id": doc_id, "text": text}, ensure_ascii=False) + "\n")
+                if heldout_file is None:
+                    heldout_file = open(heldout_path, "w")
+                heldout_file.write(json.dumps({"id": doc_id, "text": text}, ensure_ascii=False) + "\n")
+                held_docs += 1
                 continue
             kept += 1
             tokens += count(text if args.no_clean else clean_text(text), counts, capitalized, pairs, not args.no_clean)
             if docs % 50000 == 0:
-                print(f"{docs} docs, {tokens:,} words, {len(counts):,} forms, {len(pairs):,} pairs", flush=True)
+                print(f"pass 1: {docs} docs, {tokens:,} words, {len(counts):,} forms, {len(pairs):,} pairs", flush=True)
+    finally:
+        if heldout_file is not None:
+            heldout_file.close()
 
     # Books: every --heldout-every'th paragraph is held out (data/work/books_heldout.jsonl) for a future test set.
     book_files = sorted(Path(args.books).glob("*.txt")) if Path(args.books).is_dir() else []
     book_words = 0
-    with open(out / "books_heldout.jsonl", "w") as heldout:
-        for path in book_files:
-            for index, paragraph in enumerate(book_paragraphs(path)):
-                if index % args.heldout_every == args.heldout_every - 1:
-                    heldout.write(json.dumps({"id": f"{path.stem}#{index}", "text": paragraph}, ensure_ascii=False) + "\n")
-                    continue
-                book_words += count(clean_text(paragraph, cut_tail=False), counts, capitalized, pairs, True)
-    tokens += book_words
     if book_files:
+        with open(out / "books_heldout.jsonl", "w") as heldout:
+            for path in book_files:
+                for index, paragraph in enumerate(book_paragraphs(path)):
+                    if index % args.heldout_every == args.heldout_every - 1:
+                        heldout.write(json.dumps({"id": f"{path.stem}#{index}", "text": paragraph}, ensure_ascii=False) + "\n")
+                        continue
+                    book_words += count(clean_text(paragraph, cut_tail=False), counts, capitalized, pairs, True)
+        tokens += book_words
         print(f"{len(book_files)} books, {book_words:,} words", flush=True)
 
+    # Pass 2: collect 5+5 letter pairs whose glued form (first+second) was seen at least once in the corpus.
+    glued_forms = {w for w in counts if len(w) >= 10 and "'" not in w}
+    print(f"pass 2: checking glued pairs against {len(glued_forms):,} long forms...", flush=True)
+    docs2 = 0
+    for doc_id, text in documents(paths):
+        docs2 += 1
+        if is_heldout(doc_id, args.heldout_every):
+            continue
+        count_glued_pairs(text if args.no_clean else clean_text(text), glued_forms, pairs, not args.no_clean)
+        if docs2 % 100000 == 0:
+            print(f"pass 2: {docs2} docs, {len(pairs):,} pairs", flush=True)
+    for path in book_files:
+        for index, paragraph in enumerate(book_paragraphs(path)):
+            if index % args.heldout_every == args.heldout_every - 1:
+                continue
+            count_glued_pairs(clean_text(paragraph, cut_tail=False), glued_forms, pairs, True)
+
     with open(out / "unigrams.tsv", "w") as file:
-        for word, count in counts.most_common():
-            if count < args.min_count:
+        for word, c in counts.most_common():
+            if c < args.min_count:
                 break
-            file.write(f"{word}\t{count}\t{capitalized[word]}\n")
+            file.write(f"{word}\t{c}\t{capitalized[word]}\n")
     with open(out / "bigrams.tsv", "w") as file:
-        for pair, count in pairs.most_common():
-            if count < args.min_pair:
+        for pair, c in pairs.most_common():
+            if c < args.min_pair:
                 break
             first, second = pair.split(" ")
             if counts[first + second] or wanted_pair(first, second):
-                file.write(f"{pair}\t{count}\n")
-    stats = {"clean": not args.no_clean, "books": len(book_files), "book_words": book_words, "documents": docs, "counted_documents": kept, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
+                file.write(f"{pair}\t{c}\n")
+    stats = {"clean": not args.no_clean, "books": len(book_files), "book_words": book_words, "documents": docs, "counted_documents": kept, "heldout_documents": held_docs, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
     (out / "lexicon_stats.json").write_text(json.dumps(stats, indent=2))
     print(stats)
 
