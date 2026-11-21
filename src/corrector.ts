@@ -105,6 +105,18 @@ export interface Settings {
   /** A slip in the last this many letters of a word costs typoEndCost more: those letters are usually a suffix. */
   typoEndWindow: number;
   typoEndCost: number;
+  /**
+   * For an unseen word that Turkish rules reject: cost of reading a letter as an extra key when it is neither a duplicate
+   * nor a keyboard neighbor ("ağldı" is a missed "a" in "ağladı", not a stray "ğ" in "aldı").
+   */
+  typoFarExtra: number;
+  /** For an unseen invalid word: cost of one vowel typed for another ("nuler" -> "neler"); 0 turns it off. */
+  typoVowelSwap: number;
+  /**
+   * For an unseen invalid word: a rare valid inflected form borrows this share of its stem's count ("arkadaşlarımla"
+   * from "arkadaşlarım"), so long correct forms aren't lost for being rare as a whole; 0 turns it off.
+   */
+  typoStemShare: number;
   /** Real words seen at least this often are judged by the context model when one is loaded. */
   contextWord: number;
   /** A count-based fix is dropped when the context model prefers what was typed by at least this much. */
@@ -139,6 +151,9 @@ export const CAREFUL: Settings = {
   deDaJoinCost: 0,
   typoEndWindow: 2,
   typoEndCost: 1,
+  typoFarExtra: 3,
+  typoVowelSwap: 1.2,
+  typoStemShare: 0,
   contextWord: 5,
   contextVeto: 6.0,
   knownMarked: 20,
@@ -1171,8 +1186,12 @@ export class Corrector {
     // A rare form that Turkish suffix rules accept is a real word, not a slip ("getirsek" is not "getirmek").
     // Do not let single-edit typos hijack or tie a morphologically proven particle split ("boyunuda" -> "boyunu da")
     // or a clear mark restoration in an ASCII-typed sentence ("gecenleri" -> "geçenleri" vs "geceleri").
+    // A lowercase word that Turkish rules reject and that is only seen as a rare misspelling in the corpus ("brada" 13
+    // times, "burada" 33,000) is still a slip: it may be fixed, but only into a word seen 200 times as often.
+    const rareInvalidSlip =
+      this.morphology !== undefined && typed === word && typedCount < 50 && !realTyped && this.lexicon.capitalShare(word) < 0.5;
     if (
-      typedCount < knownWord &&
+      (typedCount < knownWord || rareInvalidSlip) &&
       word.length >= 4 &&
       !isName &&
       !hasApostrophe &&
@@ -1192,8 +1211,12 @@ export class Corrector {
       if (!unsplitQuestion) {
         const unseenLowerInvalid = this.morphology !== undefined && typedCount === 0 && typed === word;
         for (const [text, slipCost] of this.oneEdit(word, unseenLowerInvalid)) {
-          const count = this.lexicon.exactCount(text);
-          if (count === 0) continue;
+          let count = this.lexicon.exactCount(text);
+          if (unseenLowerInvalid && this.settings.typoStemShare > 0 && text.length >= 7 && this.isRealWord(text)) {
+            count = Math.max(count, this.stemCount(text) * this.settings.typoStemShare);
+          }
+          if (count < 1) continue;
+          if (typedCount >= knownWord && (count < 200 * typedCount || !this.isRealWord(text))) continue;
           // Never rewrite a word into a vowelless interjection/abbreviation ("Hımm" -> "Hmm", "km", "vb").
           if (!/[aeıioöuüâîû]/.test(text)) continue;
           // A lowercase slip shouldn't rewrite into a mostly-capitalized proper name ("krate" -> "kate", "lmre" -> "emre").
@@ -1833,6 +1856,16 @@ export class Corrector {
     };
   }
 
+  /** Count of the longest shorter prefix (4+ letters) that is itself a seen real word: "arkadaşlarım" for "arkadaşlarımla". */
+  private stemCount(text: string): number {
+    for (let end = text.length - 1; end >= 4; end--) {
+      const stem = text.slice(0, end);
+      const count = this.lexicon.exactCount(stem);
+      if (count > 0 && this.isRealWord(stem)) return count;
+    }
+    return 0;
+  }
+
   /** Words one edit away, with a cost for edits that are unlikely on a Turkish Q keyboard. */
   private oneEdit(word: string, unseenLowerInvalid = false): Map<string, number> {
     const edits = new Map<string, number>();
@@ -1860,10 +1893,14 @@ export class Corrector {
           (previous !== undefined && (at === previous || areNearKeys(at, previous))) ||
           (following !== undefined && (at === following || areNearKeys(at, following)));
         const isFinalNonDupDelete = i === word.length - 1 && at !== previous;
+        // A Turkish letter is typed on purpose; in a word Turkish rules reject it is not a stray key ("çalşıyorum" is
+        // a missed "ı" in "çalışıyorum", not an extra "ş" in "çalıyorum").
+        const deliberate = unseenLowerInvalid && "çğışöü".includes(at) && at !== previous && at !== following;
         // Deleting a non-duplicate final character (especially a distant key like "m" after "r" in "geliyorm") risks
         // chopping a real person suffix ("geliyorm" -> "geliyor" instead of "geliyorum").
         const finalDelPen = isFinalNonDupDelete && word.length >= 6 ? (nearExtra ? 1.4 : 2.5) : 0;
-        put(before + after, nearExtra ? 0.9 : 2.3, i, finalDelPen); // an extra key
+        const farExtra = unseenLowerInvalid ? this.settings.typoFarExtra : 2.3;
+        put(before + after, deliberate ? Math.max(farExtra, 5) : nearExtra ? 0.9 : farExtra, i, finalDelPen); // an extra key
         if (following !== undefined) put(before + following + at + word.slice(i + 2), 0.7, i); // two keys swapped
       }
       const betweenConsonants = previous !== undefined && at !== undefined && !VOWELS.has(previous) && !VOWELS.has(at);
@@ -1871,6 +1908,9 @@ export class Corrector {
         if (at !== undefined && letter !== at) {
           if (areNearKeys(letter, at)) put(before + letter + after, 0.8, i);
           else if (VOICING_PAIRS.has(at + letter)) put(before + letter + after, 1.8, i);
+          else if (unseenLowerInvalid && this.settings.typoVowelSwap > 0 && VOWELS.has(at) && VOWELS.has(letter)) {
+            put(before + letter + after, this.settings.typoVowelSwap, i);
+          }
         }
         // Omitting a vowel inside a consonant cluster ("geliyorm", "yapabilirm", "gönderdm") is very common in Turkish.
         const insertSlip = betweenConsonants && VOWELS.has(letter) ? 0.6 : 1.0;

@@ -415,6 +415,13 @@ const extraFixes: [string, string][] = [
   // Spoken "bişey" is written "bir şey".
   ["Bişey yazıyorum ama düzeltmiyor.", "Bir şey yazıyorum ama düzeltmiyor."],
   ["hiçbişey olmadı", "hiçbir şey olmadı"],
+  // Missed letters and swapped vowels (measured on synthetic chat data, half A tuned / half B checked).
+  ["Mesela burada nuler oluyor?", "Mesela burada neler oluyor?"],
+  ["Mesela brada neler oluyor?", "Mesela burada neler oluyor?"],
+  ["Bu aralar çok çalşıyorum.", "Bu aralar çok çalışıyorum."],
+  // Was kept only to avoid "görürüz" (a dropped "ş"); a Turkish letter is now kept, so the missed "ü" is restored.
+  ["Yarın akşam görüşrüz.", "Yarın akşam görüşürüz."],
+  ["Kitap bende kaldı.", "Kitap bende kaldı."],
   // A doubled suffix is not a second word: "değildirdir" must not become "değil dırdır".
   ["Bu iyi değildirdir.", "Bu iyi değildirdir."],
   ["Yarın ne yapacağını biliyormusunm?", "Yarın ne yapacağını biliyor musun?"],
@@ -461,7 +468,6 @@ const extraKeeps = [
   "Fatimi devleti tarih kitaplarında anlatılır.",
   "Dekolmanı ameliyatla tedavi edildi.",
   "Bu işin olmağı zor görünüyor.",
-  "Yarın akşam görüşrüz.",
   "İnsan bazen lmre gibi yazımlar görür.",
   // v8 precision & TDK institution guards
   "Ann e mektup göndermek istedi.",
