@@ -1,11 +1,19 @@
 import { loadAutr, type Autr, type FixKind, type LoadProgress, type Mode } from "autr";
 import type { JSX } from "@solidjs/web";
 import { For, Show, createMemo, createSignal, onSettled } from "solid-js";
-import { undoAppliedFix, type AppliedFix, type BatchProgress } from "./autocorrectExtension";
+import {
+  applyFlagSuggestion,
+  dismissFlag,
+  flagAllText,
+  undoAppliedFix,
+  type AppliedFix,
+  type BatchProgress,
+  type FlaggedWord,
+} from "./autocorrectExtension";
 import { APP_NAME, APP_TAGLINE, MODELS_BASE_URL, ORT_WASM_BASE_URL } from "./brand";
 import { DocumentsList } from "./components/DocumentsDrawer";
 import { EditorPane } from "./components/EditorPane";
-import { FixPopover } from "./components/FixPopover";
+import { FixPopover, type PopoverFix } from "./components/FixPopover";
 import { BoldIcon, HeadingIcon, ItalicIcon, ListIcon, QuoteIcon, ScanIcon, UndoIcon } from "./components/Icons";
 import { Modal, PrivacyDialog } from "./components/PrivacyDialog";
 import { SettingsPanel } from "./components/SettingsPanel";
@@ -84,6 +92,39 @@ export function App() {
       text: neverChange ? `«${fix.original}» geri alındı, bir daha değiştirilmeyecek` : `«${fix.original}» geri alındı`,
       showUndoHint: false,
     });
+    view.focus();
+  };
+  /** Tıklanan işaretli kelime: pencerede önerileri gösterilir. */
+  const [openFlag, setOpenFlag] = createSignal<{ flag: FlaggedWord; anchor: HTMLElement } | null>(null);
+
+  /** Pencere aynı nesneyi görsün diye bir kez kurulur (her okumada yeni nesne pencereyi açtırmaz). */
+  const flagPopoverFix = createMemo((): PopoverFix | null => {
+    const open = openFlag();
+    if (!open) return null;
+    const { flag } = open;
+    return { original: flag.original, replacement: flag.suggestions[0] ?? flag.original, kind: "yazim", scope: "kelime" };
+  });
+
+  /** Açık belgedeki şüpheli kelimelerin altını çizer (metne dokunmaz). */
+  const flagOpenDocument = (instance: Autr | null = autr()) => {
+    const view = editorController?.editor.view;
+    if (!view || !instance || !settings().enabled) return;
+    void flagAllText(view, instance, getActiveKinds(settings()));
+  };
+
+  const chooseSuggestion = (flag: FlaggedWord, replacement: string) => {
+    setOpenFlag(null);
+    const view = editorController?.editor.view;
+    if (!view || !applyFlagSuggestion(view, flag.id, replacement)) return;
+    setLastActivity({ text: `«${flag.original}» → «${replacement}»`, showUndoHint: true });
+  };
+
+  const dismissFlagFromPopover = (flag: FlaggedWord, never: boolean) => {
+    setOpenFlag(null);
+    const view = editorController?.editor.view;
+    if (!view) return;
+    dismissFlag(view, flag.id);
+    if (never) addIgnoredWord(flag.original);
     view.focus();
   };
   const [contextWarning, setContextWarning] = createSignal<string | null>(null);
@@ -241,6 +282,7 @@ export function App() {
       setAutr(instance);
       setEngineStatus("ready");
       setTimeout(() => void runQueue(), 0);
+      setTimeout(() => flagOpenDocument(instance), 0);
       // Sözlük yüklenirken yazılanları denetle. Solid 2'de yazılan sinyal bir sonraki turda okunur, o yüzden bekletiyoruz.
       setTimeout(() => editorController?.checkWaitingText(), 0);
     } catch (error) {
@@ -996,6 +1038,7 @@ export function App() {
                 setLiveIssues([]);
                 setReviewProgress(null);
                 if (controller) {
+                  setTimeout(() => flagOpenDocument(), 0);
                   // Daha önce analiz edilmiş belge açılınca öneriler yeniden işaretlenir (konumlar saklanmaz).
                   if (doc().review && !queue.includes(doc().id)) {
                     setActiveReview("checking");
@@ -1027,6 +1070,11 @@ export function App() {
                 });
               }}
               onFixClick={(fix: AppliedFix, element: HTMLElement) => setOpenFix({ fix, anchor: element })}
+              onFlagClick={(flag, element) => setOpenFlag({ flag, anchor: element })}
+              onFlagsChange={(flags) => {
+                const open = openFlag();
+                if (open && !flags.some((flag) => flag.id === open.flag.id)) setOpenFlag(null);
+              }}
               onUndo={(fix: AppliedFix) => {
                 setLastActivity({ text: `«${fix.original}» geri alındı`, showUndoHint: false });
                 toast({
@@ -1158,6 +1206,25 @@ export function App() {
           { label: "Bir daha önerme", onClick: () => { const issue = openIssue()?.issue; if (issue) neverSuggest(issue.original); } },
         ]}
         onClose={() => setOpenIssue(null)}
+      />
+
+      <FixPopover
+        fix={flagPopoverFix()}
+        anchor={openFlag()?.anchor ?? null}
+        note="Bu kelime hatalı görünüyor. Emin olamadığım için değiştirmedim; bir öneri seçin."
+        actions={[
+          ...(openFlag()?.flag.suggestions ?? []).map((suggestion, index) => ({
+            label: suggestion,
+            primary: index === 0,
+            onClick: () => {
+              const flag = openFlag()?.flag;
+              if (flag) chooseSuggestion(flag, suggestion);
+            },
+          })),
+          { label: "Yoksay", onClick: () => { const flag = openFlag()?.flag; if (flag) dismissFlagFromPopover(flag, false); } },
+          { label: "Bir daha işaretleme", onClick: () => { const flag = openFlag()?.flag; if (flag) dismissFlagFromPopover(flag, true); } },
+        ]}
+        onClose={() => setOpenFlag(null)}
       />
 
       <Drawer

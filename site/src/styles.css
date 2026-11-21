@@ -18,6 +18,7 @@
   --accent: oklch(52% 0.13 38);
   --fix-word: oklch(48% 0.11 250);
   --fix-context: oklch(47% 0.13 355);
+  --flag: oklch(56% 0.19 28);
   --ok: oklch(56% 0.1 150);
   --warn: oklch(68% 0.13 75);
   --danger: oklch(52% 0.17 28);
@@ -50,6 +51,7 @@
     --accent: oklch(72% 0.12 45);
     --fix-word: oklch(74% 0.1 245);
     --fix-context: oklch(74% 0.12 355);
+    --flag: oklch(70% 0.16 28);
     --ok: oklch(72% 0.12 150);
     --warn: oklch(80% 0.12 80);
     --danger: oklch(68% 0.16 28);
@@ -74,6 +76,7 @@
   --accent: oklch(72% 0.12 45);
   --fix-word: oklch(74% 0.1 245);
   --fix-context: oklch(74% 0.12 355);
+  --flag: oklch(70% 0.16 28);
   --ok: oklch(72% 0.12 150);
   --warn: oklch(80% 0.12 80);
   --danger: oklch(68% 0.16 28);
@@ -574,6 +577,20 @@ code {
     text-decoration-color: var(--fix-color);
   }
 }
+/*
+ * İşaretli kelime: motor hatalı buldu ama emin olamadığı için değiştirmedi. Düzeltmelerden ayrılsın diye kırmızı ve
+ * dalgalı (yazım denetiminin bilinen işareti); tıklanınca öneriler açılır.
+ */
+.autr-flag {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--flag);
+  text-decoration-thickness: 1.5px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.16em;
+  cursor: pointer;
+}
+
 /* Arka plan bağlam geçişinin değiştirdiği kelime bir kez hafifçe parlar: yazarken gözden kaçmasın. */
 .autr-fix--settled {
   border-radius: 3px;

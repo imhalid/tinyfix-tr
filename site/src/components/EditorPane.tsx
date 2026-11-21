@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 import type { JSX } from "@solidjs/web";
 import { createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
-import type { AppliedFix, AutocorrectRuntime, BatchProgress } from "../autocorrectExtension";
+import type { AppliedFix, AutocorrectRuntime, BatchProgress, FlaggedWord } from "../autocorrectExtension";
 import { mountEditor, type EditorController } from "../editor";
 import type { Issue } from "../review";
 
@@ -23,6 +23,8 @@ export interface EditorPaneProps {
   onSettled: (fixes: readonly AppliedFix[]) => void;
   onUndo: (fix: AppliedFix) => void;
   onFixClick: (fix: AppliedFix, element: HTMLElement) => void;
+  onFlagClick: (flag: FlaggedWord, element: HTMLElement) => void;
+  onFlagsChange: (flags: readonly FlaggedWord[]) => void;
   onBatchUndo: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress: (progress: BatchProgress | null) => void;
   onIssueClick: (issue: Issue, element: HTMLElement) => void;
@@ -56,6 +58,8 @@ export function EditorPane(props: EditorPaneProps) {
         onSettled: (fixes) => props.onSettled(fixes),
         onUndo: (fix) => props.onUndo(fix),
         onFixClick: (fix, element) => props.onFixClick(fix, element),
+        onFlagClick: (flag, element) => props.onFlagClick(flag, element),
+        onFlagsChange: (flags) => props.onFlagsChange(flags),
         onBatchUndo: (fixes) => props.onBatchUndo(fixes),
         onBatchProgress: (progress) => props.onBatchProgress(progress),
         onIssueClick: (issue, element) => props.onIssueClick(issue, element),

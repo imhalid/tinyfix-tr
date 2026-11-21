@@ -3,7 +3,7 @@ import { closeHistory } from "@tiptap/pm/history";
 import { Plugin, PluginKey, type EditorState, type Transaction } from "@tiptap/pm/state";
 import { Mapping, ReplaceStep, type StepMap } from "@tiptap/pm/transform";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Autr, Fix, FixKind, FixScope } from "autr";
+import type { Autr, Fix, FixKind, FixScope, FlagReason } from "autr";
 import { FIX_KIND_META } from "./settings";
 
 export interface AppliedFix {
@@ -24,9 +24,25 @@ export interface AppliedFix {
 /** Bir kelimenin geçirdiği tek değişiklik. */
 export interface WordStep {
   text: string;
-  /** "typed": kullanıcı yazdı; "word": kelime bitince; "rescan": paragraf yeniden tarandı; "context": bağlam modeli. */
-  by: "typed" | "word" | "rescan" | "context";
+  /**
+   * "typed": kullanıcı yazdı; "word": kelime bitince; "rescan": paragraf yeniden tarandı; "context": bağlam modeli;
+   * "chosen": kullanıcı işaretli kelimenin önerilerinden seçti.
+   */
+  by: "typed" | "word" | "rescan" | "context" | "chosen";
   at: number;
+}
+
+/**
+ * Motorun emin olamadığı için düzeltmediği, ama hatalı göründüğü için altını çizdiği kelime. Kullanıcı önerilerden
+ * birini seçer ya da yoksayar.
+ */
+export interface FlaggedWord {
+  id: string;
+  from: number;
+  to: number;
+  original: string;
+  suggestions: readonly string[];
+  reason: FlagReason;
 }
 
 export interface BatchProgress {
@@ -49,6 +65,10 @@ export interface AutocorrectExtensionOptions {
   onBatchProgress?: (progress: BatchProgress | null) => void;
   /** Düzeltilmiş kelimeye tıklanınca: uygulama ayrıntıyı ve geri alma seçeneğini bir pencerede gösterir. */
   onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
+  /** İşaretli (altı çizili, düzeltilmemiş) kelimeye tıklanınca: uygulama önerileri gösterir. */
+  onFlagClick?: (flag: FlaggedWord, element: HTMLElement) => void;
+  /** İşaretli kelimeler değişti (sayaç için). */
+  onFlagsChange?: (flags: readonly FlaggedWord[]) => void;
   /** Alt çizginin ne kadar sonra kaybolacağı (ms). Varsayılan: kaybolmaz. */
   highlightDurationMs?: number;
   /** Yazmaya bu kadar ara verilince (ms) paragraf baştan yeniden taranır. */
@@ -102,16 +122,31 @@ interface RejectedSpan {
 }
 
 type AutocorrectMeta =
-  | { type: "add"; records: readonly AppliedFix[]; finishJobId?: number; endSettle?: boolean }
+  | {
+      type: "add";
+      records: readonly AppliedFix[];
+      finishJobId?: number;
+      endSettle?: boolean;
+      /** Yeniden taramanın işaretleri: `range` içindeki eski işaretlerin yerine geçer (işlem öncesi konumlar). */
+      flags?: FlagUpdate;
+    }
   | { type: "settle-track"; on: boolean }
+  | ({ type: "flags"; endSettle?: boolean } & FlagUpdate)
+  | { type: "flag-dismiss"; id: string }
   | { type: "remove"; ids: readonly string[]; reject?: readonly RejectedSpan[] }
   | { type: "finish-job"; jobId: number }
   | { type: "check-waiting" }
   | { type: "check-all" }
   | { type: "clear" };
 
+interface FlagUpdate {
+  range: readonly [number, number];
+  items: readonly FlaggedWord[];
+}
+
 interface PluginState {
   records: AppliedFix[];
+  flags: FlaggedWord[];
   decorations: DecorationSet;
   pendingBatch: PendingBatch | null;
   activeJobMaps: readonly TrackedJobMaps[];
@@ -151,6 +186,7 @@ const SETTLE_OVERRIDE_CONFIDENCE = 1 / (1 + Math.exp(-3 / 2)) - 0.0005;
 const CHUNK_LEFT_CONTEXT = 120;
 const CHUNK_RIGHT_CONTEXT = 80;
 
+let flagCounter = 1;
 let fixCounter = 1;
 function nextFixId(): string {
   return `autr-fix-${fixCounter++}`;
@@ -163,8 +199,21 @@ function nextJobId(): number {
 
 const yieldToBrowser = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
 
-function buildDecorations(doc: EditorState["doc"], records: readonly AppliedFix[]): DecorationSet {
-  if (records.length === 0) return DecorationSet.empty;
+function buildDecorations(
+  doc: EditorState["doc"],
+  records: readonly AppliedFix[],
+  flags: readonly FlaggedWord[],
+): DecorationSet {
+  if (records.length === 0 && flags.length === 0) return DecorationSet.empty;
+  const flagDecorations = flags.map((flag) =>
+    Decoration.inline(flag.from, flag.to, {
+      class: "autr-flag",
+      "data-autr-flag-id": flag.id,
+      "aria-description": flag.suggestions.length
+        ? `Hatalı olabilir. Öneri: «${flag.suggestions[0]}»`
+        : "Hatalı olabilir",
+    }),
+  );
   const decorations = records.map((record) => {
     const kindLabel = FIX_KIND_META[record.kind].label;
     return Decoration.inline(record.from, record.to, {
@@ -174,7 +223,7 @@ function buildDecorations(doc: EditorState["doc"], records: readonly AppliedFix[
       "aria-description": `${kindLabel}: «${record.original}» yerine «${record.replacement}»`,
     });
   });
-  return DecorationSet.create(doc, decorations);
+  return DecorationSet.create(doc, [...decorations, ...flagDecorations]);
 }
 
 /** Bir işlemde `ReplaceStep` ile eklenen tüm belge aralıklarını birleştirilmiş biçimde döndürür. */
@@ -484,6 +533,95 @@ export function checkAllText(view: EditorView): boolean {
   return AUTOCORRECT_KEY.getState(view.state)?.pendingBatch != null;
 }
 
+/** İşaretli kelimeyi seçilen öneriyle değiştirir (geri alınabilir tek adım). */
+export function applyFlagSuggestion(view: EditorView, id: string, replacement: string): AppliedFix | null {
+  const flag = AUTOCORRECT_KEY.getState(view.state)?.flags.find((item) => item.id === id);
+  if (!flag) return null;
+  if (view.state.doc.textBetween(flag.from, flag.to, "\n", "\n") !== flag.original) return null;
+  view.dispatch(closeHistory(view.state.tr));
+  let tr = view.state.tr.insertText(replacement, flag.from, flag.to);
+  tr = closeHistory(tr);
+  const now = Date.now();
+  const record: AppliedFix = {
+    id: nextFixId(),
+    from: flag.from,
+    to: flag.from + replacement.length,
+    original: flag.original,
+    replacement,
+    kind: "yazim",
+    scope: "kelime",
+    settled: true,
+    history: [
+      { text: flag.original, by: "typed", at: now },
+      { text: replacement, by: "chosen", at: now },
+    ],
+  };
+  tr.setMeta(AUTOCORRECT_META, { type: "add", records: [record] } satisfies AutocorrectMeta);
+  view.dispatch(tr);
+  view.focus();
+  return record;
+}
+
+/**
+ * Belgenin bütün paragraflarındaki şüpheli kelimeleri işaretler; metne dokunmaz. Belge açılınca ve sözlük hazır
+ * olunca çağrılır. Bu sırada belge değişirse durur (yazılan paragrafı yeniden tarama zaten işaretler).
+ */
+export async function flagAllText(view: EditorView, autr: Autr, kinds: readonly FixKind[]): Promise<void> {
+  const startDoc = view.state.doc;
+  const blocks: Array<{ start: number; text: string }> = [];
+  startDoc.descendants((node, pos) => {
+    if (!node.isTextblock) return true;
+    if (node.type.spec.code) return false;
+    const text = node.textBetween(0, node.content.size, "\n", "\n");
+    if (TURKISH_LETTER.test(text) && text.length <= SETTLE_MAX_PARAGRAPH) blocks.push({ start: pos + 1, text });
+    return false;
+  });
+  for (let index = 0; index < blocks.length; index++) {
+    const block = blocks[index]!;
+    const state = AUTOCORRECT_KEY.getState(view.state);
+    if (!state || view.isDestroyed) return;
+    const records = state.records.filter((record) => record.from >= block.start && record.to <= block.start + block.text.length);
+    let flags;
+    try {
+      ({ flags } = await autr.inspect(block.text, {
+        kinds,
+        autoMarked: records.map((record) => [record.from - block.start, record.to - block.start] as const),
+      }));
+    } catch {
+      return;
+    }
+    if (view.isDestroyed || view.state.doc !== startDoc) return;
+    const current = AUTOCORRECT_KEY.getState(view.state)!;
+    const codeMark = startDoc.type.schema.marks["code"];
+    const items: FlaggedWord[] = [];
+    for (const flag of flags) {
+      if (flag.suggestions.length === 0) continue;
+      const from = block.start + flag.from;
+      const to = block.start + flag.to;
+      if (codeMark && startDoc.rangeHasMark(from, to, codeMark)) continue;
+      if (current.rejected.some((span) => from < span.to && to > span.from)) continue;
+      items.push({ id: `autr-flag-${flagCounter++}`, from, to, original: flag.original, suggestions: flag.suggestions, reason: flag.reason });
+    }
+    const tr = view.state.tr;
+    tr.setMeta("addToHistory", false);
+    tr.setMeta(AUTOCORRECT_META, {
+      type: "flags",
+      range: [block.start, block.start + block.text.length],
+      items,
+    } satisfies AutocorrectMeta);
+    view.dispatch(tr);
+    if (index % 8 === 7) await yieldToBrowser();
+  }
+}
+
+/** İşareti kaldırır; aynı yazılış yerinde durdukça bir daha işaretlenmez. */
+export function dismissFlag(view: EditorView, id: string): void {
+  const tr = view.state.tr;
+  tr.setMeta("addToHistory", false);
+  tr.setMeta(AUTOCORRECT_META, { type: "flag-dismiss", id } satisfies AutocorrectMeta);
+  view.dispatch(tr);
+}
+
 /** Kimliği verilen düzeltmeyi geri alır (yazılan biçim geri gelir). Geri alınan kaydı ya da null döner. */
 export function undoAppliedFix(view: EditorView, id: string): AppliedFix | null {
   const record = AUTOCORRECT_KEY.getState(view.state)?.records.find((item) => item.id === id);
@@ -532,6 +670,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
           init(): PluginState {
             return {
               records: [],
+              flags: [],
               decorations: DecorationSet.empty,
               pendingBatch: null,
               activeJobMaps: [],
@@ -637,6 +776,37 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               activeJobMaps.push({ id: pendingBatch.id, maps: [] });
             }
 
+            // İşaretler: düzenlemeyle kayar; kelimesi değişen ya da üzerine düzeltme yazılan işaret düşer.
+            let flags: FlaggedWord[] = prev.flags;
+            if (meta?.type === "clear") {
+              flags = [];
+            } else {
+              const size = newState.doc.content.size;
+              const mapFlag = (flag: FlaggedWord): FlaggedWord | null => {
+                const from = tr.mapping.mapResult(flag.from, 1);
+                const to = tr.mapping.mapResult(flag.to, -1);
+                if (from.deleted || to.deleted || to.pos <= from.pos || to.pos > size) return null;
+                if (newState.doc.textBetween(from.pos, to.pos, "\n", "\n") !== flag.original) return null;
+                return from.pos === flag.from && to.pos === flag.to ? flag : { ...flag, from: from.pos, to: to.pos };
+              };
+              if (tr.docChanged) flags = flags.flatMap((flag) => mapFlag(flag) ?? []);
+              const update = meta?.type === "flags" ? meta : meta?.type === "add" ? meta.flags : undefined;
+              if (update) {
+                const rangeFrom = tr.mapping.map(update.range[0], -1);
+                const rangeTo = tr.mapping.map(update.range[1], 1);
+                flags = flags.filter((flag) => flag.to <= rangeFrom || flag.from >= rangeTo);
+                for (const item of update.items) {
+                  const mapped = mapFlag(item);
+                  if (mapped) flags.push(mapped);
+                }
+                flags.sort((a, b) => a.from - b.from);
+              }
+              if (meta?.type === "flag-dismiss") flags = flags.filter((flag) => flag.id !== meta.id);
+              if (meta?.type === "add" && meta.records.length > 0) {
+                flags = flags.filter((flag) => !meta.records.some((record) => flag.from < record.to && flag.to > record.from));
+              }
+            }
+
             // Arka plan geçişinin dokunduğu ve kullanıcının geri aldığı yerler, metin değişmedikçe hatırlanır.
             let settledRanges: Array<readonly [number, number]> = [];
             let rejected: RejectedSpan[] = [];
@@ -663,6 +833,10 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               if (meta?.type === "remove" && meta.reject) {
                 for (const span of meta.reject) keepRejected(span, span.from, span.to);
               }
+              if (meta?.type === "flag-dismiss") {
+                const flag = prev.flags.find((item) => item.id === meta.id);
+                if (flag) keepRejected({ from: flag.from, to: flag.to, text: flag.original }, flag.from, flag.to);
+              }
               for (const record of undoneByHistory) {
                 const from = tr.mapping.map(record.from, -1);
                 keepRejected({ from, to: from + record.original.length, text: record.original }, from, from + record.original.length);
@@ -673,7 +847,11 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
 
             return {
               records,
-              decorations: buildDecorations(newState.doc, records),
+              flags,
+              decorations:
+                records === prev.records && flags === prev.flags && !tr.docChanged
+                  ? prev.decorations
+                  : buildDecorations(newState.doc, records, flags),
               pendingBatch,
               activeJobMaps,
               undoneByHistory,
@@ -689,7 +867,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                   ? meta.on
                     ? []
                     : null
-                  : meta?.type === "clear" || (meta?.type === "add" && meta.endSettle)
+                  : meta?.type === "clear" || ((meta?.type === "flags" || meta?.type === "add") && meta.endSettle)
                     ? null
                     : prev.settleMaps && tr.docChanged
                       ? [...prev.settleMaps, ...tr.mapping.maps]
@@ -705,6 +883,15 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
 
           handleClick(view, _pos, event) {
             const target = event.target instanceof HTMLElement ? event.target : null;
+            const flagSpan = target?.closest<HTMLElement>("[data-autr-flag-id]");
+            const flagId = flagSpan?.dataset["autrFlagId"];
+            if (flagSpan && flagId && options.onFlagClick) {
+              const flag = AUTOCORRECT_KEY.getState(view.state)?.flags.find((item) => item.id === flagId);
+              if (flag) {
+                options.onFlagClick(flag, flagSpan);
+                return true;
+              }
+            }
             const span = target?.closest<HTMLElement>("[data-autr-fix-id]");
             const fixId = span?.dataset["autrFixId"];
             if (!fixId) return false;
@@ -986,7 +1173,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               const records = plugin.records.filter((record) => record.from >= block.start && record.to <= block.end);
               setTracking(view, true);
               tracking = true;
-              const fixes = await autr.check(block.text, {
+              const { fixes, flags: rawFlags } = await autr.inspect(block.text, {
                 range: [0, limit],
                 kinds: runtime.activeKinds,
                 autoMarked: records.map((record) => [record.from - block.start, record.to - block.start] as const),
@@ -1030,7 +1217,46 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                 }
                 planned.push({ from, to, fix, replaces });
               }
-              if (planned.length === 0) return;
+              // İşaretler: yalnızca taranan bölge (imleçteki kelimeye kadar) yenilenir.
+              const flagItems: FlaggedWord[] = [];
+              for (const flag of rawFlags) {
+                if (flag.to > limit || flag.suggestions.length === 0) continue;
+                const mappedFrom = mapping.mapResult(block.start + flag.from, 1);
+                const mappedTo = mapping.mapResult(block.start + flag.to, -1);
+                if (mappedFrom.deleted || mappedTo.deleted) continue;
+                const from = mappedFrom.pos;
+                const to = mappedTo.pos;
+                if (to <= from || doc.textBetween(from, to, "\n", "\n") !== flag.original) continue;
+                if (selection.from <= to && selection.to >= from) continue;
+                if (codeMark && doc.rangeHasMark(from, to, codeMark)) continue;
+                if (current.rejected.some((span) => from < span.to && to > span.from)) continue;
+                if (planned.some((item) => from < item.to && to > item.from)) continue;
+                const existing = current.flags.find((item) => item.from === from && item.to === to && item.original === flag.original);
+                flagItems.push({
+                  id: existing?.id ?? `autr-flag-${flagCounter++}`,
+                  from,
+                  to,
+                  original: flag.original,
+                  suggestions: flag.suggestions,
+                  reason: flag.reason,
+                });
+              }
+              const flagUpdate: FlagUpdate = {
+                range: [mapping.map(block.start, -1), mapping.map(block.start + limit, 1)],
+                items: flagItems,
+              };
+
+              if (planned.length === 0) {
+                const sameFlags =
+                  flagItems.length === current.flags.filter((f) => f.from >= flagUpdate.range[0] && f.to <= flagUpdate.range[1]).length &&
+                  flagItems.every((item) => current.flags.some((f) => f.id === item.id && f.from === item.from));
+                const tr = view.state.tr;
+                tr.setMeta("addToHistory", false);
+                tr.setMeta(AUTOCORRECT_META, sameFlags ? { type: "settle-track", on: false } : { type: "flags", endSettle: true, ...flagUpdate });
+                tracking = false;
+                view.dispatch(tr);
+                return;
+              }
               planned.sort((a, b) => a.from - b.from);
 
               view.dispatch(closeHistory(view.state.tr));
@@ -1062,7 +1288,13 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                 delta += item.fix.replacement.length - (item.to - item.from);
               }
               tr = closeHistory(tr);
-              tr.setMeta(AUTOCORRECT_META, { type: "add", records: added, endSettle: true } satisfies AutocorrectMeta);
+              // İşaretlerin konumları bu işlemden önceki belgeye göre; eklentinin `apply`'ı onları işlemden geçirir.
+              tr.setMeta(AUTOCORRECT_META, {
+                type: "add",
+                records: added,
+                endSettle: true,
+                flags: flagUpdate,
+              } satisfies AutocorrectMeta);
               tracking = false;
               view.dispatch(tr);
               options.onSettled?.(added);
@@ -1085,6 +1317,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               if (!current) return;
 
               if (current.editStamp !== previous?.editStamp) scheduleSettle(view);
+              if (current.flags !== previous?.flags) options.onFlagsChange?.(current.flags);
 
               if (current.undoneByHistory.length > 0 && current.undoneByHistory !== previous?.undoneByHistory) {
                 if (current.undoneByHistory.length === 1) {

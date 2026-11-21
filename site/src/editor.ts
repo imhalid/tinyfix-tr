@@ -8,6 +8,7 @@ import {
   type AppliedFix,
   type AutocorrectRuntime,
   type BatchProgress,
+  type FlaggedWord,
 } from "./autocorrectExtension";
 import { SCHEMA_EXTENSIONS } from "./importFiles";
 import { ReviewExtension, type Issue } from "./review";
@@ -23,6 +24,8 @@ export interface EditorMountOptions {
   onSettled?: (fixes: readonly AppliedFix[]) => void;
   onUndo?: (fix: AppliedFix) => void;
   onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
+  onFlagClick?: (flag: FlaggedWord, element: HTMLElement) => void;
+  onFlagsChange?: (flags: readonly FlaggedWord[]) => void;
   onBatchUndo?: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress?: (progress: BatchProgress | null) => void;
   onIssueClick?: (issue: Issue, element: HTMLElement) => void;
@@ -56,6 +59,8 @@ export function mountEditor(options: EditorMountOptions): EditorController {
         onSettled: options.onSettled,
         onUndo: options.onUndo,
         onFixClick: options.onFixClick,
+        onFlagClick: options.onFlagClick,
+        onFlagsChange: options.onFlagsChange,
         onBatchUndo: options.onBatchUndo,
         onBatchProgress: options.onBatchProgress,
       }),

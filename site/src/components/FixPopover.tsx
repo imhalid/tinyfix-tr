@@ -19,6 +19,7 @@ const STEP_LABEL: Record<WordStep["by"], string> = {
   word: "Kelime bitince",
   rescan: "Paragraf yeniden tarandı",
   context: "Bağlama göre",
+  chosen: "Önerilerden seçildi",
 };
 
 const timeFormat = new Intl.DateTimeFormat("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
