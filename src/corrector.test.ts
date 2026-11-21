@@ -394,3 +394,7 @@ test("ol- after a participle is a helper verb, not öl-", { skip: !corrector && 
   assert.equal(corrector!.correct("Ona yardim ediyor oluyorduk.").text, "Ona yardım ediyor oluyorduk.");
   assert.equal(corrector!.correct("Ona yardım ediyor oluyorduk.").text, "Ona yardım ediyor oluyorduk.");
 });
+
+test("a unique valid mark variant keeps its lower bar when plain restoration also proposes it", { skip: !corrector && "lexicon not built" }, () => {
+  assert.equal(corrector!.correct("bu cihaz neden duzeltmiyor").text, "bu cihaz neden düzeltmiyor");
+});

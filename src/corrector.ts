@@ -627,8 +627,17 @@ export class Corrector {
     const add: AddCandidate = (text, kind, score, base = typedScore, threshold) => {
       if (!Number.isFinite(score) || !Number.isFinite(base) || text === word) return;
       const existing = found.get(text);
+      // The same fix may come from two rules with different bars (plain mark restoration and the lower bar for a
+      // unique morphologically valid variant). Keep the best margin and the lower bar of the two, or the lower bar
+      // is lost whenever the other rule saw the same candidate first ("duzeltmiyor" -> "düzeltmiyor").
+      const sameKind = existing?.kind === kind;
+      const bar = (candidate: { kind: CandidateKind; threshold?: number }) =>
+        candidate.threshold ?? this.settings.threshold[candidate.kind];
       if (!existing || score - base > marginOf(existing)) {
-        found.set(text, { text, kind, score, base, joinsNext: false, threshold });
+        const keepBar = sameKind && existing && bar(existing) < bar({ kind, threshold });
+        found.set(text, { text, kind, score, base, joinsNext: false, threshold: keepBar ? existing.threshold : threshold });
+      } else if (sameKind && bar({ kind, threshold }) < bar(existing)) {
+        existing.threshold = threshold;
       }
     };
     const capitalized = isUpperInitial(typed);
