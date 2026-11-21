@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 import { describe, test } from "node:test";
 import { encodeBinaryDictionary } from "./binary.ts";
 import { parseDictionaries } from "./dictionary.ts";
-import { TurkishMorphology } from "./index.ts";
+import { MorphPrior, TurkishMorphology, turkishEditCost } from "./index.ts";
 
 const DICT_PATHS = [
   "data/morph/master-dictionary.dict",
@@ -554,5 +554,67 @@ describe("TurkishMorphology", () => {
     for (const word of ["hükûmetten", "zeytinyağları", "bana", "diyordum", "ağzımızı", "evdekiler", "kitabımı"]) {
       assert.deepEqual(binMorph.analyze(word), morph.analyze(word), `analyze mismatch for "${word}"`);
     }
+  });
+
+  test("AMR2 binary round-trip preserves MorphPrior counts and suffix-chain probabilities", () => {
+    const miniItems = parseDictionaries(["düzenlemek\nkullanmak\ngerek\n"]);
+    const prior = new MorphPrior({
+      lemmaCounts: new Map([
+        ["düzenle|Verb", 75000],
+        ["kullan|Verb", 250000],
+        ["gerek|Noun", 5000],
+      ]),
+      chainProbs: new Map([
+        ["Verb|Neg+Prog1+A3sg", 0.002],
+        ["Verb|Pass+Verb+Prog1+A3sg", 0.0007],
+        ["Verb|PastPart+Noun+A3sg+P1sg+Loc", 0.0005],
+      ]),
+      bigramProbs: new Map([
+        ["^Verb>Neg", 0.08],
+        ["Neg>Prog1", 0.12],
+        ["Prog1>A3sg", 0.45],
+        ["A3sg>$", 0.8],
+      ]),
+    });
+    const bytes = encodeBinaryDictionary(miniItems, prior);
+    const loaded = TurkishMorphology.fromBinary(bytes);
+    assert.equal(loaded.hasPrior, true);
+    assert.ok(loaded.isWord("düzenlemiyor"));
+    const pNeg = loaded.priorCount("düzenlemiyor");
+    const pPass = loaded.priorCount("düzenleniyor");
+    assert.ok(pNeg > 100 && pNeg < 220, `expected ~150 for düzenlemiyor, got ${pNeg}`);
+    assert.ok(pNeg > pPass, `expected active negative (${pNeg}) > passive (${pPass})`);
+    assert.ok(loaded.priorCount("kullandığımda") > 80);
+    assert.equal(loaded.priorCount("duzenblemiyor"), 0);
+  });
+
+  test("fuzzySearch finds mark-loss + 1-edit, cross-boundary swaps, and 2-edit double omissions", () => {
+    const f1 = morph.fuzzySearch("duzenblemiyor", 1, 20);
+    assert.ok(
+      f1.some((c) => c.word === "düzenlemiyor" && c.foldedEdits === 1),
+      `expected düzenlemiyor in fuzzySearch(duzenblemiyor, 1), got: ${f1.map((c) => c.word).join(", ")}`,
+    );
+    // Out-of-band short stems must never leak into results.
+    assert.ok(!f1.some((c) => c.word.length < 10), `unexpected short candidate in ${f1.map((c) => c.word).join(", ")}`);
+
+    const f2 = morph.fuzzySearch("duzenlemniyor", 1, 20);
+    assert.ok(f2.some((c) => c.word === "düzenlemiyor"));
+    assert.ok(f2.some((c) => c.word === "düzenleniyor"));
+
+    const fSwap = morph.fuzzySearch("kalelmerimi", 1, 20);
+    assert.ok(fSwap.some((c) => c.word === "kalemlerimi"), "cross-boundary transposition should be found");
+
+    const fZero = morph.fuzzySearch("kullandğımda", 1, 20);
+    assert.ok(fZero.some((c) => c.word === "kullandığımda"), "zero-count 1-omission should be found");
+
+    const fDouble1 = morph.fuzzySearch("grkli", 2, 40);
+    assert.ok(fDouble1.some((c) => c.word === "gerekli"), "double omission grkli -> gerekli");
+
+    const fDouble2 = morph.fuzzySearch("beketiyruz", 2, 40);
+    assert.ok(fDouble2.some((c) => c.word === "bekletiyoruz"), "double omission beketiyruz -> bekletiyoruz");
+
+    // Verify Turkish edit cost prefers mark-restoration + near-key over far substitutions.
+    assert.ok(turkishEditCost("duzenblemiyor", "düzenlemiyor") < 1.3);
+    assert.ok(turkishEditCost("kullandğımda", "kullandığımda") < 0.7);
   });
 });

@@ -48,6 +48,29 @@ export interface Fix {
   byContext?: boolean;
 }
 
+/** Otomatik düzeltilmeyen şüpheli bir kelime için işaretlenme nedeni. */
+export type FlagReason = "invalid" | "rare";
+
+/** Otomatik düzeltilmeyen ancak yazım hatası şüphesi taşıyan bir kelime ve sıralı önerileri. */
+export interface Flag {
+  /** Şüpheli kelimenin başlangıç dizini (UTF-16 kod birimi). */
+  from: number;
+  /** Şüpheli kelimenin bitiş dizini (dahil değil). */
+  to: number;
+  /** Kullanıcının yazdığı biçim. */
+  original: string;
+  /** En çok 5 sıralı düzeltme önerisi (bağlam modeli yüklüyse cümleye göre sıralanmış olabilir). */
+  suggestions: string[];
+  /** İşaretlenme nedeni: "invalid" (biçimbilim reddediyor) veya "rare" (çok seyrek ve geçerli bir adaya çok yakın). */
+  reason: FlagReason;
+}
+
+/** `inspect` çağrısının döndürdüğü otomatik düzeltmeler ve şüpheli kelime işaretleri. */
+export interface InspectResult {
+  fixes: Fix[];
+  flags: Flag[];
+}
+
 /** İsteğe bağlı bağlam modeli dosya adı. */
 export const CONTEXT_MODEL_FILE = "context.onnx" as const;
 
@@ -175,6 +198,8 @@ export interface Autr {
   readonly hasContext: boolean;
   /** Metindeki düzeltmeleri sırayla ve çakışmayacak biçimde döndürür. */
   check(text: string, options?: CheckOptions): Promise<Fix[]>;
+  /** Metindeki otomatik düzeltmeleri ve düzeltilmeyen şüpheli kelimelerin işaretlerini döndürür. */
+  inspect(text: string, options?: CheckOptions): Promise<InspectResult>;
   /** Verilen düzeltmeleri metne uygular. Metin düzeltmeyle uyuşmuyorsa hata fırlatır. */
   apply(text: string, fixes: readonly Fix[]): string;
   /** `check` ve `apply` adımlarını birlikte çalıştırır. */

@@ -1,7 +1,7 @@
 import { DEFAULT_BASE_URL, resolveBaseUrl } from "./data.ts";
 import { applyFixes } from "./engine.ts";
 import type { WorkerRequest, WorkerResponse } from "./protocol.ts";
-import type { Autr, CheckOptions, Fix, LoadOptions, Mode } from "./types.ts";
+import type { Autr, CheckOptions, Fix, InspectResult, LoadOptions, Mode } from "./types.ts";
 
 interface PendingRequest {
   resolve: (value: unknown) => void;
@@ -90,6 +90,19 @@ export function loadAutrInWorker(options: LoadOptions): Promise<Autr> {
           send({ type: "check", id, text, options: checkOptions });
         });
       },
+      inspect: (text: string, checkOptions?: CheckOptions): Promise<InspectResult> => {
+        if (disposed) {
+          return Promise.reject(new Error("autr: Örnek kapatıldı (dispose edildi) ve artık kullanılamaz."));
+        }
+        return new Promise<InspectResult>((resolve, reject) => {
+          const id = nextId++;
+          pending.set(id, {
+            resolve: (value) => resolve(value as InspectResult),
+            reject,
+          });
+          send({ type: "inspect", id, text, options: checkOptions });
+        });
+      },
       apply: (text: string, fixes: readonly Fix[]): string => applyFixes(text, fixes),
       fix: async (text: string, checkOptions?: CheckOptions): Promise<string> => {
         const fixes = await autr.check(text, checkOptions);
@@ -154,6 +167,14 @@ export function loadAutrInWorker(options: LoadOptions): Promise<Autr> {
           if (entry) {
             pending.delete(message.id);
             entry.resolve(message.fixes);
+          }
+          return;
+        }
+        case "inspectResult": {
+          const entry = pending.get(message.id);
+          if (entry) {
+            pending.delete(message.id);
+            entry.resolve({ fixes: message.fixes, flags: message.flags });
           }
           return;
         }

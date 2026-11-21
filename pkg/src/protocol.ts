@@ -1,4 +1,4 @@
-import type { BinaryData, CheckOptions, Fix, LoadProgress, Mode, RawData } from "./types.ts";
+import type { BinaryData, CheckOptions, Fix, Flag, LoadProgress, Mode, RawData } from "./types.ts";
 
 export type WorkerRequest =
   | {
@@ -15,6 +15,12 @@ export type WorkerRequest =
     }
   | {
       type: "check";
+      id: number;
+      text: string;
+      options?: CheckOptions;
+    }
+  | {
+      type: "inspect";
       id: number;
       text: string;
       options?: CheckOptions;
@@ -56,6 +62,12 @@ export type WorkerResponse =
       type: "result";
       id: number;
       fixes: Fix[];
+    }
+  | {
+      type: "inspectResult";
+      id: number;
+      fixes: Fix[];
+      flags: Flag[];
     }
   | {
       type: "disposed";

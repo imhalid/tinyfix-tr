@@ -1,6 +1,7 @@
 import { buildContextFeatures, type ContextKind, type ContextModel, type TypoCandidateMeta } from "./context.ts";
 import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
+import { turkishEditCost, type FuzzyMorphCandidate } from "./morphology/fuzzy.ts";
 import {
   ALSO,
   COMPOUND_VERB_JOINS,
@@ -75,10 +76,24 @@ export interface WordAnalysis {
   readonly morphemes: readonly string[];
 }
 
+/** Why an untouched word was flagged as a likely misspelling. */
+export type FlagReason = "invalid" | "rare";
+
+/** A suspicious word left untouched by auto-fix, with ranked suggestions (up to 5). */
+export interface SpellFlag {
+  start: number;
+  end: number;
+  original: string;
+  suggestions: string[];
+  reason: FlagReason;
+}
+
 /** Tells whether a lowercase form is a real Turkish word by its suffixes (src/morphology). */
 export interface WordValidator {
   isWord(form: string): boolean;
   analyze?(form: string): readonly WordAnalysis[];
+  priorCount?(form: string): number;
+  fuzzySearch?(form: string, maxEdits?: number, maxResults?: number): readonly FuzzyMorphCandidate[];
 }
 
 /** contraction: a spoken-style contraction spelled out ("noldu" -> "ne oldu"), only when Settings.contractions is on. */
@@ -233,6 +248,12 @@ const BLOCKED_STEM_MORPHEMES = new Set([
 ]);
 /** 1st/2nd person nominal predicate endings blocked for zero-count unseen mark guesses ("alveolusun" -> "alveolüsün"). */
 const NOMINAL_PERSONAL_AGREEMENT = new Set(["A1sg", "A2sg", "A1pl", "A2pl"]);
+/** Productive Turkish nominal suffixes allowed on attested OOV loanword/compound roots missing from Zemberek ("özgeçmişimi", "tripodlar"). */
+const OOV_NOMINAL_SUFFIX =
+  /^(?:l[ae]r(?:(?:[ıiuü]m(?:[ıiuü]z)?|[ıiuü]n(?:[ıiuü]z)?|[ıiuü])(?:n?[dt][ae]n?|n?[dt][ae]ki|n?[aeıiuü]|n[ıiuü]n|y?l[ae])?|[dt][ae]n?|[dt][ae]ki|[ıiuü]n|[aeıiuü]|l[ae])?|(?:[ıiuü]m(?:[ıiuü]z)?|[ıiuü]n(?:[ıiuü]z)?|s?[ıiuü])(?:n?[dt][ae]n?|n?[dt][ae]ki|n?[aeıiuü]|n[ıiuü]n|y?l[ae])?|[dt][ae]n?|[dt][ae]ki|n?[ıiuü]n|y?[aeıiuü]|y?l[ae]|l[ıiuü]k?)(?:[dt][ıiuü]r|y?[dt][ıiuü]|y?m[ıiuü]ş)?$/;
+/** Latin/scientific taxonomic or clearly foreign suffix patterns that shouldn't be flagged when no close Turkish candidate exists. */
+const FOREIGN_TAXONOMIC_SUFFIX =
+  /(?:idae|aceae|inae|formes|ensis|oides|phyllus|flora|saurus|stoma|poda|comulus|ischer|lichkeit|hausen|shire|burgh|stadt|field|worth|ingham)$/;
 
 export function tokenize(text: string): Token[] {
   return [...text.matchAll(TOKEN)].map((match) => {
@@ -421,8 +442,26 @@ export class Corrector {
 
   /** Returns the corrected text and the list of changes made. */
   correct(text: string, options: CorrectOptions = {}): { text: string; corrections: Correction[] } {
+    const { text: corrected, corrections } = this.runCorePass(text, options, false);
+    return { text: corrected, corrections };
+  }
+
+  /**
+   * Like correct(), but also flags every suspicious untouched word (rejected by morphology or very rare near a
+   * much stronger valid word) with up to 5 ranked suggestions.
+   */
+  inspect(text: string, options: CorrectOptions = {}): { text: string; corrections: Correction[]; flags: SpellFlag[] } {
+    return this.runCorePass(text, options, true);
+  }
+
+  private runCorePass(
+    text: string,
+    options: CorrectOptions,
+    collectFlags: boolean,
+  ): { text: string; corrections: Correction[]; flags: SpellFlag[] } {
     const tokens = tokenize(text);
     const corrections: Correction[] = [];
+    const flags: SpellFlag[] = [];
     const evidence = stripMarksIn(text, options.autoMarked ?? []);
     const textHasMarks = hasTurkishMarks(evidence);
     const { asciiTyped, sentenceOf } = this.asciiEvidence(tokenize(evidence));
@@ -467,6 +506,10 @@ export class Corrector {
       }
       const fix = this.check(token.text, context, next?.token.text);
       if (!fix) {
+        if (collectFlags) {
+          const flag = this.detectFlag(token, context, next?.token.text);
+          if (flag) flags.push(flag);
+        }
         prevWord = lowerTr(token.text);
         prevIsName = !context.atSentenceStart && isUpperInitial(token.text);
         prevCapitalized = isUpperInitial(token.text);
@@ -493,7 +536,7 @@ export class Corrector {
       output += text.slice(cursor, correction.start) + correction.replacement;
       cursor = correction.end;
     }
-    return { text: output + text.slice(cursor), corrections };
+    return { text: output + text.slice(cursor), corrections, flags };
   }
 
   /**
@@ -506,6 +549,27 @@ export class Corrector {
     model: ContextModel,
     options: CorrectOptions = {},
   ): Promise<{ text: string; corrections: Correction[] }> {
+    const { text: corrected, corrections } = await this.runAsyncPass(text, model, options, false);
+    return { text: corrected, corrections };
+  }
+
+  /**
+   * Like inspect(), using the context model both to resolve ambiguities and to re-rank flag suggestions in sentence context.
+   */
+  async inspectAsync(
+    text: string,
+    model: ContextModel,
+    options: CorrectOptions = {},
+  ): Promise<{ text: string; corrections: Correction[]; flags: SpellFlag[] }> {
+    return this.runAsyncPass(text, model, options, true);
+  }
+
+  private async runAsyncPass(
+    text: string,
+    model: ContextModel,
+    options: CorrectOptions,
+    collectFlags: boolean,
+  ): Promise<{ text: string; corrections: Correction[]; flags: SpellFlag[] }> {
     const tokens = tokenize(text);
     const evidence = stripMarksIn(text, options.autoMarked ?? []);
     const textHasMarks = hasTurkishMarks(evidence);
@@ -881,7 +945,160 @@ export class Corrector {
       output += text.slice(cursor, correction.start) + correction.replacement;
       cursor = correction.end;
     }
-    return { text: output + text.slice(cursor), corrections };
+    const finalText = output + text.slice(cursor);
+    if (!collectFlags) {
+      return { text: finalText, corrections, flags: [] };
+    }
+
+    // Collect flags for every suspicious token left untouched by both core and context corrections.
+    const rawFlags: Array<{
+      flag: SpellFlag;
+      meta: TypoCandidateMeta[];
+      coreScores: number[];
+      asciiContext: boolean;
+    }> = [];
+    let fAtStart = true;
+    let fPrevWord: string | undefined;
+    let fPrevIsName = false;
+    let fPrevCapitalized = false;
+    let corrIdx = 0;
+
+    for (let index = 0; index < tokens.length; index++) {
+      const token = tokens[index]!;
+      if (!token.isWord) {
+        if (SENTENCE_END.has(token.text) || token.text.includes("\n")) fAtStart = true;
+        else if (/\d/.test(token.text)) fAtStart = false;
+        if (token.text !== " ") {
+          fPrevWord = undefined;
+          fPrevIsName = false;
+          fPrevCapitalized = false;
+        }
+        continue;
+      }
+      while (corrIdx < corrections.length && corrections[corrIdx]!.end <= token.start) corrIdx++;
+      const overlappingCorr =
+        corrIdx < corrections.length && overlaps(corrections[corrIdx]!, token) ? corrections[corrIdx]! : undefined;
+      const next = this.nextWord(tokens, index);
+      const sentenceHasAsciiTurkish =
+        !textHasMarks && asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]);
+      const ctx: WordContext = {
+        atSentenceStart: fAtStart,
+        textHasMarks:
+          textHasMarks &&
+          hasTurkishMarks(evidence.slice(0, token.start) + evidence.slice(token.end)) &&
+          !asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]),
+        questionAhead: this.questionAhead(tokens, index),
+        prevWord: fPrevWord,
+        prevIsName: fPrevIsName,
+        prevCapitalized: fPrevCapitalized,
+        nextIsolated: next ? this.isIsolated(tokens, next.index) : false,
+        sentenceHasAsciiTurkish,
+      };
+      fAtStart = false;
+      if (overlappingCorr) {
+        const trailing = lastSpaceWord(overlappingCorr.replacement);
+        fPrevWord = lowerTr(trailing);
+        fPrevIsName = !(ctx.atSentenceStart && !overlappingCorr.replacement.includes(" ")) && isUpperInitial(trailing);
+        fPrevCapitalized = isUpperInitial(trailing);
+        continue;
+      }
+      if (!this.isIsolated(tokens, index)) {
+        fPrevWord = undefined;
+        fPrevIsName = false;
+        fPrevCapitalized = false;
+        continue;
+      }
+      const detected = this.detectFlagDetailed(token, ctx, next?.token.text);
+      if (detected) {
+        rawFlags.push({
+          ...detected,
+          asciiContext: !ctx.textHasMarks || Boolean(ctx.sentenceHasAsciiTurkish),
+        });
+      }
+      fPrevWord = lowerTr(token.text);
+      fPrevIsName = !ctx.atSentenceStart && isUpperInitial(token.text);
+      fPrevCapitalized = isUpperInitial(token.text);
+    }
+
+    // Re-rank multi-suggestion flags in sentence context using a single batched context-model call.
+    const rerankTargets = rawFlags.filter((entry) => entry.flag.suggestions.length >= 2);
+    if (rerankTargets.length > 0) {
+      // Build context slice using final `corrections` so neighboring core+context fixes are visible.
+      const finalContextSlice = (spanStart: number, spanEnd: number): { left: string; right: string } => {
+        const leftFrom = Math.max(0, spanStart - 180);
+        const rightTo = Math.min(text.length, spanEnd + 150);
+        if (corrections.length === 0) {
+          return { left: text.slice(leftFrom, spanStart), right: text.slice(spanEnd, rightTo) };
+        }
+        let left = "";
+        let cur = leftFrom;
+        for (const d of corrections) {
+          if (d.end <= leftFrom) continue;
+          if (d.start >= spanStart) break;
+          if (d.start < cur || d.end > spanStart) continue;
+          left += text.slice(cur, d.start) + d.replacement;
+          cur = d.end;
+        }
+        left += text.slice(cur, spanStart);
+        let right = "";
+        cur = spanEnd;
+        for (const d of corrections) {
+          if (d.end <= spanEnd) continue;
+          if (d.start >= rightTo) break;
+          if (d.start < cur || d.end > rightTo) continue;
+          right += text.slice(cur, d.start) + d.replacement;
+          cur = d.end;
+        }
+        right += text.slice(cur, rightTo);
+        return { left, right };
+      };
+
+      // When re-ranking flag suggestions with the context model, expose the morphological generative prior for
+      // unseen/rare valid candidates (e.g. "düzenlemiyor") so corpus sparsity doesn't bias feature slots 0..2.
+      const priorAwareLexicon = {
+        count: (form: string) => {
+          const raw = this.lexicon.count(form);
+          if (raw >= 20 || form.includes("'") || !this.isRealWord(form)) return raw;
+          return Math.max(raw, Math.round(this.effectiveCount(form, "rank")));
+        },
+        pair: (a: string, b: string) => this.lexicon.pair(a, b),
+      } as unknown as Lexicon;
+
+      const flagScores = await model.score(
+        rerankTargets.map((entry) => {
+          const candidates = [entry.flag.original, ...entry.flag.suggestions];
+          const { left, right } = finalContextSlice(entry.flag.start, entry.flag.end);
+          return {
+            left,
+            right,
+            candidates,
+            features: buildContextFeatures(
+              candidates,
+              "typo",
+              entry.asciiContext,
+              priorAwareLexicon,
+              this.morphology,
+              entry.meta,
+            ),
+          };
+        }),
+      );
+
+      for (let i = 0; i < rerankTargets.length; i++) {
+        const entry = rerankTargets[i]!;
+        const row = flagScores[i];
+        if (!row || row.length !== entry.flag.suggestions.length + 1) continue;
+        const ranked = entry.flag.suggestions.map((sugg, idx) => ({
+          sugg,
+          // Combine sentence context score with core linguistic/edit-cost score (including case-voice agreement).
+          score: row[idx + 1]! + 0.65 * (entry.coreScores[idx] ?? 0),
+        }));
+        ranked.sort((a, b) => b.score - a.score);
+        entry.flag.suggestions = ranked.map((r) => r.sugg);
+      }
+    }
+
+    return { text: finalText, corrections, flags: rawFlags.map((entry) => entry.flag) };
   }
 
   /**
@@ -1524,10 +1741,23 @@ export class Corrector {
         this.lexicon.count(qMatch[1]!) >= 5;
       if (!unsplitQuestion) {
         const unseenLowerInvalid = this.morphology !== undefined && typedCount === 0 && typed === word;
+        const prevIsAcc = unseenLowerInvalid && context.prevWord ? this.isUnambiguousAccusative(context.prevWord) : false;
         for (const [text, slipCost] of this.oneEdit(word, unseenLowerInvalid)) {
           let count = this.lexicon.exactCount(text);
           if (unseenLowerInvalid && this.settings.typoStemShare > 0 && text.length >= 7 && this.isRealWord(text)) {
             count = Math.max(count, this.stemCount(text) * this.settings.typoStemShare);
+          }
+          const morphValid = this.morphology !== undefined && (count >= 1 ? this.isRealWord(text) : false);
+          // For attested-but-rare valid forms (e.g. "gönderdim" obs=20, "beğendim" obs=24) in long unseen words,
+          // allow a capped morphological prior boost (never boosting consonant->vowel substitutions like "göstermdn"->"göstermen").
+          if (
+            unseenLowerInvalid &&
+            morphValid &&
+            word.length >= 8 &&
+            count >= 10 &&
+            slipCost <= 1.25
+          ) {
+            count = Math.max(count, this.effectiveCount(text, "autofix"));
           }
           if (count < 1) continue;
           if (typedCount >= knownWord && (count < 200 * typedCount || !this.isRealWord(text))) continue;
@@ -1535,15 +1765,40 @@ export class Corrector {
           if (!/[aeıioöuüâîû]/.test(text)) continue;
           // A lowercase slip shouldn't rewrite into a mostly-capitalized proper name ("krate" -> "kate", "lmre" -> "emre").
           if (typed === word && this.lexicon.capitalShare(text) >= 0.6) continue;
-          const morphValid = this.morphology !== undefined && this.isRealWord(text);
           const morphPenalty = this.morphology !== undefined && !morphValid ? 1.5 : 0;
+          const voicePenalty = prevIsAcc && morphValid && this.isPurelyPassiveVerb(text) ? 1.4 : 0;
           // For long unseen lowercase invalid words, a morphologically valid high-confidence keyboard edit
           // (swap, near-key sub/extra, or missed key) needs less frequency evidence ("gönderdim", "yoğunluklarında").
           let threshold: number | undefined;
           if (unseenLowerInvalid && morphValid && word.length >= 7 && slipCost <= 1.25 && count >= 20) {
             threshold = 0.6;
           }
-          add(text, "typo", log(count) - cost.typo - slipCost - morphPenalty, typedScore, threshold, slipCost);
+          add(text, "typo", log(count) - cost.typo - slipCost - morphPenalty - voicePenalty, typedScore, threshold, slipCost);
+        }
+        // Principled generative-prior + mark-loss-plus-1-edit recovery for long unseen lowercase invalid words
+        // ("duzenblemiyor" -> "düzenlemiyor", "kullandğımda" -> "kullandığımda", "puanlrım" -> "puanlarım").
+        // Only fires when 1-edit lexicon search didn't already find a passing fix; strictly requires length >= 8,
+        // non-substitution edit when combining with mark restoration (prevents "suhenin" -> "şubenin"), and capped prior
+        // (prevents zero-count rare verb forms like "gerektin" from hijacking double omissions like "gerektn").
+        if (unseenLowerInvalid && word.length >= 8 && this.morphology?.fuzzySearch) {
+          const hasPassing1 = [...found.values()].some(
+            (cand) => marginOf(cand) >= (cand.threshold ?? this.settings.threshold[cand.kind]),
+          );
+          if (!hasPassing1) {
+            for (const f of this.morphology.fuzzySearch(word, 1, 15)) {
+              if (f.editCost > 1.25) continue;
+              if (this.lexicon.capitalShare(f.word) >= 0.6) continue;
+              // If restoring Turkish marks AND editing a char, require length >= 9 and length change or transposition
+              // (blocks 2-consonant substitutions like "suhenin" -> "şubenin" while keeping "duzenblemiyor" -> "düzenlemiyor").
+              const marksChanged = foldTr(f.word) !== f.word && foldTr(word) !== f.word && f.word.length === word.length;
+              if (marksChanged && f.editCost > 1.1) continue;
+              const eff = this.effectiveCount(f.word, "autofix");
+              if (eff < 20) continue;
+              const voicePenalty = prevIsAcc && this.isPurelyPassiveVerb(f.word) ? 1.4 : 0;
+              const threshold = word.length >= 9 && eff >= 28 ? 0.6 : 1.5;
+              add(f.word, "typo", log(eff) - cost.typo - f.editCost - voicePenalty, typedScore, threshold, f.editCost);
+            }
+          }
         }
         // Cautious 2-vowel-drop recovery ("gelyorm" -> "geliyorum", "çalışıyrm" -> "çalışıyorum") when 1-edit finds nothing strong.
         if (unseenLowerInvalid && word.length >= 6) {
@@ -2181,6 +2436,452 @@ export class Corrector {
       if (count > 0 && this.isRealWord(stem)) return count;
     }
     return 0;
+  }
+
+  /**
+   * Empirical-Bayes effective frequency combining observed corpus count with the principled morphological
+   * generative prior `C(lemma, pos) * P(morphemes | pos)` so unseen/rare valid inflections ("düzenlemiyor",
+   * "kullandığımda") rank accurately without inflating bizarre stacked derivations.
+   */
+  private effectiveCount(cand: string, mode: "autofix" | "rank"): number {
+    const obs = this.lexicon.exactCount(cand);
+    const prior = this.morphology?.priorCount?.(cand) ?? 0;
+    if (prior <= 0) return obs;
+    if (mode === "rank") {
+      const priorEst = 0.65 * Math.pow(prior, 0.78);
+      return Math.max(obs, priorEst) + Math.min(obs, priorEst) * 0.25;
+    }
+    // Cap unseen-form prior in auto-fix so a corpus-absent inflection ("gerektin") cannot pretend to
+    // have count 3,000, while strong unseen forms ("düzenlemiyor", "kullandığımda") still pass cleanly.
+    const rawPrior = 0.5 * Math.pow(prior, 0.82);
+    const cappedPrior = obs === 0 ? Math.min(45, rawPrior) : Math.min(120, rawPrior);
+    return Math.max(obs, cappedPrior);
+  }
+
+  /** True when every morphological reading of `word` is accusative ("hatalarını", "arabayı", "kitabını"). */
+  private isUnambiguousAccusative(word: string): boolean {
+    const analyses = this.morphology?.analyze?.(word);
+    if (!analyses || analyses.length === 0) return false;
+    return analyses.every((a) => a.morphemes.includes("Acc"));
+  }
+
+  /** True when every finite verb reading of `word` is passive or intransitive -lAn ("düzenleniyor"). */
+  private isPurelyPassiveVerb(word: string): boolean {
+    const analyses = this.morphology?.analyze?.(word);
+    if (!analyses || analyses.length === 0) return false;
+    const finite = analyses.filter(
+      (a) => a.pos === "Verb" || a.morphemes.some((m) => FINITE_VERB_MORPHEMES.has(m)),
+    );
+    if (finite.length === 0) return false;
+    return finite.every((a) => a.morphemes.includes("Pass") || a.morphemes.includes("Acquire"));
+  }
+
+  /**
+   * True when `word` is a productive, harmonized nominal inflection of a corpus-attested noun/loanword
+   * root missing from Zemberek's static dictionary (e.g. "özgeçmişimi" = "özgeçmiş"+"imi", "tripodlar" = "tripod"+"lar").
+   * Never activates for roots Zemberek already knows, so real Turkish root typos are never shielded.
+   */
+  private isAttestedOovInflection(word: string): boolean {
+    if (this.morphology === undefined || word.length < 6) return false;
+    for (let cut = word.length - 1; cut >= 4; cut--) {
+      const root = word.slice(0, cut);
+      const suffix = word.slice(cut);
+      if (!OOV_NOMINAL_SUFFIX.test(suffix)) continue;
+      if (this.lexicon.exactCount(root) < 12 || this.lexicon.capitalShare(root) >= 0.5) continue;
+      if (this.isRealWord(root)) continue;
+      // Check consonant assimilation & vowel harmony on suffix boundary.
+      if (suffix.startsWith("d") && isVoicelessFinal(root)) continue;
+      if (suffix.startsWith("t") && !isVoicelessFinal(root)) continue;
+      const firstSuffixVowel = [...suffix].find((ch) => VOWELS.has(ch));
+      if (firstSuffixVowel && !followsHarmony(root, firstSuffixVowel)) continue;
+      // Also verify internal suffix vowels harmonize with each other (except invariant -ki).
+      const checkCore = suffix.endsWith("ki") ? suffix.slice(0, -2) : suffix;
+      let prevV = root;
+      let harmOk = true;
+      for (let i = 0; i < checkCore.length; i++) {
+        const ch = checkCore[i]!;
+        if (VOWELS.has(ch)) {
+          if (!followsHarmony(prevV, ch)) {
+            harmOk = false;
+            break;
+          }
+          prevV = ch;
+        }
+      }
+      if (harmOk) return true;
+    }
+    return false;
+  }
+
+  /** Detects whether an untouched token should be flagged, returning the SpellFlag or null. */
+  private detectFlag(token: Token, context: WordContext, nextTyped?: string): SpellFlag | null {
+    return this.detectFlagDetailed(token, context, nextTyped)?.flag ?? null;
+  }
+
+  /**
+   * Procedural misspelling detector for words not auto-fixed by `check()`.
+   * Separates `invalid` (rejected by morphology & unseen) from `rare` (rejected by morphology, very rare,
+   * and close to a much stronger valid Turkish word) while protecting proper names, acronyms, foreign/scientific
+   * words, apostrophe forms, contractions, and productive inflections of attested OOV nouns.
+   */
+  private detectFlagDetailed(
+    token: Token,
+    context: WordContext,
+    nextTyped?: string,
+  ): { flag: SpellFlag; meta: TypoCandidateMeta[]; coreScores: number[] } | null {
+    const typed = token.text;
+    if (isAllUpper(typed) || typed.length < 2) return null;
+    const word = lowerTr(typed);
+    if (word.includes("'")) return null;
+    // Mixed/internal uppercase ("MacOS", "OpenAI", "HAProxy", "iPhone"): brand/code, not a spelling flag.
+    if (typed.slice(1) !== word.slice(1)) return null;
+    const capitalized = isUpperInitial(typed);
+    // Mid-sentence capitalized words are proper names.
+    if (capitalized && !context.atSentenceStart) return null;
+    // Respect contractions: when contractions are off, known contractions stay untouched and unflagged.
+    if (this.knownFix(typed, word, context, nextTyped) === "keep") return null;
+
+    const hasMorph = this.morphology !== undefined;
+    if (hasMorph && this.isRealWord(word)) return null;
+
+    const typedCount = this.lexicon.count(word);
+    // Common words in the corpus (modern loanwords, proper names, terms missing from Zemberek) are not flagged.
+    if (typedCount >= 50) return null;
+    const capShare = this.lexicon.capitalShare(word);
+    // Capitalized sentence-start words that are mostly capitalized in the corpus are proper names.
+    // Lowercase words whose corpus occurrences are capitalized proper names ("beek" vs "Beek", "sebz" vs "Sebz")
+    // have very low lowercase count and ARE checked as rare typos!
+    if (capitalized && typedCount >= 2 && capShare >= 0.45) return null;
+    const typedLowerCount = Math.round(typedCount * (1 - capShare));
+    // Without morphology, only flag completely unseen lowercase words that have strong lexicon suggestions.
+    if (!hasMorph && (typedCount > 0 || capitalized)) return null;
+
+    const ranked = this.rankedSuggestionsFor(typed, word, context, typedCount, nextTyped);
+    const top = ranked[0];
+
+    // Protect productive harmonized inflections of attested OOV nouns ("özgeçmişimi", "tripodlar", "stabilitesinden")
+    // unless a very close high-frequency valid Turkish word competes.
+    if (typedCount === 0 && hasMorph && this.isAttestedOovInflection(word)) {
+      const strongComp = top !== undefined && top.morphValid && top.editCost <= 0.85 && top.effCount >= 50;
+      if (!strongComp) return null;
+    }
+
+    if (typedCount === 0) {
+      // Sentence-start capitalized words (Wikipedia / subtitles) are very often proper names ("Maniwaki", "Ruluka").
+      // Flag them ONLY when there is a plausible valid Turkish candidate (e.g. "Hoxam" -> "Hocam", "Tikım" -> "Takım",
+      // "Maalledek" -> "Mahalledeki"). Allow up to capShare < 0.8 for morph-valid forms of address ("Hocam").
+      if (capitalized) {
+        if (!top) return null;
+        const plausibleAtStart =
+          top.kind === "split" ||
+          top.kind === "apostrophe" ||
+          (top.morphValid &&
+            this.lexicon.capitalShare(top.text) < 0.8 &&
+            ((top.editCost <= 1.2 && top.effCount >= 1) ||
+              (top.editCost <= 1.75 && top.effCount >= 5) ||
+              (top.editCost <= 1.95 && top.effCount >= 50)));
+        if (!plausibleAtStart) return null;
+      } else {
+        // Lowercase unseen word rejected by morphology: suppress foreign/scientific/Latin terms that have NO close
+        // Turkish candidate ("scapiflora", "neurophyllus", "psychoanalytischer", "milicenton", "dârayî").
+        // A word containing Turkish diacritics ("klasöwe" -> "klasöre") or within 1 edit of an attested Turkish word
+        // is kept even when a typo hits q/w/x.
+        const hasCloseTurkish =
+          top !== undefined &&
+          (top.kind === "split" ||
+            top.kind === "marks" ||
+            (top.morphValid &&
+              ((top.editCost <= 1.75 && (top.effCount >= 0.5 || top.obsCount >= 1)) ||
+                (top.editCost <= 1.9 && top.obsCount >= 15 && hasTurkishMarks(word)))));
+        if (!hasCloseTurkish) {
+          if (/[qwxâîû]/.test(word) || FOREIGN_TAXONOMIC_SUFFIX.test(word)) return null;
+          if (ranked.length === 0) return null;
+        }
+      }
+
+      const selected = ranked.slice(0, 5);
+      const suggestions = selected.map((c) => c.display);
+      const meta: TypoCandidateMeta[] = [
+        { coreMargin: 0, slipCost: 0, isMarkVariant: false },
+        ...selected.map((c) => ({
+          coreMargin: c.rankScore,
+          slipCost: c.editCost,
+          isMarkVariant: c.isMarkVariant,
+        })),
+      ];
+      return {
+        flag: { start: token.start, end: token.end, original: typed, suggestions, reason: "invalid" },
+        meta,
+        coreScores: selected.map((c) => c.rankScore),
+      };
+    }
+
+    // Rare-but-seen (0 < typedCount < 50) morph-rejected word: flag as "rare" only when very close to a
+    // much stronger valid Turkish word ("bka" -> "bak", "aşam" -> "akşam", "gedi" -> "geldi", "beek" -> "bebek",
+    // "sebz" -> "sebze", "Afedersiniz" -> "Affedersiniz").
+    if (!top) return null;
+    // Sentence-start capitalized words already seen in the lexicon (e.g. "Yaghi", "Şeyhhasan", "Kilittaşı") are
+    // usually proper names/compounds; only flag them when a massive 1-edit Turkish word dominates ("Afedersiniz").
+    if (capitalized) {
+      const hugeAtStart =
+        top.morphValid &&
+        this.lexicon.capitalShare(top.text) < 0.5 &&
+        top.editCost <= 0.85 &&
+        top.effCount >= Math.max(500, typedCount * 200);
+      if (!hugeAtStart) return null;
+    } else {
+      if (this.lexicon.capitalShare(top.text) >= 0.5) return null;
+      const effectiveTyped = Math.max(typedLowerCount, 1);
+      const isStrongSplit = top.kind === "split" && top.effCount >= Math.max(80, effectiveTyped * 20);
+      const isCloseTypo = ranked.slice(0, 3).some(
+        (cand) =>
+          cand.morphValid &&
+          this.lexicon.capitalShare(cand.text) < 0.5 &&
+          ((cand.editCost <= 1.25 && cand.effCount >= Math.max(typedCount <= 3 ? 45 : 80, effectiveTyped * 18)) ||
+            (typedCount <= 3 && cand.editCost <= 1.65 && cand.effCount >= 200)),
+      );
+      if (!isStrongSplit && !isCloseTypo) return null;
+    }
+
+    // Protect attested phrase tokens in bigrams ("van der", "de la") from rare flagging.
+    const nextLower = nextTyped && !isAllUpper(nextTyped) ? lowerTr(nextTyped) : undefined;
+    if (typedCount >= 5 && word.length <= 3) {
+      if (context.prevWord && this.lexicon.pair(context.prevWord, word) > 0) return null;
+      if (nextLower && this.lexicon.pair(word, nextLower) > 0) return null;
+    }
+
+    const selected = ranked.slice(0, 5);
+    const suggestions = selected.map((c) => c.display);
+    const meta: TypoCandidateMeta[] = [
+      { coreMargin: 0, slipCost: 0, isMarkVariant: false },
+      ...selected.map((c) => ({
+        coreMargin: c.rankScore,
+        slipCost: c.editCost,
+        isMarkVariant: c.isMarkVariant,
+      })),
+    ];
+    return {
+      flag: { start: token.start, end: token.end, original: typed, suggestions, reason: "rare" },
+      meta,
+      coreScores: selected.map((c) => c.rankScore),
+    };
+  }
+
+  /**
+   * Builds and ranks up to 5 suggestions for a suspicious word using:
+   * 1. Existing rule candidates (marks, splits, apostrophes, short typos, 1-edit lexicon typos, double vowel drops),
+   * 2. Fast 1-edit mark-folded fuzzy morphological search (catches unseen valid forms + mark-loss + 1 typo),
+   * 3. 2-edit mark-folded fuzzy morphological search when 1-edit doesn't yield strong candidates (double omissions / 2 typos),
+   * 4. Principled scoring with empirical-Bayes morphological prior, Turkish keyboard edit cost, bigram support,
+   *    and Turkish accusative-passive case-voice agreement.
+   */
+  private rankedSuggestionsFor(
+    typed: string,
+    word: string,
+    context: WordContext,
+    typedCount: number,
+    nextTyped?: string,
+  ): Array<{
+    text: string;
+    display: string;
+    kind: CandidateKind;
+    editCost: number;
+    obsCount: number;
+    effCount: number;
+    morphValid: boolean;
+    rankScore: number;
+    isMarkVariant: boolean;
+  }> {
+    const foldedWord = foldTr(word);
+    const nextLower = nextTyped && !isAllUpper(nextTyped) ? lowerTr(nextTyped) : undefined;
+    const prevIsAcc = context.prevWord ? this.isUnambiguousAccusative(context.prevWord) : false;
+
+    const pool = new Map<
+      string,
+      {
+        text: string;
+        kind: CandidateKind;
+        editCost: number;
+        foldedEdits: number;
+        morphValid: boolean;
+        obsCount: number;
+        effCount: number;
+      }
+    >();
+
+    const consider = (
+      candText: string,
+      kind: CandidateKind,
+      editCost: number,
+      knownMorphValid?: boolean,
+      foldedEdits = 1,
+    ) => {
+      if (!candText || candText === word) return;
+      const isMulti = candText.includes(" ");
+      if (!isMulti) {
+        if (!/[aeıioöuüâîû]/.test(candText)) return;
+        if (typed === word && this.lexicon.capitalShare(candText) >= 0.65) return;
+      }
+      const existing = pool.get(candText);
+      if (existing && existing.editCost <= editCost) {
+        if (foldedEdits < existing.foldedEdits) existing.foldedEdits = foldedEdits;
+        return;
+      }
+
+      const morphValid =
+        knownMorphValid ??
+        (isMulti
+          ? candText.split(" ").every((p) => this.isRealWord(p) || QUESTION.test(p) || ALSO.test(p) || p === "ki")
+          : this.morphology !== undefined && this.isRealWord(candText));
+      let obsCount: number;
+      let effCount: number;
+      if (isMulti) {
+        const [p1, p2] = candText.split(" ") as [string, string];
+        const pairC = this.lexicon.pair(p1, p2);
+        const minC = Math.min(this.lexicon.exactCount(p1), this.lexicon.exactCount(p2));
+        obsCount = Math.max(pairC, minC);
+        effCount = Math.max(pairC, Math.min(this.effectiveCount(p1, "rank"), Math.max(this.lexicon.count(p2), 50)));
+      } else {
+        obsCount = this.lexicon.exactCount(candText);
+        effCount = morphValid ? this.effectiveCount(candText, "rank") : obsCount;
+      }
+      // Require either corpus attestation or morphological validity with non-trivial generative prior.
+      if (obsCount < 1 && (!morphValid || (this.morphology?.priorCount && effCount < 0.03))) return;
+
+      pool.set(candText, { text: candText, kind, editCost, foldedEdits, morphValid, obsCount, effCount });
+    };
+
+    // 1. Existing rule/lexicon candidates (marks, splits, apostrophes, short 3-letter typos, 1-edit lexicon typos).
+    const existingCands = this.candidates(word, typed, context, typedCount, nextTyped);
+    for (const c of existingCands) {
+      if (c.joinsNext) continue;
+      let ec: number;
+      let fe = 1;
+      if (c.kind === "split") ec = 0.85;
+      else if (c.kind === "apostrophe") ec = 0.75;
+      else {
+        ec = turkishEditCost(word, c.text);
+        if (foldTr(c.text) === foldedWord) fe = 0;
+      }
+      consider(c.text, c.kind, ec, undefined, fe);
+    }
+
+    // 2. Short 3-letter words: allow swaps, insertions, and near-key substitutions to valid Turkish words ("bka" -> "bak").
+    if (word.length === 3 && this.morphology !== undefined) {
+      for (const swap of [word[1]! + word[0]! + word[2]!, word[0]! + word[2]! + word[1]!]) {
+        if (this.isRealWord(swap)) consider(swap, "typo", turkishEditCost(word, swap), true, 1);
+      }
+      for (let i = 0; i <= 3; i++) {
+        const before = word.slice(0, i);
+        const after = word.slice(i);
+        for (const ch of ALPHABET) {
+          const ins = before + ch + after;
+          if (this.lexicon.exactCount(ins) >= 20 && this.isRealWord(ins)) {
+            consider(ins, "typo", turkishEditCost(word, ins), true, 1);
+          }
+        }
+      }
+      for (let i = 0; i < 3; i++) {
+        const at = word[i]!;
+        for (const ch of ALPHABET) {
+          if (ch !== at && (areNearKeys(ch, at) || (VOWELS.has(ch) && VOWELS.has(at)))) {
+            const sub = word.slice(0, i) + ch + word.slice(i + 1);
+            if (this.lexicon.exactCount(sub) >= 20 && this.isRealWord(sub)) {
+              consider(sub, "typo", turkishEditCost(word, sub), true, 1);
+            }
+          }
+        }
+      }
+    }
+
+    // 3. Fast 1-edit mark-folded morphological search (handles unseen valid forms + mark-loss + 1 typo).
+    if (this.morphology?.fuzzySearch && word.length >= 4 && word.length <= 28) {
+      const fuzzy1 = this.morphology.fuzzySearch(word, 1, 30);
+      for (const f of fuzzy1) {
+        consider(f.word, f.foldedEdits === 0 ? "marks" : "typo", f.editCost, true, f.foldedEdits);
+      }
+
+      // 4. Escalate to 2-edit mark-folded morphological search when 1-edit doesn't produce a strong high-confidence
+      //    candidate (or leaves a single candidate on medium words), catching double omissions like "grkli" -> "gerekli",
+      //    "gerektn" -> "gerçekten", "frmuar" -> "fermuarı", "palıcanlar" -> "patlıcanları", "mahalemize" -> "mahallemizde".
+      let veryStrongD1 = 0;
+      let cleanTranspositionD1 = 0;
+      for (const item of pool.values()) {
+        if (item.morphValid && item.foldedEdits <= 1) {
+          if (item.editCost <= 1.1 && item.effCount >= 120) veryStrongD1++;
+          if (item.editCost <= 0.75 && item.effCount >= 1) cleanTranspositionD1++;
+        }
+      }
+      if ((veryStrongD1 === 0 || (pool.size < 2 && cleanTranspositionD1 === 0)) && word.length >= 4 && word.length <= 18) {
+        const fuzzy2 = this.morphology.fuzzySearch(word, 2, 40);
+        for (const f of fuzzy2) {
+          consider(f.word, "typo", f.editCost, true, f.foldedEdits);
+        }
+      }
+    }
+
+    // 5. Also include direct 1-edit lexicon matches for words with low count (e.g. non-Zemberek words like "caspius").
+    if (word.length >= 4 && pool.size < 3) {
+      for (const [cand, slip] of this.oneEdit(word, true)) {
+        const c = this.lexicon.exactCount(cand);
+        if (c >= 5) consider(cand, "typo", Math.min(slip, turkishEditCost(word, cand)), undefined, 1);
+      }
+    }
+
+    const scored: Array<{
+      text: string;
+      display: string;
+      kind: CandidateKind;
+      editCost: number;
+      obsCount: number;
+      effCount: number;
+      morphValid: boolean;
+      rankScore: number;
+      isMarkVariant: boolean;
+    }> = [];
+
+    for (const item of pool.values()) {
+      const isMulti = item.text.includes(" ");
+      let pairBonus = 0;
+      if (!isMulti) {
+        if (context.prevWord && this.lexicon.pair(context.prevWord, item.text) > 0) pairBonus += 1.2;
+        if (nextLower && this.lexicon.pair(item.text, nextLower) > 0) pairBonus += 1.0;
+      }
+      const morphPenalty = item.morphValid ? 0 : -1.8;
+      // Universal Turkish grammar: an unambiguously accusative direct object ("hatalarını") does not govern a
+      // purely passive/intransitive verb ("düzenleniyor"), favoring active transitive readings ("düzenlemiyor").
+      const voicePenalty = prevIsAcc && !isMulti && item.morphValid && this.isPurelyPassiveVerb(item.text) ? -1.6 : 0;
+      // Bayes channel penalty: 1 keyboard edit is far likelier than 2 edits, so 1-edit transpositions/omissions
+      // ("göndredim" -> "gönderdim", "kalelmerimi" -> "kalemlerimi") stay #1 over common 2-edit words while
+      // genuine double omissions ("gerektn" -> "gerçekten") still surface cleanly.
+      const extraEditPenalty = item.foldedEdits >= 2 ? 1.8 : 0;
+      const rankScore = log(item.effCount) - 3.6 * item.editCost - extraEditPenalty + pairBonus + morphPenalty + voicePenalty;
+      const display =
+        item.kind === "typo" ? matchCase(typed, item.text) : keepCase(typed, item.text);
+      scored.push({
+        text: item.text,
+        display,
+        kind: item.kind,
+        editCost: item.editCost,
+        obsCount: item.obsCount,
+        effCount: item.effCount,
+        morphValid: item.morphValid,
+        rankScore,
+        isMarkVariant: !isMulti && foldTr(item.text) === foldedWord,
+      });
+    }
+
+    scored.sort((a, b) => b.rankScore - a.rankScore || a.editCost - b.editCost);
+
+    // Deduplicate by display string while keeping highest-ranked entry.
+    const seenDisplay = new Set<string>();
+    const deduped: typeof scored = [];
+    for (const s of scored) {
+      if (seenDisplay.has(s.display)) continue;
+      seenDisplay.add(s.display);
+      deduped.push(s);
+    }
+    return deduped;
   }
 
   /** Words one edit away, with a cost for edits that are unlikely on a Turkish Q keyboard. */

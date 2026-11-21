@@ -1,7 +1,7 @@
-import { CAREFUL, Corrector, type Correction, type Settings } from "../../src/corrector.ts";
+import { CAREFUL, Corrector, type Correction, type Settings, type SpellFlag } from "../../src/corrector.ts";
 import { lowerTr } from "../../src/turkish.ts";
 import type { LoadedData } from "./data.ts";
-import type { CheckOptions, ContextSession, Fix, FixKind, FixScope, Mode } from "./types.ts";
+import type { CheckOptions, ContextSession, Fix, FixKind, FixScope, Flag, InspectResult, Mode } from "./types.ts";
 
 /** Temkinli kip: motorun doğrulanan varsayılan eşikleri. */
 export { CAREFUL };
@@ -217,6 +217,58 @@ export class AutrEngine {
     return fixes;
   }
 
+  private filterFlags(
+    text: string,
+    rawFlags: readonly SpellFlag[],
+    rawCorrections: readonly Correction[],
+    range: readonly [number, number] | undefined,
+    kindFilter: Set<FixKind> | null,
+  ): Flag[] {
+    if (rawFlags.length === 0) return [];
+    if (kindFilter && !kindFilter.has("yazim")) return [];
+
+    const codeRanges = findCodeRanges(text);
+    const flags: Flag[] = [];
+    let lastEnd = -1;
+
+    for (const flag of rawFlags) {
+      if (flag.start < lastEnd) continue;
+
+      if (range) {
+        const [rangeFrom, rangeTo] = range;
+        if (!(flag.start < rangeTo && flag.end > rangeFrom)) continue;
+      }
+
+      if (
+        codeRanges.length > 0 &&
+        codeRanges.some(([codeStart, codeEnd]) => flag.start < codeEnd && flag.end > codeStart)
+      ) {
+        continue;
+      }
+
+      if (this.ignored.has(normalizeIgnoredWord(flag.original))) continue;
+
+      if (
+        rawCorrections.some(
+          (c) => c.original !== c.replacement && flag.start < c.end && flag.end > c.start,
+        )
+      ) {
+        continue;
+      }
+
+      flags.push({
+        from: flag.start,
+        to: flag.end,
+        original: flag.original,
+        suggestions: flag.suggestions.slice(0, 5),
+        reason: flag.reason,
+      });
+      lastEnd = flag.end;
+    }
+
+    return flags;
+  }
+
   private enqueueAsync<T>(task: () => Promise<T>): Promise<T> {
     const next = this.asyncQueue.then(task, task);
     this.asyncQueue = next.catch(() => {});
@@ -272,6 +324,62 @@ export class AutrEngine {
       }
       this.assertActive();
       return this.filterCorrections(text, corrections, range, kindFilter);
+    });
+  }
+
+  async inspect(text: string, options: CheckOptions = {}): Promise<InspectResult> {
+    this.assertActive();
+    if (!text) return { fixes: [], flags: [] };
+
+    const range = options.range;
+    if (range) {
+      const [rangeFrom, rangeTo] = range;
+      if (rangeFrom >= rangeTo) return { fixes: [], flags: [] };
+    }
+
+    const kindFilter = options.kinds ? new Set<FixKind>(options.kinds) : null;
+    if (kindFilter && kindFilter.size === 0) return { fixes: [], flags: [] };
+
+    const session = this.contextSession;
+    const settings = settingsFor(options.mode ?? this.mode, kindFilter);
+    if (!session) {
+      this.corrector.settings = settings;
+      let result: { corrections: Correction[]; flags: SpellFlag[] };
+      try {
+        result = this.corrector.inspect(text, { autoMarked: options.autoMarked });
+      } finally {
+        this.corrector.settings = SETTINGS_BY_MODE[this.mode];
+      }
+      return {
+        fixes: this.filterCorrections(text, result.corrections, range, kindFilter),
+        flags: this.filterFlags(text, result.flags, result.corrections, range, kindFilter),
+      };
+    }
+
+    return this.enqueueAsync(async () => {
+      this.assertActive();
+      const activeSession = this.contextSession;
+      this.corrector.settings = settings;
+      let result: { corrections: Correction[]; flags: SpellFlag[] };
+      try {
+        result = activeSession
+          ? await this.corrector.inspectAsync(text, activeSession.model, {
+              autoMarked: options.autoMarked,
+              priorTypoOriginals: options.priorTypoOriginals?.map(({ from, to, original }) => ({
+                start: from,
+                end: to,
+                original,
+              })),
+            })
+          : this.corrector.inspect(text, { autoMarked: options.autoMarked });
+      } finally {
+        this.corrector.settings = SETTINGS_BY_MODE[this.mode];
+      }
+      this.assertActive();
+      return {
+        fixes: this.filterCorrections(text, result.corrections, range, kindFilter),
+        flags: this.filterFlags(text, result.flags, result.corrections, range, kindFilter),
+      };
     });
   }
 
