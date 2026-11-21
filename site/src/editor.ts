@@ -20,6 +20,7 @@ export interface EditorMountOptions {
   onSelectionChange: () => void;
   onApplied?: (fix: AppliedFix) => void;
   onBatchApplied?: (fixes: readonly AppliedFix[]) => void;
+  onSettled?: (fixes: readonly AppliedFix[]) => void;
   onUndo?: (fix: AppliedFix) => void;
   onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
   onBatchUndo?: (fixes: readonly AppliedFix[]) => void;
@@ -52,6 +53,7 @@ export function mountEditor(options: EditorMountOptions): EditorController {
         getRuntime: options.getRuntime,
         onApplied: options.onApplied,
         onBatchApplied: options.onBatchApplied,
+        onSettled: options.onSettled,
         onUndo: options.onUndo,
         onFixClick: options.onFixClick,
         onBatchUndo: options.onBatchUndo,

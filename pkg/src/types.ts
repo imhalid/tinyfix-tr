@@ -44,6 +44,8 @@ export interface Fix {
   confidence: number;
   /** Kararın yalnızca kelimeye mi, çevresine de mi dayandığı. */
   scope: FixScope;
+  /** Kararı bağlam modeli verdi (yalnızca bağlam modeli yüklüyken). */
+  byContext?: boolean;
 }
 
 /** İsteğe bağlı bağlam modeli dosya adı. */
@@ -159,6 +161,12 @@ export interface CheckOptions {
    * "sey" de düzeltilir.
    */
   autoMarked?: readonly (readonly [from: number, to: number])[];
+  /**
+   * Yalnızca bağlam modeli yüklüyken: otomatik düzeltmenin yazım hatası olarak değiştirdiği aralıklar ve kullanıcının
+   * yazdığı ilk biçim. Arka plan geçişinde model, çekirdeğin seçtiği adayı ("hber" → "her") cümlenin geri kalanına
+   * bakarak daha uygun bir adayla ("haber") değiştirebilir. Böyle bir düzeltmenin türü "context" olur.
+   */
+  priorTypoOriginals?: readonly { readonly from: number; readonly to: number; readonly original: string }[];
 }
 
 /** Türkçe otomatik düzeltici örneği. */

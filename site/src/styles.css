@@ -574,6 +574,25 @@ code {
     text-decoration-color: var(--fix-color);
   }
 }
+/* Arka plan bağlam geçişinin değiştirdiği kelime bir kez hafifçe parlar: yazarken gözden kaçmasın. */
+.autr-fix--settled {
+  border-radius: 3px;
+  animation: autr-settle-flash 1.6s ease-out 1;
+}
+@keyframes autr-settle-flash {
+  0%,
+  25% {
+    background-color: color-mix(in oklab, var(--fix-context) 22%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .autr-fix--settled {
+    animation: none;
+  }
+}
 
 .fix-pop {
   position: fixed;
@@ -643,6 +662,71 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+/* Kelimenin geçmişi: yazılan biçimden bugüne dikey bir zaman çizgisi. */
+.fix-pop-history {
+  margin: -4px 0 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.fix-pop-history-title {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fix-pop-history ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fix-pop-history li {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0 3px 18px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.fix-pop-history li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 3px;
+  inset-block-start: 0.7em;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+  border: 1.5px solid var(--faint);
+}
+.fix-pop-history li + li::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 6px;
+  inset-block-start: calc(-0.7em + 3px);
+  block-size: calc(0.7em + 3px);
+  border-inline-start: 1px solid var(--rule);
+}
+.fix-pop-history li[data-current] {
+  color: var(--ink);
+}
+.fix-pop-history li[data-current]::before {
+  background: var(--fix-context);
+  border-color: var(--fix-context);
+}
+.fix-pop-step-text {
+  font-weight: 600;
+  color: inherit;
+}
+.fix-pop-step-by {
+  flex: 1;
+}
+.fix-pop-step-time {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  color: var(--faint);
 }
 
 /* ---------- Dışa aktar menüsü ---------- */
