@@ -53,6 +53,8 @@ interface PendingParagraphCheck {
   checkTo: number;
   allowedMaxEnd: number;
   finishedWords: readonly WordSpan[];
+  /** Paragraf içinde otomatik düzeltmenin yazdığı aralıklar: buradaki Türkçe harfler kullanıcının klavyesinden gelmedi. */
+  autoMarked: Array<readonly [number, number]>;
 }
 
 interface PendingBatch {
@@ -76,6 +78,7 @@ type AutocorrectMeta =
   | { type: "add"; records: readonly AppliedFix[]; finishJobId?: number }
   | { type: "remove"; ids: readonly string[] }
   | { type: "finish-job"; jobId: number }
+  | { type: "check-waiting" }
   | { type: "clear" };
 
 interface PluginState {
@@ -84,6 +87,8 @@ interface PluginState {
   pendingBatch: PendingBatch | null;
   activeJobMaps: readonly TrackedJobMaps[];
   undoneByHistory: AppliedFix[];
+  /** Sözlük yüklenirken yazılan aralıklar: sözlük hazır olunca denetlenir. */
+  waiting: Array<readonly [number, number]>;
 }
 
 const AUTOCORRECT_KEY = new PluginKey<PluginState>("autrAutocorrect");
@@ -147,12 +152,16 @@ function collectInsertedSpans(tr: Transaction, docSize: number): Array<readonly 
     });
   }
 
-  if (raw.length === 0) return [];
-  raw.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  return mergeSpans(raw);
+}
 
-  const merged: Array<[number, number]> = [raw[0]!];
-  for (let i = 1; i < raw.length; i++) {
-    const [from, to] = raw[i]!;
+/** Aralıkları sıralar ve üst üste binenleri ya da birbirine değenleri birleştirir. */
+function mergeSpans(spans: ReadonlyArray<readonly [number, number]>): Array<[number, number]> {
+  if (spans.length === 0) return [];
+  const sorted = [...spans].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const merged: Array<[number, number]> = [[sorted[0]![0], sorted[0]![1]]];
+  for (let i = 1; i < sorted.length; i++) {
+    const [from, to] = sorted[i]!;
     const last = merged[merged.length - 1]!;
     if (from <= last[1]) {
       if (to > last[1]) last[1] = to;
@@ -167,12 +176,23 @@ function collectInsertedSpans(tr: Transaction, docSize: number): Array<readonly 
  * İşlemde eklenen aralıklarla kesişen tüm metin bloklarındaki **bitmiş** kelimeleri toplar.
  * Bitmiş kelime: arkasından boşluk/noktalama (veya paragraf kapanışı) gelen ve imlecin hemen solunda olmayan kelime.
  */
-function detectPendingBatch(tr: Transaction, newState: EditorState): PendingBatch | null {
+function detectPendingBatch(
+  tr: Transaction,
+  newState: EditorState,
+  records: readonly AppliedFix[],
+): PendingBatch | null {
   if (!tr.docChanged) return null;
   if (tr.getMeta(AUTOCORRECT_META) || tr.getMeta("history$")) return null;
+  return batchFromSpans(collectInsertedSpans(tr, newState.doc.content.size), newState, records);
+}
 
+/** Verilen (sıralı, birleştirilmiş) aralıklarla kesişen bloklardaki bitmiş kelimelerden bir denetim işi kurar. */
+function batchFromSpans(
+  spans: ReadonlyArray<readonly [number, number]>,
+  newState: EditorState,
+  records: readonly AppliedFix[],
+): PendingBatch | null {
   const doc = newState.doc;
-  const spans = collectInsertedSpans(tr, doc.content.size);
   if (spans.length === 0) return null;
 
   const minFrom = spans[0]![0];
@@ -254,6 +274,9 @@ function detectPendingBatch(tr: Transaction, newState: EditorState): PendingBatc
       checkTo,
       allowedMaxEnd: checkTo,
       finishedWords,
+      autoMarked: records
+        .filter((record) => record.from >= blockStart && record.to <= blockEnd)
+        .map((record) => [record.from - blockStart, record.to - blockStart] as const),
     });
 
     return false;
@@ -339,6 +362,7 @@ async function checkParagraph(
     const raw = await autr.check(paragraphText, {
       range: [checkFrom, checkTo],
       kinds,
+      autoMarked: paragraph.autoMarked,
     });
     return raw.filter(isAllowedFix);
   }
@@ -369,6 +393,9 @@ async function checkParagraph(
     const raw = await autr.check(slice, {
       range: [chunkStart - winStart, chunkEnd - winStart],
       kinds,
+      autoMarked: paragraph.autoMarked
+        .map(([from, to]) => [Math.max(from, winStart) - winStart, Math.min(to, winEnd) - winStart] as const)
+        .filter(([from, to]) => from < to),
     });
 
     for (const fix of raw) {
@@ -389,6 +416,15 @@ async function checkParagraph(
   }
 
   return collected;
+}
+
+/** Sözlük yüklenirken yazılan metni denetler; uygulama sözlük hazır olunca çağırır. */
+export function checkWaitingText(view: EditorView): void {
+  if (!AUTOCORRECT_KEY.getState(view.state)?.waiting.length) return;
+  const tr = view.state.tr;
+  tr.setMeta("addToHistory", false);
+  tr.setMeta(AUTOCORRECT_META, { type: "check-waiting" } satisfies AutocorrectMeta);
+  view.dispatch(tr);
 }
 
 /** Kimliği verilen düzeltmeyi geri alır (yazılan biçim geri gelir). Geri alınan kaydı ya da null döner. */
@@ -439,6 +475,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               pendingBatch: null,
               activeJobMaps: [],
               undoneByHistory: [],
+              waiting: [],
             };
           },
 
@@ -504,10 +541,29 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
             }
 
             const runtime = options.getRuntime();
-            const pendingBatch =
-              runtime.enabled && runtime.autr && runtime.activeKinds.length > 0
-                ? detectPendingBatch(tr, newState)
-                : null;
+            const ready = runtime.enabled && runtime.autr !== null && runtime.activeKinds.length > 0;
+
+            // Sözlük henüz yüklenmediyse yazılanı not et; hazır olunca ("check-waiting") birlikte denetlenir.
+            let waiting: Array<readonly [number, number]> = [];
+            if (meta?.type !== "clear" && meta?.type !== "check-waiting") {
+              const size = newState.doc.content.size;
+              for (const [from, to] of prev.waiting) {
+                const mappedFrom = Math.min(size, tr.mapping.map(from, -1));
+                const mappedTo = Math.min(size, tr.mapping.map(to, 1));
+                if (mappedTo > mappedFrom) waiting.push([mappedFrom, mappedTo]);
+              }
+              if (runtime.enabled && !runtime.autr && tr.docChanged && !meta && !isHistory) {
+                waiting.push(...collectInsertedSpans(tr, size));
+              }
+              if (waiting.length > 1) waiting = mergeSpans(waiting);
+            }
+
+            let pendingBatch: PendingBatch | null = null;
+            if (ready && meta?.type === "check-waiting") {
+              pendingBatch = batchFromSpans(prev.waiting.length > 1 ? mergeSpans(prev.waiting) : prev.waiting, newState, records);
+            } else if (ready) {
+              pendingBatch = detectPendingBatch(tr, newState, records);
+            }
 
             if (pendingBatch) {
               activeJobMaps.push({ id: pendingBatch.id, maps: [] });
@@ -519,6 +575,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               pendingBatch,
               activeJobMaps,
               undoneByHistory,
+              waiting,
             };
           },
         },

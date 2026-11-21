@@ -241,7 +241,7 @@ export class AutrEngine {
       this.corrector.settings = settings;
       let corrections: Correction[];
       try {
-        corrections = this.corrector.correct(text).corrections;
+        corrections = this.corrector.correct(text, { autoMarked: options.autoMarked }).corrections;
       } finally {
         this.corrector.settings = SETTINGS_BY_MODE[this.mode];
       }
@@ -255,8 +255,8 @@ export class AutrEngine {
       let corrections: Correction[];
       try {
         corrections = activeSession
-          ? (await this.corrector.correctAsync(text, activeSession.model)).corrections
-          : this.corrector.correct(text).corrections;
+          ? (await this.corrector.correctAsync(text, activeSession.model, { autoMarked: options.autoMarked })).corrections
+          : this.corrector.correct(text, { autoMarked: options.autoMarked }).corrections;
       } finally {
         this.corrector.settings = SETTINGS_BY_MODE[this.mode];
       }

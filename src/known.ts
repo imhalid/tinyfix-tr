@@ -1,4 +1,5 @@
 import type { Lexicon } from "./lexicon.ts";
+import { stripMarksIn } from "./turkish.ts";
 import { isValidKnownParticleSuffix } from "./rules/turkish-rules.ts";
 
 /** A known misspelling and its fix, checked against corpus counts by py/verify_lists.py. */
@@ -31,6 +32,8 @@ const SUFFIX = /^[a-zçğıöşü]+$/;
 export class KnownMisspellings {
   private readonly single = new Map<string, Rule>();
   private readonly byFirstWord = new Map<string, Rule[]>();
+  /** Two-word rules with Turkish letters, keyed by the first word without them ("hic" for "hiç bir"). */
+  private readonly byPlainFirstWord = new Map<string, Rule[]>();
   private readonly stems: Rule[] = [];
 
   /** Lines of data/rules/known.tsv: wrong, right, wrong count, right count, section. */
@@ -49,6 +52,12 @@ export class KnownMisspellings {
         const list = known.byFirstWord.get(words[0]!) ?? [];
         list.push(rule);
         known.byFirstWord.set(words[0]!, list);
+        const plainFirst = plain(words[0]!);
+        if (plain(wrong) !== wrong) {
+          const plainList = known.byPlainFirstWord.get(plainFirst) ?? [];
+          plainList.push(rule);
+          known.byPlainFirstWord.set(plainFirst, plainList);
+        }
       }
     }
     known.stems.sort((first, second) => second.wrong.length - first.wrong.length);
@@ -59,8 +68,11 @@ export class KnownMisspellings {
     return this.single.size + [...this.byFirstWord.values()].reduce((sum, list) => sum + list.length, 0);
   }
 
-  /** Fixes for a lowercased word, and for it with the next word when a two-word rule matches. */
-  find(word: string, next: string | undefined, lexicon: Lexicon): KnownFix[] {
+  /**
+   * Fixes for a lowercased word, and for it with the next word when a two-word rule matches. With `typedPlain` (the
+   * sentence is typed without Turkish letters) a two-word rule also matches its plain form: "hic bir" -> "hiçbir".
+   */
+  find(word: string, next: string | undefined, lexicon: Lexicon, typedPlain = false): KnownFix[] {
     const fixes: KnownFix[] = [];
     const exact = this.single.get(word);
     if (exact) fixes.push({ text: exact.right, count: exact.rightCount, joinsNext: false, contraction: exact.contraction });
@@ -91,7 +103,19 @@ export class KnownMisspellings {
           if (count > 0) fixes.push({ text: fixed, count: Math.min(count, rule.rightCount), joinsNext: true, contraction: rule.contraction });
         }
       }
+      if (typedPlain && fixes.every((fix) => !fix.joinsNext)) {
+        for (const rule of this.byPlainFirstWord.get(word) ?? []) {
+          if (plain(rule.wrong) === `${word} ${next}`) {
+            fixes.push({ text: rule.right, count: rule.rightCount, joinsNext: true, contraction: rule.contraction });
+          }
+        }
+      }
     }
     return fixes;
   }
+}
+
+/** The word without Turkish letters. */
+function plain(text: string): string {
+  return stripMarksIn(text, [[0, text.length]]);
 }

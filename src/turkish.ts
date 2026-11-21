@@ -62,6 +62,18 @@ export function hasTurkishMarks(text: string): boolean {
   return /[çğıöşüÇĞİÖŞÜ]/.test(text);
 }
 
+const UNMARKED: Record<string, string> = { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", Ç: "C", Ğ: "G", İ: "I", Ö: "O", Ş: "S", Ü: "U" };
+
+/** Replaces Turkish letters with their plain forms inside the given [start, end) ranges; the length stays the same. */
+export function stripMarksIn(text: string, ranges: readonly (readonly [number, number])[]): string {
+  if (ranges.length === 0) return text;
+  const chars = text.split(""); // UTF-16 units, so the ranges line up with string offsets
+  for (const [start, end] of ranges) {
+    for (let i = Math.max(0, start); i < Math.min(end, chars.length); i++) chars[i] = UNMARKED[chars[i]!] ?? chars[i]!;
+  }
+  return chars.join("");
+}
+
 /** Turkish Q keyboard rows, used to judge how likely a slip of the fingers is. */
 const KEYBOARD_ROWS = ["qwertyuıopğü", "asdfghjklşi", "zxcvbnmöç"];
 const NEAR = new Map<string, Set<string>>();

@@ -23,6 +23,7 @@ import {
   isHarmoniousApostropheMarkChange,
   isValidGenericApostrophe,
   isVoicelessFinal,
+  isAuxiliaryOl,
   matchAcronymApostrophe,
   sameHighVowels,
 } from "./rules/turkish-rules.ts";
@@ -36,6 +37,7 @@ import {
   lowerTr,
   markVariants,
   matchCase,
+  stripMarksIn,
   upperTr,
 } from "./turkish.ts";
 
@@ -200,6 +202,14 @@ function keepCase(typed: string, replacement: string): string {
   return output;
 }
 
+export interface CorrectOptions {
+  /**
+   * [start, end) ranges whose Turkish letters were put there by autocorrect, not typed by the user. They don't count
+   * as evidence that the user types with Turkish letters, so "hic bir sey" still gets "sey" fixed after "hiç" was.
+   */
+  autoMarked?: readonly (readonly [number, number])[];
+}
+
 export class Corrector {
   private readonly lexicon: Lexicon;
   private readonly known?: KnownMisspellings;
@@ -286,11 +296,12 @@ export class Corrector {
   }
 
   /** Returns the corrected text and the list of changes made. */
-  correct(text: string): { text: string; corrections: Correction[] } {
+  correct(text: string, options: CorrectOptions = {}): { text: string; corrections: Correction[] } {
     const tokens = tokenize(text);
     const corrections: Correction[] = [];
-    const textHasMarks = hasTurkishMarks(text);
-    const { asciiTyped, sentenceOf } = this.asciiEvidence(tokens);
+    const evidence = stripMarksIn(text, options.autoMarked ?? []);
+    const textHasMarks = hasTurkishMarks(evidence);
+    const { asciiTyped, sentenceOf } = this.asciiEvidence(tokenize(evidence));
     let atSentenceStart = true;
     let prevWord: string | undefined;
     let prevIsName = false;
@@ -309,7 +320,7 @@ export class Corrector {
         atSentenceStart,
         textHasMarks:
           textHasMarks &&
-          hasTurkishMarks(text.slice(0, token.start) + text.slice(token.end)) &&
+          hasTurkishMarks(evidence.slice(0, token.start) + evidence.slice(token.end)) &&
           !asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]),
         questionAhead: this.questionAhead(tokens, index),
         prevWord,
@@ -354,10 +365,15 @@ export class Corrector {
    * Like correct(), but places where two real words compete ("bende" / "ben de", "oldu" / "öldü", "sevgimi" /
    * "sevgi mi") are decided by the context model instead of by counts alone. Everything else is decided as before.
    */
-  async correctAsync(text: string, model: ContextModel): Promise<{ text: string; corrections: Correction[] }> {
+  async correctAsync(
+    text: string,
+    model: ContextModel,
+    options: CorrectOptions = {},
+  ): Promise<{ text: string; corrections: Correction[] }> {
     const tokens = tokenize(text);
-    const textHasMarks = hasTurkishMarks(text);
-    const { asciiTyped, sentenceOf } = this.asciiEvidence(tokens);
+    const evidence = stripMarksIn(text, options.autoMarked ?? []);
+    const textHasMarks = hasTurkishMarks(evidence);
+    const { asciiTyped, sentenceOf } = this.asciiEvidence(tokenize(evidence));
     const decided: Correction[] = [];
     const pending: { start: number; end: number; typed: string; alternatives: string[] }[] = [];
     let atSentenceStart = true;
@@ -378,7 +394,7 @@ export class Corrector {
         atSentenceStart,
         textHasMarks:
           textHasMarks &&
-          hasTurkishMarks(text.slice(0, token.start) + text.slice(token.end)) &&
+          hasTurkishMarks(evidence.slice(0, token.start) + evidence.slice(token.end)) &&
           !asciiTyped.some((other) => other !== index && sentenceOf[other] === sentenceOf[index]),
         questionAhead: this.questionAhead(tokens, index),
         prevWord,
@@ -568,6 +584,7 @@ export class Corrector {
     const threshold = best.threshold ?? (invalidTyped ? this.settings.typoInvalidThreshold : this.settings.threshold[best.kind]);
     if (margin < threshold) return null;
     if (runnerUp && margin - marginOf(runnerUp) < this.settings.ambiguity) return null;
+    if (best.kind === "marks" && context.prevWord && isAuxiliaryOl(context.prevWord, word, best.text)) return null;
     const original = best.joinsNext ? `${typed} ${nextTyped}` : typed;
     const replacement = best.kind === "typo" ? matchCase(typed, best.text) : keepCase(original, best.text);
     return { replacement, kind: best.kind, margin, joinsNext: best.joinsNext };
@@ -583,7 +600,7 @@ export class Corrector {
     if (!this.known || (isUpperInitial(typed) && !context.atSentenceStart)) return null;
     const next = nextTyped && !isUpperInitial(nextTyped) ? lowerTr(nextTyped) : undefined;
     let best: { replacement: string; kind: CandidateKind; margin: number; joinsNext: boolean } | null = null;
-    const fixes = this.known.find(word, next, this.lexicon);
+    const fixes = this.known.find(word, next, this.lexicon, !context.textHasMarks);
     // With contractions off, a single word matching one ("noldu") stays as typed: no other rule may take it for a slip.
     if (!this.settings.contractions && fixes.some((fix) => fix.contraction && !fix.joinsNext)) return "keep";
     for (const fix of fixes) {

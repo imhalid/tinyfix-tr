@@ -138,6 +138,12 @@ export interface CheckOptions {
   kinds?: readonly FixKind[];
   /** Yalnızca bu çağrı için geçerli hassasiyet kipi. */
   mode?: Mode;
+  /**
+   * Metinde otomatik düzeltmenin daha önce yazdığı [from, to) aralıkları. Buradaki Türkçe harfler, kullanıcının
+   * Türkçe klavyeyle yazdığına kanıt sayılmaz; böylece "hic bir sey" yazılırken "hiç" düzeltildikten sonra
+   * "sey" de düzeltilir.
+   */
+  autoMarked?: readonly (readonly [from: number, to: number])[];
 }
 
 /** Türkçe otomatik düzeltici örneği. */

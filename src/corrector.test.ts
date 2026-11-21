@@ -376,3 +376,21 @@ for (const input of extraKeeps) {
     assert.equal(corrector!.correct(input).text, input);
   });
 }
+
+test("letters autocorrect wrote don't count as typed with a Turkish keyboard", { skip: !corrector && "lexicon not built" }, () => {
+  // "Açık" was "Acik" before autocorrect fixed it; the rest of the sentence is still typed without Turkish letters.
+  const text = "Açık deniz boru hatti ";
+  assert.equal(corrector!.correct(text, { autoMarked: [[0, 4]] }).text, "Açık deniz boru hattı ");
+  // Typed by the user with a Turkish keyboard: "hatti" is left alone.
+  assert.equal(corrector!.correct(text).text, text);
+});
+
+test("two-word listed fixes also match when typed without Turkish letters", { skip: !corrector && "lexicon not built" }, () => {
+  assert.equal(corrector!.correct("Yarin gelecekmisin, hic bir sey yok.").text, "Yarın gelecek misin, hiçbir şey yok.");
+  assert.equal(corrector!.correct("bir cok insan geldi").text, "birçok insan geldi");
+});
+
+test("ol- after a participle is a helper verb, not öl-", { skip: !corrector && "lexicon not built" }, () => {
+  assert.equal(corrector!.correct("Ona yardim ediyor oluyorduk.").text, "Ona yardım ediyor oluyorduk.");
+  assert.equal(corrector!.correct("Ona yardım ediyor oluyorduk.").text, "Ona yardım ediyor oluyorduk.");
+});

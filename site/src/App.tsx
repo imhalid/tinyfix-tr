@@ -214,6 +214,8 @@ export function App() {
       }
       setAutr(instance);
       setEngineStatus("ready");
+      // Sözlük yüklenirken yazılanları denetle. Solid 2'de yazılan sinyal bir sonraki turda okunur, o yüzden bekletiyoruz.
+      setTimeout(() => editorController?.checkWaitingText(), 0);
     } catch (error) {
       if (disposed || loadSeq !== engineLoadSeq || abortController.signal.aborted) return;
       console.error("autr: sözlük yüklenemedi", error);

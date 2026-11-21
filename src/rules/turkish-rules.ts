@@ -269,3 +269,11 @@ export function harmonizeQuestionParticle(word: string, prevWord: string, isInve
   const target = word.replaceAll(current, want);
   return QUESTION.test(target) && sameHighVowels(target) ? target : null;
 }
+
+/**
+ * "ol-" used as a helper verb after a participle ("yardım ediyor oluyorduk", "gelmiş olacak", "gidecek olursa"):
+ * here it is never "öl-", however common "ölüyorduk" is on its own.
+ */
+export function isAuxiliaryOl(prevWord: string, word: string, replacement: string): boolean {
+  return /^ol/.test(word) && /^öl/.test(replacement) && /(?:[ıiuü]?yor|m[ıiuü]ş|[ae]c[ae]k)$/.test(prevWord);
+}

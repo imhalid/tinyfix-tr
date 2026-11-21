@@ -7,7 +7,10 @@
  * of the sentence the words still waiting are checked too. lag 0 checks a word as soon as it's finished; lag 2 waits
  * for two more words, as tinyfix does.
  *
- *   node bench/typing.ts [dev|test|file.jsonl] [--lag 0,1,2] [--settle] [--class name] [--show N]
+ * With --auto-marked the corrector is told which spans autocorrect itself rewrote, as the site does, so the Turkish
+ * letters it put there don't count as signs that the user types them.
+ *
+ *   node bench/typing.ts [dev|test|file.jsonl] [--lag 0,1,2] [--settle] [--auto-marked] [--class name] [--show N]
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -26,6 +29,7 @@ const args = process.argv.slice(2);
 const VALUE_FLAGS = ["--lag", "--class", "--show", "--lexicon"];
 /** At the end of a sentence, check the whole sentence once more, as if it had been pasted. */
 const settle = args.includes("--settle");
+const passAutoMarked = args.includes("--auto-marked");
 const target = args.find((arg, index) => !arg.startsWith("--") && !VALUE_FLAGS.includes(args[index - 1] ?? "")) ?? "dev";
 const lags = (args.includes("--lag") ? args[args.indexOf("--lag") + 1]! : "0,1,2").split(",").map(Number);
 const onlyClass = args.includes("--class") ? args[args.indexOf("--class") + 1] : undefined;
@@ -45,14 +49,27 @@ function words(text: string): [number, number][] {
   return [...text.matchAll(/\p{L}+(?:['’]\p{L}+)?/gu)].map((m) => [m.index, m.index + m[0].length]);
 }
 
-function apply(text: string, fixes: Correction[]): string {
+/** Applies the fixes; `autoMarked` (spans autocorrect wrote) is shifted along and gets the new spans added. */
+function apply(text: string, fixes: Correction[], autoMarked: [number, number][] = []): string {
   let out = "";
   let cursor = 0;
+  const kept: [number, number][] = [];
+  const added: [number, number][] = [];
+  const shifts: [at: number, by: number][] = [];
   for (const fix of [...fixes].sort((a, b) => a.start - b.start)) {
     if (fix.start < cursor) continue;
-    out += text.slice(cursor, fix.start) + fix.replacement;
+    out += text.slice(cursor, fix.start);
+    added.push([out.length, out.length + fix.replacement.length]);
+    out += fix.replacement;
+    shifts.push([fix.end, fix.replacement.length - (fix.end - fix.start)]);
     cursor = fix.end;
   }
+  const shift = (pos: number) => pos + shifts.filter(([at]) => at <= pos).reduce((sum, [, by]) => sum + by, 0);
+  for (const [from, to] of autoMarked) {
+    if (fixes.some((fix) => fix.start < to && fix.end > from)) continue;
+    kept.push([shift(from), shift(to)]);
+  }
+  autoMarked.splice(0, autoMarked.length, ...kept, ...added);
   return out + text.slice(cursor);
 }
 
@@ -62,13 +79,14 @@ function typeOut(input: string, lag: number): string {
   let typed = ""; // what the editor holds so far, with fixes applied
   let consumed = 0; // how much of `input` has been typed
   const pending: number[] = []; // indexes into the editor text's words still waiting to be checked
+  const autoMarked: [number, number][] = []; // spans autocorrect has rewritten
   const checkWord = (wordIndex: number, cursor: number) => {
     const span = words(typed)[wordIndex];
     if (!span) return;
     const fixes = corrector
-      .correct(typed)
+      .correct(typed, passAutoMarked ? { autoMarked } : {})
       .corrections.filter((fix) => fix.start < span[1] && fix.end > span[0] && fix.end <= cursor);
-    if (fixes.length > 0) typed = apply(typed, fixes) + "";
+    if (fixes.length > 0) typed = apply(typed, fixes, autoMarked);
   };
   for (let i = 0; i < spans.length; i++) {
     // Type the word and whatever follows it up to the next word (spaces, punctuation).
