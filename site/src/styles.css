@@ -1004,6 +1004,22 @@ code {
 .privacy-note:hover {
   color: var(--ink);
 }
+.credits {
+  margin: 8px 0 0;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--faint);
+}
+.credits a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-underline-offset: 0.15em;
+}
+.credits a:hover {
+  color: var(--ink);
+}
 
 /* Ayarlar */
 

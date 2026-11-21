@@ -75,6 +75,22 @@ export function DocumentsList(props: DocumentsListProps) {
         <ShieldIcon />
         <span>Yazılan hiçbir şey cihazdan çıkmaz</span>
       </button>
+      {/* Kelime verisinin kaynakları: OpenSubtitles verisi bu bağlantı koşuluyla paylaşıldı. */}
+      <p class="credits">
+        Kelime verisi:{" "}
+        <a href="https://tr.wikipedia.org/" target="_blank" rel="noopener">
+          Vikipedi
+        </a>{" "}
+        ·{" "}
+        <a href="http://www.opensubtitles.org/" target="_blank" rel="noopener">
+          OpenSubtitles.org
+        </a>
+        <br />
+        Model:{" "}
+        <a href="https://huggingface.co/imhalid/tdk-ai" target="_blank" rel="noopener">
+          Hugging Face
+        </a>
+      </p>
     </div>
   );
 }
