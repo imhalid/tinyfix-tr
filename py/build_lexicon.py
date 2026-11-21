@@ -41,12 +41,12 @@ UNITS = set("km cm mm m kg g mg mi ft in ha ml l lb oz mph hz khz mhz ghz kw mw 
 KEEP_SINGLE = {"o", "e", "a"}
 
 
-def clean_text(text: str) -> str:
+def clean_text(text: str, cut_tail: bool = True) -> str:
     """Prose only: drops wiki markup lines, reference sections and sentences that are mostly in another language."""
     lines = []
     for line in text.split("\n"):
         stripped = line.strip()
-        if lower_tr(stripped.rstrip(":")) in TAIL_SECTIONS:
+        if cut_tail and lower_tr(stripped.rstrip(":")) in TAIL_SECTIONS:
             break
         if not stripped:
             lines.append("")
@@ -69,6 +69,25 @@ PARTICLE = re.compile(r"^(m[iıuü](y?[iıuü]m|s[iıuü]n|y?[iıuü]z|s[iıuü]
 
 def lower_tr(word: str) -> str:
     return word.replace("I", "ı").replace("İ", "i").lower().replace("’", "'")
+
+
+def count(text: str, counts, capitalized, pairs, clean: bool) -> int:
+    """Adds the words and wanted pairs of one text to the counters; returns how many words it had."""
+    words = 0
+    previous = None
+    for item in words_with_flags(text, clean=clean):
+        if item is None:
+            previous = None
+            continue
+        word, is_cap = item
+        counts[word] += 1
+        words += 1
+        if is_cap:
+            capitalized[word] += 1
+        if previous is not None and wanted_pair(previous, word):
+            pairs[previous + " " + word] += 1
+        previous = word
+    return words
 
 
 def is_heldout(doc_id: str, every: int) -> bool:
@@ -119,6 +138,22 @@ def wanted_pair(first: str, second: str) -> bool:
     return len(first) <= 4 or len(second) <= 4 or bool(PARTICLE.match(second))
 
 
+PAGE_NUMBER = re.compile(r"^\s*[-–—]?\s*\d{1,4}\s*[-–—]?\s*$")
+LINE_HYPHEN = re.compile(rf"([{LETTERS}])[-\u00ad]\n\s*([{LETTERS.replace('A-Z', '').replace('ÇĞİÖŞÜ', '')}])")
+
+
+def book_paragraphs(path: Path):
+    """Paragraphs of a plain-text book: page numbers dropped, words broken across lines ("gel-\nmek") joined."""
+    text = path.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n").replace("\u00ad\n", "")
+    text = LINE_HYPHEN.sub(r"\1\2", text)
+    lines = [line for line in text.split("\n") if not PAGE_NUMBER.match(line)]
+    # A blank line separates paragraphs; single line breaks inside a paragraph are just wrapping.
+    for block in re.split(r"\n\s*\n", "\n".join(lines)):
+        paragraph = " ".join(line.strip() for line in block.split("\n") if line.strip())
+        if paragraph:
+            yield paragraph
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw", default="data/raw/trwiki")
@@ -127,6 +162,7 @@ def main():
     parser.add_argument("--min-count", type=int, default=2)
     parser.add_argument("--min-pair", type=int, default=2)
     parser.add_argument("--no-clean", action="store_true", help="count raw text as before (markup, references, acronyms)")
+    parser.add_argument("--books", default="data/raw/books", help="folder of UTF-8 .txt books (public domain) to count too")
     args = parser.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -143,21 +179,23 @@ def main():
                 heldout.write(json.dumps({"id": doc_id, "text": text}, ensure_ascii=False) + "\n")
                 continue
             kept += 1
-            previous = None
-            for item in words_with_flags(text if args.no_clean else clean_text(text), clean=not args.no_clean):
-                if item is None:
-                    previous = None
-                    continue
-                word, is_cap = item
-                counts[word] += 1
-                tokens += 1
-                if is_cap:
-                    capitalized[word] += 1
-                if previous is not None and wanted_pair(previous, word):
-                    pairs[previous + " " + word] += 1
-                previous = word
+            tokens += count(text if args.no_clean else clean_text(text), counts, capitalized, pairs, not args.no_clean)
             if docs % 50000 == 0:
                 print(f"{docs} docs, {tokens:,} words, {len(counts):,} forms, {len(pairs):,} pairs", flush=True)
+
+    # Books: every --heldout-every'th paragraph is held out (data/work/books_heldout.jsonl) for a future test set.
+    book_files = sorted(Path(args.books).glob("*.txt")) if Path(args.books).is_dir() else []
+    book_words = 0
+    with open(out / "books_heldout.jsonl", "w") as heldout:
+        for path in book_files:
+            for index, paragraph in enumerate(book_paragraphs(path)):
+                if index % args.heldout_every == args.heldout_every - 1:
+                    heldout.write(json.dumps({"id": f"{path.stem}#{index}", "text": paragraph}, ensure_ascii=False) + "\n")
+                    continue
+                book_words += count(clean_text(paragraph, cut_tail=False), counts, capitalized, pairs, True)
+    tokens += book_words
+    if book_files:
+        print(f"{len(book_files)} books, {book_words:,} words", flush=True)
 
     with open(out / "unigrams.tsv", "w") as file:
         for word, count in counts.most_common():
@@ -171,7 +209,7 @@ def main():
             first, second = pair.split(" ")
             if counts[first + second] or wanted_pair(first, second):
                 file.write(f"{pair}\t{count}\n")
-    stats = {"clean": not args.no_clean, "documents": docs, "counted_documents": kept, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
+    stats = {"clean": not args.no_clean, "books": len(book_files), "book_words": book_words, "documents": docs, "counted_documents": kept, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
     (out / "lexicon_stats.json").write_text(json.dumps(stats, indent=2))
     print(stats)
 
