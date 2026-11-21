@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-ext-400-normal.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-ext-400-italic.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Google Sans"; font-weight: 100 900;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource-variable/google-sans/files/google-sans-latin-ext-wght-normal.woff2) format("woff2-variations"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Google Sans"; font-weight: 100 900;
+    src: url(file:///Users/imhalid/autr/site/node_modules/@fontsource-variable/google-sans/files/google-sans-latin-wght-normal.woff2) format("woff2-variations"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+  :root {
+    --paper: oklch(96.8% 0.016 85);
+    --paper-raised: oklch(98.9% 0.008 85);
+    --sidebar: oklch(93.6% 0.023 82);
+    --ink: oklch(24% 0.018 60);
+    --ink-2: oklch(38% 0.02 60);
+    --muted: oklch(53% 0.022 65);
+    --faint: oklch(70% 0.02 72);
+    --rule: oklch(24% 0.018 60 / 11%);
+    --accent: oklch(52% 0.13 38);
+    --fix-word: oklch(48% 0.11 250);
+    --fix-context: oklch(47% 0.13 355);
+    --flag: oklch(56% 0.19 28);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1500px; height: 500px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(900px 520px at 88% 115%, oklch(90% 0.05 60 / 55%), transparent 70%),
+      radial-gradient(700px 420px at -5% -20%, oklch(99% 0.01 90 / 90%), transparent 70%),
+      var(--paper);
+    color: var(--ink);
+    font-family: "Google Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Kâğıt dokusu: çok ince yatay satırlar */
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0 43px, oklch(24% 0.018 60 / 4%) 43px 44px);
+    mask-image: linear-gradient(to right, transparent 52%, black 75%);
+  }
+
+  .left { position: absolute; left: 96px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+  .eyebrow { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .eyebrow i { width: 28px; height: 0; border-top: 2px solid var(--accent); }
+  .word { margin-top: 10px; font-family: "Instrument Serif", serif; font-size: 178px; line-height: 0.9; letter-spacing: -0.035em; }
+  .word span { color: var(--accent); }
+  .tag { margin-top: 18px; font-family: "Instrument Serif", serif; font-style: italic; font-size: 44px; color: var(--ink-2); }
+  .meta { margin-top: 26px; display: flex; gap: 10px; }
+  .meta b { font-weight: 500; font-size: 15px; color: var(--ink-2); padding: 7px 13px; border: 1px solid var(--rule); border-radius: 999px; background: oklch(99% 0.006 85 / 60%); }
+
+  .sheet {
+    position: absolute; right: 88px; top: 46px; width: 640px;
+    padding: 30px 38px 22px;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+    box-shadow: 0 1px 2px oklch(24% 0.02 60 / 6%), 0 28px 60px -20px oklch(24% 0.02 60 / 28%);
+    transform: rotate(-1.2deg);
+  }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .sheet-head .title { font-family: "Instrument Serif", serif; font-size: 30px; }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: oklch(56% 0.1 150); }
+  .text { font-size: 25px; line-height: 2.05; color: var(--ink); }
+  .fix { text-decoration-line: underline; text-decoration-skip-ink: auto; text-underline-offset: 0.16em; }
+  .w { text-decoration-style: dotted; text-decoration-thickness: 2.5px; text-decoration-color: var(--fix-word); }
+  .c { text-decoration-style: wavy; text-decoration-thickness: 1.5px; text-decoration-color: var(--fix-context); }
+  .f { text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1.7px; text-decoration-color: var(--flag); text-decoration-skip-ink: none; text-underline-offset: 0.18em; }
+  .was { position: relative; }
+  .was::after {
+    content: attr(data-was); position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 2px);
+    font-size: 13px; line-height: 1; white-space: nowrap; color: var(--faint);
+    text-decoration: line-through; text-decoration-color: var(--faint);
+  }
+
+  .pop {
+    position: absolute; right: 34px; bottom: -78px; width: 300px;
+    padding: 14px 16px; border-radius: 14px;
+    background: var(--paper-raised); border: 1px solid var(--rule);
+    box-shadow: 0 1px 2px oklch(24% 0.02 60 / 6%), 0 18px 40px -12px oklch(24% 0.02 60 / 26%);
+    transform: rotate(1.2deg);
+  }
+  .pop p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pills span { font-size: 15px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
+  .pills span:first-child { background: var(--ink); border-color: var(--ink); color: var(--paper-raised); }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="eyebrow"><i></i>Türkçe otomatik düzeltme</div>
+    <div class="word">tdk<span>ai</span></div>
+    <div class="tag">Türkçe yazım, internetsiz.</div>
+    <div class="meta"><b>TDK kurallarına göre</b><b>Tamamen cihazda</b><b>Açık model</b></div>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head"><span class="title">Not</span><span class="status">İnternetsiz hazır</span></div>
+    <p class="text">
+      Dün akşam <span class="fix c was" data-was="bende">ben de</span> geldim ama ondan
+      hiç <span class="fix w was" data-was="hber">haber</span> alamadım. <span class="fix w was" data-was="cok">Çok</span>
+      merak ediyorum, neden <span class="f">duzenblemiyor</span> acaba?
+    </p>
+    <div class="pop">
+      <p>Hatalı görünüyor. Bir öneri seçin:</p>
+      <div class="pills"><span>düzenlemiyor</span><span>düzenleniyor</span></div>
+    </div>
+  </div>
+</body>
+</html>
