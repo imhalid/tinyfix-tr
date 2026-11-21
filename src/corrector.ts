@@ -1343,6 +1343,9 @@ export class Corrector {
   private addTwoWordGluedSplits(word: string, typedScore: number, add: AddCandidate) {
     const { cost } = this.settings;
     for (let cut = 4; cut <= word.length - 4; cut++) {
+      // A doubled tail is a repeated suffix ("değil-dirdir"), not a second word ("dırdır").
+      const tail = word.slice(cut);
+      if (tail.length % 2 === 0 && tail.slice(0, tail.length / 2) === tail.slice(tail.length / 2)) continue;
       const left = this.resolveGluedPart(word.slice(0, cut));
       if (!left) continue;
       const right = this.resolveGluedPart(word.slice(cut));

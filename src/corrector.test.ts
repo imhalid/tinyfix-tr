@@ -408,6 +408,8 @@ const extraFixes: [string, string][] = [
   ["Bu akşam ane eve geldi.", "Bu akşam anne eve geldi."],
   ["Bugün ann e erken geldi.", "Bugün anne erken geldi."],
   ["Bunu neden yapmıyorsunanlamadim.", "Bunu neden yapmıyorsun anlamadım."],
+  // A doubled suffix is not a second word: "değildirdir" must not become "değil dırdır".
+  ["Bu iyi değildirdir.", "Bu iyi değildirdir."],
   ["Yarın ne yapacağını biliyormusunm?", "Yarın ne yapacağını biliyor musun?"],
   ["Birazdan yanına geliyorm.", "Birazdan yanına geliyorum."],
   ["Bunu tek başıma yapabilirm.", "Bunu tek başıma yapabilirim."],
