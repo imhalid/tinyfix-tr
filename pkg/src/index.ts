@@ -29,6 +29,9 @@ import type {
   Fix,
   FixKind,
   FixScope,
+  Flag,
+  FlagReason,
+  InspectResult,
   LoadOptions,
   LoadProgress,
   Mode,
@@ -76,6 +79,9 @@ export type {
   Fix,
   FixKind,
   FixScope,
+  Flag,
+  FlagReason,
+  InspectResult,
   LoadOptions,
   LoadProgress,
   Mode,
@@ -103,6 +109,7 @@ function wrapEngine(engine: AutrEngine): Autr {
       return engine.hasContext;
     },
     check: (text: string, options?: CheckOptions): Promise<Fix[]> => engine.check(text, options),
+    inspect: (text: string, options?: CheckOptions): Promise<InspectResult> => engine.inspect(text, options),
     apply: (text: string, fixes: readonly Fix[]): string => applyFixes(text, fixes),
     fix: async (text: string, options?: CheckOptions): Promise<string> => {
       const fixes = await engine.check(text, options);

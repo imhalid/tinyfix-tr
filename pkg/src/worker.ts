@@ -77,6 +77,23 @@ export function createWorkerMessageHandler(
         return;
       }
 
+      case "inspect": {
+        try {
+          if (!engine) {
+            throw new Error("autr: Sözlük henüz yüklenmedi.");
+          }
+          const { fixes, flags } = await engine.inspect(request.text, request.options);
+          post({ type: "inspectResult", id: request.id, fixes, flags });
+        } catch (error) {
+          post({
+            type: "error",
+            id: request.id,
+            message: error instanceof Error ? error.message : String(error),
+          });
+        }
+        return;
+      }
+
       case "ignore": {
         engine?.ignore(request.word);
         return;

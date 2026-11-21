@@ -5,6 +5,7 @@
  */
 
 import { normalizeCircumflex } from "./phonetics.ts";
+import { decodeMorphPrior, encodeMorphPrior, type MorphPrior } from "./prior.ts";
 import {
   RA_DUMMY,
   type DictionaryItem,
@@ -16,7 +17,8 @@ const MAGIC_0 = 0x41; // 'A'
 const MAGIC_1 = 0x4d; // 'M'
 const MAGIC_2 = 0x52; // 'R'
 const MAGIC_3 = 0x31; // '1'
-const FORMAT_VERSION = 1;
+const FORMAT_VERSION_V1 = 1;
+const FORMAT_VERSION_V2 = 2;
 
 const PRIMARY_POS_LIST: readonly PrimaryPos[] = [
   "Noun",
@@ -92,9 +94,9 @@ function writeVarint(out: number[], value: number): void {
 }
 
 /**
- * Encodes parsed `DictionaryItem[]` into a compact, columnar, front-coded `AMR1` binary payload.
+ * Encodes parsed `DictionaryItem[]` into a compact, columnar, front-coded `AMR1` (or `AMR2` with prior) binary payload.
  */
-export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8Array {
+export function encodeBinaryDictionary(items: readonly DictionaryItem[], prior?: MorphPrior): Uint8Array {
   const encoder = new TextEncoder();
 
   // Sort items by UTF-8 root bytes for optimal front-coding, preserving deterministic tie-breaking.
@@ -222,6 +224,8 @@ export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8A
 
   const rootStreamBytes = new Uint8Array(rootStream);
   const extrasBytes = new Uint8Array(extras);
+  const sortedItems = entries.map((e) => e.item);
+  const priorBytes = prior ? encodeMorphPrior(prior, sortedItems) : null;
   const headerSize = 4 + 1 + 4 + 2 + attrPalette.length * 4 + 4 + 4;
   const totalSize =
     headerSize +
@@ -231,7 +235,8 @@ export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8A
     posSec.byteLength +
     attrCol.byteLength +
     flagsCol.byteLength +
-    extrasBytes.byteLength;
+    extrasBytes.byteLength +
+    (priorBytes ? priorBytes.byteLength : 0);
 
   const out = new Uint8Array(totalSize);
   const view = new DataView(out.buffer);
@@ -241,7 +246,7 @@ export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8A
   out[offset++] = MAGIC_1;
   out[offset++] = MAGIC_2;
   out[offset++] = MAGIC_3;
-  out[offset++] = FORMAT_VERSION;
+  out[offset++] = priorBytes ? FORMAT_VERSION_V2 : FORMAT_VERSION_V1;
 
   view.setUint32(offset, itemCount, true);
   offset += 4;
@@ -256,7 +261,10 @@ export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8A
   view.setUint32(offset, extrasBytes.byteLength, true);
   offset += 4;
 
-  for (const part of [prefixLens, suffixLens, rootStreamBytes, posSec, attrCol, flagsCol, extrasBytes]) {
+  const parts = priorBytes
+    ? [prefixLens, suffixLens, rootStreamBytes, posSec, attrCol, flagsCol, extrasBytes, priorBytes]
+    : [prefixLens, suffixLens, rootStreamBytes, posSec, attrCol, flagsCol, extrasBytes];
+  for (const part of parts) {
     out.set(part, offset);
     offset += part.byteLength;
   }
@@ -265,9 +273,9 @@ export function encodeBinaryDictionary(items: readonly DictionaryItem[]): Uint8A
 }
 
 /**
- * Decodes an `AMR1` binary morphology payload back into exact `DictionaryItem[]`.
+ * Decodes an `AMR1` or `AMR2` binary morphology payload into exact `DictionaryItem[]` plus optional `MorphPrior`.
  */
-export function parseBinaryDictionary(bytes: Uint8Array): DictionaryItem[] {
+export function parseBinaryDictionaryWithPrior(bytes: Uint8Array): { items: DictionaryItem[]; prior?: MorphPrior } {
   if (
     bytes.byteLength < 19 ||
     bytes[0] !== MAGIC_0 ||
@@ -278,7 +286,7 @@ export function parseBinaryDictionary(bytes: Uint8Array): DictionaryItem[] {
     throw new Error("autr: Geçersiz biçimbilim ikili başlığı (AMR1 bekleniyordu).");
   }
   const version = bytes[4]!;
-  if (version !== FORMAT_VERSION) {
+  if (version !== FORMAT_VERSION_V1 && version !== FORMAT_VERSION_V2) {
     throw new Error(`autr: Desteklenmeyen biçimbilim biçim sürümü: ${version}.`);
   }
 
@@ -314,6 +322,7 @@ export function parseBinaryDictionary(bytes: Uint8Array): DictionaryItem[] {
   const flagsCol = bytes.subarray(offset, offset + itemCount);
   offset += itemCount;
   const extras = bytes.subarray(offset, offset + extrasByteLen);
+  const priorOffset = offset + extrasByteLen;
 
   const decoder = new TextDecoder("utf-8");
   const curRootBytes = new Uint8Array(256);
@@ -395,5 +404,17 @@ export function parseBinaryDictionary(bytes: Uint8Array): DictionaryItem[] {
     }
   }
 
-  return items;
+  const prior =
+    version === FORMAT_VERSION_V2 && priorOffset < bytes.byteLength
+      ? decodeMorphPrior(bytes, priorOffset, items)
+      : undefined;
+
+  return { items, prior };
+}
+
+/**
+ * Decodes an `AMR1`/`AMR2` binary morphology payload back into exact `DictionaryItem[]`.
+ */
+export function parseBinaryDictionary(bytes: Uint8Array): DictionaryItem[] {
+  return parseBinaryDictionaryWithPrior(bytes).items;
 }

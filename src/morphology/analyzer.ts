@@ -169,6 +169,11 @@ export class MorphologicalAnalyzer {
     this.wordCache = new Map<string, boolean>();
   }
 
+  /** Exposes the underlying StemIndex for lazy fuzzy morphological search. */
+  getStemIndex(): StemIndex {
+    return this.stemIndex;
+  }
+
   /**
    * Returns whether `form` is a valid Turkish word according to the loaded lexicon and morphotactics.
    * Uses a bounded cache for fast repeated lookups and longest-stem-first early-exit DFS when uncached.

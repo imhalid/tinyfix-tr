@@ -11,6 +11,10 @@ import { TurkishMorphology } from "../src/morphology/index.ts";
 export const MORPHOLOGY_FILES = ["master-dictionary.dict", "non-tdk.dict", "informal.dict", "proper.dict"];
 
 export function loadMorphology(): TurkishMorphology {
+  const binPath = "site/public/models/morph.bin";
+  if (existsSync(binPath)) {
+    return TurkishMorphology.fromBinary(readFileSync(binPath));
+  }
   return TurkishMorphology.fromDictionaries(MORPHOLOGY_FILES.map((name) => readFileSync(`data/morph/${name}`, "utf8")));
 }
 

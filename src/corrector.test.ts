@@ -738,3 +738,86 @@ test("Context Model v3: subword packing and typo candidate disambiguation (overr
   await c.correctAsync("Film beni cok etkildi.", namedModel);
   assert.ok(seenLeft.some((l) => l.includes("çok")), `expected core-restored 'çok' in left context, got: ${JSON.stringify(seenLeft)}`);
 });
+
+test("inspect(): detects and ranks all 3 errors in user example, protects proper names/foreign/OOV/apostrophes, and reranks with context", async () => {
+  if (!corrector) return;
+  const userSentence =
+    "ben şimdi mesela bir düzenleme yapıyorum ancak bazen metinleri duzenblemiyor yani çok basit kelime harf hatalarını duzenlemniyor bka burada mesela.";
+  const inspected = corrector.inspect(userSentence);
+
+  const checkResolved = (wrong: string, want: string) => {
+    const fixed = inspected.corrections.find((c) => c.original === wrong);
+    if (fixed) {
+      assert.equal(fixed.replacement, want, `auto-fix for "${wrong}" should be "${want}", got "${fixed.replacement}"`);
+      return;
+    }
+    const flagged = inspected.flags.find((f) => f.original === wrong);
+    assert.ok(flagged, `expected "${wrong}" to be either auto-fixed or flagged`);
+    assert.equal(
+      flagged.suggestions[0],
+      want,
+      `expected #1 suggestion for "${wrong}" to be "${want}", got: ${JSON.stringify(flagged.suggestions)}`,
+    );
+    assert.ok(flagged.suggestions.length <= 5);
+  };
+
+  checkResolved("duzenblemiyor", "düzenlemiyor");
+  checkResolved("duzenlemniyor", "düzenlemiyor");
+  checkResolved("bka", "bak");
+
+  // Procedural exclusions: proper names, apostrophe forms, acronyms, mixed-case brands, URLs/emails, valid unseen forms,
+  // attested OOV noun inflections, and contractions (when contractions=false).
+  const cleanSentences = [
+    "Ankara'ya giderken Ahmet ve Maniwaki hakkında konuştuk.",
+    "Maniwaki Kanada'da yer alan küçük bir kasabadır.",
+    "TDK ve NATO açıklamaları MacOS ve OpenAI üzerinden paylaşıldı.",
+    "Detaylar https://ornek.com/abc adresinde ve test@ornek.com hesabında var.",
+    "Yeni özgeçmişimi gönderdim, tripodlar da hazır.",
+    "Burda noldu hiç bilmiyorum.",
+    "Bazen metinleri düzenlemiyor ama çoğu zaman çalışıyor.",
+  ];
+  for (const s of cleanSentences) {
+    const res = corrector.inspect(s);
+    assert.deepEqual(
+      res.flags,
+      [],
+      `expected zero flags on clean sentence "${s}", got: ${JSON.stringify(res.flags)}`,
+    );
+  }
+
+  // Sentence-start typos ARE detected even though capitalized!
+  for (const [sent, wrong, want] of [
+    ["Hoxam bu hafta sonu ders var mı?", "Hoxam", "Hocam"],
+    ["Tikım bugün çok iyi oynadı.", "Tikım", "Takım"],
+    ["Otoparkat boş yer kalmamış.", "Otoparkat", "Otoparkta"],
+  ] as const) {
+    const res = corrector.inspect(sent);
+    const fixed = res.corrections.find((c) => c.original === wrong);
+    const flagged = res.flags.find((f) => f.original === wrong);
+    assert.ok(fixed || flagged, `expected sentence-start typo "${wrong}" to be caught`);
+    assert.equal(fixed ? fixed.replacement : flagged!.suggestions[0], want);
+  }
+
+  // Rare-word flag reason ("bka" -> "bak" is reason: "rare", unseen "duzenlemniyor" is reason: "invalid").
+  const bkaFlag = inspected.flags.find((f) => f.original === "bka");
+  assert.equal(bkaFlag?.reason, "rare");
+  const duzenFlag = inspected.flags.find((f) => f.original === "duzenlemniyor");
+  assert.equal(duzenFlag?.reason, "invalid");
+
+  // Context model re-ranking of flag suggestions in inspectAsync() when below auto-fix bar
+  const rerankModel = {
+    async score(queries: readonly { candidates: string[] }[]) {
+      return queries.map((q) =>
+        q.candidates.map((cand) => {
+          if (cand === "düzenleniyor") return 1.1;
+          if (cand === "düzenlemiyor") return -0.1;
+          return 0;
+        }),
+      );
+    },
+  } as unknown as ContextModel;
+  const ctxRes = await corrector.inspectAsync("Bazen hatalarını duzenlemniyor ama çalışıyor.", rerankModel);
+  const ctxFlag = ctxRes.flags.find((f) => f.original === "duzenlemniyor");
+  assert.ok(ctxFlag, `expected duzenlemniyor to stay flagged at moderate context margin, got fixes=${JSON.stringify(ctxRes.corrections)}`);
+  assert.equal(ctxFlag.suggestions[0], "düzenleniyor", "context model should re-rank flag suggestions");
+});

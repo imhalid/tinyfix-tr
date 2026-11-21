@@ -20,6 +20,8 @@ import {
 } from "../src/lexicon-binary.ts";
 import { encodeBinaryDictionary } from "../src/morphology/binary.ts";
 import { parseDictionaries } from "../src/morphology/dictionary.ts";
+import { TurkishMorphology } from "../src/morphology/index.ts";
+import { buildMorphPriorFromCorpora } from "../src/morphology/prior.ts";
 import { JOIN_FIRST, JOIN_SECOND, NEVER_ALONE, QUESTION } from "../src/rules/turkish-rules.ts";
 
 const MORPHOLOGY_FILES = [
@@ -215,11 +217,19 @@ function main(): void {
     capMax: CONFIG.capMax,
   });
 
-  // 4. Encode morph.bin (AMR1)
+  // 4. Encode morph.bin (AMR2: lossless dictionary + compact corpus lemma/suffix-chain prior)
   const dictTexts = MORPHOLOGY_FILES.map((name) => readFileSync(`data/morph/${name}`, "utf8"));
   const morphItems = parseDictionaries(dictTexts);
-  const morphBytes = encodeBinaryDictionary(morphItems);
-  console.log(`Morphology: ${morphItems.length.toLocaleString()} active dictionary items encoded`);
+  const morphAnalyzer = TurkishMorphology.fromDictionaries(dictTexts);
+  const subtitleTsv = existsSync("data/work/subtitle_counts.tsv")
+    ? readFileSync("data/work/subtitle_counts.tsv", "utf8")
+    : undefined;
+  const morphPrior = buildMorphPriorFromCorpora(morphAnalyzer, rawUnigramsText, subtitleTsv);
+  const morphBytes = encodeBinaryDictionary(morphItems, morphPrior);
+  console.log(
+    `Morphology: ${morphItems.length.toLocaleString()} active dictionary items + prior ` +
+      `(${morphPrior.lemmaSize.toLocaleString()} lemmas, ${morphPrior.chainSize.toLocaleString()} chains, ${morphPrior.bigramSize.toLocaleString()} bigrams)`,
+  );
 
   // 5. Write output artifacts + manifest.json
   writeFileSync(join(outDir, "lexicon.bin"), lexiconBytes);
