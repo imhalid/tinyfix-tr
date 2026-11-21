@@ -58,7 +58,11 @@ const modelFiles = allRelative.filter((rel) => rel.startsWith("models/"));
 const ortFiles = allRelative.filter(isOrtAsset);
 // "lazy-" parçaları (Word/Markdown okuyucuları) önden indirilmez; kullanılınca kabuk önbelleğine yazılır.
 const isLazyChunk = (rel) => /(?:^|\/)lazy-[^/]*\.js$/.test(rel);
-const shellFiles = allRelative.filter((rel) => !rel.startsWith("models/") && !isOrtAsset(rel) && !isLazyChunk(rel));
+// Paylaşım görseli (og.png) yalnızca sosyal ağların önizlemesi için; uygulama onu kullanmaz, önbelleğe alınmaz.
+const isShareImage = (rel) => rel === "og.png";
+const shellFiles = allRelative.filter(
+  (rel) => !rel.startsWith("models/") && !isOrtAsset(rel) && !isLazyChunk(rel) && !isShareImage(rel),
+);
 
 const shellVersion = hashFiles(shellFiles);
 const modelVersion = hashFiles(modelFiles);
