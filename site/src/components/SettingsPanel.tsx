@@ -2,6 +2,7 @@ import { ALL_FIX_KINDS, type FixKind, type Mode } from "autr";
 import { For, Show, createSignal } from "solid-js";
 import { Choice, Switch, type ChoiceOption } from "../kit/controls";
 import { FIX_KIND_META, type AppSettings, type Theme } from "../settings";
+import { formatMegabytes } from "../storedData";
 
 export interface SettingsPanelProps {
   settings: AppSettings;
@@ -15,6 +16,11 @@ export interface SettingsPanelProps {
   onAddIgnoredWord: (word: string) => void;
   onRemoveIgnoredWord: (word: string) => void;
   onChangeTheme: (theme: Theme) => void;
+  /** Önbellekteki indirilmiş veri (bayt); bilinmiyorsa null. */
+  storedBytes: number | null;
+  dataBusy: "redownload" | "delete" | null;
+  onRedownloadData: () => void;
+  onDeleteData: () => void;
 }
 
 const MODE_OPTIONS: readonly ChoiceOption<Mode>[] = [
@@ -31,6 +37,7 @@ const THEME_OPTIONS: readonly ChoiceOption<Theme>[] = [
 /** Ayarlar çekmecesinin içi. Tüm tercihler yalnızca bu cihazda saklanır. */
 export function SettingsPanel(props: SettingsPanelProps) {
   const [wordDraft, setWordDraft] = createSignal("");
+  const [confirmDelete, setConfirmDelete] = createSignal(false);
 
   const modeHint = () =>
     props.settings.mode === "careful"
@@ -132,6 +139,62 @@ export function SettingsPanel(props: SettingsPanelProps) {
               )}
             </For>
           </ul>
+        </Show>
+      </section>
+
+      <section class="settings-section">
+        <h3 class="section-label">İndirilen veriler</h3>
+        <p class="settings-note">
+          {props.storedBytes === null
+            ? "Bu tarayıcı indirilen verileri saklamıyor."
+            : props.storedBytes === 0
+              ? "Bu cihazda indirilmiş veri yok. Sayfa bir sonraki açılışta sözlüğü yeniden indirir."
+              : `Sözlük ve modeller bu cihazda ${formatMegabytes(props.storedBytes)} yer kaplıyor.`}{" "}
+          Belgeleriniz bu işlemlerden etkilenmez.
+        </p>
+        <div class="data-actions">
+          <button
+            type="button"
+            class="button"
+            disabled={props.dataBusy !== null}
+            onClick={() => {
+              setConfirmDelete(false);
+              props.onRedownloadData();
+            }}
+          >
+            {props.dataBusy === "redownload" ? "İndiriliyor…" : "Yeniden indir"}
+          </button>
+          <Show
+            when={confirmDelete()}
+            fallback={
+              <button
+                type="button"
+                class="button"
+                disabled={props.dataBusy !== null || !props.storedBytes}
+                onClick={() => setConfirmDelete(true)}
+              >
+                Sil
+              </button>
+            }
+          >
+            <button
+              type="button"
+              class="button button-danger"
+              disabled={props.dataBusy !== null}
+              onClick={() => {
+                setConfirmDelete(false);
+                props.onDeleteData();
+              }}
+            >
+              Evet, sil
+            </button>
+            <button type="button" class="button" onClick={() => setConfirmDelete(false)}>
+              Vazgeç
+            </button>
+          </Show>
+        </div>
+        <Show when={confirmDelete()}>
+          <p class="settings-note">Silerseniz internet yokken sayfa bir sonraki açılışta düzeltme yapamaz.</p>
         </Show>
       </section>
 

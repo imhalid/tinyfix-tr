@@ -15,6 +15,7 @@ import { Toasts, toast } from "./kit/toast";
 import type { EditorController } from "./editor";
 import { downloadTextFile, serializeMarkdown, serializePlainText } from "./export";
 import { waitForServiceWorker, watchOfflineStatus, type OfflineState } from "./offline";
+import { deleteStoredData, redownloadData, storedDataSize } from "./storedData";
 import {
   applyTheme,
   detectSystemTheme,
@@ -101,6 +102,9 @@ export function App() {
   const [lastActivity, setLastActivity] = createSignal<StatusActivity | null>(null);
   const [batchProgress, setBatchProgress] = createSignal<BatchProgress | null>(null);
   const [activeFormats, setActiveFormats] = createSignal<FormatKey[]>([]);
+
+  const [storedBytes, setStoredBytes] = createSignal<number | null>(null);
+  const [dataBusy, setDataBusy] = createSignal<"redownload" | "delete" | null>(null);
 
   let editorController: EditorController | null = null;
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -220,6 +224,48 @@ export function App() {
       if (disposed || loadSeq !== engineLoadSeq || abortController.signal.aborted) return;
       console.error("autr: sözlük yüklenemedi", error);
       setEngineStatus("error");
+    }
+  };
+
+  const refreshStoredSize = () => {
+    storedDataSize()
+      .then((bytes) => setStoredBytes(bytes))
+      .catch(() => setStoredBytes(null));
+  };
+
+  const openSettings = () => {
+    refreshStoredSize();
+    setSettingsOpen(true);
+  };
+
+  const handleRedownloadData = async () => {
+    if (dataBusy()) return;
+    setDataBusy("redownload");
+    try {
+      const sizes: Record<string, number> = await fetch(`${MODELS_BASE_URL}manifest.json`, { cache: "reload" }).then((r) => r.json());
+      // Bağlam modeli yalnızca açıksa indirilir; ORT dosyalarını motor kendisi ister.
+      const files = Object.keys(sizes).filter((name) => name !== "context.onnx" || settings().contextModel);
+      await redownloadData([`${MODELS_BASE_URL}manifest.json`, ...files.map((name) => `${MODELS_BASE_URL}${name}`)]);
+      await initAutrEngine();
+      toast({ title: "Veriler yeniden indirildi", duration: 3500 });
+    } catch (error) {
+      console.error("autr: veriler yeniden indirilemedi", error);
+      toast({ title: "İndirme başarısız; internet bağlantınızı kontrol edin", duration: 5000 });
+    } finally {
+      setDataBusy(null);
+      refreshStoredSize();
+    }
+  };
+
+  const handleDeleteData = async () => {
+    if (dataBusy()) return;
+    setDataBusy("delete");
+    try {
+      await deleteStoredData();
+      toast({ title: "İndirilen veriler silindi", duration: 4000 });
+    } finally {
+      setDataBusy(null);
+      refreshStoredSize();
     }
   };
 
@@ -629,7 +675,7 @@ export function App() {
               )}
             </For>
           </div>
-          <button type="button" class="text-button" aria-haspopup="dialog" onClick={() => setSettingsOpen(true)}>
+          <button type="button" class="text-button" aria-haspopup="dialog" onClick={openSettings}>
             Ayarlar
             <Show when={!settings().enabled}>
               <span class="off-note"> · düzeltme kapalı</span>
@@ -783,6 +829,10 @@ export function App() {
           onAddIgnoredWord={addIgnoredWord}
           onRemoveIgnoredWord={removeIgnoredWord}
           onChangeTheme={handleChangeTheme}
+          storedBytes={storedBytes()}
+          dataBusy={dataBusy()}
+          onRedownloadData={() => void handleRedownloadData()}
+          onDeleteData={() => void handleDeleteData()}
         />
       </Drawer>
 

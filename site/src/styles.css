@@ -1024,6 +1024,12 @@ code {
   display: flex;
   gap: 8px;
 }
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
 .text-input {
   flex: 1;
   min-inline-size: 0;
