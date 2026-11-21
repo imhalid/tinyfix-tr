@@ -1,7 +1,7 @@
 import { CAREFUL, Corrector, type Correction, type Settings } from "../../src/corrector.ts";
 import { lowerTr } from "../../src/turkish.ts";
 import type { LoadedData } from "./data.ts";
-import type { CheckOptions, ContextSession, Fix, FixKind, Mode } from "./types.ts";
+import type { CheckOptions, ContextSession, Fix, FixKind, FixScope, Mode } from "./types.ts";
 
 /** Temkinli kip: motorun doğrulanan varsayılan eşikleri. */
 export { CAREFUL };
@@ -43,6 +43,15 @@ function findCodeRanges(text: string): Array<readonly [number, number]> {
 }
 
 /** Motorun iç düzeltme türünü dışarıya açılan anlaşılır Türkçe türe eşler. */
+/**
+ * Birleştirme, ayırma ve bağlam modeli kararları komşu kelimelere ya da kelime çiftlerinin sıklığına bakar; iki
+ * kelimeyi kapsayan her düzeltme de öyledir ("hiç bir" → "hiçbir"). Geri kalanı yalnızca kelimeye bakar.
+ */
+export function correctionScope(correction: Pick<Correction, "kind" | "original">): FixScope {
+  if (correction.kind === "join" || correction.kind === "split" || correction.kind === "context") return "baglam";
+  return correction.original.includes(" ") ? "baglam" : "kelime";
+}
+
 export function mapCorrectionKind(correction: Pick<Correction, "kind" | "original" | "replacement">): FixKind {
   switch (correction.kind) {
     case "marks":
@@ -199,6 +208,7 @@ export class AutrEngine {
         replacement: correction.replacement,
         kind,
         confidence: marginToConfidence(correction.margin),
+        scope: correctionScope(correction),
       });
       lastEnd = correction.end;
     }

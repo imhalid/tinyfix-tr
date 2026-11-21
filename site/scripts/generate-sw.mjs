@@ -7,6 +7,20 @@ import { fileURLToPath } from "node:url";
 
 const distDir = fileURLToPath(new URL("../dist/", import.meta.url));
 
+// models/manifest.json: the real size of each model file. Servers often compress these files, and then the browser
+// can't tell how big they are; the package reads this file to show accurate download progress.
+const modelsDir = join(distDir, "models");
+try {
+  const sizes = {};
+  for (const name of readdirSync(modelsDir)) {
+    if (name === "manifest.json") continue;
+    sizes[name] = statSync(join(modelsDir, name)).size;
+  }
+  writeFileSync(join(modelsDir, "manifest.json"), JSON.stringify(sizes));
+} catch {
+  // No models/ folder yet: nothing to describe.
+}
+
 function collectFiles(directory) {
   const results = [];
   for (const entry of readdirSync(directory)) {
@@ -83,12 +97,10 @@ async function precacheMissing(cacheName, urls, sequential = false) {
 }
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    precacheMissing(SHELL_CACHE, SHELL_FILES, false)
-      .then(() => precacheMissing(MODEL_CACHE, MODEL_FILES, true))
-      .then(() => precacheMissing(ORT_CACHE, ORT_FILES, true))
-      .then(() => self.skipWaiting()),
-  );
+  // Only the app shell is cached on install. The lexicon and ORT files are cached the first time the page asks for
+  // them (cache-first handler below). Precaching them here downloaded the same ~58 MB twice on the first visit, in
+  // parallel with the page, and cut the page's own download short.
+  event.waitUntil(precacheMissing(SHELL_CACHE, SHELL_FILES, false).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {

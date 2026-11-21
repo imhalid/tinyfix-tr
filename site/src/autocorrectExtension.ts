@@ -3,7 +3,7 @@ import { closeHistory } from "@tiptap/pm/history";
 import { Plugin, PluginKey, type EditorState, type Transaction } from "@tiptap/pm/state";
 import { Mapping, ReplaceStep, type StepMap } from "@tiptap/pm/transform";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Autr, Fix, FixKind } from "autr";
+import type { Autr, Fix, FixKind, FixScope } from "autr";
 import { FIX_KIND_META } from "./settings";
 
 export interface AppliedFix {
@@ -13,6 +13,8 @@ export interface AppliedFix {
   original: string;
   replacement: string;
   kind: FixKind;
+  /** Karar yalnızca kelimeye mi ("kelime"), çevresine de mi ("baglam") dayanıyor; alt çizginin stili buna göre. */
+  scope: FixScope;
 }
 
 export interface BatchProgress {
@@ -33,6 +35,9 @@ export interface AutocorrectExtensionOptions {
   onUndo?: (fix: AppliedFix) => void;
   onBatchUndo?: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress?: (progress: BatchProgress | null) => void;
+  /** Düzeltilmiş kelimeye tıklanınca: uygulama ayrıntıyı ve geri alma seçeneğini bir pencerede gösterir. */
+  onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
+  /** Alt çizginin ne kadar sonra kaybolacağı (ms). Varsayılan: kaybolmaz. */
   highlightDurationMs?: number;
 }
 
@@ -113,11 +118,10 @@ function buildDecorations(doc: EditorState["doc"], records: readonly AppliedFix[
   const decorations = records.map((record) => {
     const kindLabel = FIX_KIND_META[record.kind].label;
     return Decoration.inline(record.from, record.to, {
-      class: "autr-fix-highlight",
+      class: "autr-fix",
       "data-autr-fix-id": record.id,
-      "data-autr-original": record.original,
-      "data-autr-kind": kindLabel,
-      title: `${kindLabel}: «${record.original}» → «${record.replacement}» (geri almak için tıklayın)`,
+      "data-autr-scope": record.scope,
+      "aria-description": `${kindLabel}: «${record.original}» yerine «${record.replacement}»`,
     });
   });
   return DecorationSet.create(doc, decorations);
@@ -387,6 +391,13 @@ async function checkParagraph(
   return collected;
 }
 
+/** Kimliği verilen düzeltmeyi geri alır (yazılan biçim geri gelir). Geri alınan kaydı ya da null döner. */
+export function undoAppliedFix(view: EditorView, id: string): AppliedFix | null {
+  const record = AUTOCORRECT_KEY.getState(view.state)?.records.find((item) => item.id === id);
+  if (!record) return null;
+  return revertAppliedFix(view, record) ? record : null;
+}
+
 function revertAppliedFix(view: EditorView, record: AppliedFix): boolean {
   const { doc } = view.state;
   if (record.from < 0 || record.to > doc.content.size) return false;
@@ -408,13 +419,13 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
   addOptions() {
     return {
       getRuntime: () => ({ autr: null, enabled: false, activeKinds: [] }),
-      highlightDurationMs: 8500,
+      highlightDurationMs: Number.POSITIVE_INFINITY,
     };
   },
 
   addProseMirrorPlugins() {
     const options = this.options;
-    const durationMs = options.highlightDurationMs ?? 8500;
+    const durationMs = options.highlightDurationMs ?? Number.POSITIVE_INFINITY;
 
     return [
       new Plugin<PluginState>({
@@ -525,8 +536,12 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
 
             const pluginState = AUTOCORRECT_KEY.getState(view.state);
             const record = pluginState?.records.find((item) => item.id === fixId);
-            if (!record) return false;
+            if (!record || !span) return false;
 
+            if (options.onFixClick) {
+              options.onFixClick(record, span);
+              return true;
+            }
             if (revertAppliedFix(view, record)) {
               options.onUndo?.(record);
               return true;
@@ -540,7 +555,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
           let destroyed = false;
 
           const scheduleExpiryBatch = (view: EditorView, ids: readonly string[]) => {
-            if (ids.length === 0) return;
+            if (ids.length === 0 || !Number.isFinite(durationMs)) return;
             const timer = setTimeout(() => {
               timers.delete(timer);
               if (destroyed) return;
@@ -676,6 +691,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                   original: item.fix.original,
                   replacement: item.fix.replacement,
                   kind: item.fix.kind,
+                  scope: item.fix.scope,
                 });
                 delta += item.fix.replacement.length - (item.absTo - item.absFrom);
               }

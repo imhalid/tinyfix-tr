@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/google-sans": "^5.3.2",
+    "@fontsource/instrument-serif": "^5.3.0",
     "@solidjs/web": "2.0.3",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-placeholder": "^2.11.5",

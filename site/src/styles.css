@@ -1,0 +1,1196 @@
+/*
+ * autr: krem kâğıt üzerinde sade, editoryal bir yazı alanı.
+ * Renkler OKLCH; açık tema krem kâğıt ve sıcak koyu mürekkep, koyu tema sıcak antrasit ve krem metin.
+ */
+
+:root {
+  color-scheme: light;
+  --paper: oklch(96.8% 0.016 85);
+  --paper-raised: oklch(98.6% 0.009 85);
+  --ink: oklch(24% 0.018 60);
+  --ink-2: oklch(38% 0.02 60);
+  --muted: oklch(53% 0.022 65);
+  --faint: oklch(70% 0.02 72);
+  --rule: oklch(24% 0.018 60 / 11%);
+  --rule-strong: oklch(24% 0.018 60 / 22%);
+  --wash: oklch(24% 0.018 60 / 5%);
+  --wash-strong: oklch(24% 0.018 60 / 9%);
+  --accent: oklch(52% 0.13 38);
+  --fix-word: oklch(48% 0.11 250);
+  --fix-context: oklch(47% 0.13 355);
+  --ok: oklch(56% 0.1 150);
+  --warn: oklch(68% 0.13 75);
+  --danger: oklch(52% 0.17 28);
+  --scrim: oklch(24% 0.02 60 / 16%);
+  --shadow: 0 1px 2px oklch(24% 0.02 60 / 6%), 0 18px 40px -12px oklch(24% 0.02 60 / 20%);
+
+  --font: "Google Sans Variable", "Google Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --measure: 68ch;
+  --sidebar-w: 288px;
+  --sidebar-bg: oklch(94.4% 0.021 82);
+  --radius: 10px;
+  --masthead: 60px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: oklch(19% 0.008 70);
+    --paper-raised: oklch(23.5% 0.009 70);
+    --sidebar-bg: oklch(16.8% 0.008 70);
+    --ink: oklch(92% 0.016 85);
+    --ink-2: oklch(82% 0.016 82);
+    --muted: oklch(68% 0.016 78);
+    --faint: oklch(52% 0.014 75);
+    --rule: oklch(92% 0.016 85 / 11%);
+    --rule-strong: oklch(92% 0.016 85 / 22%);
+    --wash: oklch(92% 0.016 85 / 5%);
+    --wash-strong: oklch(92% 0.016 85 / 9%);
+    --accent: oklch(72% 0.12 45);
+    --fix-word: oklch(74% 0.1 245);
+    --fix-context: oklch(74% 0.12 355);
+    --ok: oklch(72% 0.12 150);
+    --warn: oklch(80% 0.12 80);
+    --danger: oklch(68% 0.16 28);
+    --scrim: oklch(0% 0 0 / 45%);
+    --shadow: 0 1px 2px oklch(0% 0 0 / 30%), 0 18px 40px -12px oklch(0% 0 0 / 55%);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: oklch(19% 0.008 70);
+  --paper-raised: oklch(23.5% 0.009 70);
+  --sidebar-bg: oklch(16.8% 0.008 70);
+  --ink: oklch(92% 0.016 85);
+  --ink-2: oklch(82% 0.016 82);
+  --muted: oklch(68% 0.016 78);
+  --faint: oklch(52% 0.014 75);
+  --rule: oklch(92% 0.016 85 / 11%);
+  --rule-strong: oklch(92% 0.016 85 / 22%);
+  --wash: oklch(92% 0.016 85 / 5%);
+  --wash-strong: oklch(92% 0.016 85 / 9%);
+  --accent: oklch(72% 0.12 45);
+  --fix-word: oklch(74% 0.1 245);
+  --fix-context: oklch(74% 0.12 355);
+  --ok: oklch(72% 0.12 150);
+  --warn: oklch(80% 0.12 80);
+  --danger: oklch(68% 0.16 28);
+  --scrim: oklch(0% 0 0 / 45%);
+  --shadow: 0 1px 2px oklch(0% 0 0 / 30%), 0 18px 40px -12px oklch(0% 0 0 / 55%);
+}
+
+/* ---------- Temel ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+}
+
+kbd {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  padding: 1px 6px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 5px;
+  color: var(--muted);
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.9em;
+  padding: 1px 5px;
+  background: var(--wash);
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Düğmeler ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.button:hover {
+  background: var(--wash);
+}
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.button-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.button-primary:hover {
+  background: color-mix(in oklab, var(--ink) 88%, var(--paper));
+}
+.button-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: oklch(98% 0.01 85);
+}
+.button-danger:hover {
+  background: color-mix(in oklab, var(--danger) 88%, black);
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+.text-button:hover {
+  color: var(--ink);
+  text-decoration-color: var(--rule-strong);
+}
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.icon-button:hover {
+  background: var(--wash);
+  color: var(--ink);
+}
+.icon-button[aria-pressed="true"] {
+  background: var(--wash-strong);
+  color: var(--ink);
+}
+.icon-button svg {
+  stroke: currentColor;
+}
+
+/* ---------- Sayfa ---------- */
+
+.page {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.main-col {
+  min-inline-size: 0;
+}
+.masthead-start {
+  visibility: hidden;
+}
+
+/* ---------- Sol panel (geniş ekranda hep açık) ---------- */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+  padding: 30px 18px 22px;
+  background: var(--sidebar-bg);
+  border-inline-end: 1px solid var(--rule);
+  overflow: hidden;
+}
+.sidebar-brand {
+  display: grid;
+  gap: 2px;
+  padding: 0 10px 26px;
+}
+.sidebar-wordmark {
+  font-family: var(--serif);
+  font-size: 2.1rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.sidebar-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.02rem;
+  color: var(--muted);
+}
+.sidebar > .docs {
+  min-block-size: 0;
+}
+.sidebar .doc-list {
+  overflow-y: auto;
+  margin-inline: -4px;
+  padding-inline: 4px;
+  scrollbar-width: thin;
+}
+
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  height: var(--masthead);
+  padding: 0 28px;
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.masthead-start,
+.masthead-end {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.masthead-end {
+  justify-content: flex-end;
+}
+
+.wordmark {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.format-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0.75;
+  transition: opacity 200ms ease;
+}
+.format-bar:hover,
+.format-bar:focus-within {
+  opacity: 1;
+}
+.format-sep {
+  inline-size: 1px;
+  block-size: 16px;
+  margin: 0 6px;
+  background: var(--rule-strong);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.status-dot {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+.status[data-state="loading"] .status-dot {
+  background: var(--warn);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.status[data-state="error"] .status-dot {
+  background: var(--danger);
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.off-note {
+  color: var(--danger);
+}
+
+/* Sözlük indirilirken: başlık şeridinin altında ince bir çizgi */
+.loading {
+  max-inline-size: var(--measure);
+  margin: 0 auto;
+  padding: 10px 24px 0;
+}
+.loading-track {
+  position: relative;
+  block-size: 2px;
+  overflow: hidden;
+  background: var(--rule);
+  border-radius: 2px;
+}
+.loading-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+  transition: width 250ms ease;
+}
+.loading-track[data-indeterminate] .loading-bar {
+  inline-size: 30% !important;
+  animation: slide 1.3s ease-in-out infinite;
+}
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+.loading-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  max-inline-size: var(--measure);
+  margin: 12px auto 0;
+  padding: 14px 18px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+.notice p {
+  margin: 0;
+}
+.notice-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ---------- Yazı sütunu ---------- */
+
+.sheet {
+  max-inline-size: calc(var(--measure) + 48px);
+  margin: 0 auto;
+  padding: 9vh 24px 24vh;
+}
+
+.doc-title {
+  display: block;
+  inline-size: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  outline: none;
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 1.8rem + 2.6vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+.doc-title::placeholder {
+  color: var(--faint);
+}
+
+.doc-meta-line {
+  margin: 14px 0 44px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-host .ProseMirror {
+  outline: none;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--ink);
+  caret-color: var(--accent);
+  min-block-size: 40vh;
+}
+.ProseMirror p {
+  margin: 0 0 1.05em;
+}
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  margin: 1.6em 0 0.45em;
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+}
+.ProseMirror h1 {
+  font-size: 2.2rem;
+}
+.ProseMirror h2 {
+  font-size: 1.85rem;
+}
+.ProseMirror h3 {
+  font-size: 1.45rem;
+}
+.ProseMirror blockquote {
+  margin: 1.4em 0;
+  padding-left: 1.1em;
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-2);
+}
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.3em;
+  margin: 0 0 1.05em;
+}
+.ProseMirror li p {
+  margin-bottom: 0.3em;
+}
+.ProseMirror strong {
+  font-weight: 650;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+.footnote {
+  position: fixed;
+  left: calc(var(--sidebar-w) + 28px);
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+.footnote-activity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.footnote-activity::before {
+  content: "·";
+  color: var(--faint);
+}
+
+/* ---------- Düzeltilmiş kelime ---------- */
+
+/*
+ * Çizgi kelimenin hemen altında, taban çizgisine yakın durur; ç, ş, ğ, g, y gibi harflerin kuyruğu çizgiyi keser
+ * (text-decoration-skip-ink: auto, kuyruğun değdiği yerde çizgiye boşluk açar). Kelime düzeltmesi noktalı,
+ * bağlam düzeltmesi dalgalı.
+ */
+.autr-fix {
+  --fix-color: var(--fix-word);
+  text-decoration-line: underline;
+  text-decoration-skip-ink: auto;
+  text-decoration-color: color-mix(in oklab, var(--fix-color) 70%, transparent);
+  text-underline-offset: 0.14em;
+  cursor: pointer;
+  transition: text-decoration-color 150ms ease;
+}
+.autr-fix[data-autr-scope="kelime"] {
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+}
+.autr-fix[data-autr-scope="baglam"] {
+  --fix-color: var(--fix-context);
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1.25px;
+}
+@media (hover: hover) {
+  .autr-fix:hover {
+    text-decoration-color: var(--fix-color);
+  }
+}
+
+.fix-pop {
+  position: fixed;
+  margin: 0;
+  inline-size: max-content;
+  min-inline-size: 260px;
+  max-inline-size: min(340px, calc(100vw - 24px));
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.fix-pop-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fix-pop-scope {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.fix-pop-scope::before {
+  content: "";
+  inline-size: 16px;
+  border-bottom: 2px dotted var(--fix-word);
+}
+.fix-pop-scope[data-autr-scope="baglam"]::before {
+  border-bottom: 2px solid var(--fix-context);
+  border-radius: 2px;
+}
+.fix-pop-change {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+.fix-pop-original {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--faint);
+}
+.fix-pop-arrow {
+  color: var(--faint);
+}
+.fix-pop-replacement {
+  font-weight: 600;
+}
+.fix-pop-detail {
+  margin: 0 0 16px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.fix-pop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Dışa aktar menüsü ---------- */
+
+.menu {
+  margin: 0;
+  padding: 6px;
+  min-inline-size: 200px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  /* Tetikleyici düğme örtük çapa: hemen altında, sağa hizalı */
+  inset: auto;
+  position-area: block-end span-inline-start;
+  position-try-fallbacks: flip-block;
+  margin-top: 8px;
+}
+@supports not (position-area: block-end) {
+  .menu {
+    position: fixed;
+    inset: calc(var(--masthead) - 4px) 20px auto auto;
+  }
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  inline-size: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.menu-item:hover {
+  background: var(--wash);
+}
+.menu-kbd {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Çekmece ---------- */
+
+.drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline: auto;
+  margin: 0;
+  inline-size: min(400px, 100vw);
+  max-inline-size: 100vw;
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+  padding: 0;
+  border: 0;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), display 260ms allow-discrete, overlay 260ms allow-discrete;
+}
+.drawer[data-side="start"] {
+  inset-inline-start: 0;
+  border-inline-end: 1px solid var(--rule);
+  transform: translateX(-100%);
+}
+.drawer[data-side="end"] {
+  inset-inline-end: 0;
+  border-inline-start: 1px solid var(--rule);
+  transform: translateX(100%);
+}
+.drawer[open] {
+  transform: none;
+}
+@starting-style {
+  .drawer[data-side="start"][open] {
+    transform: translateX(-100%);
+  }
+  .drawer[data-side="end"][open] {
+    transform: translateX(100%);
+  }
+}
+.drawer::backdrop,
+.modal::backdrop {
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+}
+
+.drawer-body {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow-y: auto;
+  padding: 22px 24px 28px;
+}
+.drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.drawer-title {
+  margin: 4px 0 0;
+  font-family: var(--serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+}
+.drawer-description {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* Belgeler */
+
+.docs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.new-doc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  box-shadow: 0 1px 1px oklch(24% 0.02 60 / 4%);
+  font-weight: 550;
+  color: var(--ink);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.new-doc svg {
+  inline-size: 14px;
+  block-size: 14px;
+  color: var(--accent);
+}
+.new-doc:hover {
+  border-color: var(--rule-strong);
+  box-shadow: 0 2px 6px oklch(24% 0.02 60 / 8%);
+}
+.docs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 28px 10px 8px;
+}
+.docs-head .section-label {
+  margin: 0;
+}
+.docs-count {
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.doc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+.doc-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 8px;
+  transition: background-color 150ms ease;
+}
+.doc-item:hover {
+  background: var(--wash);
+}
+.doc-item[aria-current="page"] {
+  background: var(--paper-raised);
+  box-shadow: 0 0 0 1px var(--rule), 0 1px 2px oklch(24% 0.02 60 / 5%);
+}
+.doc-item[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 12px;
+  inset-inline-start: 0;
+  inline-size: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.doc-open {
+  flex: 1;
+  min-inline-size: 0;
+  display: grid;
+  gap: 2px;
+  padding: 10px 34px 11px 12px;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+.doc-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.doc-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.doc-meta {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.doc-delete {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  opacity: 0;
+}
+.doc-item:hover .doc-delete,
+.doc-delete:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .doc-delete {
+    opacity: 1;
+  }
+}
+.privacy-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 16px 10px 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  background: none;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: left;
+}
+.privacy-note:hover {
+  color: var(--ink);
+}
+
+/* Ayarlar */
+
+.settings {
+  display: grid;
+  gap: 30px;
+}
+.section-label {
+  margin: 0 0 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.settings-section {
+  display: grid;
+  gap: 4px;
+}
+.settings-note {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.switch-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+.switch-text {
+  display: grid;
+  gap: 2px;
+}
+.switch-label {
+  font-weight: 550;
+}
+.switch-description {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.switch-description .example {
+  display: block;
+  margin-top: 2px;
+  color: var(--faint);
+}
+.switch {
+  appearance: none;
+  flex: none;
+  position: relative;
+  inline-size: 36px;
+  block-size: 21px;
+  margin: 2px 0 0;
+  border-radius: 999px;
+  background: var(--rule-strong);
+  cursor: pointer;
+  transition: background-color 180ms ease;
+}
+.switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  inline-size: 15px;
+  block-size: 15px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 18%);
+  transition: transform 180ms ease;
+}
+.switch:checked {
+  background: var(--ink);
+}
+.switch:checked::before {
+  transform: translateX(15px);
+}
+
+.choice {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--wash-strong);
+  justify-self: start;
+}
+.choice-option {
+  position: relative;
+}
+.choice-option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+.choice-option span {
+  display: block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.choice-option input:checked + span {
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 10%);
+}
+.choice-option input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ignore-form {
+  display: flex;
+  gap: 8px;
+}
+.text-input {
+  flex: 1;
+  min-inline-size: 0;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: transparent;
+  outline: none;
+}
+.text-input:focus {
+  border-color: var(--ink-2);
+}
+.word-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 12px;
+  border-radius: 999px;
+  background: var(--wash-strong);
+  font-size: 0.85rem;
+}
+.chip-remove {
+  inline-size: 22px;
+  block-size: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  line-height: 1;
+}
+.chip-remove:hover {
+  background: var(--wash-strong);
+  color: var(--ink);
+}
+
+/* ---------- Pencere (gizlilik, silme onayı) ---------- */
+
+.modal {
+  inline-size: min(460px, calc(100vw - 32px));
+  padding: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.modal-title {
+  font-family: var(--serif);
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.modal-body p {
+  margin: 0 0 12px;
+}
+.modal-body .lead {
+  color: var(--ink);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+.privacy-list {
+  margin: 16px 0;
+}
+.privacy-list dt {
+  font-weight: 600;
+  color: var(--ink);
+}
+.privacy-list dd {
+  margin: 2px 0 12px;
+}
+.muted-copy {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------- Bildirim ---------- */
+
+.toasts {
+  position: fixed;
+  inset: auto 0 22px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 30;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.875rem;
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+.toast .text-button {
+  height: 26px;
+  color: var(--paper);
+  text-decoration-color: color-mix(in oklab, var(--paper) 40%, transparent);
+}
+
+/* ---------- Dar ekran ---------- */
+
+@media (max-width: 900px) {
+  .page {
+    display: block;
+  }
+  .sidebar {
+    display: none;
+  }
+  .masthead-start {
+    visibility: visible;
+  }
+  .footnote {
+    left: 28px;
+  }
+}
+
+@media (min-width: 901px) {
+  .masthead-start {
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .masthead {
+    grid-template-columns: auto 1fr;
+    padding: 0 16px;
+  }
+  .format-bar {
+    display: none;
+  }
+  .status-text {
+    display: none;
+  }
+  .masthead-end {
+    gap: 10px;
+  }
+  .sheet {
+    padding: 5vh 18px 22vh;
+  }
+  .doc-meta-line {
+    margin-bottom: 30px;
+  }
+  .footnote {
+    left: 18px;
+    bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation: none !important;
+  }
+}

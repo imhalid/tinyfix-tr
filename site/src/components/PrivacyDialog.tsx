@@ -1,44 +1,78 @@
+import type { JSX } from "@solidjs/web";
+import { createEffect } from "solid-js";
 import { APP_NAME } from "../brand";
-import { Button, Dialog } from "../ui";
 
-export interface PrivacyDialogProps {
+export interface ModalProps {
   open: boolean;
-  onClose: () => void;
+  /** Kapanınca hangi düğmeyle kapandığı (`<form method="dialog">` düğmesinin value'su). */
+  onClose: (returnValue: string) => void;
+  title: string;
+  role?: "dialog" | "alertdialog";
+  children: JSX.Element;
+  /** Alt düğmeler: `<form method="dialog">` içinde; `value`ları kapanış nedeni olur. */
+  actions: JSX.Element;
 }
 
-export function PrivacyDialog(props: PrivacyDialogProps) {
+/** Ortada açılan küçük pencere (yerel `<dialog>`). Esc kapatır, düğmeler JS'siz kapatır. */
+export function Modal(props: ModalProps) {
+  let dialog: HTMLDialogElement | undefined;
+  createEffect(
+    () => props.open,
+    (open) => {
+      if (!dialog) return;
+      if (open && !dialog.open) {
+        dialog.returnValue = "";
+        dialog.showModal();
+      }
+      if (!open && dialog.open) dialog.close();
+    },
+  );
   return (
-    <Dialog
+    <dialog
+      ref={(el) => {
+        dialog = el;
+        el.addEventListener("close", () => props.onClose(el.returnValue));
+      }}
+      class="modal"
+      role={props.role ?? "dialog"}
+      aria-label={props.title}
+    >
+      <h2 class="modal-title">{props.title}</h2>
+      <div class="modal-body">{props.children}</div>
+      <form method="dialog" class="modal-actions">
+        {props.actions}
+      </form>
+    </dialog>
+  );
+}
+
+export function PrivacyDialog(props: { open: boolean; onClose: () => void }) {
+  return (
+    <Modal
       open={props.open}
       onClose={() => props.onClose()}
       title="Gizlilik ve internetsiz çalışma"
-      description={`${APP_NAME} içinde yazdığınız hiçbir metin cihazınızdan çıkmaz.`}
-      footer={<Button type="submit">Tamam</Button>}
+      actions={
+        <button type="submit" class="button button-primary" value="ok">
+          Tamam
+        </button>
+      }
     >
-      <div class="privacy-copy">
-        <ul>
-          <li>
-            <strong>Sunucu yok:</strong> Otomatik düzeltme sözlüğü, bağlam modeli ve kuralları
-            tarayıcınızda, ayrı bir Web Worker içinde çalışır.
-          </li>
-          <li>
-            <strong>Belgeler cihazınızda:</strong> Tüm belgeler yalnızca tarayıcınızın yerel
-            IndexedDB deposunda saklanır; buluta gönderilmez.
-          </li>
-          <li>
-            <strong>İzleme yok:</strong> Analitik betiği, üçüncü parti yazı tipi veya dış ağ isteği
-            bulunmaz.
-          </li>
-          <li>
-            <strong>Uçak modunda tam çalışma:</strong> İlk açılışta uygulama ve sözlük önbelleğe
-            alındıktan sonra internet olmadan da açılır ve düzeltme yapar.
-          </li>
-        </ul>
-        <p>
-          Belgelerinizi dilediğiniz zaman <code>.txt</code> veya <code>.md</code> olarak
-          bilgisayarınıza yedekleyebilirsiniz.
-        </p>
-      </div>
-    </Dialog>
+      <p class="lead">{APP_NAME} içinde yazdığınız hiçbir metin cihazınızdan çıkmaz.</p>
+      <dl class="privacy-list">
+        <dt>Sunucu yok</dt>
+        <dd>Düzeltme sözlüğü ve kuralları tarayıcınızda, ayrı bir iş parçacığında çalışır.</dd>
+        <dt>Belgeler cihazınızda</dt>
+        <dd>Tüm belgeler yalnızca tarayıcınızın yerel deposunda (IndexedDB) saklanır; buluta gönderilmez.</dd>
+        <dt>İzleme yok</dt>
+        <dd>Analitik betiği, dışarıdan yüklenen yazı tipi ya da dış ağ isteği yok.</dd>
+        <dt>Uçak modunda da çalışır</dt>
+        <dd>İlk açılışta uygulama ve sözlük önbelleğe alındıktan sonra internet olmadan açılır ve düzeltir.</dd>
+      </dl>
+      <p class="muted-copy">
+        Belgelerinizi istediğiniz zaman <code>.txt</code> ya da <code>.md</code> olarak bilgisayarınıza
+        kaydedebilirsiniz.
+      </p>
+    </Modal>
   );
 }

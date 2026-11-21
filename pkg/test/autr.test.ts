@@ -240,12 +240,13 @@ describe("autr çekirdek API", () => {
       replacement: "abc",
       kind: "yazim",
       confidence: 0.9,
+      scope: "kelime",
     };
     assert.throws(() => applyFixes("cok", [wrongOriginal]));
 
     const overlapping: Fix[] = [
-      { from: 0, to: 3, original: "cok", replacement: "çok", kind: "turkce-karakter", confidence: 0.9 },
-      { from: 2, to: 5, original: "k y", replacement: "k z", kind: "yazim", confidence: 0.9 },
+      { from: 0, to: 3, original: "cok", replacement: "çok", kind: "turkce-karakter", confidence: 0.9, scope: "kelime" },
+      { from: 2, to: 5, original: "k y", replacement: "k z", kind: "yazim", confidence: 0.9, scope: "baglam" },
     ];
     assert.throws(() => applyFixes("cok y", overlapping));
   });

@@ -1,26 +1,20 @@
 import { loadAutr, type Autr, type FixKind, type LoadProgress, type Mode } from "autr";
-import { Show, createMemo, createSignal, onSettled } from "solid-js";
-import type { AppliedFix, BatchProgress } from "./autocorrectExtension";
+import type { JSX } from "@solidjs/web";
+import { For, Show, createMemo, createSignal, onSettled } from "solid-js";
+import { undoAppliedFix, type AppliedFix, type BatchProgress } from "./autocorrectExtension";
 import { APP_NAME, APP_TAGLINE, MODELS_BASE_URL, ORT_WASM_BASE_URL } from "./brand";
-import { DocumentSidebar } from "./components/DocumentSidebar";
+import { DocumentsList } from "./components/DocumentsDrawer";
 import { EditorPane } from "./components/EditorPane";
-import {
-  BoldIcon,
-  ChevronDownIcon,
-  DownloadIcon,
-  HeadingIcon,
-  ItalicIcon,
-  ListIcon,
-  QuoteIcon,
-  SettingsIcon,
-  SidebarIcon,
-  UndoIcon,
-} from "./components/Icons";
-import { PrivacyDialog } from "./components/PrivacyDialog";
-import { SettingsSheet } from "./components/SettingsSheet";
+import { FixPopover } from "./components/FixPopover";
+import { BoldIcon, HeadingIcon, ItalicIcon, ListIcon, QuoteIcon, UndoIcon } from "./components/Icons";
+import { Modal, PrivacyDialog } from "./components/PrivacyDialog";
+import { SettingsPanel } from "./components/SettingsPanel";
+import { Drawer } from "./kit/Drawer";
+import { formatBytesTr, formatLongDateTr, formatNumberTr, isMacPlatform } from "./kit/format";
+import { Toasts, toast } from "./kit/toast";
 import type { EditorController } from "./editor";
 import { downloadTextFile, serializeMarkdown, serializePlainText } from "./export";
-import { watchOfflineStatus, type OfflineState } from "./offline";
+import { waitForServiceWorker, watchOfflineStatus, type OfflineState } from "./offline";
 import {
   applyTheme,
   detectSystemTheme,
@@ -44,27 +38,6 @@ import {
   saveLastActiveDocId,
   type DocRecord,
 } from "./storage";
-import {
-  Alert,
-  Button,
-  Dialog,
-  Kbd,
-  Menu,
-  Progress,
-  Separator,
-  Sheet,
-  StatusDot,
-  Toaster,
-  ToggleGroup,
-  Toolbar,
-  Tooltip,
-  formatBytesTr,
-  formatNumberTr,
-  isMacPlatform,
-  toast,
-  type MenuItem,
-  type ToggleOption,
-} from "./ui";
 
 type FormatKey = "heading" | "bold" | "italic" | "bulletList" | "blockquote";
 
@@ -73,7 +46,6 @@ interface StatusActivity {
   showUndoHint: boolean;
 }
 
-const MOBILE_MEDIA = "(max-width: 840px)";
 
 export function App() {
   const initialSettings = loadSettings();
@@ -94,6 +66,22 @@ export function App() {
   const [autr, setAutr] = createSignal<Autr | null>(null);
   const [engineStatus, setEngineStatus] = createSignal<"loading" | "ready" | "error">("loading");
   const [engineProgress, setEngineProgress] = createSignal<LoadProgress | null>(null);
+  const [contextAvailable, setContextAvailable] = createSignal(false);
+  /** Tıklanan düzeltilmiş kelime: pencerede ayrıntısı ve geri alma seçeneği gösterilir. */
+  const [openFix, setOpenFix] = createSignal<{ fix: AppliedFix; anchor: HTMLElement } | null>(null);
+
+  /** Penceredeki "Geri al" ve "Bir daha değiştirme" için: düzeltmeyi geri alır, durum çubuğuna yazar. */
+  const undoFromPopover = (fix: AppliedFix, neverChange: boolean) => {
+    setOpenFix(null);
+    const view = editorController?.editor.view;
+    if (!view || !undoAppliedFix(view, fix.id)) return;
+    if (neverChange) addIgnoredWord(fix.original);
+    setLastActivity({
+      text: neverChange ? `«${fix.original}» geri alındı, bir daha değiştirilmeyecek` : `«${fix.original}» geri alındı`,
+      showUndoHint: false,
+    });
+    view.focus();
+  };
   const [contextWarning, setContextWarning] = createSignal<string | null>(null);
   const [bannerDismissed, setBannerDismissed] = createSignal(false);
 
@@ -103,11 +91,7 @@ export function App() {
     swSupported: typeof navigator !== "undefined" && "serviceWorker" in navigator,
   });
 
-  const [isMobile, setIsMobile] = createSignal(
-    typeof window !== "undefined" ? window.matchMedia(MOBILE_MEDIA).matches : false,
-  );
-  const [sidebarCollapsed, setSidebarCollapsed] = createSignal(false);
-  const [mobileSheetOpen, setMobileSheetOpen] = createSignal(false);
+  const [docsOpen, setDocsOpen] = createSignal(false);
   const [settingsOpen, setSettingsOpen] = createSignal(false);
   const [privacyOpen, setPrivacyOpen] = createSignal(false);
   const [pendingDelete, setPendingDelete] = createSignal<DocRecord | null>(null);
@@ -124,10 +108,6 @@ export function App() {
   let engineAbort: AbortController | null = null;
   let disposed = false;
 
-  const resolvedTheme = createMemo<ResolvedTheme>(() => {
-    const theme = settings().theme;
-    return theme === "system" ? systemTheme() : theme;
-  });
 
   const sortedDocs = createMemo(() => [...docs()].sort((a, b) => b.updatedAt - a.updatedAt));
 
@@ -203,10 +183,18 @@ export function App() {
 
     const currentSettings = settings();
     try {
+      // İlk ziyarette sözlüğün service worker üzerinden tek seferde inip önbelleğe yazılması için.
+      await waitForServiceWorker();
+      // Bağlam modeli yalnızca dosyası sitede varsa istenir; yoksa ayarı da gösterilmez.
+      const available = await fetch(`${MODELS_BASE_URL}manifest.json`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then((sizes: Record<string, number>) => typeof sizes["context.onnx"] === "number")
+        .catch(() => false);
+      setContextAvailable(available);
       const instance = await loadAutr({
         baseUrl: MODELS_BASE_URL,
         wasmPaths: ORT_WASM_BASE_URL,
-        context: currentSettings.contextModel,
+        context: currentSettings.contextModel && available,
         worker: true,
         mode: currentSettings.mode,
         ignored: currentSettings.ignoredWords,
@@ -239,12 +227,6 @@ export function App() {
     const onDarkChange = (e: MediaQueryListEvent) => setSystemTheme(e.matches ? "dark" : "light");
     darkMedia.addEventListener("change", onDarkChange);
 
-    const mobileMedia = window.matchMedia(MOBILE_MEDIA);
-    const onMobileChange = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches);
-      if (!e.matches) setMobileSheetOpen(false);
-    };
-    mobileMedia.addEventListener("change", onMobileChange);
 
     const stopOffline = watchOfflineStatus((nextOffline) => {
       setOffline(nextOffline);
@@ -292,7 +274,6 @@ export function App() {
       engineAbort?.abort();
       if (saveTimer !== null) clearTimeout(saveTimer);
       darkMedia.removeEventListener("change", onDarkChange);
-      mobileMedia.removeEventListener("change", onMobileChange);
       stopOffline();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("beforeunload", onBeforeUnload);
@@ -350,7 +331,7 @@ export function App() {
   // Belge işlemleri
   const openDocument = async (id: string) => {
     if (id === activeDocId()) {
-      setMobileSheetOpen(false);
+      setDocsOpen(false);
       return;
     }
     await persistActiveDocNow();
@@ -358,7 +339,7 @@ export function App() {
     saveLastActiveDocId(id);
     setLastActivity(null);
     setBatchProgress(null);
-    setMobileSheetOpen(false);
+    setDocsOpen(false);
   };
 
   const handleNewDoc = async () => {
@@ -370,7 +351,7 @@ export function App() {
     setLastActivity(null);
     setBatchProgress(null);
     setWordCount(0);
-    setMobileSheetOpen(false);
+    setDocsOpen(false);
     await saveDocument(fresh).catch(() => {});
     setFocusTitleSeq((n) => n + 1);
   };
@@ -395,7 +376,7 @@ export function App() {
       setLastActivity(null);
       setBatchProgress(null);
     }
-    toast({ title: "Belge silindi", tone: "neutral", duration: 3500 });
+    toast({ title: "Belge silindi", duration: 3500 });
   };
 
   const handleTitleInput = (title: string) => {
@@ -426,12 +407,12 @@ export function App() {
   };
 
   // Biçimlendirme araç çubuğu
-  const formatOptions: readonly ToggleOption<FormatKey>[] = [
-    { value: "heading", label: "Alt başlık", icon: <HeadingIcon /> },
-    { value: "bold", label: "Kalın", kbd: `${modKey}+B`, icon: <BoldIcon /> },
-    { value: "italic", label: "İtalik", kbd: `${modKey}+I`, icon: <ItalicIcon /> },
-    { value: "bulletList", label: "Madde listesi", icon: <ListIcon /> },
-    { value: "blockquote", label: "Alıntı", icon: <QuoteIcon /> },
+  const formatOptions: readonly { value: FormatKey; label: string; icon: () => JSX.Element }[] = [
+    { value: "heading", label: "Alt başlık", icon: () => <HeadingIcon /> },
+    { value: "bold", label: `Kalın (${modKey}+B)`, icon: () => <BoldIcon /> },
+    { value: "italic", label: `İtalik (${modKey}+I)`, icon: () => <ItalicIcon /> },
+    { value: "bulletList", label: "Madde listesi", icon: () => <ListIcon /> },
+    { value: "blockquote", label: "Alıntı", icon: () => <QuoteIcon /> },
   ];
 
   const handleToggleFormat = (key: FormatKey) => {
@@ -460,7 +441,7 @@ export function App() {
     editorController?.editor.chain().focus().undo().run();
   };
 
-  const exportItems: readonly MenuItem[] = [
+  const exportItems: readonly { label: string; kbd: string; onSelect: () => void }[] = [
     {
       label: "Düz metin",
       kbd: ".txt",
@@ -516,15 +497,13 @@ export function App() {
     return base;
   };
 
-  const statusDotState = (): "live" | "delayed" | "off" => {
-    if (engineStatus() === "loading") return "delayed";
-    if (engineStatus() === "error") return "off";
-    return "live";
-  };
 
   const statusDotLabel = () => {
     if (engineStatus() === "loading") {
-      return `Sözlük indiriliyor… %${progressPercent()}`;
+      // Üstteki şeritle aynı aşamayı söyler; yüzde yalnızca gerçekten biliniyorsa gösterilir.
+      const p = engineProgress();
+      if (p?.stage === "parsing") return "Sözlük hazırlanıyor…";
+      return progressIndeterminate() ? "Sözlük indiriliyor…" : `Sözlük indiriliyor… %${progressPercent()}`;
     }
     if (engineStatus() === "error") {
       return offline().online ? "Sözlük yüklenemedi" : "Çevrimdışı (sözlük yok)";
@@ -534,343 +513,293 @@ export function App() {
     return "Yerel sözlük hazır";
   };
 
-  const handleToggleSidebar = () => {
-    if (isMobile()) {
-      setMobileSheetOpen((open) => !open);
-    } else {
-      setSidebarCollapsed((collapsed) => !collapsed);
-    }
-  };
+  const exportMenuId = "export-menu";
 
   const handleOpenPrivacy = () => {
-    setMobileSheetOpen(false);
+    setDocsOpen(false);
     setSettingsOpen(false);
     setPrivacyOpen(true);
   };
 
   return (
-    <div class="app-shell">
-      {/* Masaüstü daraltılabilir belge kenar çubuğu */}
-      <aside
-        class="app-sidebar"
-        data-collapsed={sidebarCollapsed() ? "" : undefined}
-        aria-label="Belgeler"
-        inert={sidebarCollapsed() ? true : undefined}
-      >
-        <DocumentSidebar
+    <div class="page">
+      <aside class="sidebar" aria-label="Belgeler">
+        <div class="sidebar-brand">
+          <span class="sidebar-wordmark">{APP_NAME}</span>
+          <span class="sidebar-tagline">Türkçe yazım, internetsiz</span>
+        </div>
+        <DocumentsList
           docs={sortedDocs()}
           activeDocId={activeDocId()}
-          resolvedTheme={resolvedTheme()}
           onNewDoc={() => void handleNewDoc()}
           onSelectDoc={(id) => void openDocument(id)}
           onRequestDeleteDoc={(doc) => setPendingDelete(doc)}
-          onToggleTheme={(next) => handleChangeTheme(next)}
           onOpenPrivacy={handleOpenPrivacy}
         />
       </aside>
 
-      {/* Ana çalışma alanı */}
-      <main class="app-main">
-        <header class="app-topbar">
-          <div class="topbar-start">
-            <Tooltip content="Belgeler" side="bottom">
-              <Button
-                icon
-                size="sm"
-                aria-label="Belgeler menüsü"
-                aria-expanded={isMobile() ? (mobileSheetOpen() ? "true" : "false") : (sidebarCollapsed() ? "false" : "true")}
-                onClick={handleToggleSidebar}
+      <div class="main-col">
+      <header class="masthead">
+        <nav class="masthead-start" aria-label="Uygulama">
+          <button type="button" class="wordmark" onClick={() => setDocsOpen(true)} aria-label={`${APP_NAME}, belgeleri aç`}>
+            {APP_NAME}
+          </button>
+          <button type="button" class="text-button" aria-haspopup="dialog" onClick={() => setDocsOpen(true)}>
+            Belgeler
+          </button>
+        </nav>
+
+        <div
+          class="format-bar"
+          role="toolbar"
+          aria-label="Biçimlendirme"
+          onMouseDown={(event) => {
+            // Biçim düğmelerine basılınca editördeki seçim kaybolmasın.
+            if ((event.target as Element).closest("button")) event.preventDefault();
+          }}
+        >
+          <For each={formatOptions}>
+            {(option) => (
+              <button
+                type="button"
+                class="icon-button"
+                aria-label={option.label}
+                title={option.label}
+                aria-pressed={activeFormats().includes(option.value) ? "true" : "false"}
+                onClick={() => handleToggleFormat(option.value)}
               >
-                <SidebarIcon />
-              </Button>
-            </Tooltip>
-          </div>
-
-          <div class="topbar-center">
-            <Toolbar
-              label="Biçimlendirme"
-              onMouseDown={(e) => {
-                // Biçimlendirme düğmelerine basıldığında editördeki metin seçimi kaybolmasın.
-                if ((e.target as Element).closest("button")) e.preventDefault();
-              }}
-            >
-              <ToggleGroup
-                size="sm"
-                iconOnly
-                label="Metin biçimi"
-                options={formatOptions}
-                value={activeFormats()}
-                onToggle={handleToggleFormat}
-              />
-              <Separator orientation="vertical" decorative />
-              <Tooltip content="Geri al" kbd={undoShortcut} side="bottom">
-                <Button icon size="sm" aria-label="Geri al" onClick={handleUndo}>
-                  <UndoIcon />
-                </Button>
-              </Tooltip>
-            </Toolbar>
-          </div>
-
-          <div class="topbar-end">
-            <Button
-              size="sm"
-              class={["autr-mode-btn", { muted: !settings().enabled }]}
-              aria-haspopup="dialog"
-              onClick={() => setSettingsOpen(true)}
-            >
-              {modeChipLabel()}
-            </Button>
-
-            <Menu
-              size="sm"
-              label="Dışa aktar"
-              trigger={
-                <>
-                  <DownloadIcon />
-                  <span class="export-label">Dışa aktar</span>
-                  <ChevronDownIcon />
-                </>
-              }
-              items={exportItems}
-            />
-
-            <Tooltip content="Ayarlar" side="bottom">
-              <Button
-                icon
-                size="sm"
-                aria-label="Ayarlar"
-                aria-haspopup="dialog"
-                onClick={() => setSettingsOpen(true)}
-              >
-                <SettingsIcon />
-              </Button>
-            </Tooltip>
-          </div>
-        </header>
-
-        {/* Sessiz indirme ilerlemesi veya hata uyarısı */}
-        <Show when={!bannerDismissed() && engineStatus() === "loading"}>
-          <div class="engine-strip" aria-live="polite">
-            <div class="engine-strip-inner">
-              <Progress
-                thin
-                value={progressPercent()}
-                indeterminate={progressIndeterminate()}
-                label={progressLabel()}
-                showValue={!progressIndeterminate()}
-              />
-            </div>
-          </div>
-        </Show>
-
-        <Show when={!bannerDismissed() && engineStatus() === "error"}>
-          <div class="engine-strip">
-            <div class="engine-strip-inner">
-              <Alert
-                tone="bad"
-                title="Sözlük dosyaları yüklenemedi"
-                actions={
-                  <>
-                    <Button size="sm" onClick={() => void initAutrEngine()}>
-                      Tekrar dene
-                    </Button>
-                    <Button size="sm" onClick={() => setBannerDismissed(true)}>
-                      Gizle
-                    </Button>
-                  </>
-                }
-              >
-                Yazmaya devam edebilirsiniz; sözlük dosyaları eklendiğinde yeniden deneyin.
-              </Alert>
-            </div>
-          </div>
-        </Show>
-
-        {/* Yazı kağıdı */}
-        <div class="editor-scroll">
-          <Show when={docsReady() && activeDoc()}>
-            {(doc) => (
-              <EditorPane
-                docId={doc().id}
-                title={doc().title}
-                focusTitleSeq={focusTitleSeq()}
-                getInitialContent={() => doc().content}
-                getRuntime={() => ({
-                  autr: autr(),
-                  enabled: settings().enabled,
-                  activeKinds: getActiveKinds(settings()),
-                })}
-                onTitleInput={handleTitleInput}
-                onUpdate={handleEditorUpdate}
-                onSelectionChange={syncFormats}
-                onController={(controller) => {
-                  editorController = controller;
-                  if (controller) {
-                    const text = controller.editor.getText({ blockSeparator: "\n\n" });
-                    setWordCount(countWords(text));
-                    syncFormats();
-                  }
-                }}
-                onApplied={(fix: AppliedFix) => {
-                  setLastActivity({
-                    text: `«${fix.original}» → «${fix.replacement}»`,
-                    showUndoHint: true,
-                  });
-                }}
-                onBatchApplied={(fixes) => {
-                  setLastActivity({
-                    text: `${fixes.length} düzeltme uygulandı`,
-                    showUndoHint: true,
-                  });
-                }}
-                onUndo={(fix: AppliedFix) => {
-                  setLastActivity({
-                    text: `«${fix.original}» geri alındı`,
-                    showUndoHint: false,
-                  });
-                  toast({
-                    id: `undo-${fix.original}`,
-                    title: `«${fix.original}» geri alındı`,
-                    tone: "info",
-                    duration: 7500,
-                    action: {
-                      label: "Bir daha değiştirme",
-                      onClick: () => addIgnoredWord(fix.original),
-                    },
-                  });
-                }}
-                onBatchUndo={(fixes) => {
-                  setLastActivity({
-                    text: `${fixes.length} düzeltme geri alındı`,
-                    showUndoHint: false,
-                  });
-                }}
-                onBatchProgress={(progress) => {
-                  setBatchProgress(progress);
-                }}
-              />
+                {option.icon()}
+              </button>
             )}
-          </Show>
+          </For>
+          <span class="format-sep" aria-hidden="true" />
+          <button
+            type="button"
+            class="icon-button"
+            aria-label={`Geri al (${undoShortcut})`}
+            title={`Geri al (${undoShortcut})`}
+            onClick={handleUndo}
+          >
+            <UndoIcon />
+          </button>
         </div>
 
-        {/* Tek satırlık sessiz alt durum çubuğu */}
-        <footer class="app-statusbar">
-          <div class="statusbar-start">
-            <span class="num">{formatNumberTr(wordCount())} kelime</span>
-            <span class="status-sep" aria-hidden="true">
-              ·
-            </span>
-            <span class="status-save">{saveLabel()}</span>
+        <div class="masthead-end">
+          <span class="status" data-state={engineStatus()} title={statusDotLabel()}>
+            <span class="status-dot" aria-hidden="true" />
+            <span class="status-text">{statusDotLabel()}</span>
+          </span>
+          <button type="button" class="text-button" popovertarget={exportMenuId}>
+            Dışa aktar
+          </button>
+          <div id={exportMenuId} popover="auto" class="menu" role="menu" aria-label="Dışa aktar">
+            <For each={exportItems}>
+              {(item) => (
+                <button
+                  type="button"
+                  class="menu-item"
+                  role="menuitem"
+                  onClick={(event) => {
+                    item.onSelect();
+                    (event.currentTarget.closest("[popover]") as HTMLElement | null)?.hidePopover();
+                  }}
+                >
+                  <span>{item.label}</span>
+                  <span class="menu-kbd">{item.kbd}</span>
+                </button>
+              )}
+            </For>
+          </div>
+          <button type="button" class="text-button" aria-haspopup="dialog" onClick={() => setSettingsOpen(true)}>
+            Ayarlar
+            <Show when={!settings().enabled}>
+              <span class="off-note"> · düzeltme kapalı</span>
+            </Show>
+          </button>
+        </div>
+      </header>
 
-            <Show
-              when={batchProgress()}
-              fallback={
-                <Show when={lastActivity()}>
-                  {(activity) => (
-                    <span class="status-activity">
-                      <span class="status-sep" aria-hidden="true">
-                        ·
-                      </span>
-                      <span class="status-fix-text">{activity().text}</span>
-                      <Show when={activity().showUndoHint}>
-                        <span class="status-undo-hint">
-                          <Kbd>{modKey}</Kbd>
-                          <Kbd>Z</Kbd>
-                        </span>
-                      </Show>
-                    </span>
-                  )}
-                </Show>
+      <Show when={!bannerDismissed() && engineStatus() === "loading"}>
+        <div class="loading" aria-live="polite">
+          <div
+            class="loading-track"
+            role="progressbar"
+            aria-label={progressLabel()}
+            aria-valuenow={progressIndeterminate() ? undefined : progressPercent()}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            data-indeterminate={progressIndeterminate() ? "" : undefined}
+          >
+            <span class="loading-bar" style={{ width: `${progressPercent()}%` }} />
+          </div>
+          <span class="loading-label">{progressLabel()}</span>
+        </div>
+      </Show>
+
+      <Show when={!bannerDismissed() && engineStatus() === "error"}>
+        <div class="notice" role="alert">
+          <p>
+            <strong>Sözlük yüklenemedi.</strong> Yazmaya devam edebilirsiniz; düzeltme sözlük gelince başlar.
+          </p>
+          <div class="notice-actions">
+            <button type="button" class="button" onClick={() => void initAutrEngine()}>
+              Tekrar dene
+            </button>
+            <button type="button" class="text-button" onClick={() => setBannerDismissed(true)}>
+              Gizle
+            </button>
+          </div>
+        </div>
+      </Show>
+
+      <main class="sheet">
+        <Show when={docsReady() && activeDoc()}>
+          {(doc) => (
+            <EditorPane
+              docId={doc().id}
+              title={doc().title}
+              focusTitleSeq={focusTitleSeq()}
+              meta={
+                <>
+                  {formatLongDateTr(doc().updatedAt)} · {formatNumberTr(wordCount())} kelime
+                </>
               }
-            >
-              {(bp) => (
-                <span class="status-activity">
-                  <span class="status-sep" aria-hidden="true">
-                    ·
-                  </span>
-                  <span class="status-fix-text num">
-                    Denetleniyor… ({bp().processed}/{bp().total})
-                  </span>
+              getInitialContent={() => doc().content}
+              getRuntime={() => ({
+                autr: autr(),
+                enabled: settings().enabled,
+                activeKinds: getActiveKinds(settings()),
+              })}
+              onTitleInput={handleTitleInput}
+              onUpdate={handleEditorUpdate}
+              onSelectionChange={syncFormats}
+              onController={(controller) => {
+                editorController = controller;
+                if (controller) {
+                  const text = controller.editor.getText({ blockSeparator: "\n\n" });
+                  setWordCount(countWords(text));
+                  syncFormats();
+                }
+              }}
+              onApplied={(fix: AppliedFix) => {
+                setLastActivity({ text: `«${fix.original}» → «${fix.replacement}»`, showUndoHint: true });
+              }}
+              onBatchApplied={(fixes) => {
+                setLastActivity({ text: `${fixes.length} düzeltme uygulandı`, showUndoHint: true });
+              }}
+              onFixClick={(fix: AppliedFix, element: HTMLElement) => setOpenFix({ fix, anchor: element })}
+              onUndo={(fix: AppliedFix) => {
+                setLastActivity({ text: `«${fix.original}» geri alındı`, showUndoHint: false });
+                toast({
+                  id: `undo-${fix.original}`,
+                  title: `«${fix.original}» geri alındı`,
+                  duration: 7500,
+                  action: { label: "Bir daha değiştirme", onClick: () => addIgnoredWord(fix.original) },
+                });
+              }}
+              onBatchUndo={(fixes) => {
+                setLastActivity({ text: `${fixes.length} düzeltme geri alındı`, showUndoHint: false });
+              }}
+              onBatchProgress={(progress) => setBatchProgress(progress)}
+            />
+          )}
+        </Show>
+      </main>
+
+      <footer class="footnote" aria-live="polite">
+        <span>{saveLabel()}</span>
+        <Show
+          when={batchProgress()}
+          fallback={
+            <Show when={lastActivity()}>
+              {(activity) => (
+                <span class="footnote-activity">
+                  {activity().text}
+                  <Show when={activity().showUndoHint}>
+                    <kbd>{undoShortcut}</kbd>
+                  </Show>
                 </span>
               )}
             </Show>
-          </div>
+          }
+        >
+          {(bp) => (
+            <span class="footnote-activity">
+              Denetleniyor… {bp().processed}/{bp().total}
+            </span>
+          )}
+        </Show>
+      </footer>
+      </div>
 
-          <div class="statusbar-end">
-            <StatusDot state={statusDotState()}>{statusDotLabel()}</StatusDot>
-          </div>
-        </footer>
-      </main>
-
-      {/* Dar ekranda belge listesi Sheet */}
-      <Sheet
-        open={mobileSheetOpen()}
-        onClose={() => setMobileSheetOpen(false)}
-        side="start"
-        title="Belgeler"
-        description={APP_NAME}
-      >
-        <DocumentSidebar
-          inSheet
+      <Drawer open={docsOpen()} onClose={() => setDocsOpen(false)} side="start" title="Belgeler">
+        <DocumentsList
           docs={sortedDocs()}
           activeDocId={activeDocId()}
-          resolvedTheme={resolvedTheme()}
           onNewDoc={() => void handleNewDoc()}
           onSelectDoc={(id) => void openDocument(id)}
           onRequestDeleteDoc={(doc) => {
-            setMobileSheetOpen(false);
+            setDocsOpen(false);
             setPendingDelete(doc);
           }}
-          onToggleTheme={(next) => handleChangeTheme(next)}
           onOpenPrivacy={handleOpenPrivacy}
         />
-      </Sheet>
+      </Drawer>
 
-      {/* Ayarlar çekmecesi */}
-      <SettingsSheet
+      <Drawer
         open={settingsOpen()}
-        settings={settings()}
-        contextWarning={contextWarning()}
         onClose={() => setSettingsOpen(false)}
-        onToggleEnabled={handleToggleEnabled}
-        onToggleContextModel={handleToggleContextModel}
-        onChangeMode={handleChangeMode}
-        onToggleKind={handleToggleKind}
-        onAddIgnoredWord={addIgnoredWord}
-        onRemoveIgnoredWord={removeIgnoredWord}
-        onChangeTheme={handleChangeTheme}
+        side="end"
+        title="Ayarlar"
+        description="Tüm tercihler yalnızca bu cihazda saklanır."
+      >
+        <SettingsPanel
+          settings={settings()}
+          contextWarning={contextWarning()}
+          contextAvailable={contextAvailable()}
+          onToggleEnabled={handleToggleEnabled}
+          onToggleContextModel={handleToggleContextModel}
+          onChangeMode={handleChangeMode}
+          onToggleKind={handleToggleKind}
+          onAddIgnoredWord={addIgnoredWord}
+          onRemoveIgnoredWord={removeIgnoredWord}
+          onChangeTheme={handleChangeTheme}
+        />
+      </Drawer>
+
+      <FixPopover
+        fix={openFix()?.fix ?? null}
+        anchor={openFix()?.anchor ?? null}
+        onUndo={(fix) => undoFromPopover(fix, false)}
+        onNeverChange={(fix) => undoFromPopover(fix, true)}
+        onClose={() => setOpenFix(null)}
       />
 
-      {/* Gizlilik açıklaması */}
       <PrivacyDialog open={privacyOpen()} onClose={() => setPrivacyOpen(false)} />
 
-      {/* Belge silme onayı (alertdialog) */}
-      <Dialog
+      <Modal
         role="alertdialog"
         open={pendingDelete() !== null}
-        onClose={(returnValue) => {
-          if (returnValue === "confirm") {
-            void confirmDeleteDoc();
-          } else {
-            setPendingDelete(null);
-          }
-        }}
         title="Belgeyi sil"
-        description={`«${pendingDelete()?.title.trim() || "Adsız belge"}» bu cihazdan kalıcı olarak silinecek.`}
-        footer={
+        onClose={(returnValue) => {
+          if (returnValue === "confirm") void confirmDeleteDoc();
+          else setPendingDelete(null);
+        }}
+        actions={
           <>
-            <Button type="submit" value="cancel">
+            <button type="submit" class="button" value="cancel">
               Vazgeç
-            </Button>
-            <Button type="submit" value="confirm" tone="danger">
+            </button>
+            <button type="submit" class="button button-danger" value="confirm">
               Sil
-            </Button>
+            </button>
           </>
         }
-      />
+      >
+        <p>«{pendingDelete()?.title.trim() || "Adsız belge"}» bu cihazdan kalıcı olarak silinecek.</p>
+      </Modal>
 
-      {/* Geri alma ve işlem bildirimleri */}
-      <Toaster />
+      <Toasts />
     </div>
   );
 }

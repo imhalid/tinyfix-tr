@@ -21,6 +21,13 @@ export const DEFAULT_FIX_KINDS: readonly FixKind[] = ["turkce-karakter", "kesme"
 /** Düzeltme hassasiyet kipi: "careful" daha temkinli, "balanced" biraz daha cesur. */
 export type Mode = "careful" | "balanced";
 
+/**
+ * Düzeltmenin neye bakılarak yapıldığı:
+ * - "kelime": yalnızca kelimenin kendisi ("cok" → "çok", "herkez" → "herkes", "Ankaraya" → "Ankara'ya");
+ * - "baglam": çevresindeki kelimeler de ("hiç bir" → "hiçbir", "yerler de" → "yerlerde", "geldinmi?" → "geldin mi?").
+ */
+export type FixScope = "kelime" | "baglam";
+
 /** Metin üzerinde önerilen tek bir düzeltme. */
 export interface Fix {
   /** Düzeltilecek parçanın başlangıç dizini (UTF-16 kod birimi). */
@@ -35,6 +42,8 @@ export interface Fix {
   kind: FixKind;
   /** 0 ile 1 arasında güven puanı (motorun margin değerinden türetilir). */
   confidence: number;
+  /** Kararın yalnızca kelimeye mi, çevresine de mi dayandığı. */
+  scope: FixScope;
 }
 
 /** İsteğe bağlı bağlam modeli dosya adı. */

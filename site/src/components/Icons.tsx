@@ -1,4 +1,24 @@
-import { Svg } from "../ui";
+import type { JSX } from "@solidjs/web";
+
+/** İnce çizgili simge: çizgi kalınlığı görünen boyuta göre sabit (yaklaşık 1,4 px). */
+function Svg(props: { viewBox: string; width: number; height: number; children: JSX.Element }) {
+  const box = Number(props.viewBox.split(" ")[2] ?? 16);
+  return (
+    <svg
+      viewBox={props.viewBox}
+      width={props.width}
+      height={props.height}
+      fill="none"
+      stroke="currentColor"
+      stroke-width={(1.4 * box) / props.width}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      {props.children}
+    </svg>
+  );
+}
 
 export function SidebarIcon() {
   return (
@@ -109,6 +129,14 @@ export function ShieldIcon() {
   return (
     <Svg viewBox="0 0 16 16" width={13} height={13}>
       <path d="M8 2l5 2v3.8c0 3.2-2.1 5.3-5 6.2-2.9-.9-5-3-5-6.2V4l5-2z" />
+    </Svg>
+  );
+}
+
+export function TrashIcon() {
+  return (
+    <Svg viewBox="0 0 16 16" width={14} height={14}>
+      <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.2a1 1 0 0 0 1 .8h3.8a1 1 0 0 0 1-.8l.6-8.2" />
     </Svg>
   );
 }

@@ -1,4 +1,5 @@
 import type { JSONContent } from "@tiptap/core";
+import type { JSX } from "@solidjs/web";
 import { createEffect, createMemo, createSignal, untrack } from "solid-js";
 import type { AppliedFix, AutocorrectRuntime, BatchProgress } from "../autocorrectExtension";
 import { mountEditor, type EditorController } from "../editor";
@@ -8,6 +9,8 @@ export interface EditorPaneProps {
   title: string;
   /** Yeni belge açıldığında başlık alanını seçmek için artan sayaç. */
   focusTitleSeq: number;
+  /** Başlığın altındaki ince bilgi satırı (tarih, kelime sayısı). */
+  meta?: JSX.Element;
   getInitialContent: () => JSONContent;
   getRuntime: () => AutocorrectRuntime;
   onTitleInput: (title: string) => void;
@@ -17,6 +20,7 @@ export interface EditorPaneProps {
   onApplied: (fix: AppliedFix) => void;
   onBatchApplied: (fixes: readonly AppliedFix[]) => void;
   onUndo: (fix: AppliedFix) => void;
+  onFixClick: (fix: AppliedFix, element: HTMLElement) => void;
   onBatchUndo: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress: (progress: BatchProgress | null) => void;
 }
@@ -45,6 +49,7 @@ export function EditorPane(props: EditorPaneProps) {
         onApplied: (fix) => props.onApplied(fix),
         onBatchApplied: (fixes) => props.onBatchApplied(fixes),
         onUndo: (fix) => props.onUndo(fix),
+        onFixClick: (fix, element) => props.onFixClick(fix, element),
         onBatchUndo: (fixes) => props.onBatchUndo(fixes),
         onBatchProgress: (progress) => props.onBatchProgress(progress),
       });
@@ -89,6 +94,7 @@ export function EditorPane(props: EditorPaneProps) {
           }
         }}
       />
+      {props.meta ? <p class="doc-meta-line">{props.meta}</p> : null}
       <div ref={setHostEl} class="editor-host" />
     </div>
   );

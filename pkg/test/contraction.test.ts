@@ -39,3 +39,21 @@ describe("konuşma dili kısaltmaları", () => {
     }
   });
 });
+
+describe("düzeltme kapsamı", () => {
+  it("tek kelimelik düzeltmeler kelime, iki kelimeyi kapsayanlar bağlam", async () => {
+    const autr = createAutr({ ...DATA, known: DATA.known + "\nhiç bir\thiçbir\t45\t9000\tJOINED_ALWAYS", unigrams: DATA.unigrams + "\nhiçbir\t9000\t0\nhiç\t9000\t0\nbir\t90000\t0" });
+    try {
+      const fixes = await autr.check("herkez hiç bir şey bilmiyorum");
+      assert.deepEqual(
+        fixes.map((fix) => [fix.original, fix.replacement, fix.scope]),
+        [
+          ["herkez", "herkes", "kelime"],
+          ["hiç bir", "hiçbir", "baglam"],
+        ],
+      );
+    } finally {
+      await autr.dispose();
+    }
+  });
+});

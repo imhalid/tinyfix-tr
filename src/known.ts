@@ -1,4 +1,5 @@
 import type { Lexicon } from "./lexicon.ts";
+import { isValidKnownParticleSuffix } from "./rules/turkish-rules.ts";
 
 /** A known misspelling and its fix, checked against corpus counts by py/verify_lists.py. */
 interface Rule {
@@ -68,6 +69,7 @@ export class KnownMisspellings {
         if (!word.startsWith(rule.wrong)) continue;
         const suffix = word.slice(rule.wrong.length);
         if (suffix.length > MAX_SUFFIX || !SUFFIX.test(suffix)) continue;
+        if (!isValidKnownParticleSuffix(rule.right, suffix)) continue;
         const fixed = rule.right + suffix;
         const lastWord = fixed.split(" ").at(-1)!;
         const count = lexicon.count(lastWord);
@@ -82,7 +84,9 @@ export class KnownMisspellings {
         const second = rule.wrong.split(" ")[1]!;
         if (next === second) fixes.push({ text: rule.right, count: rule.rightCount, joinsNext: true, contraction: rule.contraction });
         else if (next.startsWith(second) && SUFFIX.test(next.slice(second.length)) && next.length - second.length <= MAX_SUFFIX) {
-          const fixed = rule.right + next.slice(second.length);
+          const suffix = next.slice(second.length);
+          if (!isValidKnownParticleSuffix(rule.right, suffix)) continue;
+          const fixed = rule.right + suffix;
           const count = lexicon.count(fixed.split(" ").at(-1)!);
           if (count > 0) fixes.push({ text: fixed, count: Math.min(count, rule.rightCount), joinsNext: true, contraction: rule.contraction });
         }

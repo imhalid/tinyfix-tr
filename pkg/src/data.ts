@@ -91,7 +91,7 @@ export function resolveBaseUrl(baseUrl: string | URL = DEFAULT_BASE_URL): string
   return withSlash;
 }
 
-function buildFileUrl(baseUrl: string, file: DataFileName): string {
+function buildFileUrl(baseUrl: string, file: string): string {
   if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(baseUrl)) {
     return new URL(file, baseUrl).href;
   }
@@ -259,6 +259,14 @@ async function fetchBundle(
 
   emit(undefined, true);
 
+  // Optional manifest.json next to the files, with each file's real size (written by the site's build). Without it,
+  // compressed responses give no total and progress can only be estimated.
+  const manifest: Partial<Record<DataFileName, number>> = await fetchFn(buildFileUrl(resolvedBase, "manifest.json"), {
+    signal: options.signal,
+  })
+    .then((response) => (response.ok ? (response.json() as Promise<Partial<Record<DataFileName, number>>>) : {}))
+    .catch(() => ({}));
+
   const downloadOne = async <T>(
     file: DataFileName,
     readBody: (response: Response, onChunk: (bytes: number) => void) => Promise<T>,
@@ -268,7 +276,8 @@ async function fetchBundle(
     if (!response.ok) {
       throw new Error(`autr: ${file} yüklenemedi (${response.status}) — ${url}`);
     }
-    states[file].total = parseContentLength(response);
+    const size = manifest[file];
+    states[file].total = parseContentLength(response) ?? (typeof size === "number" && size > 0 ? size : null);
     emit(file, true);
 
     const data = await readBody(response, (bytes) => {

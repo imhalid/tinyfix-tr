@@ -2,7 +2,7 @@
 
 Durum (2026-11-21):
 - **Kural motoru** (`src/`) çalışıyor.
-- **npm paketi** (`pkg/`) ve **internetsiz yazı sitesi** (`site/`, SolidJS 2.0 + mizan) çalışıyor; site tarayıcıda, sunucu kapalıyken test edildi.
+- **npm paketi** (`pkg/`) ve **internetsiz yazı sitesi** (`site/`, SolidJS 2.0, krem editoryal tasarım) çalışıyor; site tarayıcıda, sunucu kapalıyken test edildi.
 - İlk **bağlam modeli** eğitildi ama devreye alınmadı: henüz anlamlı bir fayda göstermedi (aşağıda).
 
 ## Klasörler
@@ -10,7 +10,7 @@ Durum (2026-11-21):
 |---|---|
 | `src/` | Düzeltme motoru: sözlük, kurallar, bağlam modeli arayüzü |
 | `pkg/` | `autr` npm paketi: `loadAutr()`, `check`/`fix`/`apply`, Web Worker, isteğe bağlı bağlam modeli (onnxruntime-web). Gemini Neon yazdı, Claude derleyip test etti. |
-| `site/` | İnternetsiz Türkçe yazı uygulaması: SolidJS 2.0, Tiptap, mizan (pano-ui) stilleri (`site/src/vendor/mizan`, güncelleme: `bash site/scripts/sync-mizan.sh`), service worker. Gemini Neon yazdı. |
+| `site/` | İnternetsiz Türkçe yazı uygulaması: SolidJS 2.0, Tiptap, service worker. Tasarım kendi CSS'i (`site/src/styles.css`: krem renkler, gövde Google Sans, başlıklar Instrument Serif, hep açık sol belge paneli) ve küçük bileşenler (`site/src/kit/`); UI kütüphanesi yok. Düzeltilen kelimeye tıklayınca açılan pencerede önce/sonra ve geri al var; kelime düzeltmesi noktalı, bağlam düzeltmesi dalgalı altı çizili. |
 | `py/` | Sözlük, test seti ve bağlam modeli eğitim betikleri |
 | `bench/` | Ölçüm: `run.ts` (doğruluk), `typing.ts` (yazarken tutarlılık), `examples.ts` |
 
