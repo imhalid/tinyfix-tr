@@ -1,6 +1,7 @@
 import { buildContextFeatures, type ContextKind, type ContextModel, type TypoCandidateMeta } from "./context.ts";
 import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
+import { applySentenceRules } from "./sentence.ts";
 import { turkishEditCost, type FuzzyMorphCandidate } from "./morphology/fuzzy.ts";
 import {
   ALSO,
@@ -97,7 +98,8 @@ export interface WordValidator {
 }
 
 /** contraction: a spoken-style contraction spelled out ("noldu" -> "ne oldu"), only when Settings.contractions is on. */
-export type CandidateKind = "marks" | "apostrophe" | "split" | "join" | "typo" | "known" | "context" | "contraction";
+/** punct: sentence punctuation and capitals ("merhaba.ben" -> "Merhaba. Ben"), only when Settings.sentenceCase is on. */
+export type CandidateKind = "marks" | "apostrophe" | "split" | "join" | "typo" | "known" | "context" | "contraction" | "punct";
 
 export interface Settings {
   /** Minimum margin per kind of change. Higher is more careful. */
@@ -113,6 +115,11 @@ export interface Settings {
    * written on purpose. When off, such words are left exactly as typed, not taken for slips.
    */
   contractions: boolean;
+  /**
+   * Add a missing space after a sentence end and capitalize the first word of a sentence ("merhaba.ben" ->
+   * "Merhaba. Ben"). Off in the bench settings so earlier measurements stay comparable; the package turns it on.
+   */
+  sentenceCase: boolean;
   /** Threshold for a slip-of-the-fingers fix when the typed word is unseen and the morphology layer rejects it. */
   typoInvalidThreshold: number;
   /** Extra cost for joining a word with a following "de/da" ("yerler de" -> "yerlerde"). */
@@ -167,11 +174,12 @@ export interface Settings {
 }
 
 export const CAREFUL: Settings = {
-  threshold: { marks: 2.5, apostrophe: 2.5, split: 2.5, join: 2.5, typo: 3, known: 1, context: 3, contraction: 1 },
-  cost: { marks: 0.5, apostrophe: 0.5, split: 0.5, join: 0.5, typo: 2, known: 0, context: 0, contraction: 0 },
+  threshold: { marks: 2.5, apostrophe: 2.5, split: 2.5, join: 2.5, typo: 3, known: 1, context: 3, contraction: 1, punct: 1 },
+  cost: { marks: 0.5, apostrophe: 0.5, split: 0.5, join: 0.5, typo: 2, known: 0, context: 0, contraction: 0, punct: 0 },
   ambiguity: 1,
   knownWord: 3,
   contractions: false,
+  sentenceCase: false,
   typoInvalidThreshold: 1.5,
   deDaJoinCost: 0,
   typoEndWindow: 2,
@@ -440,6 +448,19 @@ export class Corrector {
     });
   }
 
+  private withSentenceRules(text: string, corrections: Correction[]): Correction[] {
+    return applySentenceRules(
+      text,
+      corrections,
+      (lower) => this.isRealWord(lower) || this.lexicon.exactCount(lower) >= 20,
+      (lower, common) => this.known?.nameFor(lower, common ? 1500 : 0),
+      (lower) => {
+        const analyses = this.morphology?.analyze?.(lower);
+        return analyses ? analyses.map((analysis) => lowerTr(analysis.stem)) : null;
+      },
+    );
+  }
+
   /** Returns the corrected text and the list of changes made. */
   correct(text: string, options: CorrectOptions = {}): { text: string; corrections: Correction[] } {
     const { text: corrected, corrections } = this.runCorePass(text, options, false);
@@ -530,6 +551,7 @@ export class Corrector {
       prevCapitalized = isUpperInitial(trailing);
       if (fix.joinsNext && next) index = next.index;
     }
+    if (this.settings.sentenceCase) corrections.splice(0, corrections.length, ...this.withSentenceRules(text, corrections));
     let output = "";
     let cursor = 0;
     for (const correction of corrections) {
@@ -939,6 +961,7 @@ export class Corrector {
     const all = [...kept, ...judged].sort((a, b) => a.start - b.start || b.margin - a.margin);
     const corrections: Correction[] = [];
     for (const fix of all) if (!corrections.some((done) => overlaps(done, fix))) corrections.push(fix);
+    if (this.settings.sentenceCase) corrections.splice(0, corrections.length, ...this.withSentenceRules(text, corrections));
     let output = "";
     let cursor = 0;
     for (const correction of corrections) {

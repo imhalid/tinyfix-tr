@@ -48,7 +48,7 @@ describe("düzeltme kapsamı", () => {
       assert.deepEqual(
         fixes.map((fix) => [fix.original, fix.replacement, fix.scope]),
         [
-          ["herkez", "herkes", "kelime"],
+          ["herkez", "Herkes", "kelime"], // metnin başı: büyük harf aynı düzeltmeye katılır
           ["hiç bir", "hiçbir", "baglam"],
         ],
       );

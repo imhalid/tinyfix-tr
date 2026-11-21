@@ -496,6 +496,8 @@ async function checkParagraph(
     });
 
     for (const fix of raw) {
+      // Pencerenin başı cümle başı değil: oradaki "büyük harf" düzeltmesi yanlış olur.
+      if (winStart > 0 && fix.kind === "noktalama" && fix.from === 0) continue;
       const shifted: Fix = {
         ...fix,
         from: fix.from + winStart,

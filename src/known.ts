@@ -35,6 +35,8 @@ export class KnownMisspellings {
   /** Two-word rules with Turkish letters, keyed by the first word without them ("hic" for "hiç bir"). */
   private readonly byPlainFirstWord = new Map<string, Rule[]>();
   private readonly stems: Rule[] = [];
+  /** Proper names always written with a capital ("ahmet" -> "Ahmet"): the NAME section, not fixes. */
+  private readonly names = new Map<string, { name: string; count: number }>();
 
   /** Lines of data/rules/known.tsv: wrong, right, wrong count, right count, section. */
   static fromTsv(text: string): KnownMisspellings {
@@ -43,6 +45,10 @@ export class KnownMisspellings {
       if (!line || line.startsWith("#")) continue;
       const [wrong, right, , rightCount, section] = line.split("\t");
       if (!wrong || !right) continue;
+      if (section?.trim() === "NAME") {
+        known.names.set(wrong, { name: right, count: Number(rightCount) });
+        continue;
+      }
       const rule = { wrong, right, rightCount: Number(rightCount), contraction: section?.trim() === "CONTRACTION" };
       const words = wrong.split(" ");
       if (words.length === 1) {
@@ -62,6 +68,12 @@ export class KnownMisspellings {
     }
     known.stems.sort((first, second) => second.wrong.length - first.wrong.length);
     return known;
+  }
+
+  /** The capitalized spelling of a proper name, from its lowercase form ("istanbul" -> "İstanbul"). */
+  nameFor(lower: string, minCount = 0): string | undefined {
+    const entry = this.names.get(lower);
+    return entry && entry.count >= minCount ? entry.name : undefined;
   }
 
   get size(): number {

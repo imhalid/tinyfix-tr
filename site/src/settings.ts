@@ -37,6 +37,11 @@ export const FIX_KIND_META: Record<
     description: "Bilinen yazım yanlışlarını ve tek harflik klavye kaymalarını düzeltir.",
     example: "herkez → herkes, yapabiliur → yapabilir",
   },
+  noktalama: {
+    label: "Noktalama ve büyük harf",
+    description: "Cümle başını ve özel adları büyük harfle başlatır, noktadan sonra unutulan boşluğu ekler.",
+    example: "merhaba.ben → Merhaba. Ben, dr. ahmet → Dr. Ahmet",
+  },
   kisaltma: {
     label: "Konuşma dili kısaltmaları",
     description: "Konuşur gibi yazılan kısaltmaları açar. Kapalıyken bu kelimelere hiç dokunulmaz.",
@@ -61,6 +66,7 @@ function defaultKinds(): Record<FixKind, boolean> {
     kesme: true,
     "bitisik-ayri": true,
     yazim: true,
+    noktalama: true,
     // Üslup tercihi: varsayılan olarak kapalı.
     kisaltma: false,
   };

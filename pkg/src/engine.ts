@@ -9,8 +9,8 @@ export { CAREFUL };
 /** Dengeli kip: `CAREFUL` ayarından biraz daha cesur eşikler. */
 export const BALANCED: Settings = {
   ...CAREFUL,
-  threshold: { marks: 1.8, apostrophe: 2.0, split: 2.0, join: 2.0, typo: 2.3, known: 0.7, context: 2.5, contraction: 0.7 },
-  cost: { marks: 0.4, apostrophe: 0.5, split: 0.4, join: 0.4, typo: 1.7, known: 0, context: 0, contraction: 0 },
+  threshold: { marks: 1.8, apostrophe: 2.0, split: 2.0, join: 2.0, typo: 2.3, known: 0.7, context: 2.5, contraction: 0.7, punct: 1 },
+  cost: { marks: 0.4, apostrophe: 0.5, split: 0.4, join: 0.4, typo: 1.7, known: 0, context: 0, contraction: 0, punct: 0 },
   ambiguity: 0.7,
   knownWord: 5,
   knownMarked: 15,
@@ -20,7 +20,12 @@ export const BALANCED: Settings = {
 
 /** Kipin eşikleri; kısaltmalar yalnızca "kisaltma" türü açıkça istendiğinde açılır. */
 function settingsFor(mode: Mode, kinds: ReadonlySet<FixKind> | null): Settings {
-  return { ...SETTINGS_BY_MODE[mode], contractions: kinds?.has("kisaltma") ?? false };
+  return {
+    ...SETTINGS_BY_MODE[mode],
+    contractions: kinds?.has("kisaltma") ?? false,
+    // Cümle başı büyük harf ve nokta sonrası boşluk ("merhaba.ben" → "Merhaba. Ben").
+    sentenceCase: kinds ? kinds.has("noktalama") : true,
+  };
 }
 
 const SETTINGS_BY_MODE: Record<Mode, Settings> = {
@@ -48,7 +53,9 @@ function findCodeRanges(text: string): Array<readonly [number, number]> {
  * kelimeyi kapsayan her düzeltme de öyledir ("hiç bir" → "hiçbir"). Geri kalanı yalnızca kelimeye bakar.
  */
 export function correctionScope(correction: Pick<Correction, "kind" | "original">): FixScope {
-  if (correction.kind === "join" || correction.kind === "split" || correction.kind === "context") return "baglam";
+  if (correction.kind === "join" || correction.kind === "split" || correction.kind === "context" || correction.kind === "punct") {
+    return "baglam";
+  }
   return correction.original.includes(" ") ? "baglam" : "kelime";
 }
 
@@ -65,6 +72,8 @@ export function mapCorrectionKind(correction: Pick<Correction, "kind" | "origina
       return "yazim";
     case "contraction":
       return "kisaltma";
+    case "punct":
+      return "noktalama";
     case "context":
     case "known": {
       const originalHasSpace = correction.original.includes(" ");

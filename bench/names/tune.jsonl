@@ -1,0 +1,960 @@
+{"id": "belirsiz-002", "class": "clean", "wrong": "Kampta ateş yakıp sabaha kadar sohbet ettik.", "right": "Kampta ateş yakıp sabaha kadar sohbet ettik.", "origin": "belirsiz"}
+{"id": "belirsiz-004", "class": "belirsiz", "wrong": "Ödevi ırmakla birlikte hazırladım, sunumu o yapacak.", "right": "Ödevi Irmak'la birlikte hazırladım, sunumu o yapacak."}
+{"id": "belirsiz-006", "class": "belirsiz", "wrong": "Toplantı notlarını umuta gönderdim, akşama kadar dönüş yapacakmış.", "right": "Toplantı notlarını Umut'a gönderdim, akşama kadar dönüş yapacakmış."}
+{"id": "belirsiz-008", "class": "belirsiz", "wrong": "Doğum gününde güle sürpriz bir parti yaptık.", "right": "Doğum gününde Gül'e sürpriz bir parti yaptık."}
+{"id": "belirsiz-010", "class": "belirsiz", "wrong": "Bu akşam denizle sinemaya gidiyoruz, o da filmi çok merak ediyormuş.", "right": "Bu akşam Deniz'le sinemaya gidiyoruz, o da filmi çok merak ediyormuş."}
+{"id": "belirsiz-012", "class": "clean", "wrong": "Allah rahmet eylesin, yattığı yer nur olsun.", "right": "Allah rahmet eylesin, yattığı yer nur olsun.", "origin": "belirsiz"}
+{"id": "belirsiz-014", "class": "belirsiz", "wrong": "Maçta iki golü de toprak attı, herkes onu tebrik etti.", "right": "Maçta iki golü de Toprak attı, herkes onu tebrik etti."}
+{"id": "belirsiz-016", "class": "belirsiz", "wrong": "Hafta sonu özlemle sahilde uzun bir yürüyüş yaptık.", "right": "Hafta sonu Özlem'le sahilde uzun bir yürüyüş yaptık."}
+{"id": "belirsiz-018", "class": "clean", "wrong": "Üç ay sonra mezun oluyorum, staj yerimi şimdiden ayarladım.", "right": "Üç ay sonra mezun oluyorum, staj yerimi şimdiden ayarladım.", "origin": "belirsiz"}
+{"id": "belirsiz-020", "class": "belirsiz", "wrong": "Toplantı tutanağını Elif kayanın masasına bıraktım.", "right": "Toplantı tutanağını Elif Kaya'nın masasına bıraktım."}
+{"id": "belirsiz-022", "class": "belirsiz", "wrong": "Doğum günü hediyesini suya verdik, çok sevindi.", "right": "Doğum günü hediyesini Su'ya verdik, çok sevindi."}
+{"id": "belirsiz-024", "class": "belirsiz", "wrong": "Davetiyeyi sevgiye de gönderdim, düğüne gelecekmiş.", "right": "Davetiyeyi Sevgi'ye de gönderdim, düğüne gelecekmiş."}
+{"id": "belirsiz-026", "class": "belirsiz", "wrong": "Yeni muhasebecimiz nur hanım çok titiz çalışıyor.", "right": "Yeni muhasebecimiz Nur Hanım çok titiz çalışıyor."}
+{"id": "belirsiz-028", "class": "clean", "wrong": "Dün gece ay tutulmasını balkondan izledik.", "right": "Dün gece ay tutulmasını balkondan izledik.", "origin": "belirsiz"}
+{"id": "belirsiz-030", "class": "clean", "wrong": "Bu akşam hiçbir şey yapmak canım istemiyor.", "right": "Bu akşam hiçbir şey yapmak canım istemiyor.", "origin": "belirsiz"}
+{"id": "belirsiz-032", "class": "clean", "wrong": "Bu yıl bahar erken geldi, ağaçlar şimdiden çiçek açtı.", "right": "Bu yıl bahar erken geldi, ağaçlar şimdiden çiçek açtı.", "origin": "belirsiz"}
+{"id": "belirsiz-034", "class": "belirsiz", "wrong": "Raporu yıldıza teslim ettim, imzaladıktan sonra müdüre götürecek.", "right": "Raporu Yıldız'a teslim ettim, imzaladıktan sonra müdüre götürecek."}
+{"id": "belirsiz-036", "class": "clean", "wrong": "Bugün deniz çok dalgalı, çocukları suya sokmayalım.", "right": "Bugün deniz çok dalgalı, çocukları suya sokmayalım.", "origin": "belirsiz"}
+{"id": "belirsiz-038", "class": "clean", "wrong": "Yıllar sonra memleketine dönünce içindeki özlem dindi.", "right": "Yıllar sonra memleketine dönünce içindeki özlem dindi.", "origin": "belirsiz"}
+{"id": "belirsiz-040", "class": "clean", "wrong": "Dünyada kalıcı barış için herkes üzerine düşeni yapmalı.", "right": "Dünyada kalıcı barış için herkes üzerine düşeni yapmalı.", "origin": "belirsiz"}
+{"id": "belirsiz-042", "class": "clean", "wrong": "Böyle bir tesadüfe ancak kader denebilir.", "right": "Böyle bir tesadüfe ancak kader denebilir.", "origin": "belirsiz"}
+{"id": "belirsiz-044", "class": "clean", "wrong": "Bu kadar çalıştıktan sonra sınavı geçeceğimize dair umudumuz arttı.", "right": "Bu kadar çalıştıktan sonra sınavı geçeceğimize dair umudumuz arttı.", "origin": "belirsiz"}
+{"id": "belirsiz-046", "class": "belirsiz", "wrong": "Sınıf başkanlığına deniz seçildi, oyların yarısından fazlasını aldı.", "right": "Sınıf başkanlığına Deniz seçildi, oyların yarısından fazlasını aldı."}
+{"id": "belirsiz-048", "class": "belirsiz", "wrong": "Sınıf arkadaşım melek bu yıl tıp fakültesini kazandı.", "right": "Sınıf arkadaşım Melek bu yıl tıp fakültesini kazandı."}
+{"id": "belirsiz-050", "class": "belirsiz", "wrong": "Cumartesi ümitin nişanı var, hediye almayı unutma.", "right": "Cumartesi Ümit'in nişanı var, hediye almayı unutma."}
+{"id": "belirsiz-052", "class": "belirsiz", "wrong": "Yeni komşumuz baharın annesi çok güler yüzlü bir kadın.", "right": "Yeni komşumuz Bahar'ın annesi çok güler yüzlü bir kadın."}
+{"id": "belirsiz-054", "class": "clean", "wrong": "Doktorun sözleri hepimize umut verdi.", "right": "Doktorun sözleri hepimize umut verdi.", "origin": "belirsiz"}
+{"id": "belirsiz-056", "class": "belirsiz", "wrong": "Proje raporunu barışa gönderdim, yarın sabah sunacak.", "right": "Proje raporunu Barış'a gönderdim, yarın sabah sunacak."}
+{"id": "belirsiz-058", "class": "clean", "wrong": "Bu kadar ciddi olma, biraz da gül!", "right": "Bu kadar ciddi olma, biraz da gül!", "origin": "belirsiz"}
+{"id": "belirsiz-060", "class": "belirsiz", "wrong": "Sizin deniz hâlâ İngilizce kursuna gidiyor mu?", "right": "Sizin Deniz hâlâ İngilizce kursuna gidiyor mu?"}
+{"id": "belirsiz-062", "class": "clean", "wrong": "Sonuçlar açıklanana kadar ümidimizi kaybetmeyeceğiz.", "right": "Sonuçlar açıklanana kadar ümidimizi kaybetmeyeceğiz.", "origin": "belirsiz"}
+{"id": "belirsiz-064", "class": "clean", "wrong": "Yağmurdan sonra toprak kokusu bütün köyü sardı.", "right": "Yağmurdan sonra toprak kokusu bütün köyü sardı.", "origin": "belirsiz"}
+{"id": "belirsiz-066", "class": "clean", "wrong": "Hayvanat bahçesindeki aslan bütün gün gölgede uyudu.", "right": "Hayvanat bahçesindeki aslan bütün gün gölgede uyudu.", "origin": "belirsiz"}
+{"id": "belirsiz-068", "class": "clean", "wrong": "Bahar temizliğine bu hafta sonu başlıyoruz.", "right": "Bahar temizliğine bu hafta sonu başlıyoruz.", "origin": "belirsiz"}
+{"id": "belirsiz-070", "class": "clean", "wrong": "Haberlere göre bu yaz denizin sıcaklığı mevsim normallerinin üstünde seyrediyor.", "right": "Haberlere göre bu yaz denizin sıcaklığı mevsim normallerinin üstünde seyrediyor.", "origin": "belirsiz"}
+{"id": "belirsiz-072", "class": "clean", "wrong": "Doktorlar hastanın durumu için ümit verici açıklamalar yaptı.", "right": "Doktorlar hastanın durumu için ümit verici açıklamalar yaptı.", "origin": "belirsiz"}
+{"id": "belirsiz-074", "class": "belirsiz", "wrong": "Ödevin teslim tarihini denizden öğrendim.", "right": "Ödevin teslim tarihini Deniz'den öğrendim."}
+{"id": "belirsiz-076", "class": "belirsiz", "wrong": "Toplantıyı bu hafta kaya bey yönetecek.", "right": "Toplantıyı bu hafta Kaya Bey yönetecek."}
+{"id": "belirsiz-078", "class": "clean", "wrong": "Yangından sonra köylüler umutla yağmuru beklemeye başladı.", "right": "Yangından sonra köylüler umutla yağmuru beklemeye başladı.", "origin": "belirsiz"}
+{"id": "belirsiz-080", "class": "belirsiz", "wrong": "Kardeşim ateş bugün ilk kez bisiklete bindi.", "right": "Kardeşim Ateş bugün ilk kez bisiklete bindi."}
+{"id": "belirsiz-082", "class": "clean", "wrong": "Göl kıyısı boyunca ılgın ağaçları sıralanmış.", "right": "Göl kıyısı boyunca ılgın ağaçları sıralanmış.", "origin": "belirsiz"}
+{"id": "belirsiz-084", "class": "belirsiz", "wrong": "Telefonumu evde unuttum, bana ulaşmak istersen bahara mesaj at.", "right": "Telefonumu evde unuttum, bana ulaşmak istersen Bahar'a mesaj at."}
+{"id": "belirsiz-086", "class": "clean", "wrong": "Savaştan bıkan halk barış ve huzur istiyordu.", "right": "Savaştan bıkan halk barış ve huzur istiyordu.", "origin": "belirsiz"}
+{"id": "belirsiz-088", "class": "clean", "wrong": "Her bahar köydeki dedemin bahçesine fide dikmeye gideriz.", "right": "Her bahar köydeki dedemin bahçesine fide dikmeye gideriz.", "origin": "belirsiz"}
+{"id": "belirsiz-090", "class": "clean", "wrong": "Yıl dönümümüzde ona bir demet kırmızı gül aldım.", "right": "Yıl dönümümüzde ona bir demet kırmızı gül aldım.", "origin": "belirsiz"}
+{"id": "belirsiz-092", "class": "belirsiz", "wrong": "Mesaj atınca can hemen cevap verdi, yarın bize uğrayacakmış.", "right": "Mesaj atınca Can hemen cevap verdi, yarın bize uğrayacakmış."}
+{"id": "belirsiz-094", "class": "clean", "wrong": "İtfaiye yetkilileri yangında can kaybı olmadığını açıkladı.", "right": "İtfaiye yetkilileri yangında can kaybı olmadığını açıkladı.", "origin": "belirsiz"}
+{"id": "belirsiz-096", "class": "clean", "wrong": "Masallarda iyi kalpli melekler insanlara yardım eder.", "right": "Masallarda iyi kalpli melekler insanlara yardım eder.", "origin": "belirsiz"}
+{"id": "belirsiz-098", "class": "belirsiz", "wrong": "Kuzenim kader, nişanı için bizi de davet etti.", "right": "Kuzenim Kader, nişanı için bizi de davet etti."}
+{"id": "belirsiz-100", "class": "clean", "wrong": "Öğretmenimizin öğrencilerine olan sevgisi gözlerinden okunuyordu.", "right": "Öğretmenimizin öğrencilerine olan sevgisi gözlerinden okunuyordu.", "origin": "belirsiz"}
+{"id": "belirsiz-102", "class": "belirsiz", "wrong": "Annemin arkadaşı özlem dün akşam bize misafir geldi.", "right": "Annemin arkadaşı Özlem dün akşam bize misafir geldi."}
+{"id": "belirsiz-104", "class": "clean", "wrong": "Sınav sonuçlarını görünce yüzümüzde bir umut ışığı belirdi.", "right": "Sınav sonuçlarını görünce yüzümüzde bir umut ışığı belirdi.", "origin": "belirsiz"}
+{"id": "belirsiz-106", "class": "clean", "wrong": "Belgesel, gurbetteki işçilerin sıla özlemini anlatıyor.", "right": "Belgesel, gurbetteki işçilerin sıla özlemini anlatıyor.", "origin": "belirsiz"}
+{"id": "belirsiz-108", "class": "belirsiz", "wrong": "Tatilde yıldızla aynı odada kaldık.", "right": "Tatilde Yıldız'la aynı odada kaldık."}
+{"id": "belirsiz-110", "class": "belirsiz", "wrong": "Dün umutla kahve içtik, yeni işinden çok memnun.", "right": "Dün Umut'la kahve içtik, yeni işinden çok memnun."}
+{"id": "belirsiz-112", "class": "belirsiz", "wrong": "Arkadaşım umut bu yıl üniversiteyi kazandı.", "right": "Arkadaşım Umut bu yıl üniversiteyi kazandı."}
+{"id": "belirsiz-114", "class": "belirsiz", "wrong": "Gül ile umut geçen hafta nişanlandı, düğün baharda olacak.", "right": "Gül ile Umut geçen hafta nişanlandı, düğün baharda olacak."}
+{"id": "belirsiz-116", "class": "belirsiz", "wrong": "Bu akşam kaderle telefonda uzun uzun konuştum.", "right": "Bu akşam Kader'le telefonda uzun uzun konuştum."}
+{"id": "belirsiz-118", "class": "clean", "wrong": "Tatilde her sabah denize girip kumsalda kahvaltı ettik.", "right": "Tatilde her sabah denize girip kumsalda kahvaltı ettik.", "origin": "belirsiz"}
+{"id": "belirsiz-120", "class": "clean", "wrong": "Bahçenin toprağı çok verimli, domatesler kocaman oldu.", "right": "Bahçenin toprağı çok verimli, domatesler kocaman oldu.", "origin": "belirsiz"}
+{"id": "belirsiz-122", "class": "clean", "wrong": "Yemeklerde sofra tuzu yerine kaya tuzu kullanıyoruz.", "right": "Yemeklerde sofra tuzu yerine kaya tuzu kullanıyoruz.", "origin": "belirsiz"}
+{"id": "belirsiz-124", "class": "clean", "wrong": "Düğünü bahar aylarına ertelediler.", "right": "Düğünü bahar aylarına ertelediler.", "origin": "belirsiz"}
+{"id": "belirsiz-126", "class": "belirsiz", "wrong": "Bu börek tarifini sevginin annesinden aldım.", "right": "Bu börek tarifini Sevgi'nin annesinden aldım."}
+{"id": "belirsiz-128", "class": "belirsiz", "wrong": "Akşam baharla matematik çalışacağız, sınav yaklaştı.", "right": "Akşam Bahar'la matematik çalışacağız, sınav yaklaştı."}
+{"id": "belirsiz-130", "class": "clean", "wrong": "Doktor kan şekerimin biraz yüksek olduğunu söyledi.", "right": "Doktor kan şekerimin biraz yüksek olduğunu söyledi.", "origin": "belirsiz"}
+{"id": "belirsiz-132", "class": "belirsiz", "wrong": "Yarın sabah nurla buluşup kütüphaneye gideceğiz.", "right": "Yarın sabah Nur'la buluşup kütüphaneye gideceğiz."}
+{"id": "belirsiz-134", "class": "belirsiz", "wrong": "Dün ılgının resim sergisine gittik, tabloları harikaydı.", "right": "Dün Ilgın'ın resim sergisine gittik, tabloları harikaydı."}
+{"id": "belirsiz-136", "class": "clean", "wrong": "Şeker hastalığı olanlar tatlı tüketirken dikkatli olmalı.", "right": "Şeker hastalığı olanlar tatlı tüketirken dikkatli olmalı.", "origin": "belirsiz"}
+{"id": "belirsiz-138", "class": "belirsiz", "wrong": "Proje toplantısına ılgın da katılacak.", "right": "Proje toplantısına Ilgın da katılacak."}
+{"id": "belirsiz-140", "class": "belirsiz", "wrong": "Proje sunumunu barışla birlikte hazırlıyoruz.", "right": "Proje sunumunu Barış'la birlikte hazırlıyoruz."}
+{"id": "belirsiz-142", "class": "belirsiz", "wrong": "Yarınki toplantıya yıldız da katılacak, sunumu o yapacak.", "right": "Yarınki toplantıya Yıldız da katılacak, sunumu o yapacak."}
+{"id": "belirsiz-144", "class": "belirsiz", "wrong": "Telefonu barış açtı, annesi evde yokmuş.", "right": "Telefonu Barış açtı, annesi evde yokmuş."}
+{"id": "belirsiz-146", "class": "clean", "wrong": "Bu gece ay o kadar parlak ki sokak lambasına gerek yok.", "right": "Bu gece ay o kadar parlak ki sokak lambasına gerek yok.", "origin": "belirsiz"}
+{"id": "belirsiz-148", "class": "belirsiz", "wrong": "Bu akşam umutun evinde maç izleyeceğiz.", "right": "Bu akşam Umut'un evinde maç izleyeceğiz."}
+{"id": "belirsiz-150", "class": "clean", "wrong": "Çocuklar ırmağın kıyısında taş sektirdi.", "right": "Çocuklar ırmağın kıyısında taş sektirdi.", "origin": "belirsiz"}
+{"id": "belirsiz-152", "class": "clean", "wrong": "Ne yazık ki yaşlı köpeğimiz geçen kış canını kurtaramadı.", "right": "Ne yazık ki yaşlı köpeğimiz geçen kış canını kurtaramadı.", "origin": "belirsiz"}
+{"id": "belirsiz-154", "class": "belirsiz", "wrong": "Kuzenim yıldızın kızı dün yürümeye başladı.", "right": "Kuzenim Yıldız'ın kızı dün yürümeye başladı."}
+{"id": "belirsiz-156", "class": "belirsiz", "wrong": "Babam en çok barış Manço'nun şarkılarını sever.", "right": "Babam en çok Barış Manço'nun şarkılarını sever."}
+{"id": "belirsiz-158", "class": "clean", "wrong": "Kayan bir yıldız görünce hemen dilek tuttum.", "right": "Kayan bir yıldız görünce hemen dilek tuttum.", "origin": "belirsiz"}
+{"id": "belirsiz-160", "class": "clean", "wrong": "Evimizin balkonundan deniz görünüyor ama kirası çok yüksek.", "right": "Evimizin balkonundan deniz görünüyor ama kirası çok yüksek.", "origin": "belirsiz"}
+{"id": "cumle_basi-002", "class": "cumle_basi", "wrong": "geldim.sonra çıktık.", "right": "Geldim. Sonra çıktık."}
+{"id": "cumle_basi-004", "class": "cumle_basi", "wrong": "ilk dersimiz saat dokuzda başlıyor.", "right": "İlk dersimiz saat dokuzda başlıyor."}
+{"id": "cumle_basi-006", "class": "cumle_basi", "wrong": "toplantı ertelendi. yeni tarihi yarın bildireceğim.", "right": "Toplantı ertelendi. Yeni tarihi yarın bildireceğim."}
+{"id": "cumle_basi-008", "class": "cumle_basi", "wrong": "ekmek aldın mı?süt de bitmiş.", "right": "Ekmek aldın mı? Süt de bitmiş."}
+{"id": "cumle_basi-010", "class": "cumle_basi", "wrong": "ödevimi bitirdim.yarın teslim ediyorum.", "right": "Ödevimi bitirdim. Yarın teslim ediyorum."}
+{"id": "cumle_basi-012", "class": "cumle_basi", "wrong": "ışıkları kapatmayı unutma.", "right": "Işıkları kapatmayı unutma."}
+{"id": "cumle_basi-014", "class": "cumle_basi", "wrong": "sevgili hocam, ödevimi ekte gönderiyorum. iyi çalışmalar dilerim.", "right": "Sevgili hocam, ödevimi ekte gönderiyorum. İyi çalışmalar dilerim."}
+{"id": "cumle_basi-016", "class": "cumle_basi", "wrong": "bugün hava çok güzel. parka gidelim mi?", "right": "Bugün hava çok güzel. Parka gidelim mi?"}
+{"id": "cumle_basi-018", "class": "cumle_basi", "wrong": "neden cevap vermiyorsun? merak ettim.", "right": "Neden cevap vermiyorsun? Merak ettim."}
+{"id": "cumle_basi-020", "class": "cumle_basi", "wrong": "ırmağın kenarında yürüdük. su çok soğuktu.", "right": "Irmağın kenarında yürüdük. Su çok soğuktu."}
+{"id": "cumle_basi-022", "class": "cumle_basi", "wrong": "izin dilekçemi müdüre verdim. cevap bekliyorum.", "right": "İzin dilekçemi müdüre verdim. Cevap bekliyorum."}
+{"id": "cumle_basi-024", "class": "cumle_basi", "wrong": "tebrikler!harika bir iş çıkardınız.", "right": "Tebrikler! Harika bir iş çıkardınız."}
+{"id": "cumle_basi-026", "class": "cumle_basi", "wrong": "süt, yumurta ve peynir al. unutma, akşam misafir var.", "right": "Süt, yumurta ve peynir al. Unutma, akşam misafir var."}
+{"id": "cumle_basi-028", "class": "cumle_basi", "wrong": "ızgara çok güzel olmuş. ellerine sağlık.", "right": "Izgara çok güzel olmuş. Ellerine sağlık."}
+{"id": "cumle_basi-030", "class": "cumle_basi", "wrong": "dün gece film izledik.çok sürükleyiciydi.", "right": "Dün gece film izledik. Çok sürükleyiciydi."}
+{"id": "cumle_basi-032", "class": "cumle_basi", "wrong": "Kapıyı kilitledin mi? ısıtıcıyı da kapat lütfen.", "right": "Kapıyı kilitledin mi? Isıtıcıyı da kapat lütfen."}
+{"id": "cumle_basi-034", "class": "cumle_basi", "wrong": "Proje teslim edildi.şimdi biraz dinlenebiliriz.", "right": "Proje teslim edildi. Şimdi biraz dinlenebiliriz."}
+{"id": "cumle_basi-036", "class": "cumle_basi", "wrong": "Bu kitabı bitirdin mi?ikinci cildini almayı düşünüyorum.", "right": "Bu kitabı bitirdin mi? İkinci cildini almayı düşünüyorum."}
+{"id": "cumle_basi-038", "class": "cumle_basi", "wrong": "Sakin ol! ıssız bir yerde değiliz, yardım gelecek.", "right": "Sakin ol! Issız bir yerde değiliz, yardım gelecek."}
+{"id": "cumle_basi-040", "class": "cumle_basi", "wrong": "Telefonum şarjda.birazdan ararım.", "right": "Telefonum şarjda. Birazdan ararım."}
+{"id": "cumle_basi-042", "class": "cumle_basi", "wrong": "Hava kararmadan dönelim. ıhlamur da alalım dönüşte.", "right": "Hava kararmadan dönelim. Ihlamur da alalım dönüşte."}
+{"id": "cumle_basi-044", "class": "cumle_basi", "wrong": "Siparişiniz kargoya verildi. iki iş günü içinde teslim edilecektir.", "right": "Siparişiniz kargoya verildi. İki iş günü içinde teslim edilecektir."}
+{"id": "cumle_basi-046", "class": "cumle_basi", "wrong": "Aman dikkat!yerler ıslak.", "right": "Aman dikkat! Yerler ıslak."}
+{"id": "cumle_basi-048", "class": "cumle_basi", "wrong": "Araba bozuldu.servisi aradım, yarın gelecekler.", "right": "Araba bozuldu. Servisi aradım, yarın gelecekler."}
+{"id": "cumle_basi-050", "class": "cumle_basi", "wrong": "Kek fırında. on dakika sonra çıkar, olur mu?", "right": "Kek fırında. On dakika sonra çıkar, olur mu?"}
+{"id": "cumle_basi-052", "class": "cumle_basi", "wrong": "Bilet aldım.ikimiz için de yer ayırttım.", "right": "Bilet aldım. İkimiz için de yer ayırttım."}
+{"id": "cumle_basi-054", "class": "cumle_basi", "wrong": "Ne kadar güzel bir manzara!fotoğraf çekelim.", "right": "Ne kadar güzel bir manzara! Fotoğraf çekelim."}
+{"id": "cumle_basi-056", "class": "cumle_basi", "wrong": "Kira artışı belli oldu mu?ev sahibi henüz yazmadı.", "right": "Kira artışı belli oldu mu? Ev sahibi henüz yazmadı."}
+{"id": "cumle_basi-058", "class": "cumle_basi", "wrong": "Kahve içtim. ılık süt de iyi gelirdi aslında.", "right": "Kahve içtim. Ilık süt de iyi gelirdi aslında."}
+{"id": "cumle_basi-060", "class": "cumle_basi", "wrong": "Tamam, anlaştık. yarın saat onda kapıdayım.", "right": "Tamam, anlaştık. Yarın saat onda kapıdayım."}
+{"id": "cumle_basi-062", "class": "cumle_basi", "wrong": "Sunumu kim hazırlayacak?ben yapabilirim.", "right": "Sunumu kim hazırlayacak? Ben yapabilirim."}
+{"id": "cumle_basi-064", "class": "cumle_basi", "wrong": "Toplantı odası dolu.ikinci kattaki salonu kullanalım.", "right": "Toplantı odası dolu. İkinci kattaki salonu kullanalım."}
+{"id": "cumle_basi-066", "class": "cumle_basi", "wrong": "Gerçekten çok üzüldüm. ışığın sönmesi gibi bir şeydi bu.", "right": "Gerçekten çok üzüldüm. Işığın sönmesi gibi bir şeydi bu."}
+{"id": "cumle_basi-068", "class": "cumle_basi", "wrong": "Eline sağlık!yemekler harikaydı.", "right": "Eline sağlık! Yemekler harikaydı."}
+{"id": "cumle_basi-070", "class": "cumle_basi", "wrong": "Su kesik.ilan vermişler, akşama kadar sürecekmiş.", "right": "Su kesik. İlan vermişler, akşama kadar sürecekmiş."}
+{"id": "cumle_basi-072", "class": "cumle_basi", "wrong": "Bugün mesaiye kalacağım. akşam yemeğini bekleme.", "right": "Bugün mesaiye kalacağım. Akşam yemeğini bekleme."}
+{"id": "cumle_basi-074", "class": "cumle_basi", "wrong": "Kediyi beslemeyi unutma. mama dolabın üstünde.", "right": "Kediyi beslemeyi unutma. Mama dolabın üstünde."}
+{"id": "cumle_basi-076", "class": "cumle_basi", "wrong": "Yol çalışması pazartesi başlıyor. ilçe merkezinde trafik aksayabilir.", "right": "Yol çalışması pazartesi başlıyor. İlçe merkezinde trafik aksayabilir."}
+{"id": "cumle_basi-078", "class": "cumle_basi", "wrong": "Şarj aletini gördün mü?masanın üstüne koymuştum.", "right": "Şarj aletini gördün mü? Masanın üstüne koymuştum."}
+{"id": "cumle_basi-080", "class": "cumle_basi", "wrong": "Çok güzel bir gündü. ıhlamur ağaçlarının altında piknik yaptık.", "right": "Çok güzel bir gündü. Ihlamur ağaçlarının altında piknik yaptık."}
+{"id": "cumle_basi-082", "class": "cumle_basi", "wrong": "Deney sonuçları beklendiği gibi çıktı.grafikleri ekte bulabilirsiniz.", "right": "Deney sonuçları beklendiği gibi çıktı. Grafikleri ekte bulabilirsiniz."}
+{"id": "cumle_basi-084", "class": "cumle_basi", "wrong": "Ne dersin? ıspanaklı börek mi yapalım, peynirli mi?", "right": "Ne dersin? Ispanaklı börek mi yapalım, peynirli mi?"}
+{"id": "cumle_basi-086", "class": "cumle_basi", "wrong": "Uçak rötar yaptı.iki saat bekledik.", "right": "Uçak rötar yaptı. İki saat bekledik."}
+{"id": "cumle_basi-088", "class": "cumle_basi", "wrong": "Harika haber! iş başvurum kabul edildi.", "right": "Harika haber! İş başvurum kabul edildi."}
+{"id": "cumle_basi-090", "class": "cumle_basi", "wrong": "Herkes geldi mi? ilk sunumla başlayalım.", "right": "Herkes geldi mi? İlk sunumla başlayalım."}
+{"id": "cumle_basi-092", "class": "cumle_basi", "wrong": "Paket açılmamış.iade edebilirsiniz.", "right": "Paket açılmamış. İade edebilirsiniz."}
+{"id": "cumle_basi-094", "class": "cumle_basi", "wrong": "Yine mi geç kaldın?otobüsü kaçırdım deme sakın.", "right": "Yine mi geç kaldın? Otobüsü kaçırdım deme sakın."}
+{"id": "cumle_basi-096", "class": "cumle_basi", "wrong": "Aferin sana!ilk denemede başardın.", "right": "Aferin sana! İlk denemede başardın."}
+{"id": "cumle_basi-098", "class": "cumle_basi", "wrong": "Ev temizlendi. ıslak zemine basmayın lütfen.", "right": "Ev temizlendi. Islak zemine basmayın lütfen."}
+{"id": "cumle_basi-100", "class": "cumle_basi", "wrong": "Hesabı ben ödedim. itiraz istemiyorum!", "right": "Hesabı ben ödedim. İtiraz istemiyorum!"}
+{"id": "cumle_basi-102", "class": "cumle_basi", "wrong": "Bahçedeki domatesler kızardı.ılık havada çabuk olgunlaştılar.", "right": "Bahçedeki domatesler kızardı. Ilık havada çabuk olgunlaştılar."}
+{"id": "cumle_basi-104", "class": "cumle_basi", "wrong": "Mesajını gördüm! iki dakikaya oradayım.", "right": "Mesajını gördüm! İki dakikaya oradayım."}
+{"id": "cumle_basi-106", "class": "cumle_basi", "wrong": "Market açık mı?ihtiyacımız olan birkaç şey var.", "right": "Market açık mı? İhtiyacımız olan birkaç şey var."}
+{"id": "cumle_basi-108", "class": "cumle_basi", "wrong": "Sorun çözüldü. teşekkürler, iyi ki sordum.", "right": "Sorun çözüldü. Teşekkürler, iyi ki sordum."}
+{"id": "cumle_basi-110", "class": "cumle_basi", "wrong": "Eyvah, yine elektrik kesildi! ışıldağı nereye koymuştuk?", "right": "Eyvah, yine elektrik kesildi! Işıldağı nereye koymuştuk?"}
+{"id": "cumle_basi-112", "class": "clean", "wrong": "Masa, sandalye, dolap vs. her şeyi taşıdık.", "right": "Masa, sandalye, dolap vs. her şeyi taşıdık.", "origin": "cumle_basi"}
+{"id": "cumle_basi-114", "class": "clean", "wrong": "Bu konu için bkz. ikinci bölüm.", "right": "Bu konu için bkz. ikinci bölüm.", "origin": "cumle_basi"}
+{"id": "cumle_basi-116", "class": "clean", "wrong": "Ofisimiz binanın 2. katında.", "right": "Ofisimiz binanın 2. katında.", "origin": "cumle_basi"}
+{"id": "cumle_basi-118", "class": "clean", "wrong": "Enflasyon geçen ay yüzde 2,5 arttı.", "right": "Enflasyon geçen ay yüzde 2,5 arttı.", "origin": "cumle_basi"}
+{"id": "cumle_basi-120", "class": "clean", "wrong": "“Geliyorum.” dedi ve kapıyı kapattı.", "right": "“Geliyorum.” dedi ve kapıyı kapattı.", "origin": "cumle_basi"}
+{"id": "cumle_basi-122", "class": "clean", "wrong": "Dosyayı rapor.pdf adıyla kaydettim.", "right": "Dosyayı rapor.pdf adıyla kaydettim.", "origin": "cumle_basi"}
+{"id": "cumle_basi-124", "class": "clean", "wrong": "Merhaba. Nasılsın?", "right": "Merhaba. Nasılsın?", "origin": "cumle_basi"}
+{"id": "cumle_basi-126", "class": "clean", "wrong": "Yarışmada 1. olan öğrenciye ödül verildi.", "right": "Yarışmada 1. olan öğrenciye ödül verildi.", "origin": "cumle_basi"}
+{"id": "cumle_basi-128", "class": "clean", "wrong": "Tren 09.15'te kalkıyor, geç kalma.", "right": "Tren 09.15'te kalkıyor, geç kalma.", "origin": "cumle_basi"}
+{"id": "cumle_basi-130", "class": "clean", "wrong": "Şey... aslında fena fikir değil.", "right": "Şey... aslında fena fikir değil.", "origin": "cumle_basi"}
+{"id": "cumle_basi-132", "class": "clean", "wrong": "Ödevleri odev_son.docx olarak yükleyin.", "right": "Ödevleri odev_son.docx olarak yükleyin.", "origin": "cumle_basi"}
+{"id": "cumle_basi-134", "class": "clean", "wrong": "İletişim için ayse.yilmaz@ornek.org adresini kullanabilirsiniz.", "right": "İletişim için ayse.yilmaz@ornek.org adresini kullanabilirsiniz.", "origin": "cumle_basi"}
+{"id": "cumle_basi-136", "class": "clean", "wrong": "Kablolar, şarj aletleri vs. çekmecede duruyor.", "right": "Kablolar, şarj aletleri vs. çekmecede duruyor.", "origin": "cumle_basi"}
+{"id": "cumle_basi-138", "class": "clean", "wrong": "Bu sabah termometre 36,8 dereceyi gösterdi.", "right": "Bu sabah termometre 36,8 dereceyi gösterdi.", "origin": "cumle_basi"}
+{"id": "cumle_basi-140", "class": "clean", "wrong": "Bir şey söyleyecektim... neyse, unuttum.", "right": "Bir şey söyleyecektim... neyse, unuttum.", "origin": "cumle_basi"}
+{"id": "cumle_basi-142", "class": "clean", "wrong": "Ilık suyla yıkayın. İyice kuruduktan sonra ütüleyin.", "right": "Ilık suyla yıkayın. İyice kuruduktan sonra ütüleyin.", "origin": "cumle_basi"}
+{"id": "cumle_basi-144", "class": "clean", "wrong": "Ekmek, peynir, zeytin vb. kahvaltılıkları aldım.", "right": "Ekmek, peynir, zeytin vb. kahvaltılıkları aldım.", "origin": "cumle_basi"}
+{"id": "cumle_basi-146", "class": "clean", "wrong": "Hangi gün uygunsun? Ben cuma günü boşum.", "right": "Hangi gün uygunsun? Ben cuma günü boşum.", "origin": "cumle_basi"}
+{"id": "cumle_basi-148", "class": "clean", "wrong": "Tarifin 2. adımında unu ekleyin.", "right": "Tarifin 2. adımında unu ekleyin.", "origin": "cumle_basi"}
+{"id": "cumle_basi-150", "class": "clean", "wrong": "Kayıt formunu basvuru.halid.dev üzerinden doldurabilirsiniz.", "right": "Kayıt formunu basvuru.halid.dev üzerinden doldurabilirsiniz.", "origin": "cumle_basi"}
+{"id": "cumle_basi-152", "class": "clean", "wrong": "Ürün 1,5 kilogram geliyor.", "right": "Ürün 1,5 kilogram geliyor.", "origin": "cumle_basi"}
+{"id": "cumle_basi-154", "class": "clean", "wrong": "Yüz yıllık çınarlar, kavaklar, söğütler vb. ağaçlar kesilmesin.", "right": "Yüz yıllık çınarlar, kavaklar, söğütler vb. ağaçlar kesilmesin.", "origin": "cumle_basi"}
+{"id": "cumle_basi-156", "class": "clean", "wrong": "Ilgaz Dağı'na tırmandık. İnişte çok yorulduk.", "right": "Ilgaz Dağı'na tırmandık. İnişte çok yorulduk.", "origin": "cumle_basi"}
+{"id": "cumle_basi-158", "class": "clean", "wrong": "Hasta 7. günde taburcu oldu.", "right": "Hasta 7. günde taburcu oldu.", "origin": "cumle_basi"}
+{"id": "cumle_basi-160", "class": "clean", "wrong": "Okul 2025-2026 öğretim yılında 12.000 öğrenciye ulaştı.", "right": "Okul 2025-2026 öğretim yılında 12.000 öğrenciye ulaştı.", "origin": "cumle_basi"}
+{"id": "dil_millet_din-002", "class": "dil_millet_din", "wrong": "Annem almanca kursuna yazıldı, haftada iki gün gidiyor.", "right": "Annem Almanca kursuna yazıldı, haftada iki gün gidiyor."}
+{"id": "dil_millet_din-004", "class": "dil_millet_din", "wrong": "Bence türkçeyi doğru kullanmak hepimizin görevi.", "right": "Bence Türkçeyi doğru kullanmak hepimizin görevi."}
+{"id": "dil_millet_din-006", "class": "dil_millet_din", "wrong": "Merhaba, ekteki belgeyi rusçaya çevirtebilir misiniz?", "right": "Merhaba, ekteki belgeyi Rusçaya çevirtebilir misiniz?"}
+{"id": "dil_millet_din-008", "class": "dil_millet_din", "wrong": "Ödev: osmanlıca metni günümüz türkçesine aktarınız.", "right": "Ödev: Osmanlıca metni günümüz Türkçesine aktarınız."}
+{"id": "dil_millet_din-010", "class": "dil_millet_din", "wrong": "Komşumuz ispanyolcayı dizilerden öğrendiğini söylüyor.", "right": "Komşumuz İspanyolcayı dizilerden öğrendiğini söylüyor."}
+{"id": "dil_millet_din-012", "class": "dil_millet_din", "wrong": "Ninem lazca ninniler söylerdi, hâlâ birkaçını hatırlıyorum.", "right": "Ninem Lazca ninniler söylerdi, hâlâ birkaçını hatırlıyorum."}
+{"id": "dil_millet_din-014", "class": "dil_millet_din", "wrong": "korece alfabe sanıldığı kadar zor değil, bir haftada sökülüyor.", "right": "Korece alfabe sanıldığı kadar zor değil, bir haftada sökülüyor."}
+{"id": "dil_millet_din-016", "class": "dil_millet_din", "wrong": "Hocamız yunancanın tarihini anlatırken saatin nasıl geçtiğini anlamadık.", "right": "Hocamız Yunancanın tarihini anlatırken saatin nasıl geçtiğini anlamadık."}
+{"id": "dil_millet_din-018", "class": "dil_millet_din", "wrong": "Mektubu ermeniceden çeviren arkadaşa çok teşekkür ederiz.", "right": "Mektubu Ermeniceden çeviren arkadaşa çok teşekkür ederiz."}
+{"id": "dil_millet_din-020", "class": "dil_millet_din", "wrong": "Sınavda almancanın artikelleri yüzünden puan kaybettim.", "right": "Sınavda Almancanın artikelleri yüzünden puan kaybettim."}
+{"id": "dil_millet_din-022", "class": "dil_millet_din", "wrong": "hollandaca telaffuzu bana hep boğaz ağrısını hatırlatıyor.", "right": "Hollandaca telaffuzu bana hep boğaz ağrısını hatırlatıyor."}
+{"id": "dil_millet_din-024", "class": "dil_millet_din", "wrong": "Atasözlerinin gürcücesini toplayan bir derleme yayımlanmış.", "right": "Atasözlerinin Gürcücesini toplayan bir derleme yayımlanmış."}
+{"id": "dil_millet_din-026", "class": "dil_millet_din", "wrong": "Haberde fincenin türkçeyle akraba olduğu iddiası tartışılıyordu.", "right": "Haberde Fincenin Türkçeyle akraba olduğu iddiası tartışılıyordu."}
+{"id": "dil_millet_din-028", "class": "dil_millet_din", "wrong": "Kütüphanede sanskritçe el yazmaları sergileniyormuş.", "right": "Kütüphanede Sanskritçe el yazmaları sergileniyormuş."}
+{"id": "dil_millet_din-030", "class": "dil_millet_din", "wrong": "lehçe kelimelerdeki ünsüz yığınları beni korkutuyor.", "right": "Lehçe kelimelerdeki ünsüz yığınları beni korkutuyor."}
+{"id": "dil_millet_din-032", "class": "dil_millet_din", "wrong": "Türkmen arkadaşım türkmencenin bizim şivelere çok yakın olduğunu söyledi.", "right": "Türkmen arkadaşım Türkmencenin bizim şivelere çok yakın olduğunu söyledi."}
+{"id": "dil_millet_din-034", "class": "dil_millet_din", "wrong": "Ödevi kırgızca bir masaldan seçtim, öğretmen çok beğendi.", "right": "Ödevi Kırgızca bir masaldan seçtim, öğretmen çok beğendi."}
+{"id": "dil_millet_din-036", "class": "dil_millet_din", "wrong": "moğolcadaki bazı kelimeler türkçedekilere çok benziyor.", "right": "Moğolcadaki bazı kelimeler Türkçedekilere çok benziyor."}
+{"id": "dil_millet_din-038", "class": "dil_millet_din", "wrong": "çerkezce bilen son kuşak yavaş yavaş kayboluyor.", "right": "Çerkezce bilen son kuşak yavaş yavaş kayboluyor."}
+{"id": "dil_millet_din-040", "class": "dil_millet_din", "wrong": "Toplantı notlarını türkçeye çevirip herkese gönderir misin?", "right": "Toplantı notlarını Türkçeye çevirip herkese gönderir misin?"}
+{"id": "dil_millet_din-042", "class": "dil_millet_din", "wrong": "Telefonun dilini yanlışlıkla endonezceye çevirmişim, geri alamıyorum.", "right": "Telefonun dilini yanlışlıkla Endonezceye çevirmişim, geri alamıyorum."}
+{"id": "dil_millet_din-044", "class": "dil_millet_din", "wrong": "Ressam, eserlerinin adlarını hep esperanto dilinde koyarmış.", "right": "Ressam, eserlerinin adlarını hep Esperanto dilinde koyarmış."}
+{"id": "dil_millet_din-046", "class": "dil_millet_din", "wrong": "Kuzenim norveççeyi bir yılda akıcı konuşur hâle geldi.", "right": "Kuzenim Norveççeyi bir yılda akıcı konuşur hâle geldi."}
+{"id": "dil_millet_din-048", "class": "dil_millet_din", "wrong": "Dizinin korecesini altyazısız anlamak hâlâ hayalim.", "right": "Dizinin Korecesini altyazısız anlamak hâlâ hayalim."}
+{"id": "dil_millet_din-050", "class": "dil_millet_din", "wrong": "Hoca türkçe'yi güzel kullananlara ek puan vereceğini söyledi.", "right": "Hoca Türkçeyi güzel kullananlara ek puan vereceğini söyledi."}
+{"id": "dil_millet_din-052", "class": "dil_millet_din", "wrong": "Mesajını almanca'ya çevirdim, ekte bulabilirsin.", "right": "Mesajını Almancaya çevirdim, ekte bulabilirsin."}
+{"id": "dil_millet_din-054", "class": "dil_millet_din", "wrong": "Bu deyimin japonca'da tam karşılığı yokmuş.", "right": "Bu deyimin Japoncada tam karşılığı yokmuş."}
+{"id": "dil_millet_din-056", "class": "dil_millet_din", "wrong": "Arkadaşlar, ispanyolca'dan gelen kelimeleri listeleyelim.", "right": "Arkadaşlar, İspanyolcadan gelen kelimeleri listeleyelim."}
+{"id": "dil_millet_din-058", "class": "dil_millet_din", "wrong": "Babam Rusça'yı askerde öğrenmiş, hâlâ unutmamış.", "right": "Babam Rusçayı askerde öğrenmiş, hâlâ unutmamış."}
+{"id": "dil_millet_din-060", "class": "dil_millet_din", "wrong": "Mahallemize geçen ay alman bir aile taşındı.", "right": "Mahallemize geçen ay Alman bir aile taşındı."}
+{"id": "dil_millet_din-062", "class": "dil_millet_din", "wrong": "Sergiye çoğunlukla japon turistler gelmişti.", "right": "Sergiye çoğunlukla Japon turistler gelmişti."}
+{"id": "dil_millet_din-064", "class": "dil_millet_din", "wrong": "Toplantıya fransız bir mimar da katılacak.", "right": "Toplantıya Fransız bir mimar da katılacak."}
+{"id": "dil_millet_din-066", "class": "dil_millet_din", "wrong": "italyanlarla yapılan maç uzatmalara gitti.", "right": "İtalyanlarla yapılan maç uzatmalara gitti."}
+{"id": "dil_millet_din-068", "class": "dil_millet_din", "wrong": "Belgesel, lazların denizle olan ilişkisini anlatıyor.", "right": "Belgesel, Lazların denizle olan ilişkisini anlatıyor."}
+{"id": "dil_millet_din-070", "class": "dil_millet_din", "wrong": "çerkezlerin düğün dansları gerçekten etkileyici.", "right": "Çerkezlerin düğün dansları gerçekten etkileyici."}
+{"id": "dil_millet_din-072", "class": "dil_millet_din", "wrong": "selçuklular Anadolu'ya birçok kervansaray bırakmış.", "right": "Selçuklular Anadolu'ya birçok kervansaray bırakmış."}
+{"id": "dil_millet_din-074", "class": "dil_millet_din", "wrong": "moğolların at üstündeki ustalığı efsaneymiş.", "right": "Moğolların at üstündeki ustalığı efsaneymiş."}
+{"id": "dil_millet_din-076", "class": "dil_millet_din", "wrong": "hunlar hakkında bildiklerimizin çoğu Çin kaynaklarından geliyor.", "right": "Hunlar hakkında bildiklerimizin çoğu Çin kaynaklarından geliyor."}
+{"id": "dil_millet_din-078", "class": "dil_millet_din", "wrong": "Sınıfımızda iki azerbaycanlı öğrenci var.", "right": "Sınıfımızda iki Azerbaycanlı öğrenci var."}
+{"id": "dil_millet_din-080", "class": "dil_millet_din", "wrong": "ispanyolların öğle uykusu alışkanlığını çok kıskanıyorum.", "right": "İspanyolların öğle uykusu alışkanlığını çok kıskanıyorum."}
+{"id": "dil_millet_din-082", "class": "dil_millet_din", "wrong": "türkmenler halı dokumacılığıyla ünlüdür.", "right": "Türkmenler halı dokumacılığıyla ünlüdür."}
+{"id": "dil_millet_din-084", "class": "dil_millet_din", "wrong": "rumların paskalya çöreği bizim mahallede de çok sevilir.", "right": "Rumların paskalya çöreği bizim mahallede de çok sevilir."}
+{"id": "dil_millet_din-086", "class": "dil_millet_din", "wrong": "Bu kitap uygurların göç tarihini anlatıyor.", "right": "Bu kitap Uygurların göç tarihini anlatıyor."}
+{"id": "dil_millet_din-088", "class": "dil_millet_din", "wrong": "avrupalılar bu çayı ilk kez on yedinci yüzyılda tatmış.", "right": "Avrupalılar bu çayı ilk kez on yedinci yüzyılda tatmış."}
+{"id": "dil_millet_din-090", "class": "dil_millet_din", "wrong": "Okuduğum makalede türklüğün tarih içindeki tanımları tartışılıyordu.", "right": "Okuduğum makalede Türklüğün tarih içindeki tanımları tartışılıyordu."}
+{"id": "dil_millet_din-092", "class": "dil_millet_din", "wrong": "japonlar eve girerken ayakkabılarını çıkarır, biz de öyle yaparız.", "right": "Japonlar eve girerken ayakkabılarını çıkarır, biz de öyle yaparız."}
+{"id": "dil_millet_din-094", "class": "dil_millet_din", "wrong": "Misafirlere türk kahvesi yaptım, köpüğü tam oldu.", "right": "Misafirlere Türk kahvesi yaptım, köpüğü tam oldu."}
+{"id": "dil_millet_din-096", "class": "dil_millet_din", "wrong": "Kardeşim rus edebiyatına bayılıyor, şimdi de Tolstoy okuyor.", "right": "Kardeşim Rus edebiyatına bayılıyor, şimdi de Tolstoy okuyor."}
+{"id": "dil_millet_din-098", "class": "dil_millet_din", "wrong": "Eski mezar taşlarında arap harfleriyle yazılmış dualar var.", "right": "Eski mezar taşlarında Arap harfleriyle yazılmış dualar var."}
+{"id": "dil_millet_din-100", "class": "dil_millet_din", "wrong": "Babam yıllardır aynı alman marka arabayı kullanıyor.", "right": "Babam yıllardır aynı Alman marka arabayı kullanıyor."}
+{"id": "dil_millet_din-102", "class": "dil_millet_din", "wrong": "Hafta sonu fransız sinemasından üç film izledik.", "right": "Hafta sonu Fransız sinemasından üç film izledik."}
+{"id": "dil_millet_din-104", "class": "dil_millet_din", "wrong": "Sergide osmanlı dönemine ait kaftanlar da vardı.", "right": "Sergide Osmanlı dönemine ait kaftanlar da vardı."}
+{"id": "dil_millet_din-106", "class": "dil_millet_din", "wrong": "Ramazan'da müslümanlar gün doğumundan gün batımına kadar oruç tutar.", "right": "Ramazan'da Müslümanlar gün doğumundan gün batımına kadar oruç tutar."}
+{"id": "dil_millet_din-108", "class": "dil_millet_din", "wrong": "Ödevimin konusu islam mimarisinde kubbe kullanımı.", "right": "Ödevimin konusu İslam mimarisinde kubbe kullanımı."}
+{"id": "dil_millet_din-110", "class": "dil_millet_din", "wrong": "yahudilikte cumartesi günü dinlenme günü olarak kabul edilir.", "right": "Yahudilikte cumartesi günü dinlenme günü olarak kabul edilir."}
+{"id": "dil_millet_din-112", "class": "dil_millet_din", "wrong": "hinduizmde inek kutsal bir hayvan olarak görülür.", "right": "Hinduizmde inek kutsal bir hayvan olarak görülür."}
+{"id": "dil_millet_din-114", "class": "dil_millet_din", "wrong": "Sınavda katolik ve ortodoks kiliseleri arasındaki ayrılık soruldu.", "right": "Sınavda Katolik ve Ortodoks kiliseleri arasındaki ayrılık soruldu."}
+{"id": "dil_millet_din-116", "class": "dil_millet_din", "wrong": "Bu köyde alevi ve sünni aileler iç içe yaşıyor.", "right": "Bu köyde Alevi ve Sünni aileler iç içe yaşıyor."}
+{"id": "dil_millet_din-118", "class": "dil_millet_din", "wrong": "Türkiye'de hanefi mezhebi yaygındır.", "right": "Türkiye'de Hanefi mezhebi yaygındır."}
+{"id": "dil_millet_din-120", "class": "dil_millet_din", "wrong": "islamiyet öncesi Türk inançları üzerine bir seminer düzenlenecek.", "right": "İslamiyet öncesi Türk inançları üzerine bir seminer düzenlenecek."}
+{"id": "dil_millet_din-122", "class": "dil_millet_din", "wrong": "Kasabadaki ermeni kilisesi restore edilip ziyarete açıldı.", "right": "Kasabadaki Ermeni kilisesi restore edilip ziyarete açıldı."}
+{"id": "dil_millet_din-124", "class": "dil_millet_din", "wrong": "Gezide yahudi mahallesinin dar sokaklarında kaybolduk.", "right": "Gezide Yahudi mahallesinin dar sokaklarında kaybolduk."}
+{"id": "dil_millet_din-126", "class": "dil_millet_din", "wrong": "Çarşının ortasında eski bir rum ortodoks kilisesi duruyor.", "right": "Çarşının ortasında eski bir Rum Ortodoks kilisesi duruyor."}
+{"id": "dil_millet_din-128", "class": "dil_millet_din", "wrong": "Hristiyanlık'ta paskalya en önemli bayramlardan biridir.", "right": "Hristiyanlıkta paskalya en önemli bayramlardan biridir."}
+{"id": "dil_millet_din-130", "class": "dil_millet_din", "wrong": "Almanlar'ın çoğu tatilde güneye gidiyormuş.", "right": "Almanların çoğu tatilde güneye gidiyormuş."}
+{"id": "dil_millet_din-132", "class": "dil_millet_din", "wrong": "Hocamız Japonlar'ın çay törenini anlattı.", "right": "Hocamız Japonların çay törenini anlattı."}
+{"id": "dil_millet_din-134", "class": "dil_millet_din", "wrong": "Ne diyeyim, allah kolaylık versin.", "right": "Ne diyeyim, Allah kolaylık versin."}
+{"id": "dil_millet_din-136", "class": "dil_millet_din", "wrong": "allaha ısmarladık, yarın yine uğrarım.", "right": "Allah'a ısmarladık, yarın yine uğrarım."}
+{"id": "dil_millet_din-138", "class": "dil_millet_din", "wrong": "Yaşlı adam \"allah razı olsun evladım\" dedi ve uzaklaştı.", "right": "Yaşlı adam \"Allah razı olsun evladım\" dedi ve uzaklaştı."}
+{"id": "dil_millet_din-140", "class": "dil_millet_din", "wrong": "Bu işi allah rızası için yapıyoruz, karşılık beklemiyoruz.", "right": "Bu işi Allah rızası için yapıyoruz, karşılık beklemiyoruz."}
+{"id": "dil_millet_din-142", "class": "clean", "wrong": "Maşallah, oğlunuz ne kadar da büyümüş!", "right": "Maşallah, oğlunuz ne kadar da büyümüş!", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-144", "class": "clean", "wrong": "Teyzem düğünde çok güzel bir türkü söyledi.", "right": "Teyzem düğünde çok güzel bir türkü söyledi.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-146", "class": "clean", "wrong": "Bu metni İngilizceye çevirmem iki saatimi aldı.", "right": "Bu metni İngilizceye çevirmem iki saatimi aldı.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-148", "class": "clean", "wrong": "Japon mutfağında pirinç her öğünün temelidir.", "right": "Japon mutfağında pirinç her öğünün temelidir.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-150", "class": "clean", "wrong": "Allah'a emanet ol, varınca haber ver.", "right": "Allah'a emanet ol, varınca haber ver.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-152", "class": "clean", "wrong": "Sınıfta en çok Arapça kökenli kelimeleri bulan grup kazandı.", "right": "Sınıfta en çok Arapça kökenli kelimeleri bulan grup kazandı.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-154", "class": "clean", "wrong": "Elhamdülillah, ameliyat iyi geçti, babam toparlanıyor.", "right": "Elhamdülillah, ameliyat iyi geçti, babam toparlanıyor.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-156", "class": "clean", "wrong": "Rehber, Hristiyanlığın Anadolu'daki ilk izlerini gösterdi.", "right": "Rehber, Hristiyanlığın Anadolu'daki ilk izlerini gösterdi.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-158", "class": "clean", "wrong": "Seminerde Alevilik ve Sünnilik üzerine iki sunum yapıldı.", "right": "Seminerde Alevilik ve Sünnilik üzerine iki sunum yapıldı.", "origin": "dil_millet_din"}
+{"id": "dil_millet_din-160", "class": "clean", "wrong": "Çocuklar bahçede hindilerin peşinden koşuyordu.", "right": "Çocuklar bahçede hindilerin peşinden koşuyordu.", "origin": "dil_millet_din"}
+{"id": "ek_kesme-002", "class": "ek_kesme", "wrong": "Bu mesajı mehmete de iletir misin?", "right": "Bu mesajı Mehmet'e de iletir misin?"}
+{"id": "ek_kesme-004", "class": "ek_kesme", "wrong": "Ayşeye söyle, akşam yemeğe gelsin.", "right": "Ayşe'ye söyle, akşam yemeğe gelsin."}
+{"id": "ek_kesme-006", "class": "ek_kesme", "wrong": "Kardeşim geçen ay eskişehire taşındı.", "right": "Kardeşim geçen ay Eskişehir'e taşındı."}
+{"id": "ek_kesme-008", "class": "ek_kesme", "wrong": "güle doğum günü için bir kitap aldık.", "right": "Gül'e doğum günü için bir kitap aldık."}
+{"id": "ek_kesme-010", "class": "ek_kesme", "wrong": "Öğrenci değişim programıyla almanyaya gidecek.", "right": "Öğrenci değişim programıyla Almanya'ya gidecek."}
+{"id": "ek_kesme-012", "class": "ek_kesme", "wrong": "Haberi ilk onura verdim.", "right": "Haberi ilk Onur'a verdim."}
+{"id": "ek_kesme-014", "class": "ek_kesme", "wrong": "Gelecek hafta trabzona bir iş gezisi var.", "right": "Gelecek hafta Trabzon'a bir iş gezisi var."}
+{"id": "ek_kesme-016", "class": "ek_kesme", "wrong": "Bavulları hazırla, yarın ığdıra gidiyoruz.", "right": "Bavulları hazırla, yarın Iğdır'a gidiyoruz."}
+{"id": "ek_kesme-018", "class": "ek_kesme", "wrong": "Çocuklar yaz kampı için uludağa çıktı.", "right": "Çocuklar yaz kampı için Uludağ'a çıktı."}
+{"id": "ek_kesme-020", "class": "ek_kesme", "wrong": "Gemi akşamüstü norveçe doğru yola çıktı.", "right": "Gemi akşamüstü Norveç'e doğru yola çıktı."}
+{"id": "ek_kesme-022", "class": "ek_kesme", "wrong": "Mezun olduktan sonra kanadaya yerleşmek istiyor.", "right": "Mezun olduktan sonra Kanada'ya yerleşmek istiyor."}
+{"id": "ek_kesme-024", "class": "ek_kesme", "wrong": "Dedemler emekli olunca ayvalıka yerleşti.", "right": "Dedemler emekli olunca Ayvalık'a yerleşti."}
+{"id": "ek_kesme-026", "class": "ek_kesme", "wrong": "Dün akşam muratı markette gördüm.", "right": "Dün akşam Murat'ı markette gördüm."}
+{"id": "ek_kesme-028", "class": "ek_kesme", "wrong": "Uzun zamandır yusufu görmedim.", "right": "Uzun zamandır Yusuf'u görmedim."}
+{"id": "ek_kesme-030", "class": "ek_kesme", "wrong": "Polis barışı tanık olarak dinledi.", "right": "Polis Barış'ı tanık olarak dinledi."}
+{"id": "ek_kesme-032", "class": "ek_kesme", "wrong": "özgeyi havaalanından ben alırım.", "right": "Özge'yi havaalanından ben alırım."}
+{"id": "ek_kesme-034", "class": "ek_kesme", "wrong": "Herkes hüseyini bekliyordu ama gelmedi.", "right": "Herkes Hüseyin'i bekliyordu ama gelmedi."}
+{"id": "ek_kesme-036", "class": "ek_kesme", "wrong": "Tarih dersinde mısırı işledik.", "right": "Tarih dersinde Mısır'ı işledik."}
+{"id": "ek_kesme-038", "class": "ek_kesme", "wrong": "Rehber bize sinopu anlattı.", "right": "Rehber bize Sinop'u anlattı."}
+{"id": "ek_kesme-040", "class": "ek_kesme", "wrong": "Hâlâ emre'yi bekliyoruz, telefonu da kapalı.", "right": "Hâlâ Emre'yi bekliyoruz, telefonu da kapalı."}
+{"id": "ek_kesme-042", "class": "ek_kesme", "wrong": "efeyi okuldan almayı unutma.", "right": "Efe'yi okuldan almayı unutma."}
+{"id": "ek_kesme-044", "class": "ek_kesme", "wrong": "Bu akşam türkiyede maç var mı?", "right": "Bu akşam Türkiye'de maç var mı?"}
+{"id": "ek_kesme-046", "class": "ek_kesme", "wrong": "Kuzenim karsta öğretmenlik yapıyor.", "right": "Kuzenim Kars'ta öğretmenlik yapıyor."}
+{"id": "ek_kesme-048", "class": "ek_kesme", "wrong": "Bu yıl kışı erzurumda geçirdik.", "right": "Bu yıl kışı Erzurum'da geçirdik."}
+{"id": "ek_kesme-050", "class": "ek_kesme", "wrong": "Çocukluğum çorumda geçti.", "right": "Çocukluğum Çorum'da geçti."}
+{"id": "ek_kesme-052", "class": "ek_kesme", "wrong": "Konser beşiktaşta olacakmış.", "right": "Konser Beşiktaş'ta olacakmış."}
+{"id": "ek_kesme-054", "class": "ek_kesme", "wrong": "hollandada bisiklet çok yaygın.", "right": "Hollanda'da bisiklet çok yaygın."}
+{"id": "ek_kesme-056", "class": "ek_kesme", "wrong": "Kongre bu yıl mersinde düzenleniyor.", "right": "Kongre bu yıl Mersin'de düzenleniyor."}
+{"id": "ek_kesme-058", "class": "ek_kesme", "wrong": "Annemin teyzesi sivasta yaşıyor.", "right": "Annemin teyzesi Sivas'ta yaşıyor."}
+{"id": "ek_kesme-060", "class": "ek_kesme", "wrong": "ıspartada gül hasadı başlamış.", "right": "Isparta'da gül hasadı başlamış."}
+{"id": "ek_kesme-062", "class": "ek_kesme", "wrong": "Kitap şu an mehmette, yarın ümite verecek.", "right": "Kitap şu an Mehmet'te, yarın Ümit'e verecek."}
+{"id": "ek_kesme-064", "class": "ek_kesme", "wrong": "İlk işini isveçte bulmuş.", "right": "İlk işini İsveç'te bulmuş."}
+{"id": "ek_kesme-066", "class": "ek_kesme", "wrong": "Vize başvurusu için evrakları ankara'da teslim edeceğiz.", "right": "Vize başvurusu için evrakları Ankara'da teslim edeceğiz."}
+{"id": "ek_kesme-068", "class": "ek_kesme", "wrong": "japonyada deprem tatbikatları okullarda düzenli yapılıyor.", "right": "Japonya'da deprem tatbikatları okullarda düzenli yapılıyor."}
+{"id": "ek_kesme-070", "class": "ek_kesme", "wrong": "Tatil dönüşü antalyadan uçakla geleceğiz.", "right": "Tatil dönüşü Antalya'dan uçakla geleceğiz."}
+{"id": "ek_kesme-072", "class": "ek_kesme", "wrong": "Proje dosyalarını buraktan isteyebilirsin.", "right": "Proje dosyalarını Burak'tan isteyebilirsin."}
+{"id": "ek_kesme-074", "class": "ek_kesme", "wrong": "Hediyeyi tuğbadan aldım, çok güzel.", "right": "Hediyeyi Tuğba'dan aldım, çok güzel."}
+{"id": "ek_kesme-076", "class": "ek_kesme", "wrong": "Mektup yusuftan geldi.", "right": "Mektup Yusuf'tan geldi."}
+{"id": "ek_kesme-078", "class": "ek_kesme", "wrong": "ufuktan hâlâ haber yok, endişelendim.", "right": "Ufuk'tan hâlâ haber yok, endişelendim."}
+{"id": "ek_kesme-080", "class": "ek_kesme", "wrong": "boludan geçerken mola verelim.", "right": "Bolu'dan geçerken mola verelim."}
+{"id": "ek_kesme-082", "class": "ek_kesme", "wrong": "ispanya'dan gelen turist sayısı arttı.", "right": "İspanya'dan gelen turist sayısı arttı."}
+{"id": "ek_kesme-084", "class": "ek_kesme", "wrong": "Bu tarifi fatmadan öğrendim.", "right": "Bu tarifi Fatma'dan öğrendim."}
+{"id": "ek_kesme-086", "class": "ek_kesme", "wrong": "hakandan bir şey isteme, zaten çok yoğun.", "right": "Hakan'dan bir şey isteme, zaten çok yoğun."}
+{"id": "ek_kesme-088", "class": "ek_kesme", "wrong": "ahmetin annesi bugün hastaneden çıktı.", "right": "Ahmet'in annesi bugün hastaneden çıktı."}
+{"id": "ek_kesme-090", "class": "ek_kesme", "wrong": "umutun doğum günü cumartesi, hediye aldınız mı?", "right": "Umut'un doğum günü cumartesi, hediye aldınız mı?"}
+{"id": "ek_kesme-092", "class": "ek_kesme", "wrong": "Sınav sonuçlarını oğuzun babası söyledi.", "right": "Sınav sonuçlarını Oğuz'un babası söyledi."}
+{"id": "ek_kesme-094", "class": "ek_kesme", "wrong": "ordunun fındığı çok meşhurdur.", "right": "Ordu'nun fındığı çok meşhurdur."}
+{"id": "ek_kesme-096", "class": "ek_kesme", "wrong": "rizenin çayını herkes bilir.", "right": "Rize'nin çayını herkes bilir."}
+{"id": "ek_kesme-098", "class": "ek_kesme", "wrong": "malatyanın kayısısını mutlaka tatmalısın.", "right": "Malatya'nın kayısısını mutlaka tatmalısın."}
+{"id": "ek_kesme-100", "class": "ek_kesme", "wrong": "yaşar kemalin romanlarını okumayı çok severim.", "right": "Yaşar Kemal'in romanlarını okumayı çok severim."}
+{"id": "ek_kesme-102", "class": "ek_kesme", "wrong": "artvinin yaylaları yazın çok güzel oluyor.", "right": "Artvin'in yaylaları yazın çok güzel oluyor."}
+{"id": "ek_kesme-104", "class": "ek_kesme", "wrong": "barış mançonun şarkılarını çocukken çok dinlerdik.", "right": "Barış Manço'nun şarkılarını çocukken çok dinlerdik."}
+{"id": "ek_kesme-106", "class": "ek_kesme", "wrong": "ırmakın kedisi kaybolmuş, ilan asacakmış.", "right": "Irmak'ın kedisi kaybolmuş, ilan asacakmış."}
+{"id": "ek_kesme-108", "class": "ek_kesme", "wrong": "mimar sinanın eserlerini gezmek için bir tur düzenlendi.", "right": "Mimar Sinan'ın eserlerini gezmek için bir tur düzenlendi."}
+{"id": "ek_kesme-110", "class": "ek_kesme", "wrong": "cansunun düğünü haziranda yapılacak.", "right": "Cansu'nun düğünü haziranda yapılacak."}
+{"id": "ek_kesme-112", "class": "ek_kesme", "wrong": "muratla aynı sınıftaydık.", "right": "Murat'la aynı sınıftaydık."}
+{"id": "ek_kesme-114", "class": "ek_kesme", "wrong": "Elifle kahve içmeye çıktık.", "right": "Elif'le kahve içmeye çıktık."}
+{"id": "ek_kesme-116", "class": "ek_kesme", "wrong": "ufukla aynı otobüse binmişiz, tesadüf.", "right": "Ufuk'la aynı otobüse binmişiz, tesadüf."}
+{"id": "ek_kesme-118", "class": "ek_kesme", "wrong": "Şirket rusyayla yeni bir anlaşma imzaladı.", "right": "Şirket Rusya'yla yeni bir anlaşma imzaladı."}
+{"id": "ek_kesme-120", "class": "ek_kesme", "wrong": "selin'le ödev üzerinde çalışıyoruz.", "right": "Selin'le ödev üzerinde çalışıyoruz."}
+{"id": "ek_kesme-122", "class": "ek_kesme", "wrong": "istanbuldaki trafik her geçen gün artıyor.", "right": "İstanbul'daki trafik her geçen gün artıyor."}
+{"id": "ek_kesme-124", "class": "ek_kesme", "wrong": "Benim telefonum eski, ahmetinki daha yeni.", "right": "Benim telefonum eski, Ahmet'inki daha yeni."}
+{"id": "ek_kesme-126", "class": "ek_kesme", "wrong": "Bu fotoğraf ayşeninki değil, benimki.", "right": "Bu fotoğraf Ayşe'ninki değil, benimki."}
+{"id": "ek_kesme-128", "class": "ek_kesme", "wrong": "Güzel istanbulumuz yine trafikle boğuşuyor.", "right": "Güzel İstanbul'umuz yine trafikle boğuşuyor."}
+{"id": "ek_kesme-130", "class": "ek_kesme", "wrong": "Sevgili ahmetim, mektubunu aldım, çok sevindim.", "right": "Sevgili Ahmet'im, mektubunu aldım, çok sevindim."}
+{"id": "ek_kesme-132", "class": "ek_kesme", "wrong": "türkiyemizin dört bir yanından öğrenciler geldi.", "right": "Türkiye'mizin dört bir yanından öğrenciler geldi."}
+{"id": "ek_kesme-134", "class": "ek_kesme", "wrong": "Türkiye'nin başkenti ankaradır.", "right": "Türkiye'nin başkenti Ankara'dır."}
+{"id": "ek_kesme-136", "class": "ek_kesme", "wrong": "Ülkemizin en kalabalık şehri istanbuldur.", "right": "Ülkemizin en kalabalık şehri İstanbul'dur."}
+{"id": "ek_kesme-138", "class": "ek_kesme", "wrong": "Geçen yaz kayseriden sivasa arabayla gittik.", "right": "Geçen yaz Kayseri'den Sivas'a arabayla gittik."}
+{"id": "ek_kesme-140", "class": "ek_kesme", "wrong": "mustafanın oğlu hatayda doktor olarak çalışıyor.", "right": "Mustafa'nın oğlu Hatay'da doktor olarak çalışıyor."}
+{"id": "ek_kesme-142", "class": "ek_kesme", "wrong": "Otobüs samsundan kalkıp orduya uğruyor.", "right": "Otobüs Samsun'dan kalkıp Ordu'ya uğruyor."}
+{"id": "ek_kesme-144", "class": "ek_kesme", "wrong": "üsküdardan beşiktaşa vapurla geçtik.", "right": "Üsküdar'dan Beşiktaş'a vapurla geçtik."}
+{"id": "ek_kesme-146", "class": "clean", "wrong": "İstanbullular bu sabah yine trafikte bekledi.", "right": "İstanbullular bu sabah yine trafikte bekledi.", "origin": "ek_kesme"}
+{"id": "ek_kesme-148", "class": "clean", "wrong": "Deniz bugün çok dalgalı, yüzmeye girmeyelim.", "right": "Deniz bugün çok dalgalı, yüzmeye girmeyelim.", "origin": "ek_kesme"}
+{"id": "ek_kesme-150", "class": "clean", "wrong": "Bahçedeki güller açmaya başladı.", "right": "Bahçedeki güller açmaya başladı.", "origin": "ek_kesme"}
+{"id": "ek_kesme-152", "class": "clean", "wrong": "Toplantı notlarını İngilizceye çevirdim.", "right": "Toplantı notlarını İngilizceye çevirdim.", "origin": "ek_kesme"}
+{"id": "ek_kesme-154", "class": "clean", "wrong": "Türkler ve Almanlar bu turnuvada karşılaştı.", "right": "Türkler ve Almanlar bu turnuvada karşılaştı.", "origin": "ek_kesme"}
+{"id": "ek_kesme-156", "class": "clean", "wrong": "Barış görüşmeleri bu hafta yeniden başlıyor.", "right": "Barış görüşmeleri bu hafta yeniden başlıyor.", "origin": "ek_kesme"}
+{"id": "ek_kesme-158", "class": "clean", "wrong": "Kâzım Bey'e selamımı söyle.", "right": "Kâzım Bey'e selamımı söyle.", "origin": "ek_kesme"}
+{"id": "ek_kesme-160", "class": "clean", "wrong": "Kardeşim Ayşe'yle aynı okulda okuyor.", "right": "Kardeşim Ayşe'yle aynı okulda okuyor.", "origin": "ek_kesme"}
+{"id": "karisik_gunluk-002", "class": "karisik_gunluk", "wrong": "annemle bu hafta sonu bursaya gidiyoruz. uludağa çıkarsak sana fotoğraf atarım.", "right": "Annemle bu hafta sonu Bursa'ya gidiyoruz. Uludağ'a çıkarsak sana fotoğraf atarım."}
+{"id": "karisik_gunluk-004", "class": "karisik_gunluk", "wrong": "merhaba zeynep hanim, toplantı notlarini size e-postayla gonderdim.bir göz atarsaniz sevinirim.", "right": "Merhaba Zeynep Hanım, toplantı notlarını size e-postayla gönderdim. Bir göz atarsanız sevinirim."}
+{"id": "karisik_gunluk-006", "class": "karisik_gunluk", "wrong": "bugün mertle moda sahilinde yürüdük.hava çok güzeldi.", "right": "Bugün Mert'le Moda sahilinde yürüdük. Hava çok güzeldi."}
+{"id": "karisik_gunluk-008", "class": "karisik_gunluk", "wrong": "izmire taşımaya karar verdik.ev bakmaya karşıyakaya gideceğiz.", "right": "İzmir'e taşınmaya karar verdik. Ev bakmaya Karşıyaka'ya gideceğiz."}
+{"id": "karisik_gunluk-010", "class": "karisik_gunluk", "wrong": "not: çarşamba günü emreye kitabı geri ver.kütüphane cezası kesilmesin.", "right": "Not: Çarşamba günü Emre'ye kitabı geri ver. Kütüphane cezası kesilmesin."}
+{"id": "karisik_gunluk-012", "class": "karisik_gunluk", "wrong": "canim, burakin dugunu antalyada olacakmis. otel ayarlamamiz lazim", "right": "Canım, Burak'ın düğünü Antalya'da olacakmış. Otel ayarlamamız lazım."}
+{"id": "karisik_gunluk-014", "class": "karisik_gunluk", "wrong": "selinden haber var mı? telefonuna ulaşamıyorum", "right": "Selin'den haber var mı? Telefonuna ulaşamıyorum."}
+{"id": "karisik_gunluk-016", "class": "karisik_gunluk", "wrong": "hocam merhaba, odevi ankara universitesi sistemine yukleyemedim. size e-postayla gonderebilir miyim?", "right": "Hocam merhaba, ödevi Ankara Üniversitesi sistemine yükleyemedim. Size e-postayla gönderebilir miyim?"}
+{"id": "karisik_gunluk-018", "class": "karisik_gunluk", "wrong": "annem gaziantepten baklava getirdi.aksam bize gel.", "right": "Annem Gaziantep'ten baklava getirdi. Akşam bize gel."}
+{"id": "karisik_gunluk-020", "class": "karisik_gunluk", "wrong": "merveyle erzuruma kayaga gidiyoruz. palandokende hiç kaydın mi?", "right": "Merve'yle Erzurum'a kayağa gidiyoruz. Palandöken'de hiç kaydın mı?"}
+{"id": "karisik_gunluk-022", "class": "karisik_gunluk", "wrong": "toplnatı saat üçte.murat beye haber verir misin?", "right": "Toplantı saat üçte. Murat Bey'e haber verir misin?"}
+{"id": "karisik_gunluk-024", "class": "karisik_gunluk", "wrong": "bugün ecnin annesiyle tanistim. çok tatlı bir kadın.", "right": "Bugün Ece'nin annesiyle tanıştım. Çok tatlı bir kadın."}
+{"id": "karisik_gunluk-026", "class": "karisik_gunluk", "wrong": "ceme soyle, akşam maci bizde izleyelim. cips falan alirim.", "right": "Cem'e söyle, akşam maçı bizde izleyelim. Cips falan alırım."}
+{"id": "karisik_gunluk-028", "class": "karisik_gunluk", "wrong": "odevde yunus emrenin siirlerini inceleyecegiz.kaynak onerin var mi?", "right": "Ödevde Yunus Emre'nin şiirlerini inceleyeceğiz. Kaynak önerin var mı?"}
+{"id": "karisik_gunluk-030", "class": "karisik_gunluk", "wrong": "siannin arabasi yolda kalmis, sapancada bekliyorlarmis.biri gidip alsin.", "right": "Sinan'ın arabası yolda kalmış, Sapanca'da bekliyorlarmış. Biri gidip alsın."}
+{"id": "karisik_gunluk-032", "class": "karisik_gunluk", "wrong": "arkadaslar, gökhanın veda yemegi perşembe aksami. yer olarak karaköyde bir lokanta düşündük.", "right": "Arkadaşlar, Gökhan'ın veda yemeği perşembe akşamı. Yer olarak Karaköy'de bir lokanta düşündük."}
+{"id": "karisik_gunluk-034", "class": "karisik_gunluk", "wrong": "sevgili nurhan hanim, siparisiniz yarin kargoya verilecektir.ilginiz icin tesekkur ederiz.", "right": "Sevgili Nurhan Hanım, siparişiniz yarın kargoya verilecektir. İlginiz için teşekkür ederiz."}
+{"id": "karisik_gunluk-036", "class": "karisik_gunluk", "wrong": "mardine gittigimde mutlaka dara antik kentini gor. muhtesem bir yer.", "right": "Mardin'e gittiğimde mutlaka Dara Antik Kenti'ni gör. Muhteşem bir yer."}
+{"id": "karisik_gunluk-038", "class": "karisik_gunluk", "wrong": "cocuklar rizedeki yaylaya bayildi.ayderde iki gun kaldik.", "right": "Çocuklar Rize'deki yaylaya bayıldı. Ayder'de iki gün kaldık."}
+{"id": "karisik_gunluk-040", "class": "karisik_gunluk", "wrong": "bugün taksimde çok kalabalık vardı. eve zor döndüm.", "right": "Bugün Taksim'de çok kalabalık vardı. Eve zor döndüm."}
+{"id": "karisik_gunluk-042", "class": "karisik_gunluk", "wrong": "deniz bugün dersi kaçırdı.notları ona sen verir misin?", "right": "Deniz bugün dersi kaçırdı. Notları ona sen verir misin?"}
+{"id": "karisik_gunluk-044", "class": "karisik_gunluk", "wrong": "umutun sınav sonucu açıklandı. tıp fakültesini kazanmış.", "right": "Umut'un sınav sonucu açıklandı. Tıp fakültesini kazanmış."}
+{"id": "karisik_gunluk-046", "class": "karisik_gunluk", "wrong": "kemalin bahçesindeki domatesler olgunlaştı.biraz ayırdım sana.", "right": "Kemal'in bahçesindeki domatesler olgunlaştı. Biraz ayırdım sana."}
+{"id": "karisik_gunluk-048", "class": "karisik_gunluk", "wrong": "pinara dogum gunu mesaji atmayi unutma.gecen sene unutmustun", "right": "Pınar'a doğum günü mesajı atmayı unutma. Geçen sene unutmuştun."}
+{"id": "karisik_gunluk-050", "class": "karisik_gunluk", "wrong": "yarin sabah kızılayda buluşalım.oradan birlikte geçeriz.", "right": "Yarın sabah Kızılay'da buluşalım. Oradan birlikte geçeriz."}
+{"id": "karisik_gunluk-052", "class": "karisik_gunluk", "wrong": "kenan, fenrbahce maci kacta basliyor?biletleri aldin mi?", "right": "Kenan, Fenerbahçe maçı kaçta başlıyor? Biletleri aldın mı?"}
+{"id": "karisik_gunluk-054", "class": "karisik_gunluk", "wrong": "kizim japonca ogrenmeye basladi.cok hevesli", "right": "Kızım Japonca öğrenmeye başladı. Çok hevesli."}
+{"id": "karisik_gunluk-056", "class": "karisik_gunluk", "wrong": "erkanın yeni evi çankayada. hafta sonu yardıma gidelim.", "right": "Erkan'ın yeni evi Çankaya'da. Hafta sonu yardıma gidelim."}
+{"id": "karisik_gunluk-058", "class": "karisik_gunluk", "wrong": "bu hafta vandaki teyzemleri ziyaret ettik.kahvaltıları efsane.", "right": "Bu hafta Van'daki teyzemleri ziyaret ettik. Kahvaltıları efsane."}
+{"id": "karisik_gunluk-060", "class": "karisik_gunluk", "wrong": "sabah kosusunu macka parkinda yapiyorum. sen de gelsene.", "right": "Sabah koşusunu Maçka Parkı'nda yapıyorum. Sen de gelsene."}
+{"id": "karisik_gunluk-062", "class": "karisik_gunluk", "wrong": "bugün tubnın işe ilk günüydü.biraz heyecanlıydı.", "right": "Bugün Tuba'nın işe ilk günüydü. Biraz heyecanlıydı."}
+{"id": "karisik_gunluk-064", "class": "karisik_gunluk", "wrong": "ankaraya giden tren yarim saat rötar yaptı. toplantya yetisemeyecegim.", "right": "Ankara'ya giden tren yarım saat rötar yaptı. Toplantıya yetişemeyeceğim."}
+{"id": "karisik_gunluk-066", "class": "karisik_gunluk", "wrong": "esranın bebeği dogmus! adını defne koymuslar.", "right": "Esra'nın bebeği doğmuş! Adını Defne koymuşlar."}
+{"id": "karisik_gunluk-068", "class": "karisik_gunluk", "wrong": "bu kış sarıkamışa gitmek istiyorum.ne dersin?", "right": "Bu kış Sarıkamış'a gitmek istiyorum. Ne dersin?"}
+{"id": "karisik_gunluk-070", "class": "karisik_gunluk", "wrong": "toplantiyi zoom yerine yüz yuze yapalim.ofis malakta zaten.", "right": "Toplantıyı Zoom yerine yüz yüze yapalım. Ofis Maslak'ta zaten."}
+{"id": "karisik_gunluk-072", "class": "karisik_gunluk", "wrong": "hocam, tezimin ikinci bolumunu gonderdim. goruslerinizi bekliyorum.", "right": "Hocam, tezimin ikinci bölümünü gönderdim. Görüşlerinizi bekliyorum."}
+{"id": "karisik_gunluk-074", "class": "karisik_gunluk", "wrong": "abim kanadaya yerlsemeye karar verdi.annem cok uzgun.", "right": "Abim Kanada'ya yerleşmeye karar verdi. Annem çok üzgün."}
+{"id": "karisik_gunluk-076", "class": "karisik_gunluk", "wrong": "bayramda malatyaya gideceğiz. kayısı alayım mı size?", "right": "Bayramda Malatya'ya gideceğiz. Kayısı alayım mı size?"}
+{"id": "karisik_gunluk-078", "class": "karisik_gunluk", "wrong": "volkan, bilgisayarimi tamir edebilir misin?ekran acilmiyor.", "right": "Volkan, bilgisayarımı tamir edebilir misin? Ekran açılmıyor."}
+{"id": "karisik_gunluk-080", "class": "karisik_gunluk", "wrong": "bugün ayasofyayı gezdik, sonra sultanahmette köfte yedik. ayaklrım koptu.", "right": "Bugün Ayasofya'yı gezdik, sonra Sultanahmet'te köfte yedik. Ayaklarım koptu."}
+{"id": "karisik_gunluk-082", "class": "karisik_gunluk", "wrong": "aksam serkanin evinde toplaniyoruz.sen tatli getir", "right": "Akşam Serkan'ın evinde toplanıyoruz. Sen tatlı getir."}
+{"id": "karisik_gunluk-084", "class": "karisik_gunluk", "wrong": "aliye söyle, arabayı yıkatsın. yarın çeşmeye gidiyoruz.", "right": "Ali'ye söyle, arabayı yıkatsın. Yarın Çeşme'ye gidiyoruz."}
+{"id": "karisik_gunluk-086", "class": "karisik_gunluk", "wrong": "leylanin dugunu cok guzeldi. gelin de damat da cok mutluydu", "right": "Leyla'nın düğünü çok güzeldi. Gelin de damat da çok mutluydu."}
+{"id": "karisik_gunluk-088", "class": "karisik_gunluk", "wrong": "kızımın okulu bakırköyde.sabahları servilse gidiyor.", "right": "Kızımın okulu Bakırköy'de. Sabahları servisle gidiyor."}
+{"id": "karisik_gunluk-090", "class": "karisik_gunluk", "wrong": "tolga, kadirin numarasi sende var mi? acil ulasmam lazim.", "right": "Tolga, Kadir'in numarası sende var mı? Acil ulaşmam lazım."}
+{"id": "karisik_gunluk-092", "class": "karisik_gunluk", "wrong": "dedem canakkalede yasiyor.her yaz yanina gidiyoruz.", "right": "Dedem Çanakkale'de yaşıyor. Her yaz yanına gidiyoruz."}
+{"id": "karisik_gunluk-094", "class": "karisik_gunluk", "wrong": "arkadaşlar, grup ödeivni serapa gönderin.o birleştirecek.", "right": "Arkadaşlar, grup ödevini Serap'a gönderin. O birleştirecek."}
+{"id": "karisik_gunluk-096", "class": "karisik_gunluk", "wrong": "doktor yarın aslıyı taburcu edecekmis.cok sukur.", "right": "Doktor yarın Aslı'yı taburcu edecekmiş. Çok şükür."}
+{"id": "karisik_gunluk-098", "class": "karisik_gunluk", "wrong": "suleyman bey, faturayi ekte gonderiyorum. odemeyi ay sonuna kadar yapabilirsiniz.", "right": "Süleyman Bey, faturayı ekte gönderiyorum. Ödemeyi ay sonuna kadar yapabilirsiniz."}
+{"id": "karisik_gunluk-100", "class": "karisik_gunluk", "wrong": "ahmetle emine evleniyorlar! nikâh kocaelide olacak.", "right": "Ahmet'le Emine evleniyorlar! Nikâh Kocaeli'de olacak."}
+{"id": "karisik_gunluk-102", "class": "karisik_gunluk", "wrong": "bugün işten cikinca nişantaşına ugrayacagim. bir şey lazim mi?", "right": "Bugün işten çıkınca Nişantaşı'na uğrayacağım. Bir şey lazım mı?"}
+{"id": "karisik_gunluk-104", "class": "karisik_gunluk", "wrong": "yeni komşumuz diyarbakirdan gelmiş. cok sıcakkanlı bir aile.", "right": "Yeni komşumuz Diyarbakır'dan gelmiş. Çok sıcakkanlı bir aile."}
+{"id": "karisik_gunluk-106", "class": "karisik_gunluk", "wrong": "babam zonguldaka is icin gitti. yarın döner.", "right": "Babam Zonguldak'a iş için gitti. Yarın döner."}
+{"id": "karisik_gunluk-108", "class": "karisik_gunluk", "wrong": "bugün kocatepe camisinin önünden geçtim. çok kalabalikti.", "right": "Bugün Kocatepe Camisi'nin önünden geçtim. Çok kalabalıktı."}
+{"id": "karisik_gunluk-110", "class": "karisik_gunluk", "wrong": "irem, sunumu yarina kadar bitirebilir miyiz? ben giriş kısmnı yazdım.", "right": "İrem, sunumu yarına kadar bitirebilir miyiz? Ben giriş kısmını yazdım."}
+{"id": "karisik_gunluk-112", "class": "karisik_gunluk", "wrong": "mahalleize yeni bir fırın açılmış.simitleri çok güzel.", "right": "Mahallemize yeni bir fırın açılmış. Simitleri çok güzel."}
+{"id": "karisik_gunluk-114", "class": "karisik_gunluk", "wrong": "cansu yarın skaryadan donuyor.onu otogardan alalım.", "right": "Cansu yarın Sakarya'dan dönüyor. Onu otogardan alalım."}
+{"id": "karisik_gunluk-116", "class": "karisik_gunluk", "wrong": "yarın fatihteki tarihî çarşıya gidelim. annem bir şey almak istiyor.", "right": "Yarın Fatih'teki tarihî çarşıya gidelim. Annem bir şey almak istiyor."}
+{"id": "karisik_gunluk-118", "class": "karisik_gunluk", "wrong": "bugun aytene ugradim.seni cok özlemiş.", "right": "Bugün Ayten'e uğradım. Seni çok özlemiş."}
+{"id": "karisik_gunluk-120", "class": "karisik_gunluk", "wrong": "şirketimiz ankaradaki suebsini kapatıyor.çalışanlar istanbula geçecek", "right": "Şirketimiz Ankara'daki şubesini kapatıyor. Çalışanlar İstanbul'a geçecek."}
+{"id": "karisik_gunluk-122", "class": "karisik_gunluk", "wrong": "yamğur yarın sabah başlayacakmış. şemsiyeni unutma.", "right": "Yağmur yarın sabah başlayacakmış. Şemsiyeni unutma."}
+{"id": "karisik_gunluk-124", "class": "karisik_gunluk", "wrong": "kuzenim kibrista okuyor.yazin gelecek.", "right": "Kuzenim Kıbrıs'ta okuyor. Yazın gelecek."}
+{"id": "karisik_gunluk-126", "class": "karisik_gunluk", "wrong": "aksam sertapin konserine gidiyoruz. bilet buldum.", "right": "Akşam Sertap'ın konserine gidiyoruz. Bilet buldum."}
+{"id": "karisik_gunluk-128", "class": "karisik_gunluk", "wrong": "teyzemin oglu bitliste askerlik yapiyor.dun teleofnla konustuk.", "right": "Teyzemin oğlu Bitlis'te askerlik yapıyor. Dün telefonla konuştuk."}
+{"id": "karisik_gunluk-130", "class": "karisik_gunluk", "wrong": "bugün duyguyla alisverise çıktık.çok para harcadım.", "right": "Bugün Duygu'yla alışverişe çıktık. Çok para harcadım."}
+{"id": "karisik_gunluk-132", "class": "karisik_gunluk", "wrong": "gokcenin yeni isi nasil gidiyor?hic konusamadik.", "right": "Gökçe'nin yeni işi nasıl gidiyor? Hiç konuşamadık."}
+{"id": "karisik_gunluk-134", "class": "karisik_gunluk", "wrong": "yarın karsa gidiyoruz.oradan aniye de geçeceğiz", "right": "Yarın Kars'a gidiyoruz. Oradan Ani'ye de geçeceğiz."}
+{"id": "karisik_gunluk-136", "class": "karisik_gunluk", "wrong": "ofiste klima yine bozuldu. yöneticiye soyledim ama ses yok", "right": "Ofiste klima yine bozuldu. Yöneticiye söyledim ama ses yok."}
+{"id": "karisik_gunluk-138", "class": "karisik_gunluk", "wrong": "pazar sabahı ortaköyde kahvaltı yapalım mı?erken gidersek yer buluruz.", "right": "Pazar sabahı Ortaköy'de kahvaltı yapalım mı? Erken gidersek yer buluruz."}
+{"id": "karisik_gunluk-140", "class": "karisik_gunluk", "wrong": "bu akşam iftara nerminin evine gidiyoruz. bir şey goturelim.", "right": "Bu akşam iftara Nermin'in evine gidiyoruz. Bir şey götürelim."}
+{"id": "karisik_gunluk-142", "class": "karisik_gunluk", "wrong": "bugun polatlda hava cok sicakti.butun gun evden cikmadik.", "right": "Bugün Polatlı'da hava çok sıcaktı. Bütün gün evden çıkmadık."}
+{"id": "karisik_gunluk-144", "class": "karisik_gunluk", "wrong": "dün gece kuzgncukta yürüyüş yaptık.boğaz çok güzeldi", "right": "Dün gece Kuzguncuk'ta yürüyüş yaptık. Boğaz çok güzeldi."}
+{"id": "karisik_gunluk-146", "class": "karisik_gunluk", "wrong": "akşam nazlıyla bağdat caddesnde buluşacağız.sen de gel istersen.", "right": "Akşam Nazlı'yla Bağdat Caddesi'nde buluşacağız. Sen de gel istersen."}
+{"id": "karisik_gunluk-148", "class": "karisik_gunluk", "wrong": "kemalin arabasıyla datçaya gidiyoruz. yolda muğlada mola veririz.", "right": "Kemal'in arabasıyla Datça'ya gidiyoruz. Yolda Muğla'da mola veririz."}
+{"id": "karisik_gunluk-150", "class": "karisik_gunluk", "wrong": "annemin memleketi tokat. her yaz oraya gideriz.", "right": "Annemin memleketi Tokat. Her yaz oraya gideriz."}
+{"id": "karisik_gunluk-152", "class": "karisik_gunluk", "wrong": "sevgili velilerimiz, okulumuzun kermesi cumartesi gunu yapilacaktir. katiliminizi bekleriz.", "right": "Sevgili velilerimiz, okulumuzun kermesi cumartesi günü yapılacaktır. Katılımınızı bekleriz."}
+{"id": "karisik_gunluk-154", "class": "karisik_gunluk", "wrong": "yarın hataya gidiyorum, yardım malzemeleri götüreceğiz.destek olmak isteyen bana yazsın.", "right": "Yarın Hatay'a gidiyorum, yardım malzemeleri götüreceğiz. Destek olmak isteyen bana yazsın."}
+{"id": "karisik_gunluk-156", "class": "karisik_gunluk", "wrong": "şulenin bisilketi çalınmış.polise haber verdik", "right": "Şule'nin bisikleti çalınmış. Polise haber verdik."}
+{"id": "karisik_gunluk-158", "class": "karisik_gunluk", "wrong": "tamer bey, sozlesmeyi imzalayıp yarın size ulastiracagim. gecikme icin ozur dilerim.", "right": "Tamer Bey, sözleşmeyi imzalayıp yarın size ulaştıracağım. Gecikme için özür dilerim."}
+{"id": "karisik_gunluk-160", "class": "karisik_gunluk", "wrong": "oyanin tavsiye ettigi dis hekimine gittim.hic acimadi.", "right": "Oya'nın tavsiye ettiği diş hekimine gittim. Hiç acımadı."}
+{"id": "kesme_yanlis-002", "class": "kesme_yanlis", "wrong": "Toplantıda İngilizce'den Türkçe'ye çeviri yapacak birine ihtiyacımız var.", "right": "Toplantıda İngilizceden Türkçeye çeviri yapacak birine ihtiyacımız var."}
+{"id": "kesme_yanlis-004", "class": "kesme_yanlis", "wrong": "Fransızca'da bu kelimenin tam karşılığı yok.", "right": "Fransızcada bu kelimenin tam karşılığı yok."}
+{"id": "kesme_yanlis-006", "class": "kesme_yanlis", "wrong": "Babaannem Kürtçe'yi akıcı konuşuyor ama okuyup yazamıyor.", "right": "Babaannem Kürtçeyi akıcı konuşuyor ama okuyup yazamıyor."}
+{"id": "kesme_yanlis-008", "class": "kesme_yanlis", "wrong": "Bu romanın Rusça'sı neredeyse iki kat uzunmuş.", "right": "Bu romanın Rusçası neredeyse iki kat uzunmuş."}
+{"id": "kesme_yanlis-010", "class": "kesme_yanlis", "wrong": "Arşivde Osmanlıca'yı okuyabilen bir uzman bize yardım etti.", "right": "Arşivde Osmanlıcayı okuyabilen bir uzman bize yardım etti."}
+{"id": "kesme_yanlis-012", "class": "kesme_yanlis", "wrong": "Ödev için Yunanca'dan Türkçe'ye geçen kelimelerin listesini çıkarmamız gerekiyor.", "right": "Ödev için Yunancadan Türkçeye geçen kelimelerin listesini çıkarmamız gerekiyor."}
+{"id": "kesme_yanlis-014", "class": "kesme_yanlis", "wrong": "Macarca'nın Türkçe ile akraba olup olmadığı hâlâ tartışılıyor.", "right": "Macarcanın Türkçe ile akraba olup olmadığı hâlâ tartışılıyor."}
+{"id": "kesme_yanlis-016", "class": "kesme_yanlis", "wrong": "Felemenkçe'yi Hollanda'da yaşadığı beş yılda öğrenmiş.", "right": "Felemenkçeyi Hollanda'da yaşadığı beş yılda öğrenmiş."}
+{"id": "kesme_yanlis-018", "class": "kesme_yanlis", "wrong": "Sayın velimiz, öğrencinizin İngilizce'si son dönemde belirgin biçimde gelişmiştir.", "right": "Sayın velimiz, öğrencinizin İngilizcesi son dönemde belirgin biçimde gelişmiştir."}
+{"id": "kesme_yanlis-020", "class": "kesme_yanlis", "wrong": "Bu metni Türk'çe yazmak zorundasın, yabancı kelime kullanma.", "right": "Bu metni Türkçe yazmak zorundasın, yabancı kelime kullanma."}
+{"id": "kesme_yanlis-022", "class": "kesme_yanlis", "wrong": "Ben Türkçe'mi geliştirmek için her akşam yüksek sesle kitap okuyorum.", "right": "Ben Türkçemi geliştirmek için her akşam yüksek sesle kitap okuyorum."}
+{"id": "kesme_yanlis-024", "class": "kesme_yanlis", "wrong": "Annem İzmir'li, babam ise Rize'li.", "right": "Annem İzmirli, babam ise Rizeli."}
+{"id": "kesme_yanlis-026", "class": "kesme_yanlis", "wrong": "İstanbul'lu olmak her zaman avantaj sayılmaz.", "right": "İstanbullu olmak her zaman avantaj sayılmaz."}
+{"id": "kesme_yanlis-028", "class": "kesme_yanlis", "wrong": "Maç öncesinde Trabzon'lu taraftarlar stadı doldurdu.", "right": "Maç öncesinde Trabzonlu taraftarlar stadı doldurdu."}
+{"id": "kesme_yanlis-030", "class": "kesme_yanlis", "wrong": "Mardin'li gümüş ustalarının telkari işleri çok ünlüdür.", "right": "Mardinli gümüş ustalarının telkari işleri çok ünlüdür."}
+{"id": "kesme_yanlis-032", "class": "kesme_yanlis", "wrong": "Diyarbakır'lı ressamın sergisi bugün açılıyor.", "right": "Diyarbakırlı ressamın sergisi bugün açılıyor."}
+{"id": "kesme_yanlis-034", "class": "kesme_yanlis", "wrong": "Paris'li bir tasarımcı koleksiyonunu İstanbul'da tanıttı.", "right": "Parisli bir tasarımcı koleksiyonunu İstanbul'da tanıttı."}
+{"id": "kesme_yanlis-036", "class": "kesme_yanlis", "wrong": "Galatasaray'lı futbolcular antrenmana erken çıktı.", "right": "Galatasaraylı futbolcular antrenmana erken çıktı."}
+{"id": "kesme_yanlis-038", "class": "kesme_yanlis", "wrong": "Amerika'lı yazarın son kitabı geçen ay Türkçeye çevrildi.", "right": "Amerikalı yazarın son kitabı geçen ay Türkçeye çevrildi."}
+{"id": "kesme_yanlis-040", "class": "kesme_yanlis", "wrong": "Sınıfımızdaki Eskişehir'li öğrenciler bir proje grubu kurdu.", "right": "Sınıfımızdaki Eskişehirli öğrenciler bir proje grubu kurdu."}
+{"id": "kesme_yanlis-042", "class": "kesme_yanlis", "wrong": "Berlin'li sanatçının enstalasyonu bienalin en çok konuşulan işi oldu.", "right": "Berlinli sanatçının enstalasyonu bienalin en çok konuşulan işi oldu."}
+{"id": "kesme_yanlis-044", "class": "kesme_yanlis", "wrong": "Dün tanıştığım kız Tokat'lıymış, hemşehrimiz çıktı.", "right": "Dün tanıştığım kız Tokatlıymış, hemşehrimiz çıktı."}
+{"id": "kesme_yanlis-046", "class": "kesme_yanlis", "wrong": "Ona göre İstanbul'luluk bir doğum yeri değil, bir yaşam biçimi.", "right": "Ona göre İstanbulluluk bir doğum yeri değil, bir yaşam biçimi."}
+{"id": "kesme_yanlis-048", "class": "kesme_yanlis", "wrong": "Müslüman'lık ve Hristiyan'lık üzerine bir karşılaştırma ödevi hazırladım.", "right": "Müslümanlık ve Hristiyanlık üzerine bir karşılaştırma ödevi hazırladım."}
+{"id": "kesme_yanlis-050", "class": "kesme_yanlis", "wrong": "Dedem koyu bir Atatürk'çüydü, her 10 Kasım günü gözleri dolardı.", "right": "Dedem koyu bir Atatürkçüydü, her 10 Kasım günü gözleri dolardı."}
+{"id": "kesme_yanlis-052", "class": "kesme_yanlis", "wrong": "Gençliğinde Marks'çı dergilerde yazılar yazmış.", "right": "Gençliğinde Marksçı dergilerde yazılar yazmış."}
+{"id": "kesme_yanlis-054", "class": "kesme_yanlis", "wrong": "Osmanlı'cılık fikri on dokuzuncu yüzyılda ortaya çıktı.", "right": "Osmanlıcılık fikri on dokuzuncu yüzyılda ortaya çıktı."}
+{"id": "kesme_yanlis-056", "class": "kesme_yanlis", "wrong": "Tanrı'sal bir adalet beklemek yerine harekete geçmeliyiz.", "right": "Tanrısal bir adalet beklemek yerine harekete geçmeliyiz."}
+{"id": "kesme_yanlis-058", "class": "kesme_yanlis", "wrong": "Bu akşam annem'e uğrayıp ilaçlarını bırakacağım.", "right": "Bu akşam anneme uğrayıp ilaçlarını bırakacağım."}
+{"id": "kesme_yanlis-060", "class": "kesme_yanlis", "wrong": "Babam'ın arabası yine yolda kaldı.", "right": "Babamın arabası yine yolda kaldı."}
+{"id": "kesme_yanlis-062", "class": "kesme_yanlis", "wrong": "Doktor'un verdiği ilaçları düzenli içiyorum.", "right": "Doktorun verdiği ilaçları düzenli içiyorum."}
+{"id": "kesme_yanlis-064", "class": "kesme_yanlis", "wrong": "Toplantı'ya biraz geç kalacağım, siz başlayın.", "right": "Toplantıya biraz geç kalacağım, siz başlayın."}
+{"id": "kesme_yanlis-066", "class": "kesme_yanlis", "wrong": "Komşu'muz dün akşam bize irmik helvası getirdi.", "right": "Komşumuz dün akşam bize irmik helvası getirdi."}
+{"id": "kesme_yanlis-068", "class": "kesme_yanlis", "wrong": "Hava çok sıcak, hafta sonu deniz'e girmeye gidelim mi?", "right": "Hava çok sıcak, hafta sonu denize girmeye gidelim mi?"}
+{"id": "kesme_yanlis-070", "class": "kesme_yanlis", "wrong": "Dış hat uçuşlarında havalimanı'na üç saat önceden gitmek gerekiyor.", "right": "Dış hat uçuşlarında havalimanına üç saat önceden gitmek gerekiyor."}
+{"id": "kesme_yanlis-072", "class": "kesme_yanlis", "wrong": "Raporu pazartesi'ye kadar bitirmem gerekiyor.", "right": "Raporu pazartesiye kadar bitirmem gerekiyor."}
+{"id": "kesme_yanlis-074", "class": "kesme_yanlis", "wrong": "Burada kar genellikle ocak'ta yağar.", "right": "Burada kar genellikle ocakta yağar."}
+{"id": "kesme_yanlis-076", "class": "kesme_yanlis", "wrong": "Bayramda abim'e bir kol saati hediye ettim.", "right": "Bayramda abime bir kol saati hediye ettim."}
+{"id": "kesme_yanlis-078", "class": "kesme_yanlis", "wrong": "Kedi'yi aşı için veteriner'e götürdük.", "right": "Kediyi aşı için veterinere götürdük."}
+{"id": "kesme_yanlis-080", "class": "kesme_yanlis", "wrong": "En yakın arkadaşım'ın doğum gününü unuttum, çok mahcubum.", "right": "En yakın arkadaşımın doğum gününü unuttum, çok mahcubum."}
+{"id": "kesme_yanlis-082", "class": "kesme_yanlis", "wrong": "Kızım bu yıl üniversite'yi kazandı, çok gururluyuz.", "right": "Kızım bu yıl üniversiteyi kazandı, çok gururluyuz."}
+{"id": "kesme_yanlis-084", "class": "kesme_yanlis", "wrong": "Dün Zeynep'in kardeşi'yle tanıştım, çok tatlı bir çocuk.", "right": "Dün Zeynep'in kardeşiyle tanıştım, çok tatlı bir çocuk."}
+{"id": "kesme_yanlis-086", "class": "kesme_yanlis", "wrong": "Ali'nin annesi'ne geçmiş olsun demeyi unutma.", "right": "Ali'nin annesine geçmiş olsun demeyi unutma."}
+{"id": "kesme_yanlis-088", "class": "kesme_yanlis", "wrong": "Ofis'te klima yine çalışmıyor, herkes terliyor.", "right": "Ofiste klima yine çalışmıyor, herkes terliyor."}
+{"id": "kesme_yanlis-090", "class": "kesme_yanlis", "wrong": "Ablam İstanbul Üniversitesi'nde hukuk okuyor.", "right": "Ablam İstanbul Üniversitesinde hukuk okuyor."}
+{"id": "kesme_yanlis-092", "class": "kesme_yanlis", "wrong": "Yeni müfredat için Millî Eğitim Bakanlığı'na itiraz dilekçesi verildi.", "right": "Yeni müfredat için Millî Eğitim Bakanlığına itiraz dilekçesi verildi."}
+{"id": "kesme_yanlis-094", "class": "kesme_yanlis", "wrong": "Cumartesi akşamı Atatürk Kültür Merkezi'nde bir konser var.", "right": "Cumartesi akşamı Atatürk Kültür Merkezinde bir konser var."}
+{"id": "kesme_yanlis-096", "class": "kesme_yanlis", "wrong": "Komşunun oğlu Orta Doğu Teknik Üniversitesi'ni kazanmış.", "right": "Komşunun oğlu Orta Doğu Teknik Üniversitesini kazanmış."}
+{"id": "kesme_yanlis-098", "class": "kesme_yanlis", "wrong": "Geçen ay Türk Hava Yolları'yla Tokyo'ya uçtuk.", "right": "Geçen ay Türk Hava Yollarıyla Tokyo'ya uçtuk."}
+{"id": "kesme_yanlis-100", "class": "kesme_yanlis", "wrong": "İstanbul Büyükşehir Belediyesi'nin otobüsleri bayramda ücretsiz olacak.", "right": "İstanbul Büyükşehir Belediyesinin otobüsleri bayramda ücretsiz olacak."}
+{"id": "kesme_yanlis-102", "class": "kesme_yanlis", "wrong": "Tez kaynaklarımın çoğunu Türk Tarih Kurumu'nun kütüphanesinden buldum.", "right": "Tez kaynaklarımın çoğunu Türk Tarih Kurumunun kütüphanesinden buldum."}
+{"id": "kesme_yanlis-104", "class": "kesme_yanlis", "wrong": "Haber ilk olarak Anadolu Ajansı'nın sitesinde yayımlandı.", "right": "Haber ilk olarak Anadolu Ajansının sitesinde yayımlandı."}
+{"id": "kesme_yanlis-106", "class": "kesme_yanlis", "wrong": "Kuzenim geçen yıl Boğaziçi Üniversitesi'nden mezun oldu.", "right": "Kuzenim geçen yıl Boğaziçi Üniversitesinden mezun oldu."}
+{"id": "kesme_yanlis-108", "class": "kesme_yanlis", "wrong": "Meteoroloji Genel Müdürlüğü'nün uyarısına göre yarın kuvvetli yağış bekleniyor.", "right": "Meteoroloji Genel Müdürlüğünün uyarısına göre yarın kuvvetli yağış bekleniyor."}
+{"id": "kesme_yanlis-110", "class": "kesme_yanlis", "wrong": "Türk'lerin Anadolu'ya gelişi on birinci yüzyılda hızlandı.", "right": "Türklerin Anadolu'ya gelişi on birinci yüzyılda hızlandı."}
+{"id": "kesme_yanlis-112", "class": "kesme_yanlis", "wrong": "Alman'lar bu kış doğal gaz fiyatlarından şikâyetçi.", "right": "Almanlar bu kış doğal gaz fiyatlarından şikâyetçi."}
+{"id": "kesme_yanlis-114", "class": "kesme_yanlis", "wrong": "Ayşe'nin'ki benimkinden daha pahalıymış.", "right": "Ayşe'ninki benimkinden daha pahalıymış."}
+{"id": "kesme_yanlis-116", "class": "kesme_yanlis", "wrong": "Dün akşam Mehmet'le'ydim, telefonu duymadım.", "right": "Dün akşam Mehmet'leydim, telefonu duymadım."}
+{"id": "kesme_yanlis-118", "class": "kesme_yanlis", "wrong": "Antalya'da'yken her sabah denize girdik.", "right": "Antalya'dayken her sabah denize girdik."}
+{"id": "kesme_yanlis-120", "class": "kesme_yanlis", "wrong": "Bizim çantalar burada, Kemal'in'kiler arabada kaldı.", "right": "Bizim çantalar burada, Kemal'inkiler arabada kaldı."}
+{"id": "kesme_yanlis-122", "class": "kesme_yanlis", "wrong": "Ankarada'ki toplantı ertelendi.", "right": "Ankara'daki toplantı ertelendi."}
+{"id": "kesme_yanlis-124", "class": "kesme_yanlis", "wrong": "Benim defterim kayboldu, Selinin'kini ödünç aldım.", "right": "Benim defterim kayboldu, Selin'inkini ödünç aldım."}
+{"id": "kesme_yanlis-126", "class": "kesme_yanlis", "wrong": "Kampta tanıştığım Konyalı'ya mesaj attım.", "right": "Kampta tanıştığım Konyalıya mesaj attım."}
+{"id": "kesme_yanlis-128", "class": "kesme_yanlis", "wrong": "İzmir'li'ler sabah kahvaltısında boyozu çok sever.", "right": "İzmirliler sabah kahvaltısında boyozu çok sever."}
+{"id": "kesme_yanlis-130", "class": "kesme_yanlis", "wrong": "Avrupalı'ların çoğu bu ürünü hiç duymamış.", "right": "Avrupalıların çoğu bu ürünü hiç duymamış."}
+{"id": "kesme_yanlis-132", "class": "clean", "wrong": "Ayşe Hanım'a selamımı iletir misiniz?", "right": "Ayşe Hanım'a selamımı iletir misiniz?", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-134", "class": "clean", "wrong": "Dedem bize Kurtuluş Savaşı'nı anlatırken hep duygulanırdı.", "right": "Dedem bize Kurtuluş Savaşı'nı anlatırken hep duygulanırdı.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-136", "class": "clean", "wrong": "Türkçede bu kullanım yanlış kabul ediliyor.", "right": "Türkçede bu kullanım yanlış kabul ediliyor.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-138", "class": "clean", "wrong": "Mehmet'e söyle, toplantı saat üçte başlıyor.", "right": "Mehmet'e söyle, toplantı saat üçte başlıyor.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-140", "class": "clean", "wrong": "Kitap ilk kez 1953'te Fransızcaya çevrilmiş.", "right": "Kitap ilk kez 1953'te Fransızcaya çevrilmiş.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-142", "class": "clean", "wrong": "İstanbullu olmak her zaman kolay değil.", "right": "İstanbullu olmak her zaman kolay değil.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-144", "class": "clean", "wrong": "Sınav sonuçları TDK'nin değil, ÖSYM'nin sitesinde açıklanacak.", "right": "Sınav sonuçları TDK'nin değil, ÖSYM'nin sitesinde açıklanacak.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-146", "class": "clean", "wrong": "Yönetmelik dün Resmî Gazete'de yayımlandı.", "right": "Yönetmelik dün Resmî Gazete'de yayımlandı.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-148", "class": "clean", "wrong": "Bu yıl bayramda Trabzon'daki dedemlere gideceğiz.", "right": "Bu yıl bayramda Trabzon'daki dedemlere gideceğiz.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-150", "class": "clean", "wrong": "Ahmet Bey'in toplantıya katılamayacağını öğrendik.", "right": "Ahmet Bey'in toplantıya katılamayacağını öğrendik.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-152", "class": "clean", "wrong": "Toplantı notlarını Nihat Bey'e de gönderir misiniz?", "right": "Toplantı notlarını Nihat Bey'e de gönderir misiniz?", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-154", "class": "clean", "wrong": "Kapıyı açan Can'dı, ben mutfaktaydım.", "right": "Kapıyı açan Can'dı, ben mutfaktaydım.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-156", "class": "clean", "wrong": "Kızım bu yıl üniversiteyi kazandı.", "right": "Kızım bu yıl üniversiteyi kazandı.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-158", "class": "clean", "wrong": "Gaziantepli bir aşçı bize baklava yapmayı öğretti.", "right": "Gaziantepli bir aşçı bize baklava yapmayı öğretti.", "origin": "kesme_yanlis"}
+{"id": "kesme_yanlis-160", "class": "clean", "wrong": "Bu yaz Kapadokya'da balona binmeyi planlıyoruz.", "right": "Bu yaz Kapadokya'da balona binmeyi planlıyoruz.", "origin": "kesme_yanlis"}
+{"id": "kisi_adi-002", "class": "kisi_adi", "wrong": "ayşe yılmaz toplantıya gelmedi.", "right": "Ayşe Yılmaz toplantıya gelmedi."}
+{"id": "kisi_adi-004", "class": "kisi_adi", "wrong": "Sınıfımıza yeni bir öğrenci geldi, adı elif demirtaş.", "right": "Sınıfımıza yeni bir öğrenci geldi, adı Elif Demirtaş."}
+{"id": "kisi_adi-006", "class": "kisi_adi", "wrong": "umut sabah erkenden yola çıktı.", "right": "Umut sabah erkenden yola çıktı."}
+{"id": "kisi_adi-008", "class": "kisi_adi", "wrong": "barış maçtan sonra doğruca eve döndü.", "right": "Barış maçtan sonra doğruca eve döndü."}
+{"id": "kisi_adi-010", "class": "kisi_adi", "wrong": "yıldız ödevini öğretmene teslim etti.", "right": "Yıldız ödevini öğretmene teslim etti."}
+{"id": "kisi_adi-012", "class": "kisi_adi", "wrong": "ece ile ali aynı sırada oturuyor.", "right": "Ece ile Ali aynı sırada oturuyor."}
+{"id": "kisi_adi-014", "class": "kisi_adi", "wrong": "yarınki sunumu kerem aydın hazırlayacak.", "right": "Yarınki sunumu Kerem Aydın hazırlayacak."}
+{"id": "kisi_adi-016", "class": "kisi_adi", "wrong": "hüseyin çelik bu sabah emekli oldu.", "right": "Hüseyin Çelik bu sabah emekli oldu."}
+{"id": "kisi_adi-018", "class": "kisi_adi", "wrong": "ibrahim dün gece geç saatte aradı.", "right": "İbrahim dün gece geç saatte aradı."}
+{"id": "kisi_adi-020", "class": "kisi_adi", "wrong": "haberlere göre ödülü genç yazar defne arslan aldı.", "right": "Haberlere göre ödülü genç yazar Defne Arslan aldı."}
+{"id": "kisi_adi-022", "class": "kisi_adi", "wrong": "bugün merve bana çok güzel bir kitap önerdi.", "right": "Bugün Merve bana çok güzel bir kitap önerdi."}
+{"id": "kisi_adi-024", "class": "kisi_adi", "wrong": "hatice şahin mahallenin en eski sakinlerinden biri.", "right": "Hatice Şahin mahallenin en eski sakinlerinden biri."}
+{"id": "kisi_adi-026", "class": "clean", "wrong": "Bugün deniz çok dalgalı, yüzmeye girmeyelim.", "right": "Bugün deniz çok dalgalı, yüzmeye girmeyelim.", "origin": "kisi_adi"}
+{"id": "kisi_adi-028", "class": "kisi_adi", "wrong": "kaan ve melis geçen ay nişanlandı.", "right": "Kaan ve Melis geçen ay nişanlandı."}
+{"id": "kisi_adi-030", "class": "kisi_adi", "wrong": "bu raporu serkan doğan imzalayacak.", "right": "Bu raporu Serkan Doğan imzalayacak."}
+{"id": "kisi_adi-032", "class": "kisi_adi", "wrong": "ırmak bu yıl ilk kez okula başladı.", "right": "Irmak bu yıl ilk kez okula başladı."}
+{"id": "kisi_adi-034", "class": "kisi_adi", "wrong": "yağmur sabah koşusuna çıktı.", "right": "Yağmur sabah koşusuna çıktı."}
+{"id": "kisi_adi-036", "class": "kisi_adi", "wrong": "erdem her zaman sözünü tutar.", "right": "Erdem her zaman sözünü tutar."}
+{"id": "kisi_adi-038", "class": "kisi_adi", "wrong": "mutlu dün akşam bizi yemeğe davet etti.", "right": "Mutlu dün akşam bizi yemeğe davet etti."}
+{"id": "kisi_adi-040", "class": "kisi_adi", "wrong": "güneş annesiyle markete gitti.", "right": "Güneş annesiyle markete gitti."}
+{"id": "kisi_adi-042", "class": "kisi_adi", "wrong": "derya ile ozan aynı şirkette çalışıyor.", "right": "Derya ile Ozan aynı şirkette çalışıyor."}
+{"id": "kisi_adi-044", "class": "kisi_adi", "wrong": "özlem mektubu okuyunca ağladı.", "right": "Özlem mektubu okuyunca ağladı."}
+{"id": "kisi_adi-046", "class": "kisi_adi", "wrong": "yasemin konserde keman çaldı.", "right": "Yasemin konserde keman çaldı."}
+{"id": "kisi_adi-048", "class": "kisi_adi", "wrong": "kapıyı açan çiçek oldu.", "right": "Kapıyı açan Çiçek oldu."}
+{"id": "kisi_adi-050", "class": "kisi_adi", "wrong": "kaya bu sezon on iki gol attı.", "right": "Kaya bu sezon on iki gol attı."}
+{"id": "kisi_adi-052", "class": "clean", "wrong": "Bahçedeki gül sonunda açtı.", "right": "Bahçedeki gül sonunda açtı.", "origin": "kisi_adi"}
+{"id": "kisi_adi-054", "class": "kisi_adi", "wrong": "ılgın dans kursundan yeni döndü.", "right": "Ilgın dans kursundan yeni döndü."}
+{"id": "kisi_adi-056", "class": "kisi_adi", "wrong": "nur ile yavuz düğünlerini ertelediler.", "right": "Nur ile Yavuz düğünlerini ertelediler."}
+{"id": "kisi_adi-058", "class": "kisi_adi", "wrong": "tuna dün ilk maaşını aldı.", "right": "Tuna dün ilk maaşını aldı."}
+{"id": "kisi_adi-060", "class": "kisi_adi", "wrong": "hülya yeni işine çabucak alıştı.", "right": "Hülya yeni işine çabucak alıştı."}
+{"id": "kisi_adi-062", "class": "kisi_adi", "wrong": "aydın bugün çok yorgun görünüyordu.", "right": "Aydın bugün çok yorgun görünüyordu."}
+{"id": "kisi_adi-064", "class": "kisi_adi", "wrong": "toplantıya erkin bulut başkanlık edecek.", "right": "Toplantıya Erkin Bulut başkanlık edecek."}
+{"id": "kisi_adi-066", "class": "kisi_adi", "wrong": "fatma koç yeni mağazasını açtı.", "right": "Fatma Koç yeni mağazasını açtı."}
+{"id": "kisi_adi-068", "class": "kisi_adi", "wrong": "esra ve ben aynı yurtta kalıyoruz.", "right": "Esra ve ben aynı yurtta kalıyoruz."}
+{"id": "kisi_adi-070", "class": "kisi_adi", "wrong": "büşra ödevini zamanında bitirdi mi?", "right": "Büşra ödevini zamanında bitirdi mi?"}
+{"id": "kisi_adi-072", "class": "kisi_adi", "wrong": "gizem sabah kahvaltısını hiç atlamaz.", "right": "Gizem sabah kahvaltısını hiç atlamaz."}
+{"id": "kisi_adi-074", "class": "kisi_adi", "wrong": "nazlı ile berk parkta buluştu.", "right": "Nazlı ile Berk parkta buluştu."}
+{"id": "kisi_adi-076", "class": "kisi_adi", "wrong": "volkan arabayı servise götürdü.", "right": "Volkan arabayı servise götürdü."}
+{"id": "kisi_adi-078", "class": "clean", "wrong": "İki ülke arasında barış antlaşması imzalandı.", "right": "İki ülke arasında barış antlaşması imzalandı.", "origin": "kisi_adi"}
+{"id": "kisi_adi-080", "class": "kisi_adi", "wrong": "rabia kütüphanede ders çalışıyor.", "right": "Rabia kütüphanede ders çalışıyor."}
+{"id": "kisi_adi-082", "class": "kisi_adi", "wrong": "raporu hazırlayan levent karaca şu an izinde.", "right": "Raporu hazırlayan Levent Karaca şu an izinde."}
+{"id": "kisi_adi-084", "class": "kisi_adi", "wrong": "okan yeni bir telefon aldı.", "right": "Okan yeni bir telefon aldı."}
+{"id": "kisi_adi-086", "class": "kisi_adi", "wrong": "halil ile recep aynı köyden.", "right": "Halil ile Recep aynı köyden."}
+{"id": "kisi_adi-088", "class": "kisi_adi", "wrong": "furkan basketbol takımına seçildi.", "right": "Furkan basketbol takımına seçildi."}
+{"id": "kisi_adi-090", "class": "kisi_adi", "wrong": "uğur seni dışarıda bekliyor.", "right": "Uğur seni dışarıda bekliyor."}
+{"id": "kisi_adi-092", "class": "kisi_adi", "wrong": "özge ile tiyatroya gittik, oyun harikaydı.", "right": "Özge ile tiyatroya gittik, oyun harikaydı."}
+{"id": "kisi_adi-094", "class": "kisi_adi", "wrong": "neslihan sınavı geçti mi, bilen var mı?", "right": "Neslihan sınavı geçti mi, bilen var mı?"}
+{"id": "kisi_adi-096", "class": "kisi_adi", "wrong": "taner sezer yeni müdürümüz oldu.", "right": "Taner Sezer yeni müdürümüz oldu."}
+{"id": "kisi_adi-098", "class": "kisi_adi", "wrong": "cemile yetmiş yaşında ama hâlâ bahçesiyle uğraşıyor.", "right": "Cemile yetmiş yaşında ama hâlâ bahçesiyle uğraşıyor."}
+{"id": "kisi_adi-100", "class": "kisi_adi", "wrong": "aylin ile doruk aynı apartmanda oturuyor.", "right": "Aylin ile Doruk aynı apartmanda oturuyor."}
+{"id": "kisi_adi-102", "class": "kisi_adi", "wrong": "hande yeni şarkısını dün yayımladı.", "right": "Hande yeni şarkısını dün yayımladı."}
+{"id": "kisi_adi-104", "class": "clean", "wrong": "Dün akşam yağmur hiç durmadı.", "right": "Dün akşam yağmur hiç durmadı.", "origin": "kisi_adi"}
+{"id": "kisi_adi-106", "class": "kisi_adi", "wrong": "sedat uçar dün akşamki programın konuğuydu.", "right": "Sedat Uçar dün akşamki programın konuğuydu."}
+{"id": "kisi_adi-108", "class": "kisi_adi", "wrong": "kemal kahvesini şekersiz içer.", "right": "Kemal kahvesini şekersiz içer."}
+{"id": "kisi_adi-110", "class": "kisi_adi", "wrong": "mustafa ile emine kırk yıldır evli.", "right": "Mustafa ile Emine kırk yıldır evli."}
+{"id": "kisi_adi-112", "class": "kisi_adi", "wrong": "görkem bu yaz yüzme öğrendi.", "right": "Görkem bu yaz yüzme öğrendi."}
+{"id": "kisi_adi-114", "class": "kisi_adi", "wrong": "duygu film bitince sessizce ağladı.", "right": "Duygu film bitince sessizce ağladı."}
+{"id": "kisi_adi-116", "class": "kisi_adi", "wrong": "selda mesajıma hâlâ cevap vermedi.", "right": "Selda mesajıma hâlâ cevap vermedi."}
+{"id": "kisi_adi-118", "class": "kisi_adi", "wrong": "taylan yarışmayı ikinci bitirdi.", "right": "Taylan yarışmayı ikinci bitirdi."}
+{"id": "kisi_adi-120", "class": "kisi_adi", "wrong": "cengiz ateş bu akşamki maçın hakemi.", "right": "Cengiz Ateş bu akşamki maçın hakemi."}
+{"id": "kisi_adi-122", "class": "kisi_adi", "wrong": "ismail bugün çok sessizdi.", "right": "İsmail bugün çok sessizdi."}
+{"id": "kisi_adi-124", "class": "kisi_adi", "wrong": "engin bu sabah toplantıyı iptal etti.", "right": "Engin bu sabah toplantıyı iptal etti."}
+{"id": "kisi_adi-126", "class": "kisi_adi", "wrong": "ulaş yeni projesini bize anlattı.", "right": "Ulaş yeni projesini bize anlattı."}
+{"id": "kisi_adi-128", "class": "kisi_adi", "wrong": "hasan tekin bu yıl muhtar seçildi.", "right": "Hasan Tekin bu yıl muhtar seçildi."}
+{"id": "kisi_adi-130", "class": "clean", "wrong": "Akşam güneş batarken sahilde yürüdük.", "right": "Akşam güneş batarken sahilde yürüdük.", "origin": "kisi_adi"}
+{"id": "kisi_adi-132", "class": "kisi_adi", "wrong": "koray ile begüm yarın yola çıkıyor.", "right": "Koray ile Begüm yarın yola çıkıyor."}
+{"id": "kisi_adi-134", "class": "kisi_adi", "wrong": "yeliz her sabah yürüyüş yapar.", "right": "Yeliz her sabah yürüyüş yapar."}
+{"id": "kisi_adi-136", "class": "kisi_adi", "wrong": "tansu annesine bir kolye aldı.", "right": "Tansu annesine bir kolye aldı."}
+{"id": "kisi_adi-138", "class": "kisi_adi", "wrong": "melike ve emir aynı kreşe gidiyor.", "right": "Melike ve Emir aynı kreşe gidiyor."}
+{"id": "kisi_adi-140", "class": "kisi_adi", "wrong": "songül köyden taze yumurta getirdi.", "right": "Songül köyden taze yumurta getirdi."}
+{"id": "kisi_adi-142", "class": "kisi_adi", "wrong": "gülşen öğle arasında aradı, akşam tekrar arayacakmış.", "right": "Gülşen öğle arasında aradı, akşam tekrar arayacakmış."}
+{"id": "kisi_adi-144", "class": "kisi_adi", "wrong": "abdullah camiden yeni döndü.", "right": "Abdullah camiden yeni döndü."}
+{"id": "kisi_adi-146", "class": "kisi_adi", "wrong": "dedem fikret bize her akşam masal anlatırdı.", "right": "Dedem Fikret bize her akşam masal anlatırdı."}
+{"id": "kisi_adi-148", "class": "kisi_adi", "wrong": "hacer dün pazardan domates aldı.", "right": "Hacer dün pazardan domates aldı."}
+{"id": "kisi_adi-150", "class": "kisi_adi", "wrong": "berna yalçın konferansta açılış konuşmasını yaptı.", "right": "Berna Yalçın konferansta açılış konuşmasını yaptı."}
+{"id": "kisi_adi-152", "class": "kisi_adi", "wrong": "ahu kedisini veterinere götürdü.", "right": "Ahu kedisini veterinere götürdü."}
+{"id": "kisi_adi-154", "class": "kisi_adi", "wrong": "zerrin sınıfın en çalışkan öğrencisi.", "right": "Zerrin sınıfın en çalışkan öğrencisi."}
+{"id": "kisi_adi-156", "class": "clean", "wrong": "Gökyüzünde tek bir bulut yoktu.", "right": "Gökyüzünde tek bir bulut yoktu.", "origin": "kisi_adi"}
+{"id": "kisi_adi-158", "class": "kisi_adi", "wrong": "okul müdürü ercan bayraktar mezuniyet töreninde bir konuşma yaptı.", "right": "Okul müdürü Ercan Bayraktar mezuniyet töreninde bir konuşma yaptı."}
+{"id": "kisi_adi-160", "class": "kisi_adi", "wrong": "ekipten atakan ile ece şen bu projede yer almayacak.", "right": "Ekipten Atakan ile Ece Şen bu projede yer almayacak."}
+{"id": "kurum_eser-002", "class": "kurum_eser", "wrong": "Kardeşim bu yıl ankara üniversitesini kazandı.", "right": "Kardeşim bu yıl Ankara Üniversitesini kazandı."}
+{"id": "kurum_eser-004", "class": "kurum_eser", "wrong": "Babam yirmi yıl türkiye petrolleri anonim ortaklığında çalıştı.", "right": "Babam yirmi yıl Türkiye Petrolleri Anonim Ortaklığında çalıştı."}
+{"id": "kurum_eser-006", "class": "kurum_eser", "wrong": "Şikâyetimizi sağlık bakanlığına ilettik ama henüz ses çıkmadı.", "right": "Şikâyetimizi Sağlık Bakanlığına ilettik ama henüz ses çıkmadı."}
+{"id": "kurum_eser-008", "class": "kurum_eser", "wrong": "Faiz kararı türkiye cumhuriyet merkez bankasının sitesinde yayımlandı.", "right": "Faiz kararı Türkiye Cumhuriyet Merkez Bankasının sitesinde yayımlandı."}
+{"id": "kurum_eser-010", "class": "kurum_eser", "wrong": "Haber, adalet ve kalkınma partisinin grup toplantısından sonra geldi.", "right": "Haber, Adalet ve Kalkınma Partisinin grup toplantısından sonra geldi."}
+{"id": "kurum_eser-012", "class": "kurum_eser", "wrong": "Boğaziçi üniversitesinde yüksek lisans yapıyor, çok memnun.", "right": "Boğaziçi Üniversitesinde yüksek lisans yapıyor, çok memnun."}
+{"id": "kurum_eser-014", "class": "kurum_eser", "wrong": "istanbul teknik üniversitesinden mezun olalı beş yıl oldu.", "right": "İstanbul Teknik Üniversitesinden mezun olalı beş yıl oldu."}
+{"id": "kurum_eser-016", "class": "kurum_eser", "wrong": "Durum hakkında içişleri bakanlığına bilgi verildi.", "right": "Durum hakkında İçişleri Bakanlığına bilgi verildi."}
+{"id": "kurum_eser-018", "class": "kurum_eser", "wrong": "Festival bu yıl kültür ve turizm bakanlığının desteğiyle düzenleniyor.", "right": "Festival bu yıl Kültür ve Turizm Bakanlığının desteğiyle düzenleniyor."}
+{"id": "kurum_eser-020", "class": "kurum_eser", "wrong": "Bu yaz türk hava yollarıyla İzmir'e uçtuk.", "right": "Bu yaz Türk Hava Yollarıyla İzmir'e uçtuk."}
+{"id": "kurum_eser-022", "class": "kurum_eser", "wrong": "Deprem bölgesine afet ve acil durum yönetimi başkanlığının ekipleri ulaştı.", "right": "Deprem bölgesine Afet ve Acil Durum Yönetimi Başkanlığının ekipleri ulaştı."}
+{"id": "kurum_eser-024", "class": "kurum_eser", "wrong": "Haberi sabah anadolu ajansının bülteninden duydum.", "right": "Haberi sabah Anadolu Ajansının bülteninden duydum."}
+{"id": "kurum_eser-026", "class": "kurum_eser", "wrong": "kadıköy belediyesinin yaz konserleri bu akşam başlıyor.", "right": "Kadıköy Belediyesinin yaz konserleri bu akşam başlıyor."}
+{"id": "kurum_eser-028", "class": "kurum_eser", "wrong": "Pastayı köşedeki yıldız pastanesinden aldım.", "right": "Pastayı köşedeki Yıldız Pastanesinden aldım."}
+{"id": "kurum_eser-030", "class": "kurum_eser", "wrong": "Öğle yemeğini kardeşler lokantasında yedik, fena değildi.", "right": "Öğle yemeğini Kardeşler Lokantasında yedik, fena değildi."}
+{"id": "kurum_eser-032", "class": "kurum_eser", "wrong": "Oğlum bu yıl galatasaray lisesine başladı.", "right": "Oğlum bu yıl Galatasaray Lisesine başladı."}
+{"id": "kurum_eser-034", "class": "kurum_eser", "wrong": "Kızım teneffüste atatürk ilkokulunun bahçesinde oynuyor.", "right": "Kızım teneffüste Atatürk İlkokulunun bahçesinde oynuyor."}
+{"id": "kurum_eser-036", "class": "kurum_eser", "wrong": "Dedem başakşehir çam ve sakura şehir hastanesinde yatıyor.", "right": "Dedem Başakşehir Çam ve Sakura Şehir Hastanesinde yatıyor."}
+{"id": "kurum_eser-038", "class": "kurum_eser", "wrong": "Geçen hafta dokuz eylül üniversitesinde bir konferansa katıldık.", "right": "Geçen hafta Dokuz Eylül Üniversitesinde bir konferansa katıldık."}
+{"id": "kurum_eser-040", "class": "kurum_eser", "wrong": "Marmara üniversitesine yatay geçiş yapmak istiyorum.", "right": "Marmara Üniversitesine yatay geçiş yapmak istiyorum."}
+{"id": "kurum_eser-042", "class": "kurum_eser", "wrong": "Arkadaşım mimar sinan güzel sanatlar üniversitesinde resim okuyor.", "right": "Arkadaşım Mimar Sinan Güzel Sanatlar Üniversitesinde resim okuyor."}
+{"id": "kurum_eser-044", "class": "kurum_eser", "wrong": "Bu dönem türk dili ve edebiyatı bölümüne çift anadal başvurusu yaptım.", "right": "Bu dönem Türk Dili ve Edebiyatı Bölümüne çift anadal başvurusu yaptım."}
+{"id": "kurum_eser-046", "class": "kurum_eser", "wrong": "Başvurumu Türk Dil Kurumu'na yaptım.", "right": "Başvurumu Türk Dil Kurumuna yaptım."}
+{"id": "kurum_eser-048", "class": "kurum_eser", "wrong": "Toplantı gelecek hafta Türkiye Büyük Millet Meclisi'nde yapılacak.", "right": "Toplantı gelecek hafta Türkiye Büyük Millet Meclisinde yapılacak."}
+{"id": "kurum_eser-050", "class": "kurum_eser", "wrong": "Ege Üniversitesi'nden kabul mektubu geldi!", "right": "Ege Üniversitesinden kabul mektubu geldi!"}
+{"id": "kurum_eser-052", "class": "kurum_eser", "wrong": "Sosyal Güvenlik Kurumu'ndan randevu aldım.", "right": "Sosyal Güvenlik Kurumundan randevu aldım."}
+{"id": "kurum_eser-054", "class": "kurum_eser", "wrong": "Türk Hava Yolları'nın uçağı iki saat rötar yaptı.", "right": "Türk Hava Yollarının uçağı iki saat rötar yaptı."}
+{"id": "kurum_eser-056", "class": "kurum_eser", "wrong": "Bakanlar Kurulu'nun kararı Resmî Gazete'de yayımlandı.", "right": "Bakanlar Kurulunun kararı Resmî Gazete'de yayımlandı."}
+{"id": "kurum_eser-058", "class": "kurum_eser", "wrong": "Anadolu Ajansı'nın muhabiri olay yerindeydi.", "right": "Anadolu Ajansının muhabiri olay yerindeydi."}
+{"id": "kurum_eser-060", "class": "kurum_eser", "wrong": "Bu sabah dokuz eylül üniversitesi'nde sınavım var.", "right": "Bu sabah Dokuz Eylül Üniversitesinde sınavım var."}
+{"id": "kurum_eser-062", "class": "kurum_eser", "wrong": "Hazine Ve Maliye Bakanlığı yeni düzenlemeyi duyurdu.", "right": "Hazine ve Maliye Bakanlığı yeni düzenlemeyi duyurdu."}
+{"id": "kurum_eser-064", "class": "kurum_eser", "wrong": "Radyo Ve Televizyon Üst Kurulu kanala para cezası verdi.", "right": "Radyo ve Televizyon Üst Kurulu kanala para cezası verdi."}
+{"id": "kurum_eser-066", "class": "kurum_eser", "wrong": "Türkiye Odalar Ve Borsalar Birliğinin raporu dün açıklandı.", "right": "Türkiye Odalar ve Borsalar Birliğinin raporu dün açıklandı."}
+{"id": "kurum_eser-068", "class": "kurum_eser", "wrong": "Annem Leyla İle Mecnun dizisini yeniden izliyor.", "right": "Annem Leyla ile Mecnun dizisini yeniden izliyor."}
+{"id": "kurum_eser-070", "class": "kurum_eser", "wrong": "Bayramda yine Babam Ve Oğlum'u izleyip ağladık.", "right": "Bayramda yine Babam ve Oğlum'u izleyip ağladık."}
+{"id": "kurum_eser-072", "class": "kurum_eser", "wrong": "Bu hafta sinekli bakkalı bitirdim, çok etkilendim.", "right": "Bu hafta Sinekli Bakkal'ı bitirdim, çok etkilendim."}
+{"id": "kurum_eser-074", "class": "kurum_eser", "wrong": "Sabahattin Ali'nin kuyucaklı yusufunu okudun mu?", "right": "Sabahattin Ali'nin Kuyucaklı Yusuf'unu okudun mu?"}
+{"id": "kurum_eser-076", "class": "kurum_eser", "wrong": "Yaşar Kemal'in ince memedini babamın kitaplığında buldum.", "right": "Yaşar Kemal'in İnce Memed'ini babamın kitaplığında buldum."}
+{"id": "kurum_eser-078", "class": "kurum_eser", "wrong": "Herkes kürk mantolu madonnayı okumuş, sıra bende.", "right": "Herkes Kürk Mantolu Madonna'yı okumuş, sıra bende."}
+{"id": "kurum_eser-080", "class": "kurum_eser", "wrong": "Tanpınar'ın huzurunu okumak sabır istiyor.", "right": "Tanpınar'ın Huzur'unu okumak sabır istiyor."}
+{"id": "kurum_eser-082", "class": "kurum_eser", "wrong": "Mehmet Akif'in safahatından birkaç şiir ezberledik.", "right": "Mehmet Akif'in Safahat'ından birkaç şiir ezberledik."}
+{"id": "kurum_eser-084", "class": "kurum_eser", "wrong": "Orhan Pamuk'un benim adım kırmızısını yarım bıraktım.", "right": "Orhan Pamuk'un Benim Adım Kırmızı'sını yarım bıraktım."}
+{"id": "kurum_eser-086", "class": "kurum_eser", "wrong": "Yaşar Kemal'in yer demir gök bakırını okudun mu?", "right": "Yaşar Kemal'in Yer Demir Gök Bakır'ını okudun mu?"}
+{"id": "kurum_eser-088", "class": "kurum_eser", "wrong": "Çocukken küçük prensi defalarca okudum.", "right": "Çocukken Küçük Prens'i defalarca okudum."}
+{"id": "kurum_eser-090", "class": "kurum_eser", "wrong": "Bayramda televizyonda yine hababam sınıfını verdiler.", "right": "Bayramda televizyonda yine Hababam Sınıfı'nı verdiler."}
+{"id": "kurum_eser-092", "class": "kurum_eser", "wrong": "Selvi boylum al yazmalımı her izlediğimde duygulanırım.", "right": "Selvi Boylum Al Yazmalım'ı her izlediğimde duygulanırım."}
+{"id": "kurum_eser-094", "class": "kurum_eser", "wrong": "Bu deyim atasözleri ve deyimler sözlüğünde yok.", "right": "Bu deyim Atasözleri ve Deyimler Sözlüğü'nde yok."}
+{"id": "kurum_eser-096", "class": "kurum_eser", "wrong": "Yönetmelik bugün resmî gazetede yayımlandı.", "right": "Yönetmelik bugün Resmî Gazete'de yayımlandı."}
+{"id": "kurum_eser-098", "class": "kurum_eser", "wrong": "Herkes Simyacıyı okumuş, bir ben kalmışım.", "right": "Herkes Simyacı'yı okumuş, bir ben kalmışım."}
+{"id": "kurum_eser-100", "class": "kurum_eser", "wrong": "Orhan Pamuk'un Beyaz Kalesini hiç okumadım.", "right": "Orhan Pamuk'un Beyaz Kale'sini hiç okumadım."}
+{"id": "kurum_eser-102", "class": "kurum_eser", "wrong": "Abdülhak Şinasi Hisar'ın fahim bey ve biz adlı romanını aldım.", "right": "Abdülhak Şinasi Hisar'ın Fahim Bey ve Biz adlı romanını aldım."}
+{"id": "kurum_eser-104", "class": "kurum_eser", "wrong": "Dün akşam muhsin bey filmini yeniden izledik.", "right": "Dün akşam Muhsin Bey filmini yeniden izledik."}
+{"id": "kurum_eser-106", "class": "kurum_eser", "wrong": "Haberi sabah milliyet gazetesinde okudum.", "right": "Haberi sabah Milliyet gazetesinde okudum."}
+{"id": "kurum_eser-108", "class": "kurum_eser", "wrong": "Geçen ay varlık dergisine iki şiir gönderdim.", "right": "Geçen ay Varlık dergisine iki şiir gönderdim."}
+{"id": "kurum_eser-110", "class": "kurum_eser", "wrong": "Kitapta halı dokuyan kızlar tablosunun bir fotoğrafı var.", "right": "Kitapta Halı Dokuyan Kızlar tablosunun bir fotoğrafı var."}
+{"id": "kurum_eser-112", "class": "kurum_eser", "wrong": "Yasa dün gece tbmmde kabul edildi.", "right": "Yasa dün gece TBMM'de kabul edildi."}
+{"id": "kurum_eser-114", "class": "kurum_eser", "wrong": "Kargoyu sabah pttye bıraktım.", "right": "Kargoyu sabah PTT'ye bıraktım."}
+{"id": "kurum_eser-116", "class": "kurum_eser", "wrong": "İtüye girmek için çok çalıştı.", "right": "İTÜ'ye girmek için çok çalıştı."}
+{"id": "kurum_eser-118", "class": "kurum_eser", "wrong": "Bayramda thy'nin bütün uçuşları doluydu.", "right": "Bayramda THY'nin bütün uçuşları doluydu."}
+{"id": "kurum_eser-120", "class": "kurum_eser", "wrong": "abye üyelik süreci yine gündemde.", "right": "AB'ye üyelik süreci yine gündemde."}
+{"id": "kurum_eser-122", "class": "kurum_eser", "wrong": "Emeklilik için sgkye başvurdum.", "right": "Emeklilik için SGK'ye başvurdum."}
+{"id": "kurum_eser-124", "class": "kurum_eser", "wrong": "Zirvede natonun geleceği konuşuldu.", "right": "Zirvede NATO'nun geleceği konuşuldu."}
+{"id": "kurum_eser-126", "class": "kurum_eser", "wrong": "türk dil kurumu bu yıl sözlüğün yeni baskısını çıkardı.", "right": "Türk Dil Kurumu bu yıl sözlüğün yeni baskısını çıkardı."}
+{"id": "kurum_eser-128", "class": "kurum_eser", "wrong": "Maaşım ziraat bankası hesabıma yatıyor.", "right": "Maaşım Ziraat Bankası hesabıma yatıyor."}
+{"id": "kurum_eser-130", "class": "kurum_eser", "wrong": "danıştay yönetmeliği iptal etti.", "right": "Danıştay yönetmeliği iptal etti."}
+{"id": "kurum_eser-132", "class": "kurum_eser", "wrong": "Dün akşam fenerbahçe ile galatasaray berabere kaldı.", "right": "Dün akşam Fenerbahçe ile Galatasaray berabere kaldı."}
+{"id": "kurum_eser-134", "class": "kurum_eser", "wrong": "Devlet su işleri barajın yapımına başladı.", "right": "Devlet Su İşleri barajın yapımına başladı."}
+{"id": "kurum_eser-136", "class": "kurum_eser", "wrong": "Sayın hocam, ankara üniversitesi siyasal bilgiler fakültesi öğrencisiyim.", "right": "Sayın hocam, Ankara Üniversitesi Siyasal Bilgiler Fakültesi öğrencisiyim."}
+{"id": "kurum_eser-138", "class": "kurum_eser", "wrong": "Kuzenim Gaziantep üniversitesine yerleşti.", "right": "Kuzenim Gaziantep Üniversitesine yerleşti."}
+{"id": "kurum_eser-140", "class": "kurum_eser", "wrong": "Ablam Eskişehir Osmangazi üniversitesinde asistan.", "right": "Ablam Eskişehir Osmangazi Üniversitesinde asistan."}
+{"id": "kurum_eser-142", "class": "kurum_eser", "wrong": "Kayseri'deki erciyes Üniversitesinin kampüsü çok geniş.", "right": "Kayseri'deki Erciyes Üniversitesinin kampüsü çok geniş."}
+{"id": "kurum_eser-144", "class": "kurum_eser", "wrong": "Yeni düzenleme Bankacılık düzenleme ve denetleme kurumunun sitesinde yayımlandı.", "right": "Yeni düzenleme Bankacılık Düzenleme ve Denetleme Kurumunun sitesinde yayımlandı."}
+{"id": "kurum_eser-146", "class": "kurum_eser", "wrong": "Uluslararası af örgütünün raporu dün yayımlandı.", "right": "Uluslararası Af Örgütünün raporu dün yayımlandı."}
+{"id": "kurum_eser-148", "class": "clean", "wrong": "Üniversiteye kayıt için yarın okula gideceğim.", "right": "Üniversiteye kayıt için yarın okula gideceğim.", "origin": "kurum_eser"}
+{"id": "kurum_eser-150", "class": "clean", "wrong": "Hastaneye gitmeden önce randevu almayı unutma.", "right": "Hastaneye gitmeden önce randevu almayı unutma.", "origin": "kurum_eser"}
+{"id": "kurum_eser-152", "class": "clean", "wrong": "Partinin il başkanı bugün basın toplantısı yapacak.", "right": "Partinin il başkanı bugün basın toplantısı yapacak.", "origin": "kurum_eser"}
+{"id": "kurum_eser-154", "class": "clean", "wrong": "Dün akşam güzel bir film izledik.", "right": "Dün akşam güzel bir film izledik.", "origin": "kurum_eser"}
+{"id": "kurum_eser-156", "class": "clean", "wrong": "Sınav sonuçları fakültenin sitesinde ilan edildi.", "right": "Sınav sonuçları fakültenin sitesinde ilan edildi.", "origin": "kurum_eser"}
+{"id": "kurum_eser-158", "class": "clean", "wrong": "Şehirdeki üniversitelerin hepsi bu hafta tatil.", "right": "Şehirdeki üniversitelerin hepsi bu hafta tatil.", "origin": "kurum_eser"}
+{"id": "kurum_eser-160", "class": "clean", "wrong": "Ablam Bursa Uludağ Üniversitesinde çalışıyor.", "right": "Ablam Bursa Uludağ Üniversitesinde çalışıyor.", "origin": "kurum_eser"}
+{"id": "tarih_zaman-002", "class": "tarih_zaman", "wrong": "Cumhuriyet 29 ekim 1923 tarihinde ilan edildi.", "right": "Cumhuriyet 29 Ekim 1923 tarihinde ilan edildi."}
+{"id": "tarih_zaman-004", "class": "tarih_zaman", "wrong": "Sınav takvimi açıklandı: ilk sınav 12 haziran 2027 cumartesi.", "right": "Sınav takvimi açıklandı: ilk sınav 12 Haziran 2027 Cumartesi."}
+{"id": "tarih_zaman-006", "class": "tarih_zaman", "wrong": "Annemler 22 aralık akşamı geliyor.", "right": "Annemler 22 Aralık akşamı geliyor."}
+{"id": "tarih_zaman-008", "class": "tarih_zaman", "wrong": "Fatura son ödeme tarihi: 20 kasım 2026.", "right": "Fatura son ödeme tarihi: 20 Kasım 2026."}
+{"id": "tarih_zaman-010", "class": "tarih_zaman", "wrong": "İstanbul 29 mayıs 1453 salı günü fethedildi.", "right": "İstanbul 29 Mayıs 1453 Salı günü fethedildi."}
+{"id": "tarih_zaman-012", "class": "tarih_zaman", "wrong": "Mektup 2 ağustos 1990 tarihini taşıyordu.", "right": "Mektup 2 Ağustos 1990 tarihini taşıyordu."}
+{"id": "tarih_zaman-014", "class": "tarih_zaman", "wrong": "Yeni şube 3 kasım 2026 salı sabahı açılıyor.", "right": "Yeni şube 3 Kasım 2026 Salı sabahı açılıyor."}
+{"id": "tarih_zaman-016", "class": "tarih_zaman", "wrong": "Kayıtlar 25 ocak ile 8 şubat arasında alınacak.", "right": "Kayıtlar 25 Ocak ile 8 Şubat arasında alınacak."}
+{"id": "tarih_zaman-018", "class": "tarih_zaman", "wrong": "Kongre 21 eylül 2026 pazartesi günü toplanacak.", "right": "Kongre 21 Eylül 2026 Pazartesi günü toplanacak."}
+{"id": "tarih_zaman-020", "class": "tarih_zaman", "wrong": "Toplantıyı 13 aralık 2026 pazar gününe aldık.", "right": "Toplantıyı 13 Aralık 2026 Pazar gününe aldık."}
+{"id": "tarih_zaman-022", "class": "tarih_zaman", "wrong": "Sevgili hocam, raporu 27 kasım akşamına kadar gönderebilir miyim?", "right": "Sevgili hocam, raporu 27 Kasım akşamına kadar gönderebilir miyim?"}
+{"id": "tarih_zaman-024", "class": "tarih_zaman", "wrong": "Not: Kira artışı 1 temmuz itibarıyla geçerli.", "right": "Not: Kira artışı 1 Temmuz itibarıyla geçerli."}
+{"id": "tarih_zaman-026", "class": "tarih_zaman", "wrong": "Atatürk 19 mayıs 1919 tarihinde Samsun'a çıktı.", "right": "Atatürk 19 Mayıs 1919 tarihinde Samsun'a çıktı."}
+{"id": "tarih_zaman-028", "class": "tarih_zaman", "wrong": "Konser biletim 6 şubat için.", "right": "Konser biletim 6 Şubat için."}
+{"id": "tarih_zaman-030", "class": "tarih_zaman", "wrong": "TBMM 23 nisan 1920 cuma günü açıldı.", "right": "TBMM 23 Nisan 1920 Cuma günü açıldı."}
+{"id": "tarih_zaman-032", "class": "tarih_zaman", "wrong": "büyük taarruz 26 ağustos 1922 sabahı başladı.", "right": "Büyük Taarruz 26 Ağustos 1922 sabahı başladı."}
+{"id": "tarih_zaman-034", "class": "tarih_zaman", "wrong": "ramazan bayramı boyunca mağaza kapalı olacak.", "right": "Ramazan Bayramı boyunca mağaza kapalı olacak."}
+{"id": "tarih_zaman-036", "class": "tarih_zaman", "wrong": "cumhuriyet bayramı kutlu olsun!", "right": "Cumhuriyet Bayramı kutlu olsun!"}
+{"id": "tarih_zaman-038", "class": "tarih_zaman", "wrong": "öğretmenler günü yaklaşırken öğrenciler kart hazırladı.", "right": "Öğretmenler Günü yaklaşırken öğrenciler kart hazırladı."}
+{"id": "tarih_zaman-040", "class": "tarih_zaman", "wrong": "zafer bayramı törenleri sabah başlayacak.", "right": "Zafer Bayramı törenleri sabah başlayacak."}
+{"id": "tarih_zaman-042", "class": "tarih_zaman", "wrong": "sevgililer günü için restoranlar dolmuş.", "right": "Sevgililer Günü için restoranlar dolmuş."}
+{"id": "tarih_zaman-044", "class": "tarih_zaman", "wrong": "kadir gecesi camiler doldu.", "right": "Kadir Gecesi camiler doldu."}
+{"id": "tarih_zaman-046", "class": "tarih_zaman", "wrong": "emek ve dayanışma günü nedeniyle bazı yollar kapatıldı.", "right": "Emek ve Dayanışma Günü nedeniyle bazı yollar kapatıldı."}
+{"id": "tarih_zaman-048", "class": "tarih_zaman", "wrong": "gaziler günü töreninde müdürümüz bir konuşma yaptı.", "right": "Gaziler Günü töreninde müdürümüz bir konuşma yaptı."}
+{"id": "tarih_zaman-050", "class": "tarih_zaman", "wrong": "dünya su günü kapsamında bir seminer var.", "right": "Dünya Su Günü kapsamında bir seminer var."}
+{"id": "tarih_zaman-052", "class": "tarih_zaman", "wrong": "gençlik ve spor bayramı kutlamaları stadyumda yapıldı.", "right": "Gençlik ve Spor Bayramı kutlamaları stadyumda yapıldı."}
+{"id": "tarih_zaman-054", "class": "tarih_zaman", "wrong": "dünya kitap günü vesilesiyle kütüphanede imza günü düzenlendi.", "right": "Dünya Kitap Günü vesilesiyle kütüphanede imza günü düzenlendi."}
+{"id": "tarih_zaman-056", "class": "tarih_zaman", "wrong": "kurtuluş savaşı yıllarında dedem cephedeymiş.", "right": "Kurtuluş Savaşı yıllarında dedem cephedeymiş."}
+{"id": "tarih_zaman-058", "class": "tarih_zaman", "wrong": "çanakkale savaşı belgeseli çok etkileyiciydi.", "right": "Çanakkale Savaşı belgeseli çok etkileyiciydi."}
+{"id": "tarih_zaman-060", "class": "tarih_zaman", "wrong": "ikinci dünya savaşı sonrası Avrupa yeniden şekillendi.", "right": "İkinci Dünya Savaşı sonrası Avrupa yeniden şekillendi."}
+{"id": "tarih_zaman-062", "class": "tarih_zaman", "wrong": "Ödev konum: tanzimat dönemi edebiyatı.", "right": "Ödev konum: Tanzimat Dönemi edebiyatı."}
+{"id": "tarih_zaman-064", "class": "tarih_zaman", "wrong": "sanayi devrimi şehirleşmeyi hızlandırdı.", "right": "Sanayi Devrimi şehirleşmeyi hızlandırdı."}
+{"id": "tarih_zaman-066", "class": "tarih_zaman", "wrong": "yontma taş devri aletleri müzede sergileniyor.", "right": "Yontma Taş Devri aletleri müzede sergileniyor."}
+{"id": "tarih_zaman-068", "class": "tarih_zaman", "wrong": "kavimler göçü Avrupa'nın siyasi haritasını değiştirdi.", "right": "Kavimler Göçü Avrupa'nın siyasi haritasını değiştirdi."}
+{"id": "tarih_zaman-070", "class": "tarih_zaman", "wrong": "coğrafi keşifler sonucunda ticaret yolları değişti.", "right": "Coğrafi Keşifler sonucunda ticaret yolları değişti."}
+{"id": "tarih_zaman-072", "class": "tarih_zaman", "wrong": "fetret devri on bir yıl sürdü.", "right": "Fetret Devri on bir yıl sürdü."}
+{"id": "tarih_zaman-074", "class": "tarih_zaman", "wrong": "Tarih dersinde bugün yeni çağ konusuna geçtik.", "right": "Tarih dersinde bugün Yeni Çağ konusuna geçtik."}
+{"id": "tarih_zaman-076", "class": "tarih_zaman", "wrong": "mohaç savaşı yaklaşık iki saat sürmüş.", "right": "Mohaç Savaşı yaklaşık iki saat sürmüş."}
+{"id": "tarih_zaman-078", "class": "tarih_zaman", "wrong": "sakarya meydan muharebesi 22 gün sürdü.", "right": "Sakarya Meydan Muharebesi 22 gün sürdü."}
+{"id": "tarih_zaman-080", "class": "tarih_zaman", "wrong": "Dedem bize hep kore savaşı hikâyelerini anlatırdı.", "right": "Dedem bize hep Kore Savaşı hikâyelerini anlatırdı."}
+{"id": "tarih_zaman-082", "class": "clean", "wrong": "Okullar eylülde açılıyor.", "right": "Okullar eylülde açılıyor.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-084", "class": "clean", "wrong": "Mayıs ortasında bahçeye domates dikeriz.", "right": "Mayıs ortasında bahçeye domates dikeriz.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-086", "class": "clean", "wrong": "Her yıl ağustosta köye gideriz.", "right": "Her yıl ağustosta köye gideriz.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-088", "class": "clean", "wrong": "Geçen aralıkta İzmir'e taşındık.", "right": "Geçen aralıkta İzmir'e taşındık.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-090", "class": "clean", "wrong": "Maaşlar temmuzda zamlanacak.", "right": "Maaşlar temmuzda zamlanacak.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-092", "class": "clean", "wrong": "Proje mart sonuna kadar bitmeli.", "right": "Proje mart sonuna kadar bitmeli.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-094", "class": "clean", "wrong": "Kitap fuarı aralık ayında mı?", "right": "Kitap fuarı aralık ayında mı?", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-096", "class": "clean", "wrong": "Ocaktan beri spor salonuna gidiyorum.", "right": "Ocaktan beri spor salonuna gidiyorum.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-098", "class": "clean", "wrong": "Şubatta kısa bir kayak tatili planlıyoruz.", "right": "Şubatta kısa bir kayak tatili planlıyoruz.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-100", "class": "clean", "wrong": "Leylekler nisanda geri gelir.", "right": "Leylekler nisanda geri gelir.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-102", "class": "clean", "wrong": "Domatesler ancak ağustos sonunda kızarır.", "right": "Domatesler ancak ağustos sonunda kızarır.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-104", "class": "clean", "wrong": "Her salı yüzmeye gidiyorum.", "right": "Her salı yüzmeye gidiyorum.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-106", "class": "clean", "wrong": "Biz pazar sabahları kahvaltıyı uzun tutarız.", "right": "Biz pazar sabahları kahvaltıyı uzun tutarız.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-108", "class": "clean", "wrong": "Toplantıyı perşembeye ertelediler.", "right": "Toplantıyı perşembeye ertelediler.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-110", "class": "clean", "wrong": "Kargo salıya kadar gelir.", "right": "Kargo salıya kadar gelir.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-112", "class": "clean", "wrong": "Semt pazarı perşembe günü kuruluyor.", "right": "Semt pazarı perşembe günü kuruluyor.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-114", "class": "clean", "wrong": "Geçen cuma Ali Bey'i gördüm.", "right": "Geçen cuma Ali Bey'i gördüm.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-116", "class": "clean", "wrong": "Kütüphane pazar günleri kapalıdır.", "right": "Kütüphane pazar günleri kapalıdır.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-118", "class": "clean", "wrong": "Salı ve cuma günleri nöbetçiyim.", "right": "Salı ve cuma günleri nöbetçiyim.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-120", "class": "clean", "wrong": "Bende yine pazartesi sendromu var.", "right": "Bende yine pazartesi sendromu var.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-122", "class": "clean", "wrong": "Bu hafta salı günü izinliyim.", "right": "Bu hafta salı günü izinliyim.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-124", "class": "clean", "wrong": "Ders programında perşembe boş görünüyor.", "right": "Ders programında perşembe boş görünüyor.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-126", "class": "clean", "wrong": "Bayramda memlekete gidiyoruz.", "right": "Bayramda memlekete gidiyoruz.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-128", "class": "clean", "wrong": "Bayramınız kutlu olsun!", "right": "Bayramınız kutlu olsun!", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-130", "class": "clean", "wrong": "Bu çağda teknolojiden kaçmak zor.", "right": "Bu çağda teknolojiden kaçmak zor.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-132", "class": "clean", "wrong": "Okulun kuruluş yıl dönümü coşkuyla kutlandı.", "right": "Okulun kuruluş yıl dönümü coşkuyla kutlandı.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-134", "class": "clean", "wrong": "Kandil simidi almayı unutma.", "right": "Kandil simidi almayı unutma.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-136", "class": "clean", "wrong": "Tatil günlerinde trafik çok rahat.", "right": "Tatil günlerinde trafik çok rahat.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-138", "class": "clean", "wrong": "Ailecek bayram ziyaretlerine çıktık.", "right": "Ailecek bayram ziyaretlerine çıktık.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-140", "class": "clean", "wrong": "Toplantı 4 Şubat 2027 Perşembe günü yapılacak.", "right": "Toplantı 4 Şubat 2027 Perşembe günü yapılacak.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-142", "class": "clean", "wrong": "Doğum tarihim 12 Ağustos 1995.", "right": "Doğum tarihim 12 Ağustos 1995.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-144", "class": "clean", "wrong": "Fuar 8 Ekim ile 11 Ekim arasında açık.", "right": "Fuar 8 Ekim ile 11 Ekim arasında açık.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-146", "class": "clean", "wrong": "Etkinlik 22 Nisan 2027 Perşembe akşamı yapılacak.", "right": "Etkinlik 22 Nisan 2027 Perşembe akşamı yapılacak.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-148", "class": "clean", "wrong": "Tatil 23 Aralık 2026 Çarşamba itibarıyla başlıyor.", "right": "Tatil 23 Aralık 2026 Çarşamba itibarıyla başlıyor.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-150", "class": "clean", "wrong": "Teslim tarihi 30 Kasım 2026 Pazartesi.", "right": "Teslim tarihi 30 Kasım 2026 Pazartesi.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-152", "class": "clean", "wrong": "Anneler Günü için kahvaltı hazırladık.", "right": "Anneler Günü için kahvaltı hazırladık.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-154", "class": "clean", "wrong": "Lale Devri sanatına dair bir kitap aldım.", "right": "Lale Devri sanatına dair bir kitap aldım.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-156", "class": "clean", "wrong": "Orta Çağ kaleleri hep ilgimi çekmiştir.", "right": "Orta Çağ kaleleri hep ilgimi çekmiştir.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-158", "class": "clean", "wrong": "İkinci Dünya Savaşı belgeselini izledik.", "right": "İkinci Dünya Savaşı belgeselini izledik.", "origin": "tarih_zaman"}
+{"id": "tarih_zaman-160", "class": "clean", "wrong": "Fransız İhtilali milliyetçilik akımını yaydı.", "right": "Fransız İhtilali milliyetçilik akımını yaydı.", "origin": "tarih_zaman"}
+{"id": "temiz-002", "class": "clean", "wrong": "Akşamüstü deniz kenarında uzun bir yürüyüş yaptık.", "right": "Akşamüstü deniz kenarında uzun bir yürüyüş yaptık.", "origin": "temiz"}
+{"id": "temiz-004", "class": "clean", "wrong": "Toplantı o kadar uzun sürdü ki herkesin canı sıkıldı.", "right": "Toplantı o kadar uzun sürdü ki herkesin canı sıkıldı.", "origin": "temiz"}
+{"id": "temiz-006", "class": "clean", "wrong": "Annemin gül bahçesi bu yıl çok güzel açtı.", "right": "Annemin gül bahçesi bu yıl çok güzel açtı.", "origin": "temiz"}
+{"id": "temiz-008", "class": "clean", "wrong": "Bahar geldi, balkon kapısını artık açık bırakıyoruz.", "right": "Bahar geldi, balkon kapısını artık açık bırakıyoruz.", "origin": "temiz"}
+{"id": "temiz-010", "class": "clean", "wrong": "Aynı hatayı ikinci kez yapmamak için notlarımı düzenledim.", "right": "Aynı hatayı ikinci kez yapmamak için notlarımı düzenledim.", "origin": "temiz"}
+{"id": "temiz-012", "class": "clean", "wrong": "Ne adamsın ya, bütün bulaşığı tek başına yıkamışsın!", "right": "Ne adamsın ya, bütün bulaşığı tek başına yıkamışsın!", "origin": "temiz"}
+{"id": "temiz-014", "class": "clean", "wrong": "Ocak ayında kira artışı yapılacakmış.", "right": "Ocak ayında kira artışı yapılacakmış.", "origin": "temiz"}
+{"id": "temiz-016", "class": "clean", "wrong": "Dedem akşam yemeğinden sonra bir türkü söyledi.", "right": "Dedem akşam yemeğinden sonra bir türkü söyledi.", "origin": "temiz"}
+{"id": "temiz-018", "class": "clean", "wrong": "Martta havalar ısınmaya başlar ama yağmur da eksik olmaz.", "right": "Martta havalar ısınmaya başlar ama yağmur da eksik olmaz.", "origin": "temiz"}
+{"id": "temiz-020", "class": "clean", "wrong": "Bu gece ay çok parlak, perdeyi kapatmadan uyuyamıyorum.", "right": "Bu gece ay çok parlak, perdeyi kapatmadan uyuyamıyorum.", "origin": "temiz"}
+{"id": "temiz-022", "class": "clean", "wrong": "Sevgi ve saygı olmadan hiçbir ilişki uzun sürmez.", "right": "Sevgi ve saygı olmadan hiçbir ilişki uzun sürmez.", "origin": "temiz"}
+{"id": "temiz-024", "class": "clean", "wrong": "Can sıkıntısından bütün kitaplığı yeniden düzenledim.", "right": "Can sıkıntısından bütün kitaplığı yeniden düzenledim.", "origin": "temiz"}
+{"id": "temiz-026", "class": "clean", "wrong": "İnci gibi dişleriyle gülümsedi.", "right": "İnci gibi dişleriyle gülümsedi.", "origin": "temiz"}
+{"id": "temiz-028", "class": "clean", "wrong": "Pencerenin önündeki menekşe kurumak üzere, biraz su verir misin?", "right": "Pencerenin önündeki menekşe kurumak üzere, biraz su verir misin?", "origin": "temiz"}
+{"id": "temiz-030", "class": "clean", "wrong": "Bebeğin gözleri tıpkı annesininki gibi ela.", "right": "Bebeğin gözleri tıpkı annesininki gibi ela.", "origin": "temiz"}
+{"id": "temiz-032", "class": "clean", "wrong": "Bu yıl ceviz ağacı hiç meyve vermedi.", "right": "Bu yıl ceviz ağacı hiç meyve vermedi.", "origin": "temiz"}
+{"id": "temiz-034", "class": "clean", "wrong": "Sınavdan önce biraz huzur bulmak için parkta yürüdüm.", "right": "Sınavdan önce biraz huzur bulmak için parkta yürüdüm.", "origin": "temiz"}
+{"id": "temiz-036", "class": "clean", "wrong": "Her pazar sabahı semt pazarından taze sebze alıyoruz.", "right": "Her pazar sabahı semt pazarından taze sebze alıyoruz.", "origin": "temiz"}
+{"id": "temiz-038", "class": "clean", "wrong": "Şubatta doğan kuzular ahırda ısıtıcının yanında tutuluyor.", "right": "Şubatta doğan kuzular ahırda ısıtıcının yanında tutuluyor.", "origin": "temiz"}
+{"id": "temiz-040", "class": "clean", "wrong": "Mayıs ortasında kirazlar kızarmaya başlar.", "right": "Mayıs ortasında kirazlar kızarmaya başlar.", "origin": "temiz"}
+{"id": "temiz-042", "class": "clean", "wrong": "Temmuz sıcağında klimasız çalışmak çok zor.", "right": "Temmuz sıcağında klimasız çalışmak çok zor.", "origin": "temiz"}
+{"id": "temiz-044", "class": "clean", "wrong": "Eylülde yeni dönem başlıyor, kırtasiye alışverişini erken yapalım.", "right": "Eylülde yeni dönem başlıyor, kırtasiye alışverişini erken yapalım.", "origin": "temiz"}
+{"id": "temiz-046", "class": "clean", "wrong": "Raporların hepsi aralık sonuna kadar teslim edilmiş olmalı.", "right": "Raporların hepsi aralık sonuna kadar teslim edilmiş olmalı.", "origin": "temiz"}
+{"id": "temiz-048", "class": "clean", "wrong": "Çarşamba günü dişçi randevum var, toplantıyı perşembeye alabilir miyiz?", "right": "Çarşamba günü dişçi randevum var, toplantıyı perşembeye alabilir miyiz?", "origin": "temiz"}
+{"id": "temiz-050", "class": "clean", "wrong": "Kuzey rüzgârı akşama doğru şiddetini artıracak.", "right": "Kuzey rüzgârı akşama doğru şiddetini artıracak.", "origin": "temiz"}
+{"id": "temiz-052", "class": "clean", "wrong": "Evin doğu cephesindeki pencereler sabah güneşi alıyor.", "right": "Evin doğu cephesindeki pencereler sabah güneşi alıyor.", "origin": "temiz"}
+{"id": "temiz-054", "class": "clean", "wrong": "Kurban Bayramı yaklaşırken bütün aile Konya'da toplanmaya karar verdi.", "right": "Kurban Bayramı yaklaşırken bütün aile Konya'da toplanmaya karar verdi.", "origin": "temiz"}
+{"id": "temiz-056", "class": "clean", "wrong": "Mehmet'e söyle, akşam bize uğrasın.", "right": "Mehmet'e söyle, akşam bize uğrasın.", "origin": "temiz"}
+{"id": "temiz-058", "class": "clean", "wrong": "Ankara'ya ilk kez trenle gittim.", "right": "Ankara'ya ilk kez trenle gittim.", "origin": "temiz"}
+{"id": "temiz-060", "class": "clean", "wrong": "Deniz Hanım bugün izinli, dosyayı yarın imzalayabilir.", "right": "Deniz Hanım bugün izinli, dosyayı yarın imzalayabilir.", "origin": "temiz"}
+{"id": "temiz-062", "class": "clean", "wrong": "Barış Bey toplantıya on dakika geç kalacağını bildirdi.", "right": "Barış Bey toplantıya on dakika geç kalacağını bildirdi.", "origin": "temiz"}
+{"id": "temiz-064", "class": "clean", "wrong": "Yıldız'la aynı sınıfta okuduğumuzu yeni hatırladım.", "right": "Yıldız'la aynı sınıfta okuduğumuzu yeni hatırladım.", "origin": "temiz"}
+{"id": "temiz-066", "class": "clean", "wrong": "Can'la dün akşam uzun uzun konuştuk.", "right": "Can'la dün akşam uzun uzun konuştuk.", "origin": "temiz"}
+{"id": "temiz-068", "class": "clean", "wrong": "Başvurumu Ankara Üniversitesine posta yoluyla gönderdim.", "right": "Başvurumu Ankara Üniversitesine posta yoluyla gönderdim.", "origin": "temiz"}
+{"id": "temiz-070", "class": "clean", "wrong": "İngilizcede bu deyimin tam karşılığı yok.", "right": "İngilizcede bu deyimin tam karşılığı yok.", "origin": "temiz"}
+{"id": "temiz-072", "class": "clean", "wrong": "Ankaralı bir mimarla tanıştım, çok ilginç projeleri var.", "right": "Ankaralı bir mimarla tanıştım, çok ilginç projeleri var.", "origin": "temiz"}
+{"id": "temiz-074", "class": "clean", "wrong": "Yarın sabah Kadıköy'den vapura binip Karaköy'e geçeceğiz.", "right": "Yarın sabah Kadıköy'den vapura binip Karaköy'e geçeceğiz.", "origin": "temiz"}
+{"id": "temiz-076", "class": "clean", "wrong": "Prof. Dr. Kemal Ateş'in dersine bu dönem kayıt yaptırdım.", "right": "Prof. Dr. Kemal Ateş'in dersine bu dönem kayıt yaptırdım.", "origin": "temiz"}
+{"id": "temiz-078", "class": "clean", "wrong": "Ahmet Bey, faturaları cuma gününe kadar göndermemizi istedi.", "right": "Ahmet Bey, faturaları cuma gününe kadar göndermemizi istedi.", "origin": "temiz"}
+{"id": "temiz-080", "class": "clean", "wrong": "1 Ocak 2026 Perşembe günü ofis kapalı olacak.", "right": "1 Ocak 2026 Perşembe günü ofis kapalı olacak.", "origin": "temiz"}
+{"id": "temiz-082", "class": "clean", "wrong": "Nevşehir'e gidip balonla Kapadokya'yı izlemek istiyoruz.", "right": "Nevşehir'e gidip balonla Kapadokya'yı izlemek istiyoruz.", "origin": "temiz"}
+{"id": "temiz-084", "class": "clean", "wrong": "Karabük'ten gelen misafirlerimiz akşama kadar kalacak.", "right": "Karabük'ten gelen misafirlerimiz akşama kadar kalacak.", "origin": "temiz"}
+{"id": "temiz-086", "class": "clean", "wrong": "Ülkenin aydınları bu karara tepki gösterdi.", "right": "Ülkenin aydınları bu karara tepki gösterdi.", "origin": "temiz"}
+{"id": "temiz-088", "class": "clean", "wrong": "Erken kalkarsan güzel bir gün doğumu yakalarsın.", "right": "Erken kalkarsan güzel bir gün doğumu yakalarsın.", "origin": "temiz"}
+{"id": "temiz-090", "class": "clean", "wrong": "Kahvaltıda bal ve kaymak vardı.", "right": "Kahvaltıda bal ve kaymak vardı.", "origin": "temiz"}
+{"id": "temiz-092", "class": "clean", "wrong": "Ozan dediğin sazıyla sözüyle halkın sesi olur.", "right": "Ozan dediğin sazıyla sözüyle halkın sesi olur.", "origin": "temiz"}
+{"id": "temiz-094", "class": "clean", "wrong": "Anneannem bize hep kınalı kuzu derdi.", "right": "Anneannem bize hep kınalı kuzu derdi.", "origin": "temiz"}
+{"id": "temiz-096", "class": "clean", "wrong": "Dağın tepesinde bir kartal yuvası gördük.", "right": "Dağın tepesinde bir kartal yuvası gördük.", "origin": "temiz"}
+{"id": "temiz-098", "class": "clean", "wrong": "Ilık bir rüzgâr esiyordu, sahilde oturduk.", "right": "Ilık bir rüzgâr esiyordu, sahilde oturduk.", "origin": "temiz"}
+{"id": "temiz-100", "class": "clean", "wrong": "Sınav sonuçları açıklanınca derin bir nefes aldım.", "right": "Sınav sonuçları açıklanınca derin bir nefes aldım.", "origin": "temiz"}
+{"id": "temiz-102", "class": "clean", "wrong": "Bu dönem kimya dersinden ayrılmaya karar verdim.", "right": "Bu dönem kimya dersinden ayrılmaya karar verdim.", "origin": "temiz"}
+{"id": "temiz-104", "class": "clean", "wrong": "Kış uzun sürdü, odun stoğumuz bitmek üzere.", "right": "Kış uzun sürdü, odun stoğumuz bitmek üzere.", "origin": "temiz"}
+{"id": "temiz-106", "class": "clean", "wrong": "Taş ustası duvarı iki günde ördü.", "right": "Taş ustası duvarı iki günde ördü.", "origin": "temiz"}
+{"id": "temiz-108", "class": "clean", "wrong": "Mustafa Kemal Atatürk, 1919'da Samsun'a çıktı.", "right": "Mustafa Kemal Atatürk, 1919'da Samsun'a çıktı.", "origin": "temiz"}
+{"id": "temiz-110", "class": "clean", "wrong": "Yarın Rize'den taze çay gelecek, biraz da size ayırırım.", "right": "Yarın Rize'den taze çay gelecek, biraz da size ayırırım.", "origin": "temiz"}
+{"id": "temiz-112", "class": "clean", "wrong": "Bu yaz Van Gölü kıyısında kamp kurduk.", "right": "Bu yaz Van Gölü kıyısında kamp kurduk.", "origin": "temiz"}
+{"id": "temiz-114", "class": "clean", "wrong": "Almanca öğrenmek için her gün yarım saat ayırıyorum.", "right": "Almanca öğrenmek için her gün yarım saat ayırıyorum.", "origin": "temiz"}
+{"id": "temiz-116", "class": "clean", "wrong": "Kızılırmak'ın kıyısındaki köylerde pirinç ekiliyor.", "right": "Kızılırmak'ın kıyısındaki köylerde pirinç ekiliyor.", "origin": "temiz"}
+{"id": "temiz-118", "class": "clean", "wrong": "Defne'nin karnesi bütün öğretmenlerinin övgüleriyle dolu.", "right": "Defne'nin karnesi bütün öğretmenlerinin övgüleriyle dolu.", "origin": "temiz"}
+{"id": "temiz-120", "class": "clean", "wrong": "Ela'nın ödevini kontrol ettin mi?", "right": "Ela'nın ödevini kontrol ettin mi?", "origin": "temiz"}
+{"id": "temiz-122", "class": "clean", "wrong": "Kerem'in araba kullanırken telefonla konuşmaması gerek.", "right": "Kerem'in araba kullanırken telefonla konuşmaması gerek.", "origin": "temiz"}
+{"id": "temiz-124", "class": "clean", "wrong": "Okulumuzun yeni müdürü Serkan Yücel, veliler toplantısında konuştu.", "right": "Okulumuzun yeni müdürü Serkan Yücel, veliler toplantısında konuştu.", "origin": "temiz"}
+{"id": "temiz-126", "class": "clean", "wrong": "Bursa'da kaldığımız otelden Uludağ manzarası görünüyordu.", "right": "Bursa'da kaldığımız otelden Uludağ manzarası görünüyordu.", "origin": "temiz"}
+{"id": "temiz-128", "class": "clean", "wrong": "Göller Bölgesi'ne bu bahar mutlaka gitmeliyiz.", "right": "Göller Bölgesi'ne bu bahar mutlaka gitmeliyiz.", "origin": "temiz"}
+{"id": "temiz-130", "class": "clean", "wrong": "Babamın gençlik fotoğraflarında hep aynı kara ceketi giydiğini fark ettim.", "right": "Babamın gençlik fotoğraflarında hep aynı kara ceketi giydiğini fark ettim.", "origin": "temiz"}
+{"id": "temiz-132", "class": "clean", "wrong": "Bu yolun sonunda küçük bir köy var.", "right": "Bu yolun sonunda küçük bir köy var.", "origin": "temiz"}
+{"id": "temiz-134", "class": "clean", "wrong": "Doğan güneşle birlikte kuşlar ötmeye başladı.", "right": "Doğan güneşle birlikte kuşlar ötmeye başladı.", "origin": "temiz"}
+{"id": "temiz-136", "class": "clean", "wrong": "Kardeşimin ufku geniş, her konuda fikir yürütebiliyor.", "right": "Kardeşimin ufku geniş, her konuda fikir yürütebiliyor.", "origin": "temiz"}
+{"id": "temiz-138", "class": "clean", "wrong": "Esin kaynağımı çoğu zaman doğada buluyorum.", "right": "Esin kaynağımı çoğu zaman doğada buluyorum.", "origin": "temiz"}
+{"id": "temiz-140", "class": "clean", "wrong": "Kader bazen insanı hiç beklemediği yerlere götürür.", "right": "Kader bazen insanı hiç beklemediği yerlere götürür.", "origin": "temiz"}
+{"id": "temiz-142", "class": "clean", "wrong": "Bu tarlada hasat ancak temmuz sonunda başlar.", "right": "Bu tarlada hasat ancak temmuz sonunda başlar.", "origin": "temiz"}
+{"id": "temiz-144", "class": "clean", "wrong": "Evrenin sınırları hakkında konuşan bir belgesel izledik.", "right": "Evrenin sınırları hakkında konuşan bir belgesel izledik.", "origin": "temiz"}
+{"id": "temiz-146", "class": "clean", "wrong": "Güven insanın en değerli sermayesidir.", "right": "Güven insanın en değerli sermayesidir.", "origin": "temiz"}
+{"id": "temiz-148", "class": "clean", "wrong": "Onur bugün okula gelmedi, hasta olduğunu söylediler.", "right": "Onur bugün okula gelmedi, hasta olduğunu söylediler.", "origin": "temiz"}
+{"id": "temiz-150", "class": "clean", "wrong": "Saadet dolu bir yuva kurmalarını dileriz.", "right": "Saadet dolu bir yuva kurmalarını dileriz.", "origin": "temiz"}
+{"id": "temiz-152", "class": "clean", "wrong": "İpek eşarbını Bursa'dan almış.", "right": "İpek eşarbını Bursa'dan almış.", "origin": "temiz"}
+{"id": "temiz-154", "class": "clean", "wrong": "Melek gibi bir çocuk, hiç sesini çıkarmadan oynuyor.", "right": "Melek gibi bir çocuk, hiç sesini çıkarmadan oynuyor.", "origin": "temiz"}
+{"id": "temiz-156", "class": "clean", "wrong": "Su ısıtıcısı bozulmuş, çayı ocakta demleyelim.", "right": "Su ısıtıcısı bozulmuş, çayı ocakta demleyelim.", "origin": "temiz"}
+{"id": "temiz-158", "class": "clean", "wrong": "Ay tutulması bu gece saat on bir civarında başlayacak.", "right": "Ay tutulması bu gece saat on bir civarında başlayacak.", "origin": "temiz"}
+{"id": "temiz-160", "class": "clean", "wrong": "Merhaba hocam, ödevimi ekte gönderiyorum. İyi çalışmalar dilerim.", "right": "Merhaba hocam, ödevimi ekte gönderiyorum. İyi çalışmalar dilerim.", "origin": "temiz"}
+{"id": "unvan_hitap-002", "class": "unvan_hitap", "wrong": "Tez danışmanım prof. dr. selma karaca oldu.", "right": "Tez danışmanım Prof. Dr. Selma Karaca oldu."}
+{"id": "unvan_hitap-004", "class": "unvan_hitap", "wrong": "Davayı av. melike sönmez takip ediyor.", "right": "Davayı Av. Melike Sönmez takip ediyor."}
+{"id": "unvan_hitap-006", "class": "unvan_hitap", "wrong": "Kardiyoloji bölümünde uzm. dr. gülşen ateş'e muayene oldum.", "right": "Kardiyoloji bölümünde Uzm. Dr. Gülşen Ateş'e muayene oldum."}
+{"id": "unvan_hitap-008", "class": "unvan_hitap", "wrong": "Bu makaleyi prof. dr. halil inalcık'ın notlarından derledim.", "right": "Bu makaleyi Prof. Dr. Halil İnalcık'ın notlarından derledim."}
+{"id": "unvan_hitap-010", "class": "unvan_hitap", "wrong": "Sözleşmeyi av. cengiz özbek'e göstermeden imzalama.", "right": "Sözleşmeyi Av. Cengiz Özbek'e göstermeden imzalama."}
+{"id": "unvan_hitap-012", "class": "unvan_hitap", "wrong": "Randevunuz op. dr. sinan güler'in polikliniğinde.", "right": "Randevunuz Op. Dr. Sinan Güler'in polikliniğinde."}
+{"id": "unvan_hitap-014", "class": "unvan_hitap", "wrong": "Laboratuvar sonuçlarını dr. öğr. üyesi canan yıldırım değerlendirecek.", "right": "Laboratuvar sonuçlarını Dr. Öğr. Üyesi Canan Yıldırım değerlendirecek."}
+{"id": "unvan_hitap-016", "class": "unvan_hitap", "wrong": "Diş ağrım için dr. şebnem koç'tan randevu aldım.", "right": "Diş ağrım için Dr. Şebnem Koç'tan randevu aldım."}
+{"id": "unvan_hitap-018", "class": "unvan_hitap", "wrong": "Hocamız doç. dr. reşat aydemir bu dönem izinli.", "right": "Hocamız Doç. Dr. Reşat Aydemir bu dönem izinli."}
+{"id": "unvan_hitap-020", "class": "unvan_hitap", "wrong": "Ayşe hanım siparişinizi hazırladı.", "right": "Ayşe Hanım siparişinizi hazırladı."}
+{"id": "unvan_hitap-022", "class": "unvan_hitap", "wrong": "Bu bilgiyi ayşe hanımdan öğrendim.", "right": "Bu bilgiyi Ayşe Hanım'dan öğrendim."}
+{"id": "unvan_hitap-024", "class": "unvan_hitap", "wrong": "Mahmut efendiye selamımı söyle.", "right": "Mahmut Efendi'ye selamımı söyle."}
+{"id": "unvan_hitap-026", "class": "unvan_hitap", "wrong": "Mektup enver paşaya ulaşmamış.", "right": "Mektup Enver Paşa'ya ulaşmamış."}
+{"id": "unvan_hitap-028", "class": "unvan_hitap", "wrong": "Merhaba kerem bey, toplantı notlarını paylaşıyorum.", "right": "Merhaba Kerem Bey, toplantı notlarını paylaşıyorum."}
+{"id": "unvan_hitap-030", "class": "unvan_hitap", "wrong": "Sevim hanıma çiçek gönderelim mi?", "right": "Sevim Hanım'a çiçek gönderelim mi?"}
+{"id": "unvan_hitap-032", "class": "unvan_hitap", "wrong": "Bugün orhan beyde akşam yemeğine davetliyiz.", "right": "Bugün Orhan Bey'de akşam yemeğine davetliyiz."}
+{"id": "unvan_hitap-034", "class": "unvan_hitap", "wrong": "İbrahim efendinin dükkânı köşede.", "right": "İbrahim Efendi'nin dükkânı köşede."}
+{"id": "unvan_hitap-036", "class": "unvan_hitap", "wrong": "Kâzım karabekir paşanın anıları yeniden basıldı.", "right": "Kâzım Karabekir Paşa'nın anıları yeniden basıldı."}
+{"id": "unvan_hitap-038", "class": "unvan_hitap", "wrong": "Kitap, mustafa kemal paşanın gençlik yıllarını anlatıyor.", "right": "Kitap, Mustafa Kemal Paşa'nın gençlik yıllarını anlatıyor."}
+{"id": "unvan_hitap-040", "class": "unvan_hitap", "wrong": "Lütfen cevabınızı hakan beye de iletin.", "right": "Lütfen cevabınızı Hakan Bey'e de iletin."}
+{"id": "unvan_hitap-042", "class": "unvan_hitap", "wrong": "Sabri beyden haber var mı?", "right": "Sabri Bey'den haber var mı?"}
+{"id": "unvan_hitap-044", "class": "unvan_hitap", "wrong": "Saadet hanımın kurabiyelerinden kimse doyamadı.", "right": "Saadet Hanım'ın kurabiyelerinden kimse doyamadı."}
+{"id": "unvan_hitap-046", "class": "unvan_hitap", "wrong": "Doğan beyi tebrik etmek için uğradık.", "right": "Doğan Bey'i tebrik etmek için uğradık."}
+{"id": "unvan_hitap-048", "class": "unvan_hitap", "wrong": "Pınar hanım, rapor hazır olunca haber verir misiniz?", "right": "Pınar Hanım, rapor hazır olunca haber verir misiniz?"}
+{"id": "unvan_hitap-050", "class": "unvan_hitap", "wrong": "Osman paşanın plevne savunması derste anlatıldı.", "right": "Osman Paşa'nın Plevne savunması derste anlatıldı."}
+{"id": "unvan_hitap-052", "class": "unvan_hitap", "wrong": "Formu bayan elif tan doldurmuş.", "right": "Formu Bayan Elif Tan doldurmuş."}
+{"id": "unvan_hitap-054", "class": "unvan_hitap", "wrong": "Paket bay umut kaya adına gelmiş.", "right": "Paket Bay Umut Kaya adına gelmiş."}
+{"id": "unvan_hitap-056", "class": "unvan_hitap", "wrong": "Sayın başkan, söz almak istiyorum.", "right": "Sayın Başkan, söz almak istiyorum."}
+{"id": "unvan_hitap-058", "class": "unvan_hitap", "wrong": "Sayın rektör, mezuniyet töreni için teşekkür ederiz.", "right": "Sayın Rektör, mezuniyet töreni için teşekkür ederiz."}
+{"id": "unvan_hitap-060", "class": "unvan_hitap", "wrong": "Sayın müdür, dilekçemi ekte sunuyorum.", "right": "Sayın Müdür, dilekçemi ekte sunuyorum."}
+{"id": "unvan_hitap-062", "class": "unvan_hitap", "wrong": "sayın meltem arslan, siparişiniz kargoya verildi.", "right": "Sayın Meltem Arslan, siparişiniz kargoya verildi."}
+{"id": "unvan_hitap-064", "class": "unvan_hitap", "wrong": "Sayın dekan, ders programında bir hata var.", "right": "Sayın Dekan, ders programında bir hata var."}
+{"id": "unvan_hitap-066", "class": "unvan_hitap", "wrong": "Sayın belediye başkanı, parktaki banklar kırık.", "right": "Sayın Belediye Başkanı, parktaki banklar kırık."}
+{"id": "unvan_hitap-068", "class": "unvan_hitap", "wrong": "Sayın büyükelçi, davetiniz için teşekkürler.", "right": "Sayın Büyükelçi, davetiniz için teşekkürler."}
+{"id": "unvan_hitap-070", "class": "unvan_hitap", "wrong": "Sayın başhekim, acil serviste bekleme çok uzun.", "right": "Sayın Başhekim, acil serviste bekleme çok uzun."}
+{"id": "unvan_hitap-072", "class": "unvan_hitap", "wrong": "Kitapta cumhurbaşkanı ismet inönü'nün bir konuşmasına yer verilmiş.", "right": "Kitapta Cumhurbaşkanı İsmet İnönü'nün bir konuşmasına yer verilmiş."}
+{"id": "unvan_hitap-074", "class": "unvan_hitap", "wrong": "Mareşal fevzi çakmak'ın hayatını okudum.", "right": "Mareşal Fevzi Çakmak'ın hayatını okudum."}
+{"id": "unvan_hitap-076", "class": "unvan_hitap", "wrong": "Tören albay nurettin şahin'in konuşmasıyla başladı.", "right": "Tören Albay Nurettin Şahin'in konuşmasıyla başladı."}
+{"id": "unvan_hitap-078", "class": "unvan_hitap", "wrong": "Muhtar hasan çelik köyün sorunlarını anlattı.", "right": "Muhtar Hasan Çelik köyün sorunlarını anlattı."}
+{"id": "unvan_hitap-080", "class": "unvan_hitap", "wrong": "Kaymakam sena tunç'a dilekçe verdik.", "right": "Kaymakam Sena Tunç'a dilekçe verdik."}
+{"id": "unvan_hitap-082", "class": "unvan_hitap", "wrong": "Komiser gökhan yazıcı olay yerine ilk gelen kişiydi.", "right": "Komiser Gökhan Yazıcı olay yerine ilk gelen kişiydi."}
+{"id": "unvan_hitap-084", "class": "unvan_hitap", "wrong": "Hâkim nermin oral karar duruşmasını erteledi.", "right": "Hâkim Nermin Oral karar duruşmasını erteledi."}
+{"id": "unvan_hitap-086", "class": "unvan_hitap", "wrong": "Rektör tamer ilhan mezunlara diplomalarını verdi.", "right": "Rektör Tamer İlhan mezunlara diplomalarını verdi."}
+{"id": "unvan_hitap-088", "class": "unvan_hitap", "wrong": "Kaptan rüştü alkan gemiyi limana yanaştırdı.", "right": "Kaptan Rüştü Alkan gemiyi limana yanaştırdı."}
+{"id": "unvan_hitap-090", "class": "unvan_hitap", "wrong": "Belediye başkanı nail tekin yeni parkı açtı.", "right": "Belediye Başkanı Nail Tekin yeni parkı açtı."}
+{"id": "unvan_hitap-092", "class": "unvan_hitap", "wrong": "Dekan doç. dr. barış sezer açılış konuşması yaptı.", "right": "Dekan Doç. Dr. Barış Sezer açılış konuşması yaptı."}
+{"id": "unvan_hitap-094", "class": "unvan_hitap", "wrong": "Dr. levent bey hastalarını öğleden sonra kabul ediyor.", "right": "Dr. Levent Bey hastalarını öğleden sonra kabul ediyor."}
+{"id": "unvan_hitap-096", "class": "unvan_hitap", "wrong": "tülay ablama gittim, akşama dönerim.", "right": "Tülay ablama gittim, akşama dönerim."}
+{"id": "unvan_hitap-098", "class": "clean", "wrong": "Hasan amcamın bahçesindeki elmalar olgunlaştı.", "right": "Hasan amcamın bahçesindeki elmalar olgunlaştı.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-100", "class": "unvan_hitap", "wrong": "Hafta sonu zehra halamın evinde kalacağız.", "right": "Hafta sonu Zehra halamın evinde kalacağız."}
+{"id": "unvan_hitap-102", "class": "clean", "wrong": "Kenan abimin yeni işi nasıl gidiyor?", "right": "Kenan abimin yeni işi nasıl gidiyor?", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-104", "class": "unvan_hitap", "wrong": "Cuma günü rıza enişteme yardım edeceğim.", "right": "Cuma günü Rıza enişteme yardım edeceğim."}
+{"id": "unvan_hitap-106", "class": "unvan_hitap", "wrong": "Değerli dinleyiciler, programımıza hoş geldiniz.", "right": "Değerli Dinleyiciler, programımıza hoş geldiniz."}
+{"id": "unvan_hitap-108", "class": "unvan_hitap", "wrong": "Kargonuzu cihan beyin ofisine bıraktık.", "right": "Kargonuzu Cihan Bey'in ofisine bıraktık."}
+{"id": "unvan_hitap-110", "class": "unvan_hitap", "wrong": "Ödemeyi fevzi beye elden yaptım.", "right": "Ödemeyi Fevzi Bey'e elden yaptım."}
+{"id": "unvan_hitap-112", "class": "unvan_hitap", "wrong": "Ünal bey, teklifiniz değerlendirmeye alındı.", "right": "Ünal Bey, teklifiniz değerlendirmeye alındı."}
+{"id": "unvan_hitap-114", "class": "unvan_hitap", "wrong": "Bu yıl çevre ödülü sayın dilek erkan'a verildi.", "right": "Bu yıl çevre ödülü Sayın Dilek Erkan'a verildi."}
+{"id": "unvan_hitap-116", "class": "unvan_hitap", "wrong": "Bahattin beyin dükkânında her şey bulunur.", "right": "Bahattin Bey'in dükkânında her şey bulunur."}
+{"id": "unvan_hitap-118", "class": "unvan_hitap", "wrong": "Kirayı mustafa efendiden alırdık.", "right": "Kirayı Mustafa Efendi'den alırdık."}
+{"id": "unvan_hitap-120", "class": "unvan_hitap", "wrong": "Konser biletlerini gönül hanımda unuttum.", "right": "Konser biletlerini Gönül Hanım'da unuttum."}
+{"id": "unvan_hitap-122", "class": "unvan_hitap", "wrong": "Bu tabloyu dr. irem kaplan bağışladı.", "right": "Bu tabloyu Dr. İrem Kaplan bağışladı."}
+{"id": "unvan_hitap-124", "class": "unvan_hitap", "wrong": "Yeni yönetmeliği av. ece çınar yorumladı.", "right": "Yeni yönetmeliği Av. Ece Çınar yorumladı."}
+{"id": "unvan_hitap-126", "class": "unvan_hitap", "wrong": "Sınav kâğıtlarını doç. dr. ufuk balcı okuyacak.", "right": "Sınav kâğıtlarını Doç. Dr. Ufuk Balcı okuyacak."}
+{"id": "unvan_hitap-128", "class": "unvan_hitap", "wrong": "Başkomiser nazlı ekinci soruşturmayı yürütüyor.", "right": "Başkomiser Nazlı Ekinci soruşturmayı yürütüyor."}
+{"id": "unvan_hitap-130", "class": "unvan_hitap", "wrong": "Başbakan bülent ecevit'in şiirlerini okudun mu?", "right": "Başbakan Bülent Ecevit'in şiirlerini okudun mu?"}
+{"id": "unvan_hitap-132", "class": "unvan_hitap", "wrong": "Sayın komutan, birlik denetime hazır.", "right": "Sayın Komutan, birlik denetime hazır."}
+{"id": "unvan_hitap-134", "class": "unvan_hitap", "wrong": "Akşam selim abimle maç izleyeceğiz.", "right": "Akşam Selim abimle maç izleyeceğiz."}
+{"id": "unvan_hitap-136", "class": "clean", "wrong": "Hatice ninemin dolması meşhurdur.", "right": "Hatice ninemin dolması meşhurdur.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-138", "class": "unvan_hitap", "wrong": "Uzak Doğu'dan gelen heyeti vali dün kabul etti.", "right": "Uzak Doğu'dan gelen heyeti Vali dün kabul etti."}
+{"id": "unvan_hitap-140", "class": "clean", "wrong": "Kızım büyüyünce avukat olmak istiyor.", "right": "Kızım büyüyünce avukat olmak istiyor.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-142", "class": "clean", "wrong": "Doktorlar bol su içmemi önerdi.", "right": "Doktorlar bol su içmemi önerdi.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-144", "class": "clean", "wrong": "İki yıl sonra profesör oldu.", "right": "İki yıl sonra profesör oldu.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-146", "class": "clean", "wrong": "Ülkenin ilk kadın pilotlarından biriydi.", "right": "Ülkenin ilk kadın pilotlarından biriydi.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-148", "class": "clean", "wrong": "Bayramda amcamlar bize geldi.", "right": "Bayramda amcamlar bize geldi.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-150", "class": "clean", "wrong": "Albaylığa terfi ettiği gün çok mutluydu.", "right": "Albaylığa terfi ettiği gün çok mutluydu.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-152", "class": "clean", "wrong": "Mahallenin muhtarı sokak lambalarını yaptırdı.", "right": "Mahallenin muhtarı sokak lambalarını yaptırdı.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-154", "class": "clean", "wrong": "Asistanlar her gün nöbet tutuyor.", "right": "Asistanlar her gün nöbet tutuyor.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-156", "class": "clean", "wrong": "Babaannem her sabah komşularla çay içer.", "right": "Babaannem her sabah komşularla çay içer.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-158", "class": "clean", "wrong": "Komşumuzun oğlu yüzbaşı olmuş.", "right": "Komşumuzun oğlu yüzbaşı olmuş.", "origin": "unvan_hitap"}
+{"id": "unvan_hitap-160", "class": "clean", "wrong": "Yeni rektör seçimi önümüzdeki ay yapılacak.", "right": "Yeni rektör seçimi önümüzdeki ay yapılacak.", "origin": "unvan_hitap"}
+{"id": "yer_adi-002", "class": "clean", "wrong": "Akşam mısır patlatıp film izleyelim mi?", "right": "Akşam mısır patlatıp film izleyelim mi?", "origin": "yer_adi"}
+{"id": "yer_adi-004", "class": "yer_adi", "wrong": "rio de janeiro karnavalı şubat ayında yapılıyor.", "right": "Rio de Janeiro karnavalı şubat ayında yapılıyor."}
+{"id": "yer_adi-006", "class": "yer_adi", "wrong": "napoli pizzası ile roma pizzası arasındaki farkı anlatan bir video izledim.", "right": "Napoli pizzası ile Roma pizzası arasındaki farkı anlatan bir video izledim."}
+{"id": "yer_adi-008", "class": "clean", "wrong": "Bu tatilde dağ evi kiralamayı düşünüyoruz.", "right": "Bu tatilde dağ evi kiralamayı düşünüyoruz.", "origin": "yer_adi"}
+{"id": "yer_adi-010", "class": "yer_adi", "wrong": "semerkant ve buhara ipek yolu üzerindeki en önemli şehirlerdi.", "right": "Semerkant ve Buhara İpek Yolu üzerindeki en önemli şehirlerdi."}
+{"id": "yer_adi-012", "class": "yer_adi", "wrong": "gazi mustafa kemal bulvarı boyunca yeni bisiklet yolu yapılacak.", "right": "Gazi Mustafa Kemal Bulvarı boyunca yeni bisiklet yolu yapılacak."}
+{"id": "yer_adi-014", "class": "yer_adi", "wrong": "mısır piramitleri hakkında bir belgesel izledik, ardından mısır patlattık.", "right": "Mısır piramitleri hakkında bir belgesel izledik, ardından mısır patlattık."}
+{"id": "yer_adi-016", "class": "yer_adi", "wrong": "batı anadolu kıyılarında zeytinlikler çok yaygın.", "right": "Batı Anadolu kıyılarında zeytinlikler çok yaygın."}
+{"id": "yer_adi-018", "class": "yer_adi", "wrong": "van gölü kıyısında kahvaltı yapmadan dönmeyin.", "right": "Van Gölü kıyısında kahvaltı yapmadan dönmeyin."}
+{"id": "yer_adi-020", "class": "yer_adi", "wrong": "harran evleri konik kubbeleriyle hemen tanınıyor.", "right": "Harran evleri konik kubbeleriyle hemen tanınıyor."}
+{"id": "yer_adi-022", "class": "clean", "wrong": "Kaş yapayım derken göz çıkardı.", "right": "Kaş yapayım derken göz çıkardı.", "origin": "yer_adi"}
+{"id": "yer_adi-024", "class": "yer_adi", "wrong": "midyat taş işçiliği ve telkari ustalarıyla ünlüdür.", "right": "Midyat taş işçiliği ve telkari ustalarıyla ünlüdür."}
+{"id": "yer_adi-026", "class": "yer_adi", "wrong": "Bu yaz almanya ve hollanda arasında trenle gezmeyi düşünüyoruz.", "right": "Bu yaz Almanya ve Hollanda arasında trenle gezmeyi düşünüyoruz."}
+{"id": "yer_adi-028", "class": "yer_adi", "wrong": "sahra çölü her yıl biraz daha güneye ilerliyor.", "right": "Sahra Çölü her yıl biraz daha güneye ilerliyor."}
+{"id": "yer_adi-030", "class": "yer_adi", "wrong": "paris yerine bu kez lizbon ve porto rotasını seçtik.", "right": "Paris yerine bu kez Lizbon ve Porto rotasını seçtik."}
+{"id": "yer_adi-032", "class": "yer_adi", "wrong": "Sevgili günlük, bugün safranbolu evlerini gezdik ve çok etkilendim.", "right": "Sevgili günlük, bugün Safranbolu evlerini gezdik ve çok etkilendim."}
+{"id": "yer_adi-034", "class": "yer_adi", "wrong": "cenevre gölü manzarası çok sakinleştiriciydi.", "right": "Cenevre Gölü manzarası çok sakinleştiriciydi."}
+{"id": "yer_adi-036", "class": "yer_adi", "wrong": "çanakkale boğazı gemi trafiğine geçici olarak kapatıldı.", "right": "Çanakkale Boğazı gemi trafiğine geçici olarak kapatıldı."}
+{"id": "yer_adi-038", "class": "yer_adi", "wrong": "kuzey kutbu buzulları hızla eriyor.", "right": "Kuzey Kutbu buzulları hızla eriyor."}
+{"id": "yer_adi-040", "class": "yer_adi", "wrong": "sevilla ve barselona arasında hangisini seçeceğimizi bilemedik.", "right": "Sevilla ve Barselona arasında hangisini seçeceğimizi bilemedik."}
+{"id": "yer_adi-042", "class": "yer_adi", "wrong": "bergama ile efes aynı gün gezilebilir mi?", "right": "Bergama ile Efes aynı gün gezilebilir mi?"}
+{"id": "yer_adi-044", "class": "yer_adi", "wrong": "amsterdam kanalları boyunca tekne turu yaptık.", "right": "Amsterdam kanalları boyunca tekne turu yaptık."}
+{"id": "yer_adi-046", "class": "yer_adi", "wrong": "finlandiya eğitim sistemi hakkında bir sunum hazırlıyorum.", "right": "Finlandiya eğitim sistemi hakkında bir sunum hazırlıyorum."}
+{"id": "yer_adi-048", "class": "yer_adi", "wrong": "rize çayı ile trabzon hurması aynı pazarda satılıyordu.", "right": "Rize çayı ile Trabzon hurması aynı pazarda satılıyordu."}
+{"id": "yer_adi-050", "class": "yer_adi", "wrong": "balkanlar ve kafkasya üzerine bir tarih dersi alıyorum.", "right": "Balkanlar ve Kafkasya üzerine bir tarih dersi alıyorum."}
+{"id": "yer_adi-052", "class": "clean", "wrong": "Dağa çıkarken yanımıza bol su almayı unutmayalım.", "right": "Dağa çıkarken yanımıza bol su almayı unutmayalım.", "origin": "yer_adi"}
+{"id": "yer_adi-054", "class": "yer_adi", "wrong": "tunalı hilmi caddesi akşamları gençlerle doluyor.", "right": "Tunalı Hilmi Caddesi akşamları gençlerle doluyor."}
+{"id": "yer_adi-056", "class": "yer_adi", "wrong": "kaz dağları oksijen bakımından çok zengin bir bölge sayılıyor.", "right": "Kaz Dağları oksijen bakımından çok zengin bir bölge sayılıyor."}
+{"id": "yer_adi-058", "class": "yer_adi", "wrong": "kızıldeniz mercan resifleriyle dalgıçların gözdesi.", "right": "Kızıldeniz mercan resifleriyle dalgıçların gözdesi."}
+{"id": "yer_adi-060", "class": "yer_adi", "wrong": "kanada ve avustralya göçmen kabul eden ülkelerin başında geliyor.", "right": "Kanada ve Avustralya göçmen kabul eden ülkelerin başında geliyor."}
+{"id": "yer_adi-062", "class": "clean", "wrong": "Bu sezon moda olan renkler bana biraz fazla canlı geldi.", "right": "Bu sezon moda olan renkler bana biraz fazla canlı geldi.", "origin": "yer_adi"}
+{"id": "yer_adi-064", "class": "yer_adi", "wrong": "sapanca gölü kenarında bungalov kiraladık.", "right": "Sapanca Gölü kenarında bungalov kiraladık."}
+{"id": "yer_adi-066", "class": "yer_adi", "wrong": "güneydoğu anadolu bölgesi yaz aylarında çok sıcak geçer.", "right": "Güneydoğu Anadolu Bölgesi yaz aylarında çok sıcak geçer."}
+{"id": "yer_adi-068", "class": "yer_adi", "wrong": "beyşehir gölü en büyük tatlı su göllerimizden biridir.", "right": "Beyşehir Gölü en büyük tatlı su göllerimizden biridir."}
+{"id": "yer_adi-070", "class": "yer_adi", "wrong": "brezilya ve arjantin maçı yarın akşam oynanacak.", "right": "Brezilya ve Arjantin maçı yarın akşam oynanacak."}
+{"id": "yer_adi-072", "class": "yer_adi", "wrong": "kaçkar dağları tırmanışı için iyi bir rehber arıyoruz.", "right": "Kaçkar Dağları tırmanışı için iyi bir rehber arıyoruz."}
+{"id": "yer_adi-074", "class": "clean", "wrong": "Ankara ile Konya arasında hızlı tren her saat kalkıyor.", "right": "Ankara ile Konya arasında hızlı tren her saat kalkıyor.", "origin": "yer_adi"}
+{"id": "yer_adi-076", "class": "yer_adi", "wrong": "karadeniz sahili boyunca bisikletle gitmeyi planlıyoruz.", "right": "Karadeniz sahili boyunca bisikletle gitmeyi planlıyoruz."}
+{"id": "yer_adi-078", "class": "yer_adi", "wrong": "aras boyunca uzanan sınır köylerinde hayat çok sakin.", "right": "Aras boyunca uzanan sınır köylerinde hayat çok sakin."}
+{"id": "yer_adi-080", "class": "yer_adi", "wrong": "kayaköy taş evleriyle hayalet kasaba olarak bilinir.", "right": "Kayaköy taş evleriyle hayalet kasaba olarak bilinir."}
+{"id": "yer_adi-082", "class": "yer_adi", "wrong": "abant gölü etrafında yürüyüş parkuru tam bir saat sürüyor.", "right": "Abant Gölü etrafında yürüyüş parkuru tam bir saat sürüyor."}
+{"id": "yer_adi-084", "class": "yer_adi", "wrong": "endonezya ve tayland rotası için vizeye gerek var mı?", "right": "Endonezya ve Tayland rotası için vizeye gerek var mı?"}
+{"id": "yer_adi-086", "class": "yer_adi", "wrong": "ürgüp ve göreme arasındaki mesafe arabayla on beş dakika.", "right": "Ürgüp ve Göreme arasındaki mesafe arabayla on beş dakika."}
+{"id": "yer_adi-088", "class": "yer_adi", "wrong": "gaziantep baklavası mı, hatay künefesi mi?", "right": "Gaziantep baklavası mı, Hatay künefesi mi?"}
+{"id": "yer_adi-090", "class": "yer_adi", "wrong": "Annemler emekli olunca ayvalık taraflarına taşınmak istiyor.", "right": "Annemler emekli olunca Ayvalık taraflarına taşınmak istiyor."}
+{"id": "yer_adi-092", "class": "yer_adi", "wrong": "tuz gölü kurak geçen yaz yüzünden iyice çekilmiş.", "right": "Tuz Gölü kurak geçen yaz yüzünden iyice çekilmiş."}
+{"id": "yer_adi-094", "class": "yer_adi", "wrong": "floransa ve venedik arasında hızlı tren sadece iki saat sürüyor.", "right": "Floransa ve Venedik arasında hızlı tren sadece iki saat sürüyor."}
+{"id": "yer_adi-096", "class": "yer_adi", "wrong": "meksika mutfağı ile peru mutfağını karşılaştıran bir yazı okudum.", "right": "Meksika mutfağı ile Peru mutfağını karşılaştıran bir yazı okudum."}
+{"id": "yer_adi-098", "class": "yer_adi", "wrong": "atatürk bulvarı üzerindeki yol çalışması hâlâ bitmedi.", "right": "Atatürk Bulvarı üzerindeki yol çalışması hâlâ bitmedi."}
+{"id": "yer_adi-100", "class": "yer_adi", "wrong": "bornova kampüsüne servis her yarım saatte bir kalkıyor.", "right": "Bornova kampüsüne servis her yarım saatte bir kalkıyor."}
+{"id": "yer_adi-102", "class": "yer_adi", "wrong": "izlanda kuzey ışıklarını görmek için en uygun yerlerden biri.", "right": "İzlanda kuzey ışıklarını görmek için en uygun yerlerden biri."}
+{"id": "yer_adi-104", "class": "yer_adi", "wrong": "Ödevimin konusu fırat ve dicle arasında kalan verimli topraklar.", "right": "Ödevimin konusu Fırat ve Dicle arasında kalan verimli topraklar."}
+{"id": "yer_adi-106", "class": "clean", "wrong": "Kuzey cephesindeki ordu geri çekilmek zorunda kaldı.", "right": "Kuzey cephesindeki ordu geri çekilmek zorunda kaldı.", "origin": "yer_adi"}
+{"id": "yer_adi-108", "class": "yer_adi", "wrong": "kıbrıs şehitleri caddesi üzerindeki kafede buluşalım.", "right": "Kıbrıs Şehitleri Caddesi üzerindeki kafede buluşalım."}
+{"id": "yer_adi-110", "class": "yer_adi", "wrong": "artvin ve ardahan arasındaki yol kışın sık sık kapanıyor.", "right": "Artvin ve Ardahan arasındaki yol kışın sık sık kapanıyor."}
+{"id": "yer_adi-112", "class": "yer_adi", "wrong": "atina sıcağında akropolis tepesine çıkmak zor oldu.", "right": "Atina sıcağında Akropolis tepesine çıkmak zor oldu."}
+{"id": "yer_adi-114", "class": "yer_adi", "wrong": "alpler ve pireneler arasında kayak için hangisi daha uygun?", "right": "Alpler ve Pireneler arasında kayak için hangisi daha uygun?"}
+{"id": "yer_adi-116", "class": "yer_adi", "wrong": "kaş sakin ama kalkan biraz daha lüks bir yer.", "right": "Kaş sakin ama Kalkan biraz daha lüks bir yer."}
+{"id": "yer_adi-118", "class": "yer_adi", "wrong": "kars kaşarı ile erzurum cağ kebabı bu gezinin en güzel tarafıydı.", "right": "Kars kaşarı ile Erzurum cağ kebabı bu gezinin en güzel tarafıydı."}
+{"id": "yer_adi-120", "class": "clean", "wrong": "Göl kenarında piknik yapmak için güzel bir yer bulduk.", "right": "Göl kenarında piknik yapmak için güzel bir yer bulduk.", "origin": "yer_adi"}
+{"id": "yer_adi-122", "class": "yer_adi", "wrong": "Yazın bodrum çok kalabalık oluyor, sakin bir yer arıyorsak datça daha iyi.", "right": "Yazın Bodrum çok kalabalık oluyor, sakin bir yer arıyorsak Datça daha iyi."}
+{"id": "yer_adi-124", "class": "yer_adi", "wrong": "çoruh vadisinde rafting yapmak isteyenler için kayıtlar başladı.", "right": "Çoruh vadisinde rafting yapmak isteyenler için kayıtlar başladı."}
+{"id": "yer_adi-126", "class": "yer_adi", "wrong": "istanbul boğazı manzaralı bir kafe biliyorsan haber ver.", "right": "İstanbul Boğazı manzaralı bir kafe biliyorsan haber ver."}
+{"id": "yer_adi-128", "class": "yer_adi", "wrong": "çankaya sırtlarından şehrin ışıkları görünüyor.", "right": "Çankaya sırtlarından şehrin ışıkları görünüyor."}
+{"id": "yer_adi-130", "class": "yer_adi", "wrong": "londra havası hakkında söylenenler tamamen doğruymuş.", "right": "Londra havası hakkında söylenenler tamamen doğruymuş."}
+{"id": "yer_adi-132", "class": "yer_adi", "wrong": "Toplantı için salı günü ankara merkez ofisine gideceğim.", "right": "Toplantı için salı günü Ankara merkez ofisine gideceğim."}
+{"id": "yer_adi-134", "class": "clean", "wrong": "Ova boyunca uzanan buğday tarlaları sararmış.", "right": "Ova boyunca uzanan buğday tarlaları sararmış.", "origin": "yer_adi"}
+{"id": "yer_adi-136", "class": "yer_adi", "wrong": "beşiktaş iskelesinden vapura binip üsküdar tarafına geçtik.", "right": "Beşiktaş iskelesinden vapura binip Üsküdar tarafına geçtik."}
+{"id": "yer_adi-138", "class": "yer_adi", "wrong": "kırklareli ve tekirdağ bağları yeni hasat için hazırlanıyor.", "right": "Kırklareli ve Tekirdağ bağları yeni hasat için hazırlanıyor."}
+{"id": "yer_adi-140", "class": "yer_adi", "wrong": "şirince şarapları ünlüdür ama ben en çok köyün sokaklarını sevdim.", "right": "Şirince şarapları ünlüdür ama ben en çok köyün sokaklarını sevdim."}
+{"id": "yer_adi-142", "class": "yer_adi", "wrong": "fas ve tunus kuzey afrika ülkeleri arasında turistlerin en çok gittiği yerler.", "right": "Fas ve Tunus Kuzey Afrika ülkeleri arasında turistlerin en çok gittiği yerler."}
+{"id": "yer_adi-144", "class": "yer_adi", "wrong": "Pazardan tokat yaprağı ve çorum leblebisi aldık.", "right": "Pazardan Tokat yaprağı ve Çorum leblebisi aldık."}
+{"id": "yer_adi-146", "class": "yer_adi", "wrong": "meriç taştığında edirne çevresindeki tarlalar sular altında kalıyor.", "right": "Meriç taştığında Edirne çevresindeki tarlalar sular altında kalıyor."}
+{"id": "yer_adi-148", "class": "yer_adi", "wrong": "süveyş kanalı trafiği bir geminin karaya oturması yüzünden durdu.", "right": "Süveyş Kanalı trafiği bir geminin karaya oturması yüzünden durdu."}
+{"id": "yer_adi-150", "class": "clean", "wrong": "Evin doğu tarafındaki pencereden sabah güneşi giriyor.", "right": "Evin doğu tarafındaki pencereden sabah güneşi giriyor.", "origin": "yer_adi"}
+{"id": "yer_adi-152", "class": "yer_adi", "wrong": "batman petrolüyle tanınan bir şehir, hasankeyf de hemen yanında.", "right": "Batman petrolüyle tanınan bir şehir, Hasankeyf de hemen yanında."}
+{"id": "yer_adi-154", "class": "yer_adi", "wrong": "kuzguncuk sahili sabahları çok huzurlu.", "right": "Kuzguncuk sahili sabahları çok huzurlu."}
+{"id": "yer_adi-156", "class": "yer_adi", "wrong": "ordu ve giresun fındık hasadı için işçi arıyor.", "right": "Ordu ve Giresun fındık hasadı için işçi arıyor."}
+{"id": "yer_adi-158", "class": "yer_adi", "wrong": "iskandinavya turu için kış aylarını bekleyeceğiz.", "right": "İskandinavya turu için kış aylarını bekleyeceğiz."}
+{"id": "yer_adi-160", "class": "yer_adi", "wrong": "cebelitarık boğazı akdeniz ile atlas okyanusu arasındaki geçittir.", "right": "Cebelitarık Boğazı Akdeniz ile Atlas Okyanusu arasındaki geçittir."}

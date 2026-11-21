@@ -198,9 +198,10 @@ describe("Web Worker protokolü", () => {
     autr.unignore("herkez");
     assert.equal(await autr.fix("Herkez geldi."), "Herkes geldi.");
 
-    assert.equal(await autr.fix("soz"), "soz");
+    // Cümle başı büyük harf bu testin konusu değil: yalnızca Türkçe karakter türü.
+    assert.equal(await autr.fix("soz", { kinds: ["turkce-karakter"] }), "soz");
     autr.setMode("balanced");
-    assert.equal(await autr.fix("soz"), "söz");
+    assert.equal(await autr.fix("soz", { kinds: ["turkce-karakter"] }), "söz");
 
     await autr.dispose();
     await assert.rejects(() => autr.check("cok"));

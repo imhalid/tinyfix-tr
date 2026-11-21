@@ -234,7 +234,13 @@ function main(): void {
   // 5. Write output artifacts + manifest.json
   writeFileSync(join(outDir, "lexicon.bin"), lexiconBytes);
   writeFileSync(join(outDir, "morph.bin"), morphBytes);
-  copyFileSync("data/rules/known.tsv", join(outDir, "known.tsv"));
+  // known.tsv ships with the proper-names list (data/rules/names.tsv, section NAME) appended.
+  const namesTsv = existsSync("data/rules/names.tsv") ? readFileSync("data/rules/names.tsv", "utf8") : "";
+  const nameRows = namesTsv.split("\n").filter((line) => line && !line.startsWith("#"));
+  writeFileSync(
+    join(outDir, "known.tsv"),
+    readFileSync("data/rules/known.tsv", "utf8").replace(/\n?$/, "\n") + (nameRows.length ? nameRows.join("\n") + "\n" : ""),
+  );
 
   const knownBytes = readFileSync(join(outDir, "known.tsv"));
   const manifest: Record<string, number> = {

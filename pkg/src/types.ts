@@ -1,7 +1,7 @@
 import type { ContextModel, RunModel } from "../../src/context.ts";
 
 /** Dışarıya açılan Türkçe otomatik düzeltme türleri. */
-export type FixKind = "turkce-karakter" | "kesme" | "bitisik-ayri" | "yazim" | "kisaltma";
+export type FixKind = "turkce-karakter" | "kesme" | "bitisik-ayri" | "yazim" | "noktalama" | "kisaltma";
 
 /** Desteklenen tüm düzeltme türleri. */
 export const ALL_FIX_KINDS: readonly FixKind[] = [
@@ -9,6 +9,7 @@ export const ALL_FIX_KINDS: readonly FixKind[] = [
   "kesme",
   "bitisik-ayri",
   "yazim",
+  "noktalama",
   "kisaltma",
 ];
 
@@ -16,7 +17,7 @@ export const ALL_FIX_KINDS: readonly FixKind[] = [
  * `kinds` verilmediğinde uygulanan türler. "kisaltma" (noldu → ne oldu, burda → burada) bir üslup tercihi olduğu için
  * varsayılan olarak kapalı; açıkça istenince uygulanır.
  */
-export const DEFAULT_FIX_KINDS: readonly FixKind[] = ["turkce-karakter", "kesme", "bitisik-ayri", "yazim"];
+export const DEFAULT_FIX_KINDS: readonly FixKind[] = ["turkce-karakter", "kesme", "bitisik-ayri", "yazim", "noktalama"];
 
 /** Düzeltme hassasiyet kipi: "careful" daha temkinli, "balanced" biraz daha cesur. */
 export type Mode = "careful" | "balanced";

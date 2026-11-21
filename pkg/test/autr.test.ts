@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ALL_FIX_KINDS, applyFixes, createTdkai, type Fix, type RawData } from "../src/index.ts";
 
+/** Eşik testleri tek kelimeyle çalışır: cümle başı büyük harfi (noktalama türü) bu testlerin konusu değil. */
+const NO_PUNCT = { kinds: ALL_FIX_KINDS.filter((kind) => kind !== "noktalama" && kind !== "kisaltma") };
+
 /** Testler için elle yazılmış küçük sözlük. */
 const TEST_DATA: RawData = {
   unigrams: [
@@ -165,10 +168,11 @@ describe("autr çekirdek API", () => {
       // 3) Metnin geri kalanında Türkçe karakter olması bağlam olarak okunur
       const withoutMarks = await autr.check("uc nokta", { range: [0, 2] });
       assert.equal(withoutMarks.length, 1);
-      assert.equal(withoutMarks[0]!.replacement, "uç");
+      assert.equal(withoutMarks[0]!.replacement, "Uç"); // metnin başı: büyük harf de aynı düzeltmeye katılır
 
       const withMarksElsewhere = await autr.check("uc nokta değil", { range: [0, 2] });
-      assert.equal(withMarksElsewhere.length, 0);
+      // Türkçe karakter eklenmez; metnin başı olduğu için yalnızca büyük harf önerilir ("Uc").
+      assert.deepEqual(withMarksElsewhere.map((fix) => [fix.replacement, fix.kind]), [["Uc", "noktalama"]]);
 
       // 4) İki kelimelik birleştirme, ikinci kelime aralığı verildiğinde yakalanır
       const joinText = "Ev de kaldım.";
@@ -190,15 +194,15 @@ describe("autr çekirdek API", () => {
     const balanced = createTdkai(TEST_DATA, { mode: "balanced" });
     try {
       // "soz" (5) -> "söz" (80): careful eşiğinin altında, balanced eşiğinin üstünde
-      assert.equal(await careful.fix("soz"), "soz");
-      assert.equal(await balanced.fix("soz"), "söz");
+      assert.equal(await careful.fix("soz", NO_PUNCT), "soz");
+      assert.equal(await balanced.fix("soz", NO_PUNCT), "söz");
 
       // Çağrı bazlı mode geçersiz kılma ve setMode desteği
-      assert.equal(await careful.fix("soz", { mode: "balanced" }), "söz");
-      assert.equal(await careful.fix("soz"), "soz");
+      assert.equal(await careful.fix("soz", { ...NO_PUNCT, mode: "balanced" }), "söz");
+      assert.equal(await careful.fix("soz", NO_PUNCT), "soz");
 
       careful.setMode("balanced");
-      assert.equal(await careful.fix("soz"), "söz");
+      assert.equal(await careful.fix("soz", NO_PUNCT), "söz");
     } finally {
       await careful.dispose();
       await balanced.dispose();
