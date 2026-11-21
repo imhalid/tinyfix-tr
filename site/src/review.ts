@@ -2,7 +2,7 @@ import { Extension, getSchema, type JSONContent } from "@tiptap/core";
 import { Node as PMNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Autr, FixKind, FixScope } from "autr";
+import type { Tdkai, FixKind, FixScope } from "tdkai";
 import { SCHEMA_EXTENSIONS } from "./importFiles";
 
 /**
@@ -83,7 +83,7 @@ export interface AnalyzeOptions {
 }
 
 /** Belgeyi paragraf paragraf denetler. Arayüz donmasın diye bloklar arasında tarayıcıya nefes verilir. */
-export async function analyzeDoc(autr: Autr, doc: PMNode, options: AnalyzeOptions): Promise<Issue[] | null> {
+export async function analyzeDoc(autr: Tdkai, doc: PMNode, options: AnalyzeOptions): Promise<Issue[] | null> {
   const blocks = textBlocks(doc);
   const issues: Issue[] = [];
   for (let index = 0; index < blocks.length; index++) {

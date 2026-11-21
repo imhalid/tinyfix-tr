@@ -5,8 +5,8 @@ import {
   CONTEXT_MODEL_FILE,
   ContextModel,
   SEQUENCE,
-  createAutr,
-  loadAutr,
+  createTdkai,
+  loadTdkai,
   type ContextSessionLoader,
   type LoadProgress,
   type RawData,
@@ -148,7 +148,7 @@ function createFakeWorker(
 
 describe("bağlam modeli (sahte RunModel ile)", () => {
   it("bağlam modeli olmadan belirsiz gerçek kelimelere dokunmaz, model ile düzeltir", async () => {
-    const withoutContext = createAutr(CONTEXT_TEST_DATA);
+    const withoutContext = createTdkai(CONTEXT_TEST_DATA);
     const calls: Array<{ n: number; candidates: string[]; featuresLength: number }> = [];
     const fakeRun = createFakeRunModel(
       {
@@ -159,7 +159,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       },
       calls,
     );
-    const withContext = createAutr(CONTEXT_TEST_DATA, { contextModel: fakeRun });
+    const withContext = createTdkai(CONTEXT_TEST_DATA, { contextModel: fakeRun });
 
     try {
       assert.equal(withoutContext.hasContext, false);
@@ -213,7 +213,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       oldu: 0,
       öldü: 2.7,
     });
-    const autr = createAutr(CONTEXT_TEST_DATA, { mode: "careful", contextModel: fakeRun });
+    const autr = createTdkai(CONTEXT_TEST_DATA, { mode: "careful", contextModel: fakeRun });
     try {
       assert.equal(await autr.fix("Adam oldu."), "Adam oldu.");
       assert.equal(await autr.fix("Adam oldu.", { mode: "balanced" }), "Adam öldü.");
@@ -236,7 +236,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       requested,
     );
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       fetch: mockFetch,
     });
@@ -275,7 +275,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       };
     };
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       context: true,
       wasmPaths: "https://example.test/ort",
@@ -316,7 +316,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       "known.tsv": CONTEXT_TEST_DATA.known,
     });
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       context: true,
       fetch: mockFetch,
@@ -350,7 +350,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       throw new Error("WASM başlatılamadı");
     };
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       context: true,
       fetch: mockFetch,
@@ -389,7 +389,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       };
     };
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       worker: true,
       context: true,
@@ -417,7 +417,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       "known.tsv": CONTEXT_TEST_DATA.known,
     });
 
-    const fallbackAutr = await loadAutr({
+    const fallbackAutr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       worker: true,
       context: true,

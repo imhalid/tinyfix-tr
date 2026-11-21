@@ -1,5 +1,5 @@
 import { loadData } from "./data.ts";
-import { AutrEngine } from "./engine.ts";
+import { TdkaiEngine } from "./engine.ts";
 import type { WorkerRequest, WorkerResponse } from "./protocol.ts";
 import type { ContextSessionLoader } from "./types.ts";
 
@@ -21,7 +21,7 @@ export function createWorkerMessageHandler(
   post: (message: WorkerResponse) => void,
   options: WorkerHandlerOptions = {},
 ): (request: WorkerRequest) => Promise<void> {
-  let engine: AutrEngine | null = null;
+  let engine: TdkaiEngine | null = null;
 
   return async (request: WorkerRequest): Promise<void> => {
     switch (request.type) {
@@ -48,7 +48,7 @@ export function createWorkerMessageHandler(
               post({ type: "warning", id: request.id, message });
             },
           });
-          engine = new AutrEngine(loaded, request.mode, request.ignored, loaded.contextSession);
+          engine = new TdkaiEngine(loaded, request.mode, request.ignored, loaded.contextSession);
           post({ type: "loaded", id: request.id, hasContext: engine.hasContext });
         } catch (error) {
           post({

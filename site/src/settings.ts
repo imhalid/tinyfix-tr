@@ -1,4 +1,4 @@
-import { ALL_FIX_KINDS, type FixKind, type Mode } from "autr";
+import { ALL_FIX_KINDS, type FixKind, type Mode } from "tdkai";
 import { SETTINGS_STORAGE_KEY } from "./brand";
 
 export type Theme = "system" | "light" | "dark";

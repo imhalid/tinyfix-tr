@@ -134,7 +134,7 @@ export type ProgressCallback = (progress: LoadProgress) => void;
 /** İsteğe bağlı bileşenlerle ilgili uyarıları alan geri çağırma işlevi. */
 export type WarningCallback = (message: string) => void;
 
-/** `loadAutr` seçenekleri. */
+/** `loadTdkai` seçenekleri. */
 export interface LoadOptions {
   /** Sözlük (ve `context: true` ise `context.onnx`) dosyalarının bulunduğu temel URL. Varsayılan: "/models/". */
   baseUrl?: string | URL;
@@ -193,7 +193,7 @@ export interface CheckOptions {
 }
 
 /** Türkçe otomatik düzeltici örneği. */
-export interface Autr {
+export interface Tdkai {
   /** Bağlam modelinin etkin olarak yüklenip yüklenmediği. */
   readonly hasContext: boolean;
   /** Metindeki düzeltmeleri sırayla ve çakışmayacak biçimde döndürür. */

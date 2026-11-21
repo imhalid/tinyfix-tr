@@ -1,4 +1,4 @@
-import type { FixKind } from "autr";
+import type { FixKind } from "tdkai";
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { formatNumberTr } from "../kit/format";
 import type { Issue } from "../review";

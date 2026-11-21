@@ -118,7 +118,7 @@ export function applyFixes(text: string, fixes: readonly Fix[]): string {
 }
 
 /** Çekirdek motoru (ve isteğe bağlı bağlam modelini) paket API'si ile sarmalayan çalışma motoru. */
-export class AutrEngine {
+export class TdkaiEngine {
   private readonly corrector: Corrector;
   private readonly ignored = new Set<string>();
   private contextSession: ContextSession | null;

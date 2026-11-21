@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { encodeBinaryLexicon } from "../../src/lexicon-binary.ts";
 import { encodeBinaryDictionary } from "../../src/morphology/binary.ts";
 import { parseDictionaries } from "../../src/morphology/dictionary.ts";
-import { createAutr, loadAutr, type BinaryData, type LoadProgress, type RawData } from "../src/index.ts";
+import { createTdkai, loadTdkai, type BinaryData, type LoadProgress, type RawData } from "../src/index.ts";
 import type { WorkerRequest, WorkerResponse } from "../src/protocol.ts";
 import { createWorkerMessageHandler } from "../src/worker.ts";
 
@@ -106,7 +106,7 @@ describe("veri yükleme ve ilerleme bildirimi", () => {
       "known.tsv": SMALL_DATA.known,
     });
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       fetch: mockFetch,
       onProgress: (progress) => events.push({ ...progress }),
@@ -140,7 +140,7 @@ describe("veri yükleme ve ilerleme bildirimi", () => {
       { gzipHeader: true },
     );
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       fetch: mockFetch,
       onProgress: (progress) => events.push({ ...progress }),
@@ -162,7 +162,7 @@ describe("veri yükleme ve ilerleme bildirimi", () => {
     });
 
     await assert.rejects(
-      () => loadAutr({ baseUrl: "https://example.test/models/", fetch: mockFetch }),
+      () => loadTdkai({ baseUrl: "https://example.test/models/", fetch: mockFetch }),
       /404/,
     );
   });
@@ -177,7 +177,7 @@ describe("Web Worker protokolü", () => {
       "known.tsv": SMALL_DATA.known,
     });
 
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       worker: true,
       createWorker: () => createFakeWorker(mockFetch),
@@ -276,7 +276,7 @@ describe("ikili sözlük ve biçimbilim yükleme", () => {
     );
 
     const events: LoadProgress[] = [];
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       fetch: mockFetch,
       onProgress: (progress) => events.push({ ...progress }),
@@ -300,9 +300,9 @@ describe("ikili sözlük ve biçimbilim yükleme", () => {
     }
   });
 
-  it("createAutr ve Web Worker ikili sözlük + biçimbilim ile çalışır", async () => {
+  it("createTdkai ve Web Worker ikili sözlük + biçimbilim ile çalışır", async () => {
     const bundle = buildMiniBinaryBundle();
-    const direct = createAutr(bundle);
+    const direct = createTdkai(bundle);
     try {
       assert.equal(await direct.fix("Getirsek boyunuda yükledinizmi?"), "Getirsek boyunu da yüklediniz mi?");
     } finally {
@@ -314,7 +314,7 @@ describe("ikili sözlük ve biçimbilim yükleme", () => {
       "morph.bin": bundle.morphology!,
       "known.tsv": bundle.known,
     });
-    const workerAutr = await loadAutr({
+    const workerAutr = await loadTdkai({
       baseUrl: "https://example.test/models/",
       worker: true,
       createWorker: () => createFakeWorker(mockFetch),

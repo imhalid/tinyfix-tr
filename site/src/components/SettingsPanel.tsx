@@ -1,4 +1,4 @@
-import { ALL_FIX_KINDS, type FixKind, type Mode } from "autr";
+import { ALL_FIX_KINDS, type FixKind, type Mode } from "tdkai";
 import { For, Show, createSignal } from "solid-js";
 import { Choice, Switch, type ChoiceOption } from "../kit/controls";
 import { FIX_KIND_META, type AppSettings, type Theme } from "../settings";

@@ -1,4 +1,4 @@
-import { loadAutr, type Autr, type FixKind, type LoadProgress, type Mode } from "autr";
+import { loadTdkai, type Tdkai, type FixKind, type LoadProgress, type Mode } from "tdkai";
 import type { JSX } from "@solidjs/web";
 import { For, Show, createMemo, createSignal, onSettled } from "solid-js";
 import {
@@ -75,7 +75,7 @@ export function App() {
   const [docsReady, setDocsReady] = createSignal(false);
   const [focusTitleSeq, setFocusTitleSeq] = createSignal(0);
 
-  const [autr, setAutr] = createSignal<Autr | null>(null);
+  const [autr, setAutr] = createSignal<Tdkai | null>(null);
   const [engineStatus, setEngineStatus] = createSignal<"loading" | "ready" | "error">("loading");
   const [engineProgress, setEngineProgress] = createSignal<LoadProgress | null>(null);
   const [contextAvailable, setContextAvailable] = createSignal(false);
@@ -106,7 +106,7 @@ export function App() {
   });
 
   /** Açık belgedeki şüpheli kelimelerin altını çizer (metne dokunmaz). */
-  const flagOpenDocument = (instance: Autr | null = autr()) => {
+  const flagOpenDocument = (instance: Tdkai | null = autr()) => {
     const view = editorController?.editor.view;
     if (!view || !instance || !settings().enabled) return;
     void flagAllText(view, instance, getActiveKinds(settings()));
@@ -258,7 +258,7 @@ export function App() {
         .then((sizes: Record<string, number>) => typeof sizes["context.onnx"] === "number")
         .catch(() => false);
       setContextAvailable(available);
-      const instance = await loadAutr({
+      const instance = await loadTdkai({
         baseUrl: MODELS_BASE_URL,
         wasmPaths: ORT_WASM_BASE_URL,
         context: currentSettings.contextModel && available,

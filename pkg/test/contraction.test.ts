@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { DEFAULT_FIX_KINDS, createAutr, type RawData } from "../src/index.ts";
+import { DEFAULT_FIX_KINDS, createTdkai, type RawData } from "../src/index.ts";
 
 const DATA: RawData = {
   unigrams: ["burada\t5000\t10", "ne\t90000\t100", "oldu\t5000\t0", "bilmiyorum\t2000\t0", "herkes\t3709\t50"].join("\n"),
@@ -15,7 +15,7 @@ const DATA: RawData = {
 describe("konuşma dili kısaltmaları", () => {
   it("varsayılan türlerde kısaltmalara dokunmaz, yazım yanlışlarını düzeltir", async () => {
     assert.ok(!DEFAULT_FIX_KINDS.includes("kisaltma"));
-    const autr = createAutr(DATA);
+    const autr = createTdkai(DATA);
     try {
       assert.equal(await autr.fix("Burda noldu, herkez bilmiyorum."), "Burda noldu, herkes bilmiyorum.");
     } finally {
@@ -24,7 +24,7 @@ describe("konuşma dili kısaltmaları", () => {
   });
 
   it("kisaltma türü istenince açar ve türünü kisaltma olarak bildirir", async () => {
-    const autr = createAutr(DATA);
+    const autr = createTdkai(DATA);
     try {
       const fixes = await autr.check("Burda noldu?", { kinds: [...DEFAULT_FIX_KINDS, "kisaltma"] });
       assert.deepEqual(
@@ -42,7 +42,7 @@ describe("konuşma dili kısaltmaları", () => {
 
 describe("düzeltme kapsamı", () => {
   it("tek kelimelik düzeltmeler kelime, iki kelimeyi kapsayanlar bağlam", async () => {
-    const autr = createAutr({ ...DATA, known: DATA.known + "\nhiç bir\thiçbir\t45\t9000\tJOINED_ALWAYS", unigrams: DATA.unigrams + "\nhiçbir\t9000\t0\nhiç\t9000\t0\nbir\t90000\t0" });
+    const autr = createTdkai({ ...DATA, known: DATA.known + "\nhiç bir\thiçbir\t45\t9000\tJOINED_ALWAYS", unigrams: DATA.unigrams + "\nhiçbir\t9000\t0\nhiç\t9000\t0\nbir\t90000\t0" });
     try {
       const fixes = await autr.check("herkez hiç bir şey bilmiyorum");
       assert.deepEqual(

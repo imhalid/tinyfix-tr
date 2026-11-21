@@ -6,8 +6,8 @@ import { parseDictionaries } from "../../src/morphology/dictionary.ts";
 import { MorphPrior } from "../../src/morphology/prior.ts";
 import { ALPHABET, SEQUENCE } from "../../src/context.ts";
 import {
-  createAutr,
-  loadAutr,
+  createTdkai,
+  loadTdkai,
   type BinaryData,
   type RunModel,
 } from "../src/index.ts";
@@ -147,7 +147,7 @@ function createFakeWorker(bundle: BinaryData, contextModel?: RunModel): Worker {
 describe("inspect() paket API ve Worker desteği", () => {
   it("düzeltmeleri ve işaretleri ayrı döndürür, range/kinds/autoMarked/ignore/kod kurallarına uyar", async () => {
     const bundle = buildInspectBundle();
-    const autr = createAutr(bundle);
+    const autr = createTdkai(bundle);
     try {
       const text = "Bugün cok herkez hatalarını duzenlemniyor bka Ankara'ya `duzenlemniyor` geldi.";
       const res = await autr.inspect(text);
@@ -226,7 +226,7 @@ describe("inspect() paket API ve Worker desteği", () => {
       düzenleniyor: 1.1,
       düzenlemiyor: -0.1,
     });
-    const autr = createAutr(bundle, { contextModel: fakeRun });
+    const autr = createTdkai(bundle, { contextModel: fakeRun });
     try {
       const res = await autr.inspect("Bugün hatalarını duzenlemniyor.");
       const flag = res.flags.find((f) => f.original === "duzenlemniyor");
@@ -239,7 +239,7 @@ describe("inspect() paket API ve Worker desteği", () => {
 
   it("Web Worker protokolü inspect() ve ignore() ile uçtan uca çalışır", async () => {
     const bundle = buildInspectBundle();
-    const autr = await loadAutr({
+    const autr = await loadTdkai({
       data: bundle,
       worker: true,
       createWorker: () => createFakeWorker(bundle),

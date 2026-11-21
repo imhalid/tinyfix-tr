@@ -1,4 +1,4 @@
-# autr: tarayıcıda, internetsiz çalışan Türkçe otomatik düzeltme
+# tdkai: tarayıcıda, internetsiz çalışan Türkçe otomatik düzeltme
 
 Durum (2026-11-21):
 - **Kural motoru** (`src/`) çalışıyor.
@@ -9,7 +9,7 @@ Durum (2026-11-21):
 | Klasör | İçerik |
 |---|---|
 | `src/` | Düzeltme motoru: sözlük, kurallar, bağlam modeli arayüzü |
-| `pkg/` | `autr` npm paketi: `loadAutr()`, `check`/`fix`/`apply`, Web Worker, isteğe bağlı bağlam modeli (onnxruntime-web). Gemini Neon yazdı, Claude derleyip test etti. |
+| `pkg/` | `tdkai` npm paketi: `loadTdkai()`, `check`/`fix`/`apply`, Web Worker, isteğe bağlı bağlam modeli (onnxruntime-web). Gemini Neon yazdı, Claude derleyip test etti. |
 | `site/` | İnternetsiz Türkçe yazı uygulaması: SolidJS 2.0, Tiptap, service worker. Tasarım kendi CSS'i (`site/src/styles.css`: krem renkler, gövde Google Sans, başlıklar Instrument Serif, hep açık sol belge paneli) ve küçük bileşenler (`site/src/kit/`); UI kütüphanesi yok. Düzeltilen kelimeye tıklayınca açılan pencerede önce/sonra ve geri al var; kelime düzeltmesi noktalı, bağlam düzeltmesi dalgalı altı çizili. |
 | `py/` | Sözlük, test seti ve bağlam modeli eğitim betikleri |
 | `bench/` | Ölçüm: `run.ts` (doğruluk), `typing.ts` (yazarken tutarlılık), `examples.ts` |

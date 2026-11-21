@@ -3,7 +3,7 @@ import { closeHistory } from "@tiptap/pm/history";
 import { Plugin, PluginKey, type EditorState, type Transaction } from "@tiptap/pm/state";
 import { Mapping, ReplaceStep, type StepMap } from "@tiptap/pm/transform";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Autr, Fix, FixKind, FixScope, FlagReason } from "autr";
+import type { Tdkai, Fix, FixKind, FixScope, FlagReason } from "tdkai";
 import { FIX_KIND_META } from "./settings";
 
 export interface AppliedFix {
@@ -51,7 +51,7 @@ export interface BatchProgress {
 }
 
 export interface AutocorrectRuntime {
-  autr: Autr | null;
+  autr: Tdkai | null;
   enabled: boolean;
   activeKinds: readonly FixKind[];
 }
@@ -444,7 +444,7 @@ function splitRangeIntoChunks(
 
 /** Paragraf içindeki düzeltmeleri (gerekirse parça parça) toplar. */
 async function checkParagraph(
-  autr: Autr,
+  autr: Tdkai,
   paragraph: PendingParagraphCheck,
   kinds: readonly FixKind[],
   shouldContinue: () => boolean,
@@ -566,7 +566,7 @@ export function applyFlagSuggestion(view: EditorView, id: string, replacement: s
  * Belgenin bütün paragraflarındaki şüpheli kelimeleri işaretler; metne dokunmaz. Belge açılınca ve sözlük hazır
  * olunca çağrılır. Bu sırada belge değişirse durur (yazılan paragrafı yeniden tarama zaten işaretler).
  */
-export async function flagAllText(view: EditorView, autr: Autr, kinds: readonly FixKind[]): Promise<void> {
+export async function flagAllText(view: EditorView, autr: Tdkai, kinds: readonly FixKind[]): Promise<void> {
   const startDoc = view.state.doc;
   const blocks: Array<{ start: number; text: string }> = [];
   startDoc.descendants((node, pos) => {

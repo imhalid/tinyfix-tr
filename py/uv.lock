@@ -8,7 +8,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "autr-data"
+name = "tdkai-data"
 version = "0.0.1"
 source = { virtual = "." }
 dependencies = [

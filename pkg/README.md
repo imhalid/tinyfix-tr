@@ -1,11 +1,11 @@
-# autr
+# tdkai
 
 Tarayıcıda ve Node.js üzerinde **internetsiz** çalışan Türkçe otomatik düzeltme paketi. Sözlük ve kurallar cihazda çalışır; isteğe bağlı bağlam modeli (`context: true`) yalnızca istendiğinde dinamik `import()` ile `onnxruntime-web` yükler.
 
 ## Kurulum
 
 ```bash
-npm install autr
+npm install tdkai
 ```
 
 Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, `known.tsv`, isteğe bağlı `manifest.json`) ve bağlam modelini kullanacaksanız `context.onnx` dosyasını uygulamanızda sunacağınız bir klasöre (örneğin `public/models/`) yerleştirin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
@@ -13,9 +13,9 @@ Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, 
 ## Hızlı Başlangıç
 
 ```ts
-import { loadAutr } from "autr";
+import { loadTdkai } from "tdkai";
 
-const autr = await loadAutr({
+const tdkai = await loadTdkai({
   baseUrl: "/models/",
   worker: true,
   context: true, // isteğe bağlı: context.onnx + onnxruntime-web
@@ -28,13 +28,13 @@ const autr = await loadAutr({
   },
 });
 
-const duzeltilmis = await autr.fix("Bugün cok yorgunum, Ankaraya herkez geldi.");
+const duzeltilmis = await tdkai.fix("Bugün cok yorgunum, Ankaraya herkez geldi.");
 // "Bugün çok yorgunum, Ankara'ya herkes geldi."
 
-await autr.dispose();
+await tdkai.dispose();
 ```
 
-`context: false` (varsayılan) iken `context.onnx` indirilmez ve `onnxruntime-web` hiç yüklenmez. `context: true` verildiğinde `context.onnx` bulunamazsa veya ONNX oturumu açılamazsa paket uyarı verir (`console.warn` ve `onWarning`) ve bağlam modeli olmadan sözlük kurallarıyla çalışmaya devam eder (`autr.hasContext === false`).
+`context: false` (varsayılan) iken `context.onnx` indirilmez ve `onnxruntime-web` hiç yüklenmez. `context: true` verildiğinde `context.onnx` bulunamazsa veya ONNX oturumu açılamazsa paket uyarı verir (`console.warn` ve `onWarning`) ve bağlam modeli olmadan sözlük kurallarıyla çalışmaya devam eder (`tdkai.hasContext === false`).
 
 ## Düzeltmeleri İnceleme ve Uygulama
 
@@ -42,7 +42,7 @@ await autr.dispose();
 
 ```ts
 const metin = "Birşey söylemek istiyorum ama hiç bir fikrim yok.";
-const duzeltmeler = await autr.check(metin);
+const duzeltmeler = await tdkai.check(metin);
 /*
 [
   { from: 0, to: 6, original: "Birşey", replacement: "Bir şey", kind: "bitisik-ayri", confidence: 0.986 },
@@ -50,7 +50,7 @@ const duzeltmeler = await autr.check(metin);
 ]
 */
 
-const sonuc = autr.apply(metin, duzeltmeler);
+const sonuc = tdkai.apply(metin, duzeltmeler);
 ```
 
 ## Yazarken Düzeltme (`range`)
@@ -59,7 +59,7 @@ Kullanıcı bir kelimeyi bitirdiğinde (boşluk veya noktalama girildiğinde) t�
 
 ```ts
 const paragraf = "Sen geldinmi?";
-const fixes = await autr.check(paragraf, {
+const fixes = await tdkai.check(paragraf, {
   range: [4, 12], // yalnızca "geldinmi" aralığı; "?" bağlam olarak okunur
   kinds: ["turkce-karakter", "kesme", "bitisik-ayri", "yazim"],
 });
@@ -68,7 +68,7 @@ const fixes = await autr.check(paragraf, {
 Kullanıcı bir düzeltmeyi geri aldığında aynı kelimeyi tekrar değiştirmemek için `ignore` çağırın:
 
 ```ts
-autr.ignore(fix.original);
+tdkai.ignore(fix.original);
 ```
 
 ## Düzeltme Türleri (`FixKind`)
@@ -84,16 +84,16 @@ autr.ignore(fix.original);
 
 | Çağrı | Açıklama |
 |---|---|
-| `loadAutr(options?)` | Sözlük (ve istenirse `context.onnx`) dosyalarını indirir ve bir `Autr` örneği döndürür. |
-| `createAutr(data, options?)` | Bellekteki ham TSV verisinden (isteğe bağlı `contextModel` ile) eşzamanlı olarak `Autr` oluşturur. |
-| `autr.hasContext` | Bağlam modelinin etkin olarak yüklenip yüklenmediğini belirtir. |
-| `autr.check(text, options?)` | Çakışmayan, sıralı `Fix[]` listesi döndürür. |
-| `autr.apply(text, fixes)` | Düzeltmeleri metne uygular; konum veya metin uyuşmazsa hata fırlatır. |
-| `autr.fix(text, options?)` | `check` ve `apply` adımlarını birlikte çalıştırır. |
-| `autr.ignore(word)` | Belirtilen kelime veya ifadeyi bir daha değiştirmez (Türkçe büyük/küçük harf duyarsız). |
-| `autr.unignore(word)` | Yoksayılan kelimeyi yeniden denetime açar. |
-| `autr.setMode(mode)` | Hassasiyet kipini (`"careful"` veya `"balanced"`) günceller. |
-| `autr.dispose()` | Kaynakları, varsa ONNX oturumunu ve Web Worker'ı sonlandırır. |
+| `loadTdkai(options?)` | Sözlük (ve istenirse `context.onnx`) dosyalarını indirir ve bir `Tdkai` örneği döndürür. |
+| `createTdkai(data, options?)` | Bellekteki ham TSV verisinden (isteğe bağlı `contextModel` ile) eşzamanlı olarak `Tdkai` oluşturur. |
+| `tdkai.hasContext` | Bağlam modelinin etkin olarak yüklenip yüklenmediğini belirtir. |
+| `tdkai.check(text, options?)` | Çakışmayan, sıralı `Fix[]` listesi döndürür. |
+| `tdkai.apply(text, fixes)` | Düzeltmeleri metne uygular; konum veya metin uyuşmazsa hata fırlatır. |
+| `tdkai.fix(text, options?)` | `check` ve `apply` adımlarını birlikte çalıştırır. |
+| `tdkai.ignore(word)` | Belirtilen kelime veya ifadeyi bir daha değiştirmez (Türkçe büyük/küçük harf duyarsız). |
+| `tdkai.unignore(word)` | Yoksayılan kelimeyi yeniden denetime açar. |
+| `tdkai.setMode(mode)` | Hassasiyet kipini (`"careful"` veya `"balanced"`) günceller. |
+| `tdkai.dispose()` | Kaynakları, varsa ONNX oturumunu ve Web Worker'ı sonlandırır. |
 
 ### `LoadOptions`
 
@@ -122,12 +122,12 @@ autr.ignore(fix.original);
 | `kinds` | Tüm türler | Yalnızca belirtilen `FixKind` türlerini döndürür. |
 | `mode` | Örnek kipi | Yalnızca bu çağrı için geçici kip (`"careful"` / `"balanced"`). |
 
-### Web Worker Girişi (`autr/worker`)
+### Web Worker Girişi (`tdkai/worker`)
 
-`loadAutr({ worker: true })` modern paketleyicilerle (Vite, webpack) paketin kendi worker dosyasını otomatik başlatır. Worker dosyasını kendiniz bağlamak isterseniz `autr/worker` girişini doğrudan kullanabilirsiniz:
+`loadTdkai({ worker: true })` modern paketleyicilerle (Vite, webpack) paketin kendi worker dosyasını otomatik başlatır. Worker dosyasını kendiniz bağlamak isterseniz `tdkai/worker` girişini doğrudan kullanabilirsiniz:
 
 ```ts
-const worker = new Worker(new URL("autr/worker", import.meta.url), { type: "module" });
+const worker = new Worker(new URL("tdkai/worker", import.meta.url), { type: "module" });
 ```
 
 ## Geliştirme

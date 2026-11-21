@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { ALL_FIX_KINDS, applyFixes, createAutr, type Fix, type RawData } from "../src/index.ts";
+import { ALL_FIX_KINDS, applyFixes, createTdkai, type Fix, type RawData } from "../src/index.ts";
 
 /** Testler için elle yazılmış küçük sözlük. */
 const TEST_DATA: RawData = {
@@ -55,7 +55,7 @@ const TEST_DATA: RawData = {
 
 describe("autr çekirdek API", () => {
   it("dört hata türünü de doğru biçimde yakalar ve uygular", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     try {
       const text =
         "Bugün cok yorgunum. Yarın Ankaraya gidiyorum. Birşey yok ama hiç bir fikrim yok. Herkez geldi, malesef yapabiliur miyiz bunu? Sen geldinmi? Ev de kaldım.";
@@ -113,7 +113,7 @@ describe("autr çekirdek API", () => {
   });
 
   it("kinds seçeneği ile yalnızca istenen türleri döndürür", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     try {
       const text = "Bugün cok yorgunum, Ankaraya birşey ve herkez geldi.";
 
@@ -143,7 +143,7 @@ describe("autr çekirdek API", () => {
   });
 
   it("range yalnızca ilgili aralığı kontrol eder ama bağlamı tüm metinden okur", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     try {
       // 1) İkinci cümledeki kelime aralığı, ilk cümledeki hatayı döndürmez
       const sentence = "Bugün cok yorgunum. Yarın Ankaraya gidiyorum.";
@@ -186,8 +186,8 @@ describe("autr çekirdek API", () => {
   });
 
   it("careful ve balanced kipleri arasındaki eşik farkını uygular", async () => {
-    const careful = createAutr(TEST_DATA, { mode: "careful" });
-    const balanced = createAutr(TEST_DATA, { mode: "balanced" });
+    const careful = createTdkai(TEST_DATA, { mode: "careful" });
+    const balanced = createTdkai(TEST_DATA, { mode: "balanced" });
     try {
       // "soz" (5) -> "söz" (80): careful eşiğinin altında, balanced eşiğinin üstünde
       assert.equal(await careful.fix("soz"), "soz");
@@ -206,7 +206,7 @@ describe("autr çekirdek API", () => {
   });
 
   it("ignore ve unignore Türkçe büyük/küçük harf duyarsız çalışır", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     try {
       autr.ignore("Herkez");
       assert.equal(await autr.fix("Herkez ve herkez geldi."), "Herkez ve herkez geldi.");
@@ -219,7 +219,7 @@ describe("autr çekirdek API", () => {
   });
 
   it("satır içi ve blok kod parçalarına dokunmaz", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     try {
       const text = "Bugün cok iyiyim ama `cok herkez` ve\n```\ncok herkez\n```\ndokunulmaz.";
       const fixes = await autr.check(text);
@@ -252,7 +252,7 @@ describe("autr çekirdek API", () => {
   });
 
   it("dispose sonrası kullanım hata fırlatır", async () => {
-    const autr = createAutr(TEST_DATA);
+    const autr = createTdkai(TEST_DATA);
     await autr.dispose();
     await assert.rejects(() => autr.check("cok"));
   });

@@ -1,7 +1,7 @@
 import { DEFAULT_BASE_URL, resolveBaseUrl } from "./data.ts";
 import { applyFixes } from "./engine.ts";
 import type { WorkerRequest, WorkerResponse } from "./protocol.ts";
-import type { Autr, CheckOptions, Fix, InspectResult, LoadOptions, Mode } from "./types.ts";
+import type { Tdkai, CheckOptions, Fix, InspectResult, LoadOptions, Mode } from "./types.ts";
 
 interface PendingRequest {
   resolve: (value: unknown) => void;
@@ -12,13 +12,13 @@ function createDefaultWorker(): Worker {
   // Derlenmiş çıktıdaki `worker.js` dosyasını hedefler (Vite ve webpack bunu ayrı chunk olarak paketler).
   return new Worker(new URL("./worker.js", import.meta.url), {
     type: "module",
-    name: "autr",
+    name: "tdkai",
   });
 }
 
 /** Sözlüğü, bağlam modelini ve düzelticiyi ayrı bir Web Worker içinde başlatır. */
-export function loadAutrInWorker(options: LoadOptions): Promise<Autr> {
-  return new Promise<Autr>((resolveLoad, rejectLoad) => {
+export function loadTdkaiInWorker(options: LoadOptions): Promise<Tdkai> {
+  return new Promise<Tdkai>((resolveLoad, rejectLoad) => {
     if (options.signal?.aborted) {
       rejectLoad(new Error("autr: Yükleme iptal edildi."));
       return;
@@ -73,7 +73,7 @@ export function loadAutrInWorker(options: LoadOptions): Promise<Autr> {
       }
     };
 
-    const autr: Autr = {
+    const autr: Tdkai = {
       get hasContext(): boolean {
         return hasContext;
       },

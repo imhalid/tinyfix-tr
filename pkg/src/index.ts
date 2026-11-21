@@ -16,10 +16,10 @@ import {
   parseRawData,
   resolveBaseUrl,
 } from "./data.ts";
-import { AutrEngine, BALANCED, CAREFUL, applyFixes, mapCorrectionKind, marginToConfidence } from "./engine.ts";
+import { TdkaiEngine, BALANCED, CAREFUL, applyFixes, mapCorrectionKind, marginToConfidence } from "./engine.ts";
 import { ALL_FIX_KINDS, DEFAULT_FIX_KINDS } from "./types.ts";
 import type {
-  Autr,
+  Tdkai,
   BinaryData,
   CheckOptions,
   ContextModelFileName,
@@ -39,7 +39,7 @@ import type {
   RawData,
   WarningCallback,
 } from "./types.ts";
-import { loadAutrInWorker } from "./workerClient.ts";
+import { loadTdkaiInWorker } from "./workerClient.ts";
 
 export {
   ALL_FIX_KINDS,
@@ -68,7 +68,7 @@ export {
 };
 
 export type {
-  Autr,
+  Tdkai,
   BinaryData,
   CheckOptions,
   ContextModelFileName,
@@ -103,8 +103,8 @@ export interface CreateOptions {
   contextModel?: ContextModel | RunModel;
 }
 
-function wrapEngine(engine: AutrEngine): Autr {
-  const autr: Autr = {
+function wrapEngine(engine: TdkaiEngine): Tdkai {
+  const autr: Tdkai = {
     get hasContext(): boolean {
       return engine.hasContext;
     },
@@ -124,10 +124,10 @@ function wrapEngine(engine: AutrEngine): Autr {
 }
 
 /**
- * Bellekteki ikili veya ham TSV sözlük verisinden eşzamanlı olarak bir `Autr` örneği oluşturur.
+ * Bellekteki ikili veya ham TSV sözlük verisinden eşzamanlı olarak bir `Tdkai` örneği oluşturur.
  * Ağ isteği gerektirmeyen testler veya önceden yüklenmiş veriler için kullanışlıdır.
  */
-export function createAutr(data: RawData | BinaryData, options: CreateOptions = {}): Autr {
+export function createTdkai(data: RawData | BinaryData, options: CreateOptions = {}): Tdkai {
   const lexicon = isBinaryData(data)
     ? Lexicon.fromBinary(data.lexicon)
     : Lexicon.fromTsv(data.unigrams, data.bigrams, options.minCount ?? 1, options.minPair ?? 1);
@@ -143,7 +143,7 @@ export function createAutr(data: RawData | BinaryData, options: CreateOptions = 
     }
   }
   const contextSession = options.contextModel ? wrapContextModel(options.contextModel) : null;
-  const engine = new AutrEngine(
+  const engine = new TdkaiEngine(
     { lexicon, known, morphology, contextSession },
     options.mode ?? "careful",
     options.ignored,
@@ -156,9 +156,9 @@ export function createAutr(data: RawData | BinaryData, options: CreateOptions = 
  * Sözlük ve biçimbilim dosyalarını (ve `context: true` ise `context.onnx` bağlam modelini) indirip Türkçe otomatik düzelticiyi hazırlar.
  * `worker: true` verildiğinde ve ortam desteklediğinde Web Worker içinde çalışır.
  */
-export async function loadAutr(options: LoadOptions = {}): Promise<Autr> {
+export async function loadTdkai(options: LoadOptions = {}): Promise<Tdkai> {
   if (options.worker && (options.createWorker || typeof Worker !== "undefined")) {
-    return loadAutrInWorker(options);
+    return loadTdkaiInWorker(options);
   }
 
   const loaded = await loadData({
@@ -182,6 +182,6 @@ export async function loadAutr(options: LoadOptions = {}): Promise<Autr> {
     yieldToMain: typeof document !== "undefined",
   });
 
-  const engine = new AutrEngine(loaded, options.mode ?? "careful", options.ignored, loaded.contextSession);
+  const engine = new TdkaiEngine(loaded, options.mode ?? "careful", options.ignored, loaded.contextSession);
   return wrapEngine(engine);
 }
