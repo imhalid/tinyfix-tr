@@ -67,7 +67,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
             checked={props.settings.contextModel}
             onChange={props.onToggleContextModel}
             label="Bağlam modeli"
-            description="«bende / ben de», «oldu / öldü» gibi bağlama bağlı seçimleri yerel modelle çözer."
+            description="Yazmaya ara verince cümleyi baştan okur: «hber» → «haber», «ben de», «öldü» gibi kararları anlamına göre verir, gerekirse önceki kelimeleri de düzeltir."
           />
           <Show when={props.settings.contextModel && props.contextWarning}>
             <p class="settings-note">Bağlam modeli şu an yüklenemedi; sözlük kurallarıyla devam ediliyor.</p>

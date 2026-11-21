@@ -1015,6 +1015,17 @@ export function App() {
               onBatchApplied={(fixes) => {
                 setLastActivity({ text: `${fixes.length} düzeltme uygulandı`, showUndoHint: true });
               }}
+              onSettled={(fixes) => {
+                const first = fixes[0];
+                if (!first) return;
+                setLastActivity({
+                  text:
+                    fixes.length === 1
+                      ? `Paragraf tarandı: «${first.original}» → «${first.replacement}»`
+                      : `Paragraf tarandı: ${fixes.length} kelime değişti`,
+                  showUndoHint: true,
+                });
+              }}
               onFixClick={(fix: AppliedFix, element: HTMLElement) => setOpenFix({ fix, anchor: element })}
               onUndo={(fix: AppliedFix) => {
                 setLastActivity({ text: `«${fix.original}» geri alındı`, showUndoHint: false });

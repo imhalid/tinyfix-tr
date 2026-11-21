@@ -117,6 +117,8 @@ export interface Settings {
    * from "arkadaşlarım"), so long correct forms aren't lost for being rare as a whole; 0 turns it off.
    */
   typoStemShare: number;
+  /** Minimum count for an adjacent-swap fix of an unseen-looking 3-letter word ("bka" -> "bak"). */
+  shortSwapMinCount: number;
   /** Real words seen at least this often are judged by the context model when one is loaded. */
   contextWord: number;
   /** A count-based fix is dropped when the context model prefers what was typed by at least this much. */
@@ -162,6 +164,7 @@ export const CAREFUL: Settings = {
   typoFarExtra: 3,
   typoVowelSwap: 1.2,
   typoStemShare: 0,
+  shortSwapMinCount: 300,
   contextWord: 5,
   contextVeto: 6.0,
   contextTypoOverride: 1.2,
@@ -1576,8 +1579,8 @@ export class Corrector {
       if (cand !== word && (edits.get(cand) ?? Infinity) > slip) edits.set(cand, slip);
     };
     // Adjacent swaps ("bne" -> "ben")
-    put(word[1]! + word[0]! + word[2]!, 0.7);
-    put(word[0]! + word[2]! + word[1]!, 0.7);
+    const swaps = new Set([word[1]! + word[0]! + word[2]!, word[0]! + word[2]! + word[1]!]);
+    for (const swap of swaps) put(swap, 0.7);
     // Single letter insertions (doubled consonant like "ane" -> "anne" is cheapest; leading insert heavily penalized)
     for (let i = 0; i <= word.length; i++) {
       const before = word.slice(0, i);
@@ -1606,7 +1609,10 @@ export class Corrector {
     const base = Math.min(typedScore, log(typedLowerCount));
     for (const [cand, slip] of edits) {
       const count = this.lexicon.exactCount(cand);
-      if (count < 1500 || count < typedCount * 50) continue;
+      // A swap is the commonest 3-letter slip ("bka" -> "bak"): it needs less frequency evidence than an insertion.
+      const minCount = swaps.has(cand) ? Math.min(1500, this.settings.shortSwapMinCount) : 1500;
+      const ratio = swaps.has(cand) && this.settings.shortSwapMinCount < 1500 ? 20 : 50;
+      if (count < minCount || count < typedCount * ratio) continue;
       if (this.lexicon.capitalShare(cand) >= 0.5 || !this.isRealWord(cand)) continue;
       const pairBonus =
         (context.prevWord && this.lexicon.pair(context.prevWord, cand) > 0) ||

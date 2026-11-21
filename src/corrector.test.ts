@@ -426,6 +426,7 @@ const extraFixes: [string, string][] = [
   // Missed letters and swapped vowels (measured on synthetic chat data, half A tuned / half B checked).
   ["Mesela burada nuler oluyor?", "Mesela burada neler oluyor?"],
   ["Mesela brada neler oluyor?", "Mesela burada neler oluyor?"],
+  ["Şuna bir bka.", "Şuna bir bak."],
   ["Bu aralar çok çalşıyorum.", "Bu aralar çok çalışıyorum."],
   // Was kept only to avoid "görürüz" (a dropped "ş"); a Turkish letter is now kept, so the missed "ü" is restored.
   ["Yarın akşam görüşrüz.", "Yarın akşam görüşürüz."],

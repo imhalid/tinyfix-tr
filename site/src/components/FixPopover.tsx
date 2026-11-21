@@ -1,6 +1,7 @@
 import { Show, createEffect, onCleanup } from "solid-js";
 import { For } from "solid-js";
 import type { FixKind, FixScope } from "autr";
+import type { WordStep } from "../autocorrectExtension";
 import { FIX_KIND_META } from "../settings";
 
 /** Penceredeki değişiklik: uygulanmış bir düzeltme ya da analizden gelen bir öneri. */
@@ -9,7 +10,18 @@ export interface PopoverFix {
   replacement: string;
   kind: FixKind;
   scope: FixScope;
+  /** Uygulanmış düzeltmede kelimenin geçmişi (yazılan biçimden bugüne). */
+  history?: readonly WordStep[];
 }
+
+const STEP_LABEL: Record<WordStep["by"], string> = {
+  typed: "Yazdığın",
+  word: "Kelime bitince",
+  rescan: "Paragraf yeniden tarandı",
+  context: "Bağlama göre",
+};
+
+const timeFormat = new Intl.DateTimeFormat("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
 export interface PopoverAction {
   label: string;
@@ -120,6 +132,26 @@ export function FixPopover(props: FixPopoverProps) {
               <span class="fix-pop-replacement">{fix().replacement}</span>
             </p>
             <p class="fix-pop-detail">{props.note ?? SCOPE_TEXT[fix().scope].detail}</p>
+            <Show when={(fix().history?.length ?? 0) >= 2}>
+              <div class="fix-pop-history">
+                <p class="fix-pop-history-title">Kelimenin geçmişi</p>
+                <ol>
+                  <For each={fix().history ?? []}>
+                    {(step, index) => (
+                      <li data-current={index() === (fix().history?.length ?? 0) - 1 ? "" : undefined}>
+                        <span class="fix-pop-step-text">{step.text}</span>
+                        <span class="fix-pop-step-by">{STEP_LABEL[step.by]}</span>
+                        <Show when={step.by !== "typed"}>
+                          <time class="fix-pop-step-time" datetime={new Date(step.at).toISOString()}>
+                            {timeFormat.format(step.at)}
+                          </time>
+                        </Show>
+                      </li>
+                    )}
+                  </For>
+                </ol>
+              </div>
+            </Show>
             <div class="fix-pop-actions">
               <For each={props.actions}>
                 {(action) => (

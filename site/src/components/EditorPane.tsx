@@ -20,6 +20,7 @@ export interface EditorPaneProps {
   onController: (controller: EditorController | null) => void;
   onApplied: (fix: AppliedFix) => void;
   onBatchApplied: (fixes: readonly AppliedFix[]) => void;
+  onSettled: (fixes: readonly AppliedFix[]) => void;
   onUndo: (fix: AppliedFix) => void;
   onFixClick: (fix: AppliedFix, element: HTMLElement) => void;
   onBatchUndo: (fixes: readonly AppliedFix[]) => void;
@@ -52,6 +53,7 @@ export function EditorPane(props: EditorPaneProps) {
         onSelectionChange: () => props.onSelectionChange(),
         onApplied: (fix) => props.onApplied(fix),
         onBatchApplied: (fixes) => props.onBatchApplied(fixes),
+        onSettled: (fixes) => props.onSettled(fixes),
         onUndo: (fix) => props.onUndo(fix),
         onFixClick: (fix, element) => props.onFixClick(fix, element),
         onBatchUndo: (fixes) => props.onBatchUndo(fixes),

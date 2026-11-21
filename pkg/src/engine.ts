@@ -209,6 +209,7 @@ export class AutrEngine {
         kind,
         confidence: marginToConfidence(correction.margin),
         scope: correctionScope(correction),
+        ...(correction.kind === "context" ? { byContext: true } : {}),
       });
       lastEnd = correction.end;
     }
@@ -255,7 +256,16 @@ export class AutrEngine {
       let corrections: Correction[];
       try {
         corrections = activeSession
-          ? (await this.corrector.correctAsync(text, activeSession.model, { autoMarked: options.autoMarked })).corrections
+          ? (
+              await this.corrector.correctAsync(text, activeSession.model, {
+                autoMarked: options.autoMarked,
+                priorTypoOriginals: options.priorTypoOriginals?.map(({ from, to, original }) => ({
+                  start: from,
+                  end: to,
+                  original,
+                })),
+              })
+            ).corrections
           : this.corrector.correct(text, { autoMarked: options.autoMarked }).corrections;
       } finally {
         this.corrector.settings = SETTINGS_BY_MODE[this.mode];

@@ -15,6 +15,18 @@ export interface AppliedFix {
   kind: FixKind;
   /** Karar yalnızca kelimeye mi ("kelime"), çevresine de mi ("baglam") dayanıyor; alt çizginin stili buna göre. */
   scope: FixScope;
+  /** Paragrafın yeniden taranmasıyla yapıldı (kelime bittiğinde değil, paragrafın tamamına bakarak). */
+  settled?: boolean;
+  /** Kelimenin geçmişi: kullanıcının yazdığı biçimden bugünkü biçime kadar her adım. */
+  history: readonly WordStep[];
+}
+
+/** Bir kelimenin geçirdiği tek değişiklik. */
+export interface WordStep {
+  text: string;
+  /** "typed": kullanıcı yazdı; "word": kelime bitince; "rescan": paragraf yeniden tarandı; "context": bağlam modeli. */
+  by: "typed" | "word" | "rescan" | "context";
+  at: number;
 }
 
 export interface BatchProgress {
@@ -39,6 +51,12 @@ export interface AutocorrectExtensionOptions {
   onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
   /** Alt çizginin ne kadar sonra kaybolacağı (ms). Varsayılan: kaybolmaz. */
   highlightDurationMs?: number;
+  /** Yazmaya bu kadar ara verilince (ms) paragraf baştan yeniden taranır. */
+  settleDelayMs?: number;
+  /** Yazma sürerken paragraf en geç bu aralıkla (ms) yeniden taranır. */
+  settleIntervalMs?: number;
+  /** Arka plan bağlam geçişi kelimeleri değiştirdi. */
+  onSettled?: (fixes: readonly AppliedFix[]) => void;
 }
 
 interface WordSpan {
@@ -76,9 +94,17 @@ interface CollectedFix {
   fix: Fix;
 }
 
+/** Kullanıcının geri aldığı düzeltmenin yerinde duran yazdığı biçim: arka plan geçişi buna bir daha dokunmaz. */
+interface RejectedSpan {
+  from: number;
+  to: number;
+  text: string;
+}
+
 type AutocorrectMeta =
-  | { type: "add"; records: readonly AppliedFix[]; finishJobId?: number }
-  | { type: "remove"; ids: readonly string[] }
+  | { type: "add"; records: readonly AppliedFix[]; finishJobId?: number; endSettle?: boolean }
+  | { type: "settle-track"; on: boolean }
+  | { type: "remove"; ids: readonly string[]; reject?: readonly RejectedSpan[] }
   | { type: "finish-job"; jobId: number }
   | { type: "check-waiting" }
   | { type: "check-all" }
@@ -92,6 +118,13 @@ interface PluginState {
   undoneByHistory: AppliedFix[];
   /** Sözlük yüklenirken yazılan aralıklar: sözlük hazır olunca denetlenir. */
   waiting: Array<readonly [number, number]>;
+  /** Arka plan geçişinin bir kez değiştirdiği aralıklar: aynı kelime ikinci kez değiştirilmez. */
+  settledRanges: Array<readonly [number, number]>;
+  rejected: RejectedSpan[];
+  /** Kullanıcının kendi düzenlemelerinde artar: arka plan geçişinin zamanlayıcısı buna göre yeniden kurulur. */
+  editStamp: number;
+  /** Yeniden tarama sürerken belgede olan değişiklikler: sonuçlar bunlarla bugünkü konumlara taşınır. */
+  settleMaps: readonly StepMap[] | null;
 }
 
 const AUTOCORRECT_KEY = new PluginKey<PluginState>("autrAutocorrect");
@@ -106,6 +139,15 @@ const WORD_BOUNDARY = /^[\s.,;:!?()[\]"{}“”»«…—–\-/]$/;
 const LONG_PASTE_CHARS = 5000;
 /** Tek bir paragraf bu sınırı aşarsa cümle/kelime sınırlarından bölünerek işlenir. */
 const MAX_PARAGRAPH_CHUNK = 2000;
+/** Yeniden tarama yalnızca imlecin bulunduğu paragrafa bakar; bundan uzun paragraflar atlanır. */
+const SETTLE_MAX_PARAGRAPH = 3000;
+const SETTLE_DEFAULT_DELAY_MS = 900;
+const SETTLE_DEFAULT_INTERVAL_MS = 2500;
+/**
+ * Kelime bittiğinde çekirdeğin yaptığı yazım düzeltmesini arka plan geçişi ancak bağlam modeli çok eminse değiştirir
+ * (margin ≥ 3; güven = 1 / (1 + e^(-margin/2))). Yazma benzetiminde (`bench/typing.ts --settle-add`) kullanılan çıta.
+ */
+const SETTLE_OVERRIDE_CONFIDENCE = 1 / (1 + Math.exp(-3 / 2)) - 0.0005;
 const CHUNK_LEFT_CONTEXT = 120;
 const CHUNK_RIGHT_CONTEXT = 80;
 
@@ -126,7 +168,7 @@ function buildDecorations(doc: EditorState["doc"], records: readonly AppliedFix[
   const decorations = records.map((record) => {
     const kindLabel = FIX_KIND_META[record.kind].label;
     return Decoration.inline(record.from, record.to, {
-      class: "autr-fix",
+      class: record.settled ? "autr-fix autr-fix--settled" : "autr-fix",
       "data-autr-fix-id": record.id,
       "data-autr-scope": record.scope,
       "aria-description": `${kindLabel}: «${record.original}» yerine «${record.replacement}»`,
@@ -458,7 +500,11 @@ function revertAppliedFix(view: EditorView, record: AppliedFix): boolean {
   view.dispatch(closeHistory(view.state.tr));
   let tr = view.state.tr.insertText(record.original, record.from, record.to);
   tr = closeHistory(tr);
-  tr.setMeta(AUTOCORRECT_META, { type: "remove", ids: [record.id] } satisfies AutocorrectMeta);
+  tr.setMeta(AUTOCORRECT_META, {
+    type: "remove",
+    ids: [record.id],
+    reject: [{ from: record.from, to: record.from + record.original.length, text: record.original }],
+  } satisfies AutocorrectMeta);
   view.dispatch(tr);
   view.focus();
   return true;
@@ -491,6 +537,10 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               activeJobMaps: [],
               undoneByHistory: [],
               waiting: [],
+              settledRanges: [],
+              rejected: [],
+              editStamp: 0,
+              settleMaps: null,
             };
           },
 
@@ -587,6 +637,40 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               activeJobMaps.push({ id: pendingBatch.id, maps: [] });
             }
 
+            // Arka plan geçişinin dokunduğu ve kullanıcının geri aldığı yerler, metin değişmedikçe hatırlanır.
+            let settledRanges: Array<readonly [number, number]> = [];
+            let rejected: RejectedSpan[] = [];
+            if (meta?.type !== "clear") {
+              const size = newState.doc.content.size;
+              for (const [from, to] of prev.settledRanges) {
+                const mappedFrom = tr.mapping.map(from, 1);
+                const mappedTo = tr.mapping.map(to, -1);
+                if (mappedTo > mappedFrom && mappedTo <= size) settledRanges.push([mappedFrom, mappedTo]);
+              }
+              if (meta?.type === "add") {
+                for (const record of meta.records) {
+                  if (record.settled) settledRanges.push([record.from, record.to]);
+                }
+              }
+              const keepRejected = (span: RejectedSpan, from: number, to: number) => {
+                if (from < 0 || to > size || to <= from) return;
+                if (newState.doc.textBetween(from, to, "\n", "\n") !== span.text) return;
+                rejected.push({ from, to, text: span.text });
+              };
+              for (const span of prev.rejected) {
+                keepRejected(span, tr.mapping.map(span.from, 1), tr.mapping.map(span.to, -1));
+              }
+              if (meta?.type === "remove" && meta.reject) {
+                for (const span of meta.reject) keepRejected(span, span.from, span.to);
+              }
+              for (const record of undoneByHistory) {
+                const from = tr.mapping.map(record.from, -1);
+                keepRejected({ from, to: from + record.original.length, text: record.original }, from, from + record.original.length);
+              }
+              if (rejected.length > 200) rejected = rejected.slice(-200);
+              if (settledRanges.length > 500) settledRanges = settledRanges.slice(-500);
+            }
+
             return {
               records,
               decorations: buildDecorations(newState.doc, records),
@@ -594,6 +678,22 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
               activeJobMaps,
               undoneByHistory,
               waiting,
+              settledRanges,
+              rejected,
+              editStamp:
+                tr.docChanged && !meta && !isHistory && !tr.getMeta("autr-review-meta")
+                  ? prev.editStamp + 1
+                  : prev.editStamp,
+              settleMaps:
+                meta?.type === "settle-track"
+                  ? meta.on
+                    ? []
+                    : null
+                  : meta?.type === "clear" || (meta?.type === "add" && meta.endSettle)
+                    ? null
+                    : prev.settleMaps && tr.docChanged
+                      ? [...prev.settleMaps, ...tr.mapping.maps]
+                      : prev.settleMaps,
             };
           },
         },
@@ -767,6 +867,10 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
                   replacement: item.fix.replacement,
                   kind: item.fix.kind,
                   scope: item.fix.scope,
+                  history: [
+                    { text: item.fix.original, by: "typed", at: Date.now() },
+                    { text: item.fix.replacement, by: "word", at: Date.now() },
+                  ],
                 });
                 delta += item.fix.replacement.length - (item.absTo - item.absFrom);
               }
@@ -804,11 +908,183 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
             }
           };
 
+          // Paragrafı yeniden tarama: yazarken en geç birkaç saniyede bir, yazmaya ara verince de hemen, imlecin
+          // bulunduğu paragraf baştan denetlenir. Kelime bittiğinde verilmiş kararı yalnızca bağlam modeli çok eminse
+          // değiştirir; her kelimeye en fazla bir kez dokunur, kullanıcının geri aldığı düzeltmelere hiç dokunmaz.
+          const settleDelayMs = options.settleDelayMs ?? SETTLE_DEFAULT_DELAY_MS;
+          const settleIntervalMs = options.settleIntervalMs ?? SETTLE_DEFAULT_INTERVAL_MS;
+          let pauseTimer: ReturnType<typeof setTimeout> | null = null;
+          let intervalTimer: ReturnType<typeof setTimeout> | null = null;
+          let settleRunning = false;
+          let settleAgain = false;
+          const settledKeys = new Set<string>();
+
+          const clearSettleTimers = () => {
+            if (pauseTimer !== null) clearTimeout(pauseTimer);
+            if (intervalTimer !== null) clearTimeout(intervalTimer);
+            pauseTimer = null;
+            intervalTimer = null;
+          };
+
+          const fireSettle = (view: EditorView) => {
+            clearSettleTimers();
+            void runSettle(view);
+          };
+
+          /** Her düzenlemede: ara verilince tara; yazma sürüyorsa da en geç `settleIntervalMs` sonra tara. */
+          const scheduleSettle = (view: EditorView, delay = settleDelayMs) => {
+            if (destroyed) return;
+            if (pauseTimer !== null) clearTimeout(pauseTimer);
+            pauseTimer = setTimeout(() => fireSettle(view), delay);
+            intervalTimer ??= setTimeout(() => fireSettle(view), Math.max(delay, settleIntervalMs));
+          };
+
+          const currentBlock = (state: EditorState) => {
+            const { $from } = state.selection;
+            const node = $from.parent;
+            if (!node.isTextblock || node.type.spec.code) return null;
+            const start = $from.start();
+            return { start, end: start + node.content.size, text: node.textBetween(0, node.content.size, "\n", "\n") };
+          };
+
+          const setTracking = (view: EditorView, on: boolean) => {
+            const tr = view.state.tr;
+            tr.setMeta("addToHistory", false);
+            tr.setMeta(AUTOCORRECT_META, { type: "settle-track", on } satisfies AutocorrectMeta);
+            view.dispatch(tr);
+          };
+
+          const runSettle = async (view: EditorView) => {
+            if (destroyed) return;
+            if (settleRunning) {
+              settleAgain = true;
+              return;
+            }
+            const runtime = options.getRuntime();
+            const autr = runtime.autr;
+            if (!runtime.enabled || !autr || runtime.activeKinds.length === 0) return;
+            const startState = view.state;
+            const plugin = AUTOCORRECT_KEY.getState(startState);
+            if (!plugin) return;
+            if (plugin.activeJobMaps.length > 0) {
+              // Kelime sonu denetimi sürüyor; o bitince tekrar denenir.
+              scheduleSettle(view, 250);
+              return;
+            }
+            const block = currentBlock(startState);
+            if (!block || block.text.length > SETTLE_MAX_PARAGRAPH || !TURKISH_LETTER.test(block.text)) return;
+            // İmlecin üzerindeki (yazılmakta olan) kelimeye ve sağındakilere dokunma.
+            let limit = startState.selection.from - block.start;
+            while (limit > 0 && /[\p{L}'’]/u.test(block.text[limit - 1] ?? "")) limit--;
+            if (limit <= 0) return;
+            const key = `${autr.hasContext ? 1 : 0}\u0000${limit}\u0000${block.text}`;
+            if (settledKeys.has(key)) return;
+
+            settleRunning = true;
+            let tracking = false;
+            try {
+              const records = plugin.records.filter((record) => record.from >= block.start && record.to <= block.end);
+              setTracking(view, true);
+              tracking = true;
+              const fixes = await autr.check(block.text, {
+                range: [0, limit],
+                kinds: runtime.activeKinds,
+                autoMarked: records.map((record) => [record.from - block.start, record.to - block.start] as const),
+                priorTypoOriginals: records
+                  .filter((record) => !record.settled && (record.kind === "yazim" || record.kind === "turkce-karakter"))
+                  .map((record) => ({ from: record.from - block.start, to: record.to - block.start, original: record.original })),
+              });
+              if (destroyed) return;
+              if (settledKeys.size > 300) settledKeys.clear();
+              settledKeys.add(key);
+
+              // Tarama sürerken yazılanlar: sonuçlar bugünkü konumlarına taşınır, değişmiş kelimeler atlanır.
+              const state = view.state;
+              const current = AUTOCORRECT_KEY.getState(state);
+              if (!current) return;
+              const mapping = new Mapping([...(current.settleMaps ?? [])]);
+              const { doc, selection } = state;
+              const codeMark = doc.type.schema.marks["code"];
+              const planned: Array<{ from: number; to: number; fix: Fix; replaces?: AppliedFix }> = [];
+              for (const fix of fixes) {
+                if (fix.to > limit) continue;
+                const mappedFrom = mapping.mapResult(block.start + fix.from, 1);
+                const mappedTo = mapping.mapResult(block.start + fix.to, -1);
+                if (mappedFrom.deleted || mappedTo.deleted) continue;
+                const from = mappedFrom.pos;
+                const to = mappedTo.pos;
+                if (to <= from || to > doc.content.size) continue;
+                if (doc.textBetween(from, to, "\n", "\n") !== fix.original) continue;
+                if (selection.from <= to && selection.to >= from) continue;
+                if (codeMark && doc.rangeHasMark(from, to, codeMark)) continue;
+                const overlaps = (spanFrom: number, spanTo: number) => from < spanTo && to > spanFrom;
+                if (current.settledRanges.some(([spanFrom, spanTo]) => overlaps(spanFrom, spanTo))) continue;
+                if (current.rejected.some((span) => overlaps(span.from, span.to))) continue;
+                const hit = current.records.filter((record) => overlaps(record.from, record.to));
+                if (hit.length > 1) continue;
+                const replaces = hit[0];
+                if (replaces) {
+                  // Kelime bittiğinde yapılmış düzeltme: yalnızca bağlam modeli çok eminse ve aynı kelimeyse.
+                  if (replaces.from !== from || replaces.to !== to) continue;
+                  if (!fix.byContext || fix.confidence < SETTLE_OVERRIDE_CONFIDENCE) continue;
+                }
+                planned.push({ from, to, fix, replaces });
+              }
+              if (planned.length === 0) return;
+              planned.sort((a, b) => a.from - b.from);
+
+              view.dispatch(closeHistory(view.state.tr));
+              let tr = view.state.tr;
+              const added: AppliedFix[] = [];
+              const now = Date.now();
+              let delta = 0;
+              let prevTo = -1;
+              for (const item of planned) {
+                if (item.from < prevTo) continue;
+                prevTo = item.to;
+                const from = item.from + delta;
+                tr.insertText(item.fix.replacement, from, item.to + delta);
+                const step: WordStep = { text: item.fix.replacement, by: item.fix.byContext ? "context" : "rescan", at: now };
+                added.push({
+                  id: nextFixId(),
+                  from,
+                  to: from + item.fix.replacement.length,
+                  // Geri alınınca kullanıcının yazdığı biçim gelsin (çekirdeğin ara seçimi değil).
+                  original: item.replaces ? item.replaces.original : item.fix.original,
+                  replacement: item.fix.replacement,
+                  kind: item.fix.kind,
+                  scope: item.fix.scope,
+                  settled: true,
+                  history: item.replaces
+                    ? [...item.replaces.history, step]
+                    : [{ text: item.fix.original, by: "typed", at: now }, step],
+                });
+                delta += item.fix.replacement.length - (item.to - item.from);
+              }
+              tr = closeHistory(tr);
+              tr.setMeta(AUTOCORRECT_META, { type: "add", records: added, endSettle: true } satisfies AutocorrectMeta);
+              tracking = false;
+              view.dispatch(tr);
+              options.onSettled?.(added);
+            } catch {
+              // Yeniden tarama isteğe bağlıdır; hata yazmayı etkilemez.
+            } finally {
+              settleRunning = false;
+              if (tracking && !destroyed) setTracking(view, false);
+              if (settleAgain && !destroyed) {
+                settleAgain = false;
+                scheduleSettle(view, 0);
+              }
+            }
+          };
+
           return {
             update(view, prevState) {
               const current = AUTOCORRECT_KEY.getState(view.state);
               const previous = AUTOCORRECT_KEY.getState(prevState);
               if (!current) return;
+
+              if (current.editStamp !== previous?.editStamp) scheduleSettle(view);
 
               if (current.undoneByHistory.length > 0 && current.undoneByHistory !== previous?.undoneByHistory) {
                 if (current.undoneByHistory.length === 1) {
@@ -829,6 +1105,7 @@ export const AutocorrectExtension = Extension.create<AutocorrectExtensionOptions
 
             destroy() {
               destroyed = true;
+              clearSettleTimers();
               for (const timer of timers) clearTimeout(timer);
               timers.clear();
             },
