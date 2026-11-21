@@ -185,7 +185,8 @@ function detectPendingBatch(
   records: readonly AppliedFix[],
 ): PendingBatch | null {
   if (!tr.docChanged) return null;
-  if (tr.getMeta(AUTOCORRECT_META) || tr.getMeta("history$")) return null;
+  // Analiz önerisinin uygulanması da yazma sayılmaz ("autr-review-meta", review.ts).
+  if (tr.getMeta(AUTOCORRECT_META) || tr.getMeta("history$") || tr.getMeta("autr-review-meta")) return null;
   return batchFromSpans(collectInsertedSpans(tr, newState.doc.content.size), newState, records);
 }
 

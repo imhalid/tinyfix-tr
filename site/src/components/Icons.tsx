@@ -37,6 +37,14 @@ export function PlusIcon() {
   );
 }
 
+export function ImportIcon() {
+  return (
+    <Svg viewBox="0 0 16 16" width={14} height={14}>
+      <path d="M8 2.5v7.5M4.8 7l3.2 3.2L11.2 7M3 12.5h10" />
+    </Svg>
+  );
+}
+
 export function DocIcon() {
   return (
     <Svg viewBox="0 0 16 16" width={14} height={14}>

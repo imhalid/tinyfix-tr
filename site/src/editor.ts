@@ -1,6 +1,5 @@
 import { Editor, type JSONContent } from "@tiptap/core";
 import Placeholder from "@tiptap/extension-placeholder";
-import StarterKit from "@tiptap/starter-kit";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import {
   AutocorrectExtension,
@@ -10,6 +9,8 @@ import {
   type AutocorrectRuntime,
   type BatchProgress,
 } from "./autocorrectExtension";
+import { SCHEMA_EXTENSIONS } from "./importFiles";
+import { ReviewExtension, type Issue } from "./review";
 
 export interface EditorMountOptions {
   element: HTMLElement;
@@ -23,6 +24,9 @@ export interface EditorMountOptions {
   onFixClick?: (fix: AppliedFix, element: HTMLElement) => void;
   onBatchUndo?: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress?: (progress: BatchProgress | null) => void;
+  onIssueClick?: (issue: Issue, element: HTMLElement) => void;
+  onIssuesChange?: (issues: readonly Issue[]) => void;
+  onHistoryChange?: () => void;
 }
 
 export interface EditorController {
@@ -40,9 +44,7 @@ export function mountEditor(options: EditorMountOptions): EditorController {
     element: options.element,
     content: options.content,
     extensions: [
-      StarterKit.configure({
-        heading: { levels: [1, 2, 3] },
-      }),
+      ...SCHEMA_EXTENSIONS,
       Placeholder.configure({
         placeholder: "Yazmaya başlayın…",
       }),
@@ -54,6 +56,11 @@ export function mountEditor(options: EditorMountOptions): EditorController {
         onFixClick: options.onFixClick,
         onBatchUndo: options.onBatchUndo,
         onBatchProgress: options.onBatchProgress,
+      }),
+      ReviewExtension.configure({
+        onIssueClick: options.onIssueClick,
+        onIssuesChange: options.onIssuesChange,
+        onHistoryChange: options.onHistoryChange,
       }),
     ],
     editorProps: {

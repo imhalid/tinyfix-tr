@@ -1,5 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 import { ACTIVE_DOC_STORAGE_KEY, APP_NAME, DOCS_DB_NAME } from "./brand";
+import type { ReviewSummary } from "./review";
 
 export interface DocRecord {
   id: string;
@@ -9,6 +10,8 @@ export interface DocRecord {
   wordCount: number;
   createdAt: number;
   updatedAt: number;
+  /** Son analizin özeti (yalnızca sayılar). Analiz edilmemiş belgede yok. */
+  review?: ReviewSummary;
 }
 
 const STORE_NAME = "documents";

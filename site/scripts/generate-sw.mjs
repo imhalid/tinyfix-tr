@@ -56,7 +56,9 @@ const isOrtAsset = (rel) =>
 
 const modelFiles = allRelative.filter((rel) => rel.startsWith("models/"));
 const ortFiles = allRelative.filter(isOrtAsset);
-const shellFiles = allRelative.filter((rel) => !rel.startsWith("models/") && !isOrtAsset(rel));
+// "lazy-" parçaları (Word/Markdown okuyucuları) önden indirilmez; kullanılınca kabuk önbelleğine yazılır.
+const isLazyChunk = (rel) => /(?:^|\/)lazy-[^/]*\.js$/.test(rel);
+const shellFiles = allRelative.filter((rel) => !rel.startsWith("models/") && !isOrtAsset(rel) && !isLazyChunk(rel));
 
 const shellVersion = hashFiles(shellFiles);
 const modelVersion = hashFiles(modelFiles);

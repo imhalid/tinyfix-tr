@@ -3,6 +3,7 @@ import type { JSX } from "@solidjs/web";
 import { createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 import type { AppliedFix, AutocorrectRuntime, BatchProgress } from "../autocorrectExtension";
 import { mountEditor, type EditorController } from "../editor";
+import type { Issue } from "../review";
 
 export interface EditorPaneProps {
   docId: string;
@@ -23,6 +24,9 @@ export interface EditorPaneProps {
   onFixClick: (fix: AppliedFix, element: HTMLElement) => void;
   onBatchUndo: (fixes: readonly AppliedFix[]) => void;
   onBatchProgress: (progress: BatchProgress | null) => void;
+  onIssueClick: (issue: Issue, element: HTMLElement) => void;
+  onIssuesChange: (issues: readonly Issue[]) => void;
+  onHistoryChange: () => void;
 }
 
 export function EditorPane(props: EditorPaneProps) {
@@ -52,6 +56,9 @@ export function EditorPane(props: EditorPaneProps) {
         onFixClick: (fix, element) => props.onFixClick(fix, element),
         onBatchUndo: (fixes) => props.onBatchUndo(fixes),
         onBatchProgress: (progress) => props.onBatchProgress(progress),
+        onIssueClick: (issue, element) => props.onIssueClick(issue, element),
+        onIssuesChange: (issues) => props.onIssuesChange(issues),
+        onHistoryChange: () => props.onHistoryChange(),
       });
       activeController = controller;
       props.onController(controller);

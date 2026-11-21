@@ -1,14 +1,30 @@
 import { Show, createEffect, onCleanup } from "solid-js";
-import type { AppliedFix } from "../autocorrectExtension";
+import { For } from "solid-js";
+import type { FixKind, FixScope } from "autr";
 import { FIX_KIND_META } from "../settings";
+
+/** Penceredeki değişiklik: uygulanmış bir düzeltme ya da analizden gelen bir öneri. */
+export interface PopoverFix {
+  original: string;
+  replacement: string;
+  kind: FixKind;
+  scope: FixScope;
+}
+
+export interface PopoverAction {
+  label: string;
+  primary?: boolean;
+  onClick: () => void;
+}
 
 export interface FixPopoverProps {
   /** Gösterilen düzeltme; null iken pencere kapalı. */
-  fix: AppliedFix | null;
-  /** Tıklanan düzeltilmiş kelime: pencere ona bağlanır. */
+  fix: PopoverFix | null;
+  /** Tıklanan kelime: pencere ona bağlanır. */
   anchor: HTMLElement | null;
-  onUndo: (fix: AppliedFix) => void;
-  onNeverChange: (fix: AppliedFix) => void;
+  /** Kapsam açıklamasının yerine geçen kısa not ("Öneri: henüz uygulanmadı."). */
+  note?: string;
+  actions: readonly PopoverAction[];
   onClose: () => void;
 }
 
@@ -103,14 +119,19 @@ export function FixPopover(props: FixPopoverProps) {
               <span class="visually-hidden">yerine</span>
               <span class="fix-pop-replacement">{fix().replacement}</span>
             </p>
-            <p class="fix-pop-detail">{SCOPE_TEXT[fix().scope].detail}</p>
+            <p class="fix-pop-detail">{props.note ?? SCOPE_TEXT[fix().scope].detail}</p>
             <div class="fix-pop-actions">
-              <button type="button" class="button button-primary" onClick={() => props.onUndo(fix())}>
-                Geri al
-              </button>
-              <button type="button" class="button" onClick={() => props.onNeverChange(fix())}>
-                Bir daha değiştirme
-              </button>
+              <For each={props.actions}>
+                {(action) => (
+                  <button
+                    type="button"
+                    class={action.primary ? "button button-primary" : "button"}
+                    onClick={() => action.onClick()}
+                  >
+                    {action.label}
+                  </button>
+                )}
+              </For>
             </div>
           </>
         )}

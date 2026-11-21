@@ -9,6 +9,9 @@ import { FixPopover } from "./components/FixPopover";
 import { BoldIcon, HeadingIcon, ItalicIcon, ListIcon, QuoteIcon, ScanIcon, UndoIcon } from "./components/Icons";
 import { Modal, PrivacyDialog } from "./components/PrivacyDialog";
 import { SettingsPanel } from "./components/SettingsPanel";
+import { AnalysisPanel, type IssueGroup } from "./components/AnalysisPanel";
+import { IMPORT_ACCEPT, ImportError, importFile } from "./importFiles";
+import { analyzeDoc, applyIssues, docFromJson, getIssues, removeIssues, setIssues, summarize, type Issue, type ReviewSummary } from "./review";
 import { Drawer } from "./kit/Drawer";
 import { formatBytesTr, formatLongDateTr, formatNumberTr, isMacPlatform } from "./kit/format";
 import { Toasts, toast } from "./kit/toast";
@@ -102,6 +105,25 @@ export function App() {
   const [lastActivity, setLastActivity] = createSignal<StatusActivity | null>(null);
   const [batchProgress, setBatchProgress] = createSignal<BatchProgress | null>(null);
   const [activeFormats, setActiveFormats] = createSignal<FormatKey[]>([]);
+
+  // Analiz: açık belgedeki öneriler, durum ve sıralı denetim kuyruğu.
+  const [liveIssues, setLiveIssues] = createSignal<readonly Issue[]>([]);
+  const [activeReview, setActiveReview] = createSignal<"idle" | "checking" | "done">("idle");
+  const [reviewProgress, setReviewProgress] = createSignal<{ done: number; total: number } | null>(null);
+  const [analysisOpen, setAnalysisOpen] = createSignal(false);
+  const [openIssue, setOpenIssue] = createSignal<{ issue: Issue; anchor: HTMLElement } | null>(null);
+  const [reviewQueue, setReviewQueue] = createSignal<string[]>([]);
+  const [queueTotal, setQueueTotal] = createSignal(0);
+  const [checkingId, setCheckingId] = createSignal<string | null>(null);
+  const [dragging, setDragging] = createSignal(false);
+  let controllerDocId: string | null = null;
+  let queueRunning = false;
+  let historyTimer: ReturnType<typeof setTimeout> | null = null;
+  // Kuyruğun asıl kaydı düz dizi: Solid 2'de yazılan sinyal aynı turda okunamıyor. Sinyal yalnızca görünüm için.
+  const queue: string[] = [];
+  const queuedDocs = new Map<string, DocRecord>();
+  const syncQueue = () => setReviewQueue([...queue]);
+  let importInput: HTMLInputElement | undefined;
 
   const [storedBytes, setStoredBytes] = createSignal<number | null>(null);
   const [dataBusy, setDataBusy] = createSignal<"redownload" | "delete" | null>(null);
@@ -218,6 +240,7 @@ export function App() {
       }
       setAutr(instance);
       setEngineStatus("ready");
+      setTimeout(() => void runQueue(), 0);
       // Sözlük yüklenirken yazılanları denetle. Solid 2'de yazılan sinyal bir sonraki turda okunur, o yüzden bekletiyoruz.
       setTimeout(() => editorController?.checkWaitingText(), 0);
     } catch (error) {
@@ -225,6 +248,194 @@ export function App() {
       console.error("autr: sözlük yüklenemedi", error);
       setEngineStatus("error");
     }
+  };
+
+  const updateReviewSummary = (id: string, review: ReviewSummary) => {
+    setDocs((prev) => prev.map((doc) => (doc.id === id ? { ...doc, review } : doc)));
+    const doc = docs().find((item) => item.id === id) ?? queuedDocs.get(id);
+    if (doc) void saveDocument({ ...doc, review }).catch(() => {});
+  };
+
+  /** Açık belgeyi analiz eder ve önerileri editörde işaretler. Motor ya da belge değişirse false döner. */
+  const analyzeActive = async (): Promise<boolean> => {
+    const engine = autr();
+    const controller = editorController;
+    const docId = controllerDocId;
+    if (!engine || !controller || !docId) return false;
+    const view = controller.editor.view;
+    setActiveReview("checking");
+    setReviewProgress(null);
+    // Analiz sürerken yazılırsa konumlar eskir: belge değiştiyse baştan alınır.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const startDoc = view.state.doc;
+      const issues = await analyzeDoc(engine, startDoc, {
+        kinds: getActiveKinds(settings()),
+        shouldStop: () => autr() !== engine || controllerDocId !== docId,
+        onProgress: (done, total) => setReviewProgress({ done, total }),
+      });
+      if (!issues) {
+        if (controllerDocId === docId) setActiveReview(docs().find((doc) => doc.id === docId)?.review ? "done" : "idle");
+        return false;
+      }
+      if (view.state.doc !== startDoc) continue;
+      setIssues(view, issues);
+      setActiveReview("done");
+      updateReviewSummary(docId, summarize(issues));
+      return true;
+    }
+    setActiveReview("idle");
+    return false;
+  };
+
+  /** Kuyruktaki belgeleri sırayla denetler. Açık olmayan belgeler editör açılmadan, kayıtlı içerikten denetlenir. */
+  const runQueue = async () => {
+    if (queueRunning) return;
+    queueRunning = true;
+    try {
+      for (;;) {
+        const engine = autr();
+        const id = queue[0];
+        if (!engine || !id) break;
+        setCheckingId(id);
+        const doc = docs().find((item) => item.id === id) ?? queuedDocs.get(id);
+        let ok = true;
+        if (doc && id === controllerDocId) {
+          ok = await analyzeActive();
+        } else if (doc) {
+          const issues = await analyzeDoc(engine, docFromJson(doc.content), {
+            kinds: getActiveKinds(settings()),
+            shouldStop: () => autr() !== engine,
+          });
+          if (issues) updateReviewSummary(id, summarize(issues));
+          ok = issues !== null;
+          // Belge bu sırada açıldıysa öneriler editörde de işaretlensin.
+          if (ok && id === controllerDocId) ok = await analyzeActive();
+        }
+        if (!ok && autr() !== engine) break;
+        queue.shift();
+        queuedDocs.delete(id);
+        syncQueue();
+      }
+    } finally {
+      setCheckingId(null);
+      queueRunning = false;
+      if (queue.length === 0) setQueueTotal(0);
+    }
+  };
+
+  const enqueueReview = (ids: readonly string[]) => {
+    const fresh = ids.filter((id) => !queue.includes(id));
+    queue.push(...fresh);
+    syncQueue();
+    setQueueTotal((total) => (queueRunning ? total : 0) + fresh.length);
+    void runQueue();
+  };
+
+  const handleImportFiles = async (files: readonly File[]) => {
+    if (files.length === 0) return;
+    await persistActiveDocNow();
+    const created: DocRecord[] = [];
+    const now = Date.now();
+    for (const file of files) {
+      try {
+        const imported = await importFile(file);
+        const doc = createEmptyDocument(imported.title);
+        const text = docFromJson(imported.content).textBetween(0, docFromJson(imported.content).content.size, "\n\n", " ");
+        // İlk dosya listenin en üstünde dursun: sıraya göre azalan zaman.
+        const stamp = now - created.length;
+        created.push({ ...doc, content: imported.content, preview: extractPreview(text), wordCount: countWords(text), createdAt: stamp, updatedAt: stamp });
+      } catch (error) {
+        const reason = error instanceof ImportError ? error.message : "Dosya okunamadı.";
+        toast({ title: `«${file.name}»: ${reason}`, duration: 6000 });
+      }
+    }
+    if (created.length === 0) return;
+    for (const doc of created) {
+      queuedDocs.set(doc.id, doc);
+      await saveDocument(doc).catch(() => {});
+    }
+    setDocs((prev) => [...created, ...prev]);
+    const first = created[0]!;
+    setActiveDocId(first.id);
+    saveLastActiveDocId(first.id);
+    setLastActivity(null);
+    setBatchProgress(null);
+    setDocsOpen(false);
+    toast({
+      title: created.length === 1 ? `«${first.title}» içe aktarıldı` : `${created.length} belge içe aktarıldı`,
+      duration: 3500,
+    });
+    enqueueReview(created.map((doc) => doc.id));
+  };
+
+  const pickImportFiles = () => importInput?.click();
+
+  /** Bir önerinin çevresindeki metin (panelde bağlam olarak gösterilir). */
+  const issueContext = (issue: Issue) => {
+    const doc = editorController?.editor.state.doc;
+    if (!doc || issue.to > doc.content.size) return { before: "", after: "", cutBefore: false, cutAfter: false };
+    const $from = doc.resolve(issue.from);
+    const start = Math.max($from.start(), issue.from - 36);
+    const end = Math.min($from.end(), issue.to + 36);
+    let before = doc.textBetween(start, issue.from, " ", " ");
+    let after = doc.textBetween(issue.to, end, " ", " ");
+    if (start > $from.start()) before = before.replace(/^\S*\s/, "");
+    if (end < $from.end()) after = after.replace(/\s\S*$/, "");
+    return { before, after, cutBefore: start > $from.start(), cutAfter: end < $from.end() };
+  };
+
+  const jumpToIssue = (issue: Issue) => {
+    setAnalysisOpen(false);
+    const editor = editorController?.editor;
+    if (!editor) return;
+    editor.chain().focus().setTextSelection(issue.to).scrollIntoView().run();
+    setTimeout(() => {
+      const element = editor.view.dom.querySelector<HTMLElement>(`[data-autr-issue-id="${issue.id}"]`);
+      if (element) {
+        element.scrollIntoView({ block: "center" });
+        setTimeout(() => setOpenIssue({ issue, anchor: element }), 60);
+      }
+    }, 30);
+  };
+
+  const applyIssueIds = (ids: readonly string[]) => {
+    setOpenIssue(null);
+    const view = editorController?.editor.view;
+    if (!view) return;
+    const applied = applyIssues(view, ids);
+    if (applied > 0) {
+      setLastActivity({
+        text: applied === 1 ? "Öneri uygulandı" : `${formatNumberTr(applied)} öneri uygulandı`,
+        showUndoHint: true,
+      });
+    }
+  };
+
+  const ignoreIssueIds = (ids: readonly string[]) => {
+    setOpenIssue(null);
+    const view = editorController?.editor.view;
+    if (view) removeIssues(view, ids);
+  };
+
+  const neverSuggest = (original: string) => {
+    setOpenIssue(null);
+    addIgnoredWord(original);
+    const view = editorController?.editor.view;
+    if (!view) return;
+    const key = normalizeWordTr(original);
+    removeIssues(
+      view,
+      getIssues(view.state)
+        .filter((issue) => normalizeWordTr(issue.original) === key)
+        .map((issue) => issue.id),
+    );
+  };
+
+  const reviewBadge = (doc: DocRecord): string | null => {
+    if (checkingId() === doc.id) return "denetleniyor";
+    if (reviewQueue().includes(doc.id)) return "sırada";
+    const total = doc.id === activeDocId() && activeReview() === "done" ? liveIssues().length : doc.review?.total ?? 0;
+    return total > 0 ? formatNumberTr(total) : null;
   };
 
   const refreshStoredSize = () => {
@@ -291,6 +502,34 @@ export function App() {
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("beforeunload", onBeforeUnload);
 
+    // Dosyayı sayfaya sürükleyip bırakarak içe aktarma.
+    let dragDepth = 0;
+    const hasFiles = (event: DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files");
+    const onDragEnter = (event: DragEvent) => {
+      if (!hasFiles(event)) return;
+      dragDepth++;
+      setDragging(true);
+    };
+    const onDragLeave = (event: DragEvent) => {
+      if (!hasFiles(event)) return;
+      dragDepth = Math.max(0, dragDepth - 1);
+      if (dragDepth === 0) setDragging(false);
+    };
+    const onDragOver = (event: DragEvent) => {
+      if (hasFiles(event)) event.preventDefault();
+    };
+    const onDrop = (event: DragEvent) => {
+      if (!hasFiles(event)) return;
+      event.preventDefault();
+      dragDepth = 0;
+      setDragging(false);
+      void handleImportFiles(Array.from(event.dataTransfer?.files ?? []));
+    };
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("drop", onDrop);
+
     // Belgeleri IndexedDB'den yükle
     void (async () => {
       let loaded: DocRecord[] = [];
@@ -325,6 +564,10 @@ export function App() {
       stopOffline();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("beforeunload", onBeforeUnload);
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("drop", onDrop);
       const currentAutr = autr();
       if (currentAutr) void currentAutr.dispose().catch(() => {});
     };
@@ -594,6 +837,8 @@ export function App() {
           docs={sortedDocs()}
           activeDocId={activeDocId()}
           onNewDoc={() => void handleNewDoc()}
+          onImport={pickImportFiles}
+          reviewBadge={reviewBadge}
           onSelectDoc={(id) => void openDocument(id)}
           onRequestDeleteDoc={(doc) => setPendingDelete(doc)}
           onOpenPrivacy={handleOpenPrivacy}
@@ -654,6 +899,12 @@ export function App() {
             <span class="status-dot" aria-hidden="true" />
             <span class="status-text">{statusDotLabel()}</span>
           </span>
+          <button type="button" class="text-button" aria-haspopup="dialog" onClick={() => setAnalysisOpen(true)}>
+            Analiz
+            <Show when={activeReview() === "done" && liveIssues().length > 0}>
+              <span class="count-pill">{formatNumberTr(liveIssues().length)}</span>
+            </Show>
+          </button>
           <button type="button" class="text-button" popovertarget={exportMenuId}>
             Dışa aktar
           </button>
@@ -740,7 +991,19 @@ export function App() {
               onSelectionChange={syncFormats}
               onController={(controller) => {
                 editorController = controller;
+                controllerDocId = controller ? doc().id : null;
+                setOpenIssue(null);
+                setLiveIssues([]);
+                setReviewProgress(null);
                 if (controller) {
+                  // Daha önce analiz edilmiş belge açılınca öneriler yeniden işaretlenir (konumlar saklanmaz).
+                  if (doc().review && !queue.includes(doc().id)) {
+                    setActiveReview("checking");
+                    if (engineStatus() === "ready") void analyzeActive();
+                    else enqueueReview([doc().id]);
+                  } else {
+                    setActiveReview(queue.includes(doc().id) ? "checking" : "idle");
+                  }
                   const text = controller.editor.getText({ blockSeparator: "\n\n" });
                   setWordCount(countWords(text));
                   syncFormats();
@@ -766,6 +1029,27 @@ export function App() {
                 setLastActivity({ text: `${fixes.length} düzeltme geri alındı`, showUndoHint: false });
               }}
               onBatchProgress={(progress) => setBatchProgress(progress)}
+              onIssueClick={(issue, element) => setOpenIssue({ issue, anchor: element })}
+              onHistoryChange={() => {
+                // Geri alınan öneriler yeniden işaretlensin: analiz edilmiş belgede kısa bir gecikmeyle yenilenir.
+                if (!doc().review || queue.includes(doc().id)) return;
+                if (historyTimer !== null) clearTimeout(historyTimer);
+                historyTimer = setTimeout(() => {
+                  historyTimer = null;
+                  void analyzeActive();
+                }, 400);
+              }}
+              onIssuesChange={(issues) => {
+                setLiveIssues(issues);
+                const id = controllerDocId;
+                if (id && activeReview() === "done") {
+                  const current = docs().find((item) => item.id === id)?.review;
+                  if (current && current.total !== issues.length) {
+                    setDocs((prev) => prev.map((item) => (item.id === id ? { ...item, review: summarize(issues) } : item)));
+                    scheduleSave();
+                  }
+                }
+              }}
             />
           )}
         </Show>
@@ -773,6 +1057,11 @@ export function App() {
 
       <footer class="footnote" aria-live="polite">
         <span>{saveLabel()}</span>
+        <Show when={reviewQueue().length > 0 && queueTotal() > 1}>
+          <span class="footnote-activity">
+            Belgeler denetleniyor · {formatNumberTr(queueTotal() - reviewQueue().length)}/{formatNumberTr(queueTotal())}
+          </span>
+        </Show>
         <Show
           when={batchProgress()}
           fallback={
@@ -802,6 +1091,8 @@ export function App() {
           docs={sortedDocs()}
           activeDocId={activeDocId()}
           onNewDoc={() => void handleNewDoc()}
+          onImport={pickImportFiles}
+          reviewBadge={reviewBadge}
           onSelectDoc={(id) => void openDocument(id)}
           onRequestDeleteDoc={(doc) => {
             setDocsOpen(false);
@@ -839,10 +1130,66 @@ export function App() {
       <FixPopover
         fix={openFix()?.fix ?? null}
         anchor={openFix()?.anchor ?? null}
-        onUndo={(fix) => undoFromPopover(fix, false)}
-        onNeverChange={(fix) => undoFromPopover(fix, true)}
+        actions={[
+          { label: "Geri al", primary: true, onClick: () => { const fix = openFix()?.fix; if (fix) undoFromPopover(fix, false); } },
+          { label: "Bir daha değiştirme", onClick: () => { const fix = openFix()?.fix; if (fix) undoFromPopover(fix, true); } },
+        ]}
         onClose={() => setOpenFix(null)}
       />
+
+      <FixPopover
+        fix={openIssue()?.issue ?? null}
+        anchor={openIssue()?.anchor ?? null}
+        note="Öneri: siz uygulayana kadar metin değişmez."
+        actions={[
+          { label: "Uygula", primary: true, onClick: () => { const issue = openIssue()?.issue; if (issue) applyIssueIds([issue.id]); } },
+          { label: "Yoksay", onClick: () => { const issue = openIssue()?.issue; if (issue) ignoreIssueIds([issue.id]); } },
+          { label: "Bir daha önerme", onClick: () => { const issue = openIssue()?.issue; if (issue) neverSuggest(issue.original); } },
+        ]}
+        onClose={() => setOpenIssue(null)}
+      />
+
+      <Drawer
+        open={analysisOpen()}
+        onClose={() => setAnalysisOpen(false)}
+        side="end"
+        title="Analiz"
+        description="Öneriler siz uygulayana kadar metni değiştirmez."
+      >
+        <AnalysisPanel
+          issues={liveIssues()}
+          status={activeReview()}
+          progress={reviewProgress()}
+          wordCount={wordCount()}
+          engineReady={engineStatus() === "ready"}
+          contextOf={issueContext}
+          onAnalyze={() => void analyzeActive()}
+          onJump={jumpToIssue}
+          onApply={applyIssueIds}
+          onIgnore={ignoreIssueIds}
+          onNeverChange={(group: IssueGroup) => neverSuggest(group.original)}
+        />
+      </Drawer>
+
+      <input
+        ref={(el) => (importInput = el)}
+        type="file"
+        multiple
+        accept={IMPORT_ACCEPT}
+        hidden
+        onChange={(event) => {
+          const files = Array.from(event.currentTarget.files ?? []);
+          event.currentTarget.value = "";
+          void handleImportFiles(files);
+        }}
+      />
+
+      <Show when={dragging()}>
+        <div class="drop-overlay" aria-hidden="true">
+          <p>Bırakın, içe aktarılsın</p>
+          <span>.docx · .txt · .md</span>
+        </div>
+      </Show>
 
       <PrivacyDialog open={privacyOpen()} onClose={() => setPrivacyOpen(false)} />
 

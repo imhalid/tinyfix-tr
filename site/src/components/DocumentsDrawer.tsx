@@ -1,12 +1,15 @@
 import { For, Show } from "solid-js";
 import { formatShortDateTr } from "../kit/format";
 import type { DocRecord } from "../storage";
-import { PlusIcon, ShieldIcon, TrashIcon } from "./Icons";
+import { ImportIcon, PlusIcon, ShieldIcon, TrashIcon } from "./Icons";
 
 export interface DocumentsListProps {
   docs: readonly DocRecord[];
   activeDocId: string;
   onNewDoc: () => void;
+  onImport: () => void;
+  /** Belgenin analiz durumu: öneri sayısı, "sırada" ya da "denetleniyor"; yoksa null (tarih gösterilir). */
+  reviewBadge: (doc: DocRecord) => string | null;
   onSelectDoc: (id: string) => void;
   onRequestDeleteDoc: (doc: DocRecord) => void;
   onOpenPrivacy: () => void;
@@ -19,6 +22,10 @@ export function DocumentsList(props: DocumentsListProps) {
       <button type="button" class="new-doc" onClick={props.onNewDoc}>
         <PlusIcon />
         <span>Yeni belge</span>
+      </button>
+      <button type="button" class="import-doc" onClick={props.onImport} title=".docx, .txt ya da .md dosyası; sürükleyip bırakabilirsiniz">
+        <ImportIcon />
+        <span>İçe aktar</span>
       </button>
 
       <div class="docs-head">
@@ -34,7 +41,16 @@ export function DocumentsList(props: DocumentsListProps) {
                 <button type="button" class="doc-open" onClick={() => props.onSelectDoc(doc().id)}>
                   <span class="doc-head">
                     <span class="doc-name">{title()}</span>
-                    <span class="doc-date">{formatShortDateTr(doc().updatedAt)}</span>
+                    <Show
+                      when={props.reviewBadge(doc())}
+                      fallback={<span class="doc-date">{formatShortDateTr(doc().updatedAt)}</span>}
+                    >
+                      {(badge) => (
+                        <span class="doc-badge" data-busy={/^\d/.test(badge()) ? undefined : ""} title={/^\d/.test(badge()) ? `${badge()} öneri` : undefined}>
+                          {badge()}
+                        </span>
+                      )}
+                    </Show>
                   </span>
                   <Show when={doc().preview}>
                     <span class="doc-preview">{doc().preview}</span>

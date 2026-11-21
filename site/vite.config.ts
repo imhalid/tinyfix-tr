@@ -146,5 +146,17 @@ export default defineConfig({
   build: {
     target: "es2022",
     outDir: "dist",
+    rollupOptions: {
+      output: {
+        // İçe aktarma okuyucuları (Word, Markdown) yalnızca dosya açılınca iner: "lazy-" önekiyle service worker'ın
+        // önden indirdiği kabuk dosyalarının dışında tutulur (scripts/generate-sw.mjs).
+        chunkFileNames: (chunk) =>
+          chunk.moduleIds.some((id) => id.includes("/node_modules/mammoth/"))
+            ? "assets/lazy-docx-[hash].js"
+            : chunk.moduleIds.some((id) => id.includes("/node_modules/markdown-it/"))
+              ? "assets/lazy-md-[hash].js"
+              : "assets/[name]-[hash].js",
+      },
+    },
   },
 });
