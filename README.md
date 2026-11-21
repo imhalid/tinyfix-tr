@@ -253,3 +253,36 @@ Aynı turda iki kural değişikliği daha yapıldı:
 3. **Site hataları.** İki ilerleme göstergesinin farklı değer göstermesi; ayar değişince panelin kayması; Cmd+Z'nin boşluğu da silmesi; ayar değişince sözlüğün baştan yüklenmesi; yazarken "hiç bir" birleştirmesinin tetiklenmemesi.
 4. **Bağlam modeli v2.** Ancak doğrulama puanlarında, yazılan doğruyken değiştirme oranı ile yazılan yanlışken düzeltme oranı arasında kullanılabilir bir eşik varsa denenmeli.
 5. **Boyut.** Sıkıştırılmış sözlük, 8-bit model, ONNX Runtime yerine saf JS çalıştırma. Hedef toplam 5 MB'ın altı. Konuşma sözlüğü kelime sayısını 1,15 milyondan 1,25 milyona çıkardı.
+6. **Planlanan: kelime önerisi (tinynext benzeri).** Yazarken sıradaki kelimeyi ya da yazılmakta olan kelimenin devamını önermek. İlk sürüm, sözlükteki kelime çiftlerinden ek indirme olmadan yapılabilir. Türkçede ekler yüzünden sıradaki kelimeyi tahmin etmek zor olduğu için kelime tamamlama da denenmeli. Tam bir model ayrı eğitim ister.
+7. **Planlanan: noktadan sonra boşluk.** "geldim.Yarın" → "geldim. Yarın".
+   - *Neden yok:* Motor şu an yalnızca kelimelere bakıyor; noktalama için kuralı yok.
+   - *Dikkat:* "3.5", "site.com", "vb.", "..." gibi durumlar bozulmamalı.
+8. **Planlanan: cümle başında büyük harf.** Noktadan, soru ve ünlem işaretinden sonra gelen kelime büyük harfle başlasın.
+   - *Neden yok:* Büyük/küçük harf kuralı hiç yok.
+   - *Dikkat:*
+     - Türkçede sıra sayıları noktayla yazılır ("1. sınıf"); bunlardan sonra büyük harf gelmemeli.
+     - Kısaltmalardan sonra ("Dr.", "vb.") büyük harf gelmemeli.
+     - Kullanıcının bilerek küçük yazdığı kod ve adres gibi metinler korunmalı.
+9. **Planlanan: bitişik yazılmış iki kelimeyi ayırma, ikinci bir hatayla birlikte.** Örnekler: "yapmıyorsunanlamadim" → "yapmıyorsun anlamadım", "biliyormusunm" → "biliyor musun".
+   - *Neden yok:* Ayırma için iki kelimenin yan yana sözlükte (kelime çiftlerinde) yeterince görülmüş olması gerekiyor. "yapmıyorsun anlamadım" gibi seyrek ama doğru çiftler bu yüzden ayrılmıyor.
+   - Motor bir kelimede tek bir hatayı düzeltiyor. Ayırma + Türkçe karakter, ya da ayırma + fazla harf gibi iki hata bir arada olunca aday hiç üretilmiyor.
+   - *Çözüm fikri:* Parçaları biçimbilimle doğrulamak ve iki adımlı adaylara izin vermek. Bunu sıkı bir eşikle yapmak gerekiyor ki doğru yazılmış uzun kelimeler bölünmesin.
+10. **Planlanan: TDK birleşik kelime listesi.** Bitişik yazılması gerekenleri birleştirmek ("hava alanı" → "havaalanı", "hanım eli" → "hanımeli"), ayrı yazılması gerekenleri ayırmak.
+    - *Neden eksik:* Şu an yalnızca korpusta görülen birkaç düzine birleşik kelime var (`data/rules/known.tsv`, `JOINED_ALWAYS`).
+    - *Çözüm fikri:* TDK'nin birleşik kelime kurallarından (anlam kayması, ses düşmesi, "-ev, -hane, -name" gibi) ve sözlük listesinden sistemli bir liste çıkarmak.
+    - *Dikkat:* Birleşmesi anlama bağlı olanlar var: "hanımeli" bir çiçek, ama "hanım eli" bir hanımın eli olabilir. Bu yüzden her kayıt korpus sayımıyla kontrol edilmeli.
+11. **Planlanan: kısa kelimelerde yazım hatası.** Örnekler: "bne" → "ben", "ane" → "anne".
+    - *Neden yok:* Yazım hatası düzeltmesi yalnızca 4 harf ve üstü kelimelerde çalışıyor (`src/corrector.ts`, typo adayları). Kısa kelimelerde bir harflik değişiklik çok sayıda geçerli kelimeye çıkıyor (bne → ben, bne → bre…).
+    - Korpusta bu hatalı biçimler de geçiyor: "bne" 4 kez, "ane" 108 kez (çoğu ad olarak). Bu yüzden "bilinmeyen kelime" sayılmıyorlar. Biçimbilim ise ikisini de geçersiz sayıyor; çözüm bunu kullanmalı.
+    - *Çözüm fikri:*
+      - Kısa kelimeler için harf yer değiştirme ("bne" → "ben") ve eksik harf ("ane" → "anne") adaylarını ayrı ve sıkı bir eşikle üretmek.
+      - Kararı yanındaki kelimelerle (kelime çiftleri) desteklemek.
+      - Çok sık yapılan kısa hatalar için bilinen yanlışlar listesine kayıt eklemek.
+12. **Planlanan: yanlış yere konmuş boşluk.** Örnek: "ann e" → "anne".
+    - *Neden yok:* Türkçede "ann" diye bir kelime yok. Ama birleştirme kararı biçimbilime değil, korpustaki sayımlara dayanıyor.
+      - Korpus Vikipedi'den geldiği için yabancı ad "Ann" 2.191 kez geçiyor.
+      - Tek harf "e" de (harf adı, kısaltma, "e-posta") çok sık geçiyor.
+      - Motor bu yüzden "ann" ve "e"yi geçerli kelime gibi görüyor.
+    - *Çözüm fikri:* Biçimbilim "ann" kelimesini zaten geçersiz sayıyor. Kural şöyle olabilir: parçalardan biri biçimbilime göre geçersizse ve birleşik biçim ("anne") geçerli ve sık ise, birleştirme düşük bir eşikle kabul edilsin.
+      - Büyük harfle yazılan parçalar ("Ann") ad olabileceği için dışarıda kalmalı.
+      - "ne de", "o da" gibi doğru ayrı yazımlar bozulmamalı.

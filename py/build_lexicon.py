@@ -17,6 +17,52 @@ import pyarrow.parquet as pq
 
 LETTERS = "A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû"
 TOKEN = re.compile(rf"[{LETTERS}]+(?:['’][{LETTERS}]+)?|\d+(?:[.,]\d+)*|[.!?:;,\"()\n]")
+# A number with its suffix ("1977'de", "3’ü") is one token: the suffix is not a word of its own.
+CLEAN_TOKEN = re.compile(rf"[{LETTERS}]+(?:['’][{LETTERS}]+)?|\d+(?:[.,]\d+)*(?:['’][{LETTERS}]+)?|[.!?:;,\"()\n]")
+
+# Section headings after which a Wikipedia article is only references, links and lists of (often foreign) titles.
+TAIL_SECTIONS = {
+    "kaynakça", "kaynaklar", "dipnotlar", "notlar", "dış bağlantılar", "ayrıca bakınız", "konuyla ilgili yayınlar",
+    "bibliyografya", "ek okumalar", "ileri okumalar", "ek kaynaklar", "kaynak", "dış linkler",
+}
+# Lines that are wiki tables, templates or HTML rather than prose.
+MARKUP_LINE = re.compile(r"^\s*(?:\{\||\|\}|\|-|\||!|<)|\w+=\"|style=|class=|colspan|rowspan|bgcolor|cellspacing|<\/?\w+[^>]*>")
+HTML_TAG = re.compile(r"<[^>]+>")
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+# Common function words of English, French and German. Words that are also Turkish ("on", "at", "her", "can", "has",
+# "his", "der", "et", "it", "in", "is", "as", "an", "be", "la", "le", "mit") are left out on purpose.
+FOREIGN = set(
+    "the of and to for with are was were by from this that or which not have their but they who what when where "
+    "how all will would should into than then there these those its "
+    "les des du une est dans pour die das und ist von".split()
+)
+# Units written after a number ("50 km", "500 mi"): counting them makes "mi" and "km" look like words.
+UNITS = set("km cm mm m kg g mg mi ft in ha ml l lb oz mph hz khz mhz ghz kw mw gw kwh v w kb mb gb tb km² m² m³ ".split())
+KEEP_SINGLE = {"o", "e", "a"}
+
+
+def clean_text(text: str) -> str:
+    """Prose only: drops wiki markup lines, reference sections and sentences that are mostly in another language."""
+    lines = []
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if lower_tr(stripped.rstrip(":")) in TAIL_SECTIONS:
+            break
+        if not stripped:
+            lines.append("")
+            continue
+        if MARKUP_LINE.search(stripped):
+            continue
+        stripped = HTML_TAG.sub(" ", stripped)
+        kept = []
+        for sentence in SENTENCE_SPLIT.split(stripped):
+            words = re.findall(rf"[{LETTERS}]+", sentence)
+            foreign = sum(1 for word in words if word.lower() in FOREIGN)
+            if foreign >= 2 and foreign >= 0.1 * len(words):
+                continue
+            kept.append(sentence)
+        lines.append(" ".join(kept))
+    return "\n".join(lines)
 SENTENCE_END = {".", "!", "?", ":", "\n"}
 PARTICLE = re.compile(r"^(m[iıuü](y?[iıuü]m|s[iıuü]n|y?[iıuü]z|s[iıuü]n[iıuü]z|d[iıuü]r|d[iıuü]|ym[iıuü]ş|ys[ae])?|d[ae]|k[iı]|t[ae])$")
 
@@ -36,14 +82,30 @@ def documents(paths: list[Path]):
             yield doc_id, text
 
 
-def words_with_flags(text: str):
-    """Yields (lowercased word, capitalized mid-sentence) for each word, and None at sentence breaks."""
+def words_with_flags(text: str, clean: bool = False):
+    """Yields (lowercased word, capitalized mid-sentence) for each word, and None at sentence breaks.
+
+    With clean=True, acronyms ("ISBN", "FIFA", Roman "II", "TBMM'nin"), stray single letters and units after a
+    number are not words: they break the chain like a number does.
+    """
     at_start = True
-    for raw in TOKEN.findall(text):
+    after_number = False
+    for raw in (CLEAN_TOKEN if clean else TOKEN).findall(text):
         if raw[0].isdigit():
             at_start = False
+            after_number = True
             yield None
             continue
+        if clean and raw[0].isalpha():
+            stem = re.split(r"['’]", raw, maxsplit=1)[0]
+            is_unit = after_number and lower_tr(raw) in UNITS
+            after_number = False
+            if (len(stem) >= 2 and stem.isupper()) or is_unit or (len(raw) == 1 and lower_tr(raw) not in KEEP_SINGLE):
+                at_start = False
+                yield None
+                continue
+        else:
+            after_number = False
         if not raw[0].isalpha():
             if raw in SENTENCE_END:
                 at_start = True
@@ -64,6 +126,7 @@ def main():
     parser.add_argument("--heldout-every", type=int, default=50)
     parser.add_argument("--min-count", type=int, default=2)
     parser.add_argument("--min-pair", type=int, default=2)
+    parser.add_argument("--no-clean", action="store_true", help="count raw text as before (markup, references, acronyms)")
     args = parser.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -81,7 +144,7 @@ def main():
                 continue
             kept += 1
             previous = None
-            for item in words_with_flags(text):
+            for item in words_with_flags(text if args.no_clean else clean_text(text), clean=not args.no_clean):
                 if item is None:
                     previous = None
                     continue
@@ -108,7 +171,7 @@ def main():
             first, second = pair.split(" ")
             if counts[first + second] or wanted_pair(first, second):
                 file.write(f"{pair}\t{count}\n")
-    stats = {"documents": docs, "counted_documents": kept, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
+    stats = {"clean": not args.no_clean, "documents": docs, "counted_documents": kept, "words": tokens, "forms": len(counts), "pairs": len(pairs)}
     (out / "lexicon_stats.json").write_text(json.dumps(stats, indent=2))
     print(stats)
 
