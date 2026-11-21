@@ -1,4 +1,4 @@
-import { ContextModel, SEQUENCE, type RunModel } from "../../src/context.ts";
+import { ContextModel, FEATURE_DIM, SEQUENCE, type RunModel } from "../../src/context.ts";
 import type { ContextSession } from "./types.ts";
 
 export interface OnnxContextOptions {
@@ -47,15 +47,24 @@ export async function createOnnxContextSession(
     return next;
   };
 
-  const run: RunModel = (tokens, segments, n) =>
+  const wantsFeatures = session.inputNames.includes("features");
+
+  const run: RunModel = (tokens, segments, n, features) =>
     enqueue(async () => {
       if (released) {
         throw new Error("autr: Bağlam modeli kapatıldı (dispose edildi).");
       }
-      const feeds = {
+      const feeds: Record<string, import("onnxruntime-web/wasm").Tensor> = {
         tokens: new ort.Tensor("int64", tokens, [n, SEQUENCE]),
         segments: new ort.Tensor("int64", segments, [n, SEQUENCE]),
       };
+      if (wantsFeatures) {
+        feeds["features"] = new ort.Tensor(
+          "float32",
+          features ?? new Float32Array(n * FEATURE_DIM),
+          [n, FEATURE_DIM],
+        );
+      }
       const result = await session.run(feeds);
       const output = result["scores"] ?? Object.values(result)[0];
       if (!output) {

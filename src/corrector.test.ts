@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { Corrector, type WordAnalysis, type WordValidator } from "./corrector.ts";
+import { FEATURE_DIM, buildContextFeatures, morphFeatureBits, pack, ContextModel } from "./context.ts";
+import { CAREFUL, Corrector, type WordAnalysis, type WordValidator } from "./corrector.ts";
 import { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
 import {
@@ -10,8 +11,10 @@ import {
   harmonizeQuestionParticle,
   hasBlockedApostropheStem,
   isHarmoniousApostropheMarkChange,
+  isPlaceApostropheHead,
   isValidGenericApostrophe,
   isValidKnownParticleSuffix,
+  isValidPlaceApostrophe,
   matchAcronymApostrophe,
 } from "./rules/turkish-rules.ts";
 import { lowerTr, markVariants, matchCase } from "./turkish.ts";
@@ -154,6 +157,24 @@ test("Turkish rule helpers", () => {
   assert.equal(harmonizeQuestionParticle("mi", "saat", true), null);
   assert.equal(harmonizeQuestionParticle("mu", "alkol", true), "mü");
   assert.equal(harmonizeQuestionParticle("mü", "oldu", false), null);
+
+  // TDK place/geographic/state apostrophe head-word rules vs institutions
+  assert.equal(isPlaceApostropheHead("denizi"), true);
+  assert.equal(isPlaceApostropheHead("cumhuriyeti"), true);
+  assert.equal(isPlaceApostropheHead("mahallesi"), true);
+  assert.equal(isPlaceApostropheHead("birliği", "avrupa"), true);
+  assert.equal(isPlaceApostropheHead("birliği", "psikiyatri"), false);
+  assert.equal(isPlaceApostropheHead("üniversitesi"), false);
+  assert.equal(isPlaceApostropheHead("partisi"), false);
+  assert.equal(isPlaceApostropheHead("kurumu"), false);
+  assert.equal(isValidPlaceApostrophe("denizi", "nin"), true);
+  assert.equal(isValidPlaceApostrophe("mahallesi", "nde"), true);
+  assert.equal(isValidPlaceApostrophe("cumhuriyeti", "nden"), true);
+  assert.equal(isValidPlaceApostrophe("okyanus", "ta"), true);
+  assert.equal(isValidPlaceApostrophe("okyanus", "da"), false);
+  assert.equal(isValidPlaceApostrophe("denizi", "nın"), false);
+  assert.equal(hasBlockedApostropheStem("denizi", true, false), true);
+  assert.equal(hasBlockedApostropheStem("denizi", true, true), false);
 });
 
 test("synthetic regression tests (no full lexicon required)", () => {
@@ -382,6 +403,26 @@ const extraFixes: [string, string][] = [
   ["Çok üzülsede istemesede bunu kabullendi.", "Çok üzülse de istemese de bunu kabullendi."],
   ["Böyle bir ihtimalide göz önünde bulundurduk.", "Böyle bir ihtimali de göz önünde bulundurduk."],
   ["Burası Ankara'dada bilinir, Çin'dirki meşhurdur.", "Burası Ankara'da da bilinir, Çin'dir ki meşhurdur."],
+  // v8 user-reported short words, misplaced space, two-error combos, vowel drops, and TDK place-name apostrophes
+  ["Dün bne eve geç geldim.", "Dün ben eve geç geldim."],
+  ["Bu akşam ane eve geldi.", "Bu akşam anne eve geldi."],
+  ["Bugün ann e erken geldi.", "Bugün anne erken geldi."],
+  ["Bunu neden yapmıyorsunanlamadim.", "Bunu neden yapmıyorsun anlamadım."],
+  ["Yarın ne yapacağını biliyormusunm?", "Yarın ne yapacağını biliyor musun?"],
+  ["Birazdan yanına geliyorm.", "Birazdan yanına geliyorum."],
+  ["Bunu tek başıma yapabilirm.", "Bunu tek başıma yapabilirim."],
+  ["İstersen yarın eve gidebilirm.", "İstersen yarın eve gidebilirim."],
+  ["Yoldayım birazdan gelyorm.", "Yoldayım birazdan geliyorum."],
+  ["Bu proje üzerinde çok çalışıyrm.", "Bu proje üzerinde çok çalışıyorum."],
+  ["Bu anlaşma ABDde ve ABDnin tarihinde önemlidir.", "Bu anlaşma ABD'de ve ABD'nin tarihinde önemlidir."],
+  ["Gemi Marmara Denizinin ortasından geçti.", "Gemi Marmara Denizi'nin ortasından geçti."],
+  ["Ankara, Türkiye Cumhuriyetinin başkentidir.", "Ankara, Türkiye Cumhuriyeti'nin başkentidir."],
+  ["Ailem Kadıköy Mahallesinde oturuyor.", "Ailem Kadıköy Mahallesi'nde oturuyor."],
+  ["Yazın Van Gölünde ve Ağrı Dağının eteklerinde gezdik.", "Yazın Van Gölü'nde ve Ağrı Dağı'nın eteklerinde gezdik."],
+  ["Akşam İstiklal Caddesinde yürüyüş yaptık.", "Akşam İstiklal Caddesi'nde yürüyüş yaptık."],
+  ["Dugonglar Büyük Okyanusta yaşarlar.", "Dugonglar Büyük Okyanus'ta yaşarlar."],
+  ["Belge Osmanlı Devletinin arşivindedir.", "Belge Osmanlı Devleti'nin arşivindedir."],
+  ["Ülke Avrupa Birliğine resmen başvurdu.", "Ülke Avrupa Birliği'ne resmen başvurdu."],
 ];
 
 const extraKeeps = [
@@ -413,6 +454,17 @@ const extraKeeps = [
   "Bu işin olmağı zor görünüyor.",
   "Yarın akşam görüşrüz.",
   "İnsan bazen lmre gibi yazımlar görür.",
+  // v8 precision & TDK institution guards
+  "Ann e mektup göndermek istedi.",
+  "Bu ne de güzel, o da geldi.",
+  "Dün ben bir an şu ne dedim.",
+  "Öğrenci Ankara Üniversitesinde okuyor.",
+  "Lider Adalet Partisinin kararını açıkladı.",
+  "Yüksek Seçim Kurulunun verileri yayımlandı.",
+  "Bu rapor Amerikan Psikiyatri Birliğinin çalışmasıdır.",
+  "Mezun olduğu Kabataş Erkek Lisesinin takımında oynadı.",
+  "Bu maç Superbowl akşamında izlendi.",
+  "Hımm, bu fikri daha önce düşünmemiştim.",
 ];
 
 for (const [input, want] of extraFixes) {
@@ -448,4 +500,86 @@ test("ol- after a participle is a helper verb, not öl-", { skip: !corrector && 
 
 test("a unique valid mark variant keeps its lower bar when plain restoration also proposes it", { skip: !corrector && "lexicon not built" }, () => {
   assert.equal(corrector!.correct("bu cihaz neden duzeltmiyor").text, "bu cihaz neden düzeltmiyor");
+});
+
+test("context model v2 features, packing, and per-regime contextOffsets", async () => {
+  const unigrams = [
+    "oldu\t5000\t10",
+    "öldü\t2000\t10",
+    "uç\t1000\t5",
+    "üç\t8000\t20",
+    "bende\t10000\t50",
+    "ben\t50000\t200",
+    "de\t500000\t1000",
+    "ev\t10000\t100",
+    "evde\t8000\t50",
+    "geldi\t20000\t100",
+    "adam\t5000\t50",
+    "cok\t10\t0",
+    "çok\t100000\t500",
+  ].join("\n");
+  const bigrams = ["ben de\t15000", "ev de\t120"].join("\n");
+  const analysesMap = new Map<string, readonly WordAnalysis[]>([
+    ["oldu", [{ stem: "ol", pos: "Verb", morphemes: ["Past", "A3sg"] }]],
+    ["öldü", [{ stem: "öl", pos: "Verb", morphemes: ["Past", "A3sg"] }]],
+    ["evde", [{ stem: "ev", pos: "Noun", morphemes: ["A3sg", "Loc"] }]],
+    ["ev", [{ stem: "ev", pos: "Noun", morphemes: ["A3sg"] }]],
+    ["ben", [{ stem: "ben", pos: "Pron", morphemes: ["A1sg"] }]],
+    ["bende", [{ stem: "ben", pos: "Pron", morphemes: ["A1sg", "Loc"] }]],
+  ]);
+  const morph: WordValidator = {
+    isWord: (form) => analysesMap.has(form),
+    analyze: (form) => analysesMap.get(form) ?? [],
+  };
+  const lex = Lexicon.fromTsv(unigrams, bigrams, 1, 1);
+
+  // 8-bit morphology feature mask matches scripts/extract-morph-features.ts
+  assert.equal(morphFeatureBits("oldu", morph), 1 | 2 | 128); // valid + Verb + Past (finite)
+  assert.equal(morphFeatureBits("evde", morph), 1 | 4 | 32); // valid + Noun + Loc
+  assert.equal(morphFeatureBits("ben", morph), 1 | 16); // valid + Pron
+  assert.equal(morphFeatureBits("yokboyle", morph), 0);
+
+  // 18-dim structured feature vector
+  const feats = buildContextFeatures(["oldu", "öldü"], "marks", true, lex, morph);
+  assert.equal(feats.length, 2);
+  assert.equal(feats[0]!.length, FEATURE_DIM);
+  assert.equal(feats[0]![1], 0); // most frequent candidate has relative log freq 0
+  assert.ok(feats[1]![1]! < 0); // rarer candidate has negative relative log freq
+  assert.equal(feats[0]![3], 0); // single word (no space)
+  assert.equal(feats[0]![4], 0); // "oldu" has no Turkish marks
+  assert.equal(feats[1]![4], 1); // "öldü" has Turkish marks
+  assert.equal(feats[0]![5], 1); // asciiContext = true
+  assert.equal(feats[0]![6], 1); // kind one-hot: marks = index 0 -> slot 6
+  assert.equal(feats[0]![10], 1); // morph valid
+  assert.equal(feats[0]![11], 1); // pos_verb
+  assert.equal(feats[0]![17], 1); // has_finite
+
+  const packed = pack([{ left: "Adam ", right: ".", candidates: ["oldu", "öldü"], features: feats }]);
+  assert.equal(packed.n, 2);
+  assert.equal(packed.features.length, 2 * FEATURE_DIM);
+  assert.equal(packed.features[FEATURE_DIM + 4], 1);
+
+  // Per-regime contextOffsets: marksAscii uses threshold.context + marksAscii, while marksMarked adds marksMarked.
+  const seenAsciiFlags: number[] = [];
+  const fakeModel = new ContextModel(async (_tok, _seg, n, features) => {
+    const scores = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      if (features) seenAsciiFlags.push(features[i * FEATURE_DIM + 5]!);
+      // Candidate 0 (typed) gets 0, candidate 1 (alt) gets 3.5 -> clears ASCII (3.0) but not marked (4.0)
+      scores[i] = i % 2 === 1 ? 3.5 : 0;
+    }
+    return scores;
+  });
+  const settings = {
+    ...CAREFUL,
+    threshold: { ...CAREFUL.threshold, context: 3.0 },
+    contextOffsets: { marksAscii: 0, marksMarked: 1.0, marksMarkedOnMarked: 2.5, deDaSplit: 0, deDaJoin: 0, kiSplit: 0, kiJoin: 0, miSplit: 0, miJoin: 0 },
+  };
+  const c = new Corrector(lex, settings, undefined, morph);
+  // ASCII sentence (no Turkish marks elsewhere): margin 3.5 >= 3.0 -> fixes "oldu" -> "öldü"
+  assert.equal((await c.correctAsync("Adam oldu.", fakeModel)).text, "Adam öldü.");
+  // Marked sentence ("çok" has Turkish marks): margin 3.5 < 3.0 + 1.0 -> leaves "oldu" untouched
+  assert.equal((await c.correctAsync("Adam çok oldu.", fakeModel)).text, "Adam çok oldu.");
+  assert.ok(seenAsciiFlags.includes(1));
+  assert.ok(seenAsciiFlags.includes(0));
 });

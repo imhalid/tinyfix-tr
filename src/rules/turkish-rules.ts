@@ -67,6 +67,52 @@ const ACRONYM_WORD = /^([A-ZÇĞİÖŞÜa-zçğıöşü]*[A-ZÇĞİÖŞÜ]{2,})(
 export const HONORIFIC_TITLES = new Set(["bey", "hanım", "paşa", "efendi", "ağa"]);
 
 /**
+ * Closed list of TDK geographic, place, landmark, and state head words (mostly P3sg forms) that take an apostrophe
+ * when preceded by a capitalized proper name ("Marmara Denizi'nin", "Türkiye Cumhuriyeti'nin", "Kadıköy Mahallesi'nde",
+ * "Büyük Okyanus'ta", "Osmanlı Devleti'nin").
+ * Institution and organization head words ("Üniversitesi", "Partisi", "Bakanlığı", "Kurumu", ...) are deliberately excluded.
+ */
+export const PLACE_APOSTROPHE_HEADS = new Set([
+  // Water bodies & coastal geography
+  "denizi", "okyanusu", "okyanus", "gölü", "nehri", "ırmağı", "çayı", "deresi",
+  "boğazı", "körfezi", "kanalı", "şelalesi", "adası", "yarımadası", "takımadası",
+  // Landforms
+  "dağı", "ovası", "yaylası", "platosu", "vadisi", "kanyonu", "çölü", "ormanı",
+  "mağarası", "havzası", "kıtası",
+  // Urban & administrative places
+  "mahallesi", "caddesi", "sokağı", "bulvarı", "meydanı",
+  "eyaleti", "oblastı", "bölgesi",
+  // Historical landmarks
+  "sarayı", "kalesi", "köprüsü", "kulesi",
+  // States & polities
+  "cumhuriyeti", "devleti", "imparatorluğu", "krallığı", "prensliği",
+]);
+
+/** Suffixes after a P3sg vowel-final place/state head word (pronominal buffer "n", "y", or copula). */
+export const PLACE_P3SG_SUFFIX = /^(?:n[ıiuü]n|nd[ae]n?|nd[ae]ki|n[aeıiuü]|yl[ae]|[dt][ıiuü]r|yd[ıiuü]|ym[ıiuü]ş)$/;
+
+/** True when `stem` is a TDK geographic/place/state head word (plus the explicit TDK exception "Avrupa Birliği"). */
+export function isPlaceApostropheHead(stem: string, prevWord?: string): boolean {
+  return PLACE_APOSTROPHE_HEADS.has(stem) || (stem === "birliği" && prevWord === "avrupa");
+}
+
+/** Validates a suffix attached with an apostrophe to a TDK place/geographic/state head word. */
+export function isValidPlaceApostrophe(stem: string, suffix: string): boolean {
+  const vowelFinal = /[aeıioöuüâîû]$/.test(stem);
+  if (vowelFinal) {
+    if (!PLACE_P3SG_SUFFIX.test(suffix)) return false;
+  } else {
+    if (!NAME_SUFFIX.test(suffix)) return false;
+    if (/^(?:n[ıiuü]n|y)/.test(suffix)) return false;
+    if (suffix.startsWith("d") && isVoicelessFinal(stem)) return false;
+    if (suffix.startsWith("t") && !isVoicelessFinal(stem)) return false;
+  }
+  const firstVowel = [...suffix].find((ch) => "aeıioöuü".includes(ch));
+  if (firstVowel && !followsHarmony(stem, firstVowel)) return false;
+  return true;
+}
+
+/**
  * TDK compound verbs that must be written joined across all conjugations (due to vowel drop, consonant doubling,
  * or lexicalization): maps the separate first word to { auxStem, prefix, strictZeroPair? }.
  * E.g. "vaz" + "geçtim" -> "vazgeçtim", "kayıp" + "ediyorum" -> "kaybediyorum", "his" + "ettik" -> "hissettik".
@@ -175,8 +221,8 @@ export function isVoicelessFinal(word: string): boolean {
  * - plural stems and inflected plurals ("Türklerin", "Müslümanlara", "Japonların", "Yunanlardan"),
  * - long derivational language/manner stems in -ca/-ce/-ça/-çe and their inflections ("Hırvatçadan", "Türkçeden").
  */
-export function hasBlockedApostropheStem(stem: string, skipBareCa = false): boolean {
-  if (/[^aeıioöuü](s?[ıiuü])$/.test(stem)) return true;
+export function hasBlockedApostropheStem(stem: string, skipBareCa = false, allowPlaceHead = false): boolean {
+  if (!allowPlaceHead && /[^aeıioöuü](s?[ıiuü])$/.test(stem)) return true;
   if (/l[ae]r$/.test(stem)) return true;
   if (/[aıouâû][^aeıioöuü]*lar(?:ın(?:dan?|a|ı)?|ıyla|dan?|a|la)$/.test(stem)) return true;
   if (/[eiöüî][^aeıioöuü]*ler(?:in(?:den?|e|i)?|iyle|den?|e|le)$/.test(stem)) return true;

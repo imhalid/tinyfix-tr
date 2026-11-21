@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { ALPHABET } from "../../src/context.ts";
+import { ALPHABET, FEATURE_DIM } from "../../src/context.ts";
 import {
   CONTEXT_MODEL_FILE,
   ContextModel,
@@ -50,11 +50,14 @@ function decodeCandidate(tokens: BigInt64Array, segments: BigInt64Array, row: nu
 /** Gerçek ONNX oturumu yerine aday metnine göre sabit puan döndüren sahte `RunModel`. */
 function createFakeRunModel(
   scoreTable: Record<string, number>,
-  calls?: Array<{ n: number; candidates: string[] }>,
+  calls?: Array<{ n: number; candidates: string[]; featuresLength: number }>,
 ): RunModel {
-  return async (tokens, segments, n) => {
+  return async (tokens, segments, n, features) => {
     assert.equal(tokens.length, n * SEQUENCE, "tokens uzunluğu n * SEQUENCE olmalı");
     assert.equal(segments.length, n * SEQUENCE, "segments uzunluğu n * SEQUENCE olmalı");
+    if (features !== undefined) {
+      assert.equal(features.length, n * FEATURE_DIM, "features uzunluğu n * FEATURE_DIM olmalı");
+    }
     const scores = new Float32Array(n);
     const candidates: string[] = [];
     for (let row = 0; row < n; row++) {
@@ -62,7 +65,7 @@ function createFakeRunModel(
       candidates.push(candidate);
       scores[row] = scoreTable[candidate] ?? 0;
     }
-    calls?.push({ n, candidates });
+    calls?.push({ n, candidates, featuresLength: features?.length ?? 0 });
     return scores;
   };
 }
@@ -146,7 +149,7 @@ function createFakeWorker(
 describe("bağlam modeli (sahte RunModel ile)", () => {
   it("bağlam modeli olmadan belirsiz gerçek kelimelere dokunmaz, model ile düzeltir", async () => {
     const withoutContext = createAutr(CONTEXT_TEST_DATA);
-    const calls: Array<{ n: number; candidates: string[] }> = [];
+    const calls: Array<{ n: number; candidates: string[]; featuresLength: number }> = [];
     const fakeRun = createFakeRunModel(
       {
         oldu: 0,
@@ -179,6 +182,7 @@ describe("bağlam modeli (sahte RunModel ile)", () => {
       assert.ok(calls.length >= 2);
       assert.ok(calls[0]!.candidates.includes("ben de"));
       assert.ok(calls[0]!.candidates.includes("öldü"));
+      assert.equal(calls[0]!.featuresLength, calls[0]!.n * FEATURE_DIM);
 
       // kinds ve range filtreleri bağlam düzeltmeleri için de çalışır
       const onlySpacing = await withContext.check(text, { kinds: ["bitisik-ayri"] });
