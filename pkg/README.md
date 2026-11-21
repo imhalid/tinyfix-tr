@@ -8,7 +8,7 @@ Tarayıcıda ve Node.js üzerinde **internetsiz** çalışan Türkçe otomatik d
 npm install autr
 ```
 
-Sözlük dosyalarını (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) ve bağlam modelini kullanacaksanız `context.onnx` dosyasını uygulamanızda sunacağınız bir klasöre (örneğin `public/models/`) yerleştirin.
+Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, `known.tsv`, isteğe bağlı `manifest.json`) ve bağlam modelini kullanacaksanız `context.onnx` dosyasını uygulamanızda sunacağınız bir klasöre (örneğin `public/models/`) yerleştirin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
 
 ## Hızlı Başlangıç
 
@@ -99,8 +99,8 @@ autr.ignore(fix.original);
 
 | Seçenek | Varsayılan | Açıklama |
 |---|---|---|
-| `baseUrl` | `"/models/"` | `unigrams.tsv`, `bigrams.tsv`, `known.tsv` ve isteğe bağlı `context.onnx` dosyalarının bulunduğu adres. |
-| `data` | — | Ağ isteği yerine bellekteki `{ unigrams, bigrams, known }` verisini kullanır. |
+| `baseUrl` | `"/models/"` | `lexicon.bin`, `morph.bin`, `known.tsv` (veya geriye dönük `unigrams.tsv`/`bigrams.tsv`) ve isteğe bağlı `context.onnx` dosyalarının bulunduğu adres. |
+| `data` | — | Ağ isteği yerine bellekteki ikili (`BinaryData`) veya ham TSV (`RawData`) verisini kullanır. |
 | `mode` | `"careful"` | `"careful"` motorun temkinli varsayılan ayarını, `"balanced"` biraz daha cesur eşikleri kullanır. |
 | `worker` | `false` | `true` verilirse sözlük yükleme, bağlam modeli ve denetim ayrı bir Web Worker içinde çalışır. |
 | `createWorker` | — | Özel `Worker` örneği sağlamak için isteğe bağlı kurucu işlev. |

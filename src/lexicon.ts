@@ -1,8 +1,11 @@
+import { BinaryLexicon } from "./lexicon-binary.ts";
+
 /** Word-form and word-pair counts from edited Turkish text. Forms are lowercased the Turkish way; "ankara'ya" keeps its apostrophe. */
 export class Lexicon {
   private readonly counts = new Map<string, number>();
   private readonly capitalized = new Map<string, number>();
   private readonly pairs = new Map<string, number>();
+  private binary: BinaryLexicon | null = null;
 
   /** unigrams: "form\tcount\tcapitalizedMidSentence" lines. bigrams: "first second\tcount" lines. */
   static fromTsv(unigrams: string, bigrams: string, minCount = 1, minPair = 1): Lexicon {
@@ -24,30 +27,43 @@ export class Lexicon {
     return lexicon;
   }
 
+  /** Loads a compact `ALX1` binary lexicon (`lexicon.bin`) directly into memory without parsing TSV strings. */
+  static fromBinary(bytes: Uint8Array): Lexicon {
+    const lexicon = new Lexicon();
+    lexicon.binary = new BinaryLexicon(bytes);
+    return lexicon;
+  }
+
   count(form: string): number {
+    if (this.binary !== null) return this.binary.count(form);
     return this.counts.get(form) ?? 0;
   }
 
   pair(first: string, second: string): number {
+    if (this.binary !== null) return this.binary.pair(first, second);
     return this.pairs.get(first + " " + second) ?? 0;
   }
 
   /** Share of occurrences written with a capital letter mid-sentence: near 1 for names like "ankara". */
   capitalShare(form: string): number {
+    if (this.binary !== null) return this.binary.capitalShare(form);
     const count = this.count(form);
     return count === 0 ? 0 : (this.capitalized.get(form) ?? 0) / count;
   }
 
   get size(): number {
+    if (this.binary !== null) return this.binary.size;
     return this.counts.size;
   }
 
   get pairCount(): number {
+    if (this.binary !== null) return this.binary.pairCount;
     return this.pairs.size;
   }
 
   /** The lexicon as the two TSV texts it was loaded from, for measuring what a pruned copy would weigh. */
   toTsv(): { unigrams: string; bigrams: string } {
+    if (this.binary !== null) return this.binary.toTsv();
     const unigrams = [...this.counts].map(([form, count]) => `${form}\t${count}\t${this.capitalized.get(form) ?? 0}`).join("\n");
     const bigrams = [...this.pairs].map(([pair, count]) => `${pair}\t${count}`).join("\n");
     return { unigrams, bigrams };

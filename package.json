@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "bench": "node bench/run.ts",
+    "build:models": "node scripts/build-browser-models.ts",
     "test": "node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit"
   },

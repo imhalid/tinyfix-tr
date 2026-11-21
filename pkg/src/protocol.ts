@@ -1,11 +1,11 @@
-import type { CheckOptions, Fix, LoadProgress, Mode, RawData } from "./types.ts";
+import type { BinaryData, CheckOptions, Fix, LoadProgress, Mode, RawData } from "./types.ts";
 
 export type WorkerRequest =
   | {
       type: "load";
       id: number;
       baseUrl?: string;
-      data?: RawData;
+      data?: RawData | BinaryData;
       mode: Mode;
       minCount?: number;
       minPair?: number;

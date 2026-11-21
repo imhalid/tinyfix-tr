@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { performance } from "node:perf_hooks";
 import { describe, test } from "node:test";
+import { encodeBinaryDictionary } from "./binary.ts";
+import { parseDictionaries } from "./dictionary.ts";
 import { TurkishMorphology } from "./index.ts";
 
 const DICT_PATHS = [
@@ -514,5 +516,43 @@ describe("TurkishMorphology", () => {
     console.log(
       `[morphology] sample-valid.txt: ${acceptedCount}/${validWords.length} accepted (${rate.toFixed(2)}%) | uncached: ${uncachedUsPerWord.toFixed(2)} us/word | cached: ${cachedUsPerWord.toFixed(2)} us/word`,
     );
+  });
+
+  test("binary AMR1 format produces identical isWord() and analyze() results to text .dict", () => {
+    const items = parseDictionaries(dictTexts);
+    const binaryBytes = encodeBinaryDictionary(items);
+    const binStart = performance.now();
+    const binMorph = TurkishMorphology.fromBinary(binaryBytes);
+    const binLoadMs = performance.now() - binStart;
+    console.log(`[morphology] binary AMR1 load time: ${binLoadMs.toFixed(1)} ms (${binaryBytes.byteLength} bytes raw)`);
+
+    const checkWords = [
+      ...loadWordList("data/morph/sample-valid.txt"),
+      ...loadWordList("data/morph/sample-wrong.txt"),
+      "hükûmetten",
+      "hükümetten",
+      "âcizane",
+      "kitâbımı",
+      "zeytinyağları",
+      "buzdolabım",
+      "bana",
+      "sana",
+      "diyordum",
+      "yiyeceksin",
+      "birbirimize",
+      "çoğumuzdan",
+      "saatler",
+      "kalbim",
+    ];
+
+    for (const word of checkWords) {
+      assert.equal(binMorph.isWord(word), morph.isWord(word), `isWord mismatch for "${word}"`);
+    }
+    for (const word of checkWords.slice(0, 500)) {
+      assert.deepEqual(binMorph.analyze(word), morph.analyze(word), `analyze mismatch for "${word}"`);
+    }
+    for (const word of ["hükûmetten", "zeytinyağları", "bana", "diyordum", "ağzımızı", "evdekiler", "kitabımı"]) {
+      assert.deepEqual(binMorph.analyze(word), morph.analyze(word), `analyze mismatch for "${word}"`);
+    }
   });
 });

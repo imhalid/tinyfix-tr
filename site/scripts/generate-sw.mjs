@@ -49,11 +49,14 @@ const allRelative = collectFiles(distDir)
   .filter((rel) => rel !== "sw.js" && !rel.endsWith(".DS_Store") && !rel.endsWith(".map"))
   .sort();
 
+const isOrtAsset = (rel) =>
+  rel.startsWith("ort/") ||
+  rel.endsWith(".wasm") ||
+  /(?:^|\/)ort\.wasm\.bundle/.test(rel);
+
 const modelFiles = allRelative.filter((rel) => rel.startsWith("models/"));
-const ortFiles = allRelative.filter((rel) => rel.startsWith("ort/") || rel.endsWith(".wasm"));
-const shellFiles = allRelative.filter(
-  (rel) => !rel.startsWith("models/") && !rel.startsWith("ort/") && !rel.endsWith(".wasm"),
-);
+const ortFiles = allRelative.filter(isOrtAsset);
+const shellFiles = allRelative.filter((rel) => !rel.startsWith("models/") && !isOrtAsset(rel));
 
 const shellVersion = hashFiles(shellFiles);
 const modelVersion = hashFiles(modelFiles);
@@ -97,9 +100,8 @@ async function precacheMissing(cacheName, urls, sequential = false) {
 }
 
 self.addEventListener("install", (event) => {
-  // Only the app shell is cached on install. The lexicon and ORT files are cached the first time the page asks for
-  // them (cache-first handler below). Precaching them here downloaded the same ~58 MB twice on the first visit, in
-  // parallel with the page, and cut the page's own download short.
+  // Only the app shell is cached on install. The lexicon, morphology, and optional ORT files are cached lazily
+  // the first time the page requests them (cache-first handler below).
   event.waitUntil(precacheMissing(SHELL_CACHE, SHELL_FILES, false).then(() => self.skipWaiting()));
 });
 
@@ -174,7 +176,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.includes("/ort/") || url.pathname.endsWith(".wasm")) {
+  if (url.pathname.includes("/ort/") || url.pathname.endsWith(".wasm") || url.pathname.includes("/ort.wasm.bundle")) {
     event.respondWith(handleCacheFirst(request, ORT_CACHE));
     return;
   }

@@ -13,7 +13,7 @@ import { ContextModel, SEQUENCE } from "../src/context.ts";
 import { Corrector } from "../src/corrector.ts";
 import { KnownMisspellings } from "../src/known.ts";
 import { Lexicon } from "../src/lexicon.ts";
-import { loadMorphology } from "./setup.ts";
+import { loadBrowserCorrector, loadMorphology } from "./setup.ts";
 
 interface Row {
   id: string | number;
@@ -23,22 +23,48 @@ interface Row {
 }
 
 const args = process.argv.slice(2);
-const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set"];
+const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set", "--models"];
 const target = args.find((arg, index) => !arg.startsWith("--") && !VALUE_FLAGS.includes(args[index - 1] ?? "")) ?? "dev";
 const show = args.includes("--show") ? Number(args[args.indexOf("--show") + 1]) : 0;
 const onlyClass = args.includes("--class") ? args[args.indexOf("--class") + 1] : undefined;
+const browserMode = args.includes("--browser");
+const modelsDir = args.includes("--models") ? args[args.indexOf("--models") + 1]! : "site/public/models";
 
 const started = Date.now();
-const minCount = args.includes("--min-count") ? Number(args[args.indexOf("--min-count") + 1]) : 1;
-const minPair = args.includes("--min-pair") ? Number(args[args.indexOf("--min-pair") + 1]) : 1;
-const lexicon = Lexicon.fromTsv(
-  readFileSync(process.argv.includes("--lexicon") && process.argv[process.argv.indexOf("--lexicon") + 1] === "wiki" ? "data/work/unigrams.tsv" : "data/work/unigrams_conv.tsv", "utf8"),
-  readFileSync("data/work/bigrams.tsv", "utf8"),
-  minCount,
-  minPair,
-);
-const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8"));
-const corrector = new Corrector(lexicon, undefined, known, process.argv.includes("--no-morphology") ? undefined : loadMorphology());
+let lexicon: Lexicon;
+let corrector: Corrector;
+let loadSummary: string;
+
+if (browserMode) {
+  const loaded = await loadBrowserCorrector(modelsDir, {
+    noMorphology: args.includes("--no-morphology"),
+    noKnown: args.includes("--no-known"),
+  });
+  lexicon = loaded.lexicon;
+  corrector = loaded.corrector;
+  const rawMb = loaded.files.reduce((s, f) => s + f.raw, 0) / 1e6;
+  const gzipMb = loaded.files.reduce((s, f) => s + f.gzip, 0) / 1e6;
+  const brotliMb = loaded.files.reduce((s, f) => s + f.brotli, 0) / 1e6;
+  loadSummary =
+    `browser (${modelsDir}): ${lexicon.size.toLocaleString()} forms, ${lexicon.pairCount.toLocaleString()} pairs, ` +
+    `${rawMb.toFixed(2)} MB raw / ${gzipMb.toFixed(2)} MB gzip / ${brotliMb.toFixed(2)} MB brotli, ` +
+    `parsed in ${loaded.parseMs.toFixed(1)} ms (total ${loaded.totalMs.toFixed(1)} ms)\n`;
+} else {
+  const minCount = args.includes("--min-count") ? Number(args[args.indexOf("--min-count") + 1]) : 1;
+  const minPair = args.includes("--min-pair") ? Number(args[args.indexOf("--min-pair") + 1]) : 1;
+  lexicon = Lexicon.fromTsv(
+    readFileSync(process.argv.includes("--lexicon") && process.argv[process.argv.indexOf("--lexicon") + 1] === "wiki" ? "data/work/unigrams.tsv" : "data/work/unigrams_conv.tsv", "utf8"),
+    readFileSync("data/work/bigrams.tsv", "utf8"),
+    minCount,
+    minPair,
+  );
+  const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8"));
+  corrector = new Corrector(lexicon, undefined, known, process.argv.includes("--no-morphology") ? undefined : loadMorphology());
+  const tsv = lexicon.toTsv();
+  const gzipMb = (gzipSync(tsv.unigrams).length + gzipSync(tsv.bigrams).length) / 1e6;
+  loadSummary =
+    `lexicon: ${lexicon.size.toLocaleString()} forms (count >= ${minCount}), ${lexicon.pairCount.toLocaleString()} pairs (count >= ${minPair}), ${gzipMb.toFixed(1)} MB gzipped as TSV, loaded in ${Date.now() - started} ms\n`;
+}
 // --set name=value overrides one number in the settings, for trying values: --set typoEndWindow=3
 for (const [index, arg] of args.entries()) {
   if (arg !== "--set") continue;
@@ -61,11 +87,7 @@ if (contextPath) {
   if (args.includes("--context-threshold")) corrector.settings.threshold.context = Number(args[args.indexOf("--context-threshold") + 1]);
   console.log(`context model: ${contextPath}, threshold ${corrector.settings.threshold.context}`);
 }
-const tsv = lexicon.toTsv();
-const gzipMb = (gzipSync(tsv.unigrams).length + gzipSync(tsv.bigrams).length) / 1e6;
-console.log(
-  `lexicon: ${lexicon.size.toLocaleString()} forms (count >= ${minCount}), ${lexicon.pairCount.toLocaleString()} pairs (count >= ${minPair}), ${gzipMb.toFixed(1)} MB gzipped as TSV, loaded in ${Date.now() - started} ms\n`,
-);
+console.log(loadSummary);
 
 const path = statSync(target, { throwIfNoEntry: false })?.isFile() ? target : join("bench", target);
 const files = statSync(path).isFile() ? [path] : readdirSync(path).filter((f) => f.endsWith(".jsonl")).map((f) => join(path, f));

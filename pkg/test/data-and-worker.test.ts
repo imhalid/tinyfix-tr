@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { loadAutr, type LoadProgress, type RawData } from "../src/index.ts";
+import { encodeBinaryLexicon } from "../../src/lexicon-binary.ts";
+import { encodeBinaryDictionary } from "../../src/morphology/binary.ts";
+import { parseDictionaries } from "../../src/morphology/dictionary.ts";
+import { createAutr, loadAutr, type BinaryData, type LoadProgress, type RawData } from "../src/index.ts";
 import type { WorkerRequest, WorkerResponse } from "../src/protocol.ts";
 import { createWorkerMessageHandler } from "../src/worker.ts";
 
@@ -201,5 +204,125 @@ describe("Web Worker protokolü", () => {
 
     await autr.dispose();
     await assert.rejects(() => autr.check("cok"));
+  });
+});
+
+function createBinaryMockFetch(
+  files: Record<string, string | Uint8Array>,
+  requested?: string[],
+): typeof globalThis.fetch {
+  return async (input) => {
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    const name = url.split("/").at(-1) ?? "";
+    requested?.push(name);
+    const content = files[name];
+    if (content === undefined) {
+      return new Response("Not Found", { status: 404 });
+    }
+    const bytes = typeof content === "string" ? new TextEncoder().encode(content) : content;
+    return new Response(new Uint8Array(bytes), {
+      status: 200,
+      headers: {
+        "content-length": String(bytes.byteLength),
+        "content-type": name.endsWith(".json")
+          ? "application/json"
+          : name.endsWith(".tsv")
+            ? "text/tab-separated-values; charset=utf-8"
+            : "application/octet-stream",
+      },
+    });
+  };
+}
+
+function buildMiniBinaryBundle(): BinaryData {
+  const lexicon = encodeBinaryLexicon({
+    unigrams: [
+      { form: "bugün", count: 8000, capitalized: 100 },
+      { form: "çok", count: 10000, capitalized: 100 },
+      { form: "getirmek", count: 5000, capitalized: 10 },
+      { form: "boyun", count: 2000, capitalized: 10 },
+      { form: "boyunu", count: 300, capitalized: 0 },
+      { form: "boyunda", count: 2000, capitalized: 0 },
+      { form: "yüklemek", count: 3000, capitalized: 0 },
+      { form: "yüklediniz", count: 50, capitalized: 0 },
+      { form: "herkes", count: 3709, capitalized: 50 },
+      { form: "geldi", count: 20000, capitalized: 100 },
+    ],
+    bigrams: [{ first: "bir", second: "şey", count: 5325 }],
+  });
+  const morphItems = parseDictionaries(["getirmek [A:Aorist_I]\nboy\nyüklemek\n"]);
+  const morphology = encodeBinaryDictionary(morphItems);
+  const known = "herkez\therkes\t0\t3709\tMISSPELLINGS\n";
+  return { lexicon, morphology, known };
+}
+
+describe("ikili sözlük ve biçimbilim yükleme", () => {
+  it("manifest.json ile lexicon.bin + morph.bin + known.tsv yükler ve biçimbilimi kullanır", async () => {
+    const bundle = buildMiniBinaryBundle();
+    const requested: string[] = [];
+    const manifest = JSON.stringify({
+      "lexicon.bin": bundle.lexicon.byteLength,
+      "morph.bin": bundle.morphology!.byteLength,
+      "known.tsv": new TextEncoder().encode(bundle.known).byteLength,
+    });
+    const mockFetch = createBinaryMockFetch(
+      {
+        "manifest.json": manifest,
+        "lexicon.bin": bundle.lexicon,
+        "morph.bin": bundle.morphology!,
+        "known.tsv": bundle.known,
+      },
+      requested,
+    );
+
+    const events: LoadProgress[] = [];
+    const autr = await loadAutr({
+      baseUrl: "https://example.test/models/",
+      fetch: mockFetch,
+      onProgress: (progress) => events.push({ ...progress }),
+    });
+
+    try {
+      // Eski TSV dosyaları hiç istenmemeli
+      assert.ok(!requested.includes("unigrams.tsv"));
+      assert.ok(!requested.includes("bigrams.tsv"));
+      assert.ok(requested.includes("lexicon.bin"));
+      assert.ok(requested.includes("morph.bin"));
+
+      // Biçimbilim: nadir ama geçerli "getirsek" korunur (getirmek yapılmaz), "boyunuda" -> "boyunu da", "yükledinizmi?" -> "yüklediniz mi?"
+      assert.equal(await autr.fix("Bugün getirsek olur."), "Bugün getirsek olur.");
+      assert.equal(await autr.fix("Boyunuda aldım, yükledinizmi?"), "Boyunu da aldım, yüklediniz mi?");
+      assert.equal(await autr.fix("Herkez cok geldi."), "Herkes çok geldi.");
+      assert.equal(events.at(-1)?.stage, "ready");
+      assert.equal(events.at(-1)?.ratio, 1);
+    } finally {
+      await autr.dispose();
+    }
+  });
+
+  it("createAutr ve Web Worker ikili sözlük + biçimbilim ile çalışır", async () => {
+    const bundle = buildMiniBinaryBundle();
+    const direct = createAutr(bundle);
+    try {
+      assert.equal(await direct.fix("Getirsek boyunuda yükledinizmi?"), "Getirsek boyunu da yüklediniz mi?");
+    } finally {
+      await direct.dispose();
+    }
+
+    const mockFetch = createBinaryMockFetch({
+      "lexicon.bin": bundle.lexicon,
+      "morph.bin": bundle.morphology!,
+      "known.tsv": bundle.known,
+    });
+    const workerAutr = await loadAutr({
+      baseUrl: "https://example.test/models/",
+      worker: true,
+      createWorker: () => createFakeWorker(mockFetch),
+    });
+    try {
+      assert.equal(await workerAutr.fix("Getirsek boyunuda yükledinizmi?"), "Getirsek boyunu da yüklediniz mi?");
+    } finally {
+      await workerAutr.dispose();
+    }
   });
 });

@@ -5,6 +5,7 @@
  */
 
 import { MorphologicalAnalyzer } from "./analyzer.ts";
+import { parseBinaryDictionary } from "./binary.ts";
 import { buildStemIndex, parseDictionaries } from "./dictionary.ts";
 import { getMorphotacticsGraph } from "./morphotactics.ts";
 import type { MorphAnalysis } from "./types.ts";
@@ -22,6 +23,14 @@ export class TurkishMorphology {
   static fromDictionaries(texts: readonly string[]): TurkishMorphology {
     const graph = getMorphotacticsGraph();
     const items = parseDictionaries(texts);
+    const stemIndex = buildStemIndex(items, graph);
+    return new TurkishMorphology(new MorphologicalAnalyzer(stemIndex));
+  }
+
+  /** Sıkıştırılmış ikili sözlükten (AMR1 `morph.bin`) kurar. */
+  static fromBinary(bytes: Uint8Array): TurkishMorphology {
+    const graph = getMorphotacticsGraph();
+    const items = parseBinaryDictionary(bytes);
     const stemIndex = buildStemIndex(items, graph);
     return new TurkishMorphology(new MorphologicalAnalyzer(stemIndex));
   }

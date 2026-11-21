@@ -134,7 +134,7 @@ export class AutrEngine {
   ) {
     this.mode = mode;
     this.contextSession = contextSession;
-    this.corrector = new Corrector(data.lexicon, SETTINGS_BY_MODE[mode], data.known);
+    this.corrector = new Corrector(data.lexicon, SETTINGS_BY_MODE[mode], data.known, data.morphology);
     if (ignored) {
       for (const word of ignored) this.ignore(word);
     }

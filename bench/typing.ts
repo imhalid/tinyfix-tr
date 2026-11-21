@@ -17,7 +17,7 @@ import { join } from "node:path";
 import { Corrector, type Correction } from "../src/corrector.ts";
 import { KnownMisspellings } from "../src/known.ts";
 import { Lexicon } from "../src/lexicon.ts";
-import { loadMorphology } from "./setup.ts";
+import { loadBrowserCorrector, loadMorphology } from "./setup.ts";
 
 interface Row {
   class: string;
@@ -26,7 +26,7 @@ interface Row {
 }
 
 const args = process.argv.slice(2);
-const VALUE_FLAGS = ["--lag", "--class", "--show", "--lexicon"];
+const VALUE_FLAGS = ["--lag", "--class", "--show", "--lexicon", "--models"];
 /** At the end of a sentence, check the whole sentence once more, as if it had been pasted. */
 const settle = args.includes("--settle");
 const passAutoMarked = args.includes("--auto-marked");
@@ -34,9 +34,17 @@ const target = args.find((arg, index) => !arg.startsWith("--") && !VALUE_FLAGS.i
 const lags = (args.includes("--lag") ? args[args.indexOf("--lag") + 1]! : "0,1,2").split(",").map(Number);
 const onlyClass = args.includes("--class") ? args[args.indexOf("--class") + 1] : undefined;
 const show = args.includes("--show") ? Number(args[args.indexOf("--show") + 1]) : 0;
+const browserMode = args.includes("--browser");
+const modelsDir = args.includes("--models") ? args[args.indexOf("--models") + 1]! : "site/public/models";
 
-const lexicon = Lexicon.fromTsv(readFileSync(process.argv.includes("--lexicon") && process.argv[process.argv.indexOf("--lexicon") + 1] === "wiki" ? "data/work/unigrams.tsv" : "data/work/unigrams_conv.tsv", "utf8"), readFileSync("data/work/bigrams.tsv", "utf8"), 1, 5);
-const corrector = new Corrector(lexicon, undefined, KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8")), process.argv.includes("--no-morphology") ? undefined : loadMorphology());
+const corrector = browserMode
+  ? (await loadBrowserCorrector(modelsDir, { noMorphology: args.includes("--no-morphology") })).corrector
+  : new Corrector(
+      Lexicon.fromTsv(readFileSync(process.argv.includes("--lexicon") && process.argv[process.argv.indexOf("--lexicon") + 1] === "wiki" ? "data/work/unigrams.tsv" : "data/work/unigrams_conv.tsv", "utf8"), readFileSync("data/work/bigrams.tsv", "utf8"), 1, 5),
+      undefined,
+      KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8")),
+      process.argv.includes("--no-morphology") ? undefined : loadMorphology(),
+    );
 
 const path = statSync(target, { throwIfNoEntry: false })?.isFile() ? target : join("bench", target);
 const files = statSync(path).isFile() ? [path] : readdirSync(path).filter((f) => f.endsWith(".jsonl")).map((f) => join(path, f));

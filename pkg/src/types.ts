@@ -52,13 +52,28 @@ export const CONTEXT_MODEL_FILE = "context.onnx" as const;
 /** Bağlam modeli dosya adı türü. */
 export type ContextModelFileName = typeof CONTEXT_MODEL_FILE;
 
-/** İndirilen sözlük ve bağlam modeli dosyalarının adları. */
-export type DataFileName = "unigrams.tsv" | "bigrams.tsv" | "known.tsv" | ContextModelFileName;
+/** İndirilen sözlük, biçimbilim ve bağlam modeli dosyalarının adları. */
+export type DataFileName =
+  | "lexicon.bin"
+  | "morph.bin"
+  | "known.tsv"
+  | "unigrams.tsv"
+  | "bigrams.tsv"
+  | ContextModelFileName;
 
-/** Bellekteki ham sözlük verisi. */
+/** Bellekteki ham TSV sözlük verisi. */
 export interface RawData {
   unigrams: string;
   bigrams: string;
+  known: string;
+  /** İsteğe bağlı biçimbilim verisi (`morph.bin` baytları veya Zemberek `.dict` metinleri). */
+  morphology?: Uint8Array | string | readonly string[];
+}
+
+/** Bellekteki sıkıştırılmış ikili sözlük verisi (`lexicon.bin` + `morph.bin` + `known.tsv`). */
+export interface BinaryData {
+  lexicon: Uint8Array;
+  morphology?: Uint8Array;
   known: string;
 }
 
@@ -98,8 +113,8 @@ export type WarningCallback = (message: string) => void;
 export interface LoadOptions {
   /** Sözlük (ve `context: true` ise `context.onnx`) dosyalarının bulunduğu temel URL. Varsayılan: "/models/". */
   baseUrl?: string | URL;
-  /** Ağ isteği yapmadan doğrudan bellek içi sözlük verisi kullanmak için. */
-  data?: RawData;
+  /** Ağ isteği yapmadan doğrudan bellek içi sözlük verisi (ikili veya ham TSV) kullanmak için. */
+  data?: RawData | BinaryData;
   /** Düzeltme hassasiyeti. Varsayılan: "careful". */
   mode?: Mode;
   /** true verilirse sözlük yükleme, bağlam modeli ve denetim ayrı bir Web Worker içinde çalışır. */

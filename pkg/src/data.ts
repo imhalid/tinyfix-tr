@@ -1,9 +1,12 @@
 import type { ContextModel, RunModel } from "../../src/context.ts";
+import type { WordValidator } from "../../src/corrector.ts";
 import { KnownMisspellings } from "../../src/known.ts";
 import { Lexicon } from "../../src/lexicon.ts";
+import { TurkishMorphology } from "../../src/morphology/index.ts";
 import { createOnnxContextSession, wrapContextModel } from "./context.ts";
 import { CONTEXT_MODEL_FILE } from "./types.ts";
 import type {
+  BinaryData,
   ContextSession,
   ContextSessionLoader,
   DataFileName,
@@ -13,8 +16,15 @@ import type {
   WarningCallback,
 } from "./types.ts";
 
-/** Zorunlu sözlük TSV dosyaları. Sıkıştırılmış ikili biçime geçildiğinde yalnızca bu modül güncellenir. */
-export const DATA_FILES: readonly ("unigrams.tsv" | "bigrams.tsv" | "known.tsv")[] = [
+/** Zorunlu tarayıcı veri dosyaları (ikili sözlük + biçimbilim + bilinen yanlışlar). */
+export const DATA_FILES: readonly ("lexicon.bin" | "morph.bin" | "known.tsv")[] = [
+  "lexicon.bin",
+  "morph.bin",
+  "known.tsv",
+];
+
+/** Eski düz metin TSV dosya listesi (geriye dönük uyumluluk için). */
+export const LEGACY_DATA_FILES: readonly ("unigrams.tsv" | "bigrams.tsv" | "known.tsv")[] = [
   "unigrams.tsv",
   "bigrams.tsv",
   "known.tsv",
@@ -27,10 +37,12 @@ export const DEFAULT_BASE_URL = "/models/";
 
 /** İndirme ilerlemesini tahmin etmek için dosyaların yaklaşık ağırlıkları (Content-Length yoksa). */
 const FILE_WEIGHTS: Record<DataFileName, number> = {
+  "lexicon.bin": 0.94,
+  "morph.bin": 0.05,
+  "known.tsv": 0.01,
   "unigrams.tsv": 0.60,
   "bigrams.tsv": 0.26,
-  "known.tsv": 0.04,
-  "context.onnx": 0.10,
+  "context.onnx": 0.25,
 };
 
 const DOWNLOAD_SHARE = 0.9;
@@ -40,6 +52,7 @@ const DOWNLOAD_ATTEMPTS = 3;
 export interface LoadedData {
   lexicon: Lexicon;
   known: KnownMisspellings;
+  morphology?: WordValidator;
   contextSession?: ContextSession | null;
 }
 
@@ -57,7 +70,7 @@ export interface ParseDataOptions {
 
 export interface LoadDataOptions extends FetchDataOptions, ParseDataOptions {
   baseUrl?: string | URL;
-  data?: RawData;
+  data?: RawData | BinaryData;
   context?: boolean;
   wasmPaths?: string | URL;
   contextModel?: ContextModel | RunModel;
@@ -72,14 +85,18 @@ interface FileProgressState {
 }
 
 interface FetchedBundle {
-  unigrams?: string;
-  bigrams?: string;
-  known?: string;
+  binary?: BinaryData;
+  raw?: RawData;
   contextBytes: Uint8Array | null;
   contextError: unknown;
 }
 
 const nextTask = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+
+/** Verilen bellek içi verinin ikili (`BinaryData`) biçimde olup olmadığını söyler. */
+export function isBinaryData(data: RawData | BinaryData): data is BinaryData {
+  return "lexicon" in data && data.lexicon instanceof Uint8Array;
+}
 
 /** Göreli veya mutlak URL/yol değerini sona `/` ekleyerek çözümler. */
 export function resolveBaseUrl(baseUrl: string | URL = DEFAULT_BASE_URL): string {
@@ -223,9 +240,20 @@ async function readResponseBytes(
   return output;
 }
 
+function createEmptyStates(): Record<DataFileName, FileProgressState> {
+  return {
+    "lexicon.bin": { loaded: 0, total: null, done: false },
+    "morph.bin": { loaded: 0, total: null, done: false },
+    "known.tsv": { loaded: 0, total: null, done: false },
+    "unigrams.tsv": { loaded: 0, total: null, done: false },
+    "bigrams.tsv": { loaded: 0, total: null, done: false },
+    "context.onnx": { loaded: 0, total: null, done: false },
+  };
+}
+
 async function fetchBundle(
   baseUrl: string | URL,
-  files: readonly DataFileName[],
+  mode: { wantCore: boolean; forceLegacyTsv?: boolean; wantContext: boolean },
   options: FetchDataOptions = {},
 ): Promise<FetchedBundle> {
   const fetchFn = options.fetch ?? globalThis.fetch;
@@ -234,12 +262,12 @@ async function fetchBundle(
   }
 
   const resolvedBase = resolveBaseUrl(baseUrl);
-  const states: Record<DataFileName, FileProgressState> = {
-    "unigrams.tsv": { loaded: 0, total: null, done: false },
-    "bigrams.tsv": { loaded: 0, total: null, done: false },
-    "known.tsv": { loaded: 0, total: null, done: false },
-    "context.onnx": { loaded: 0, total: null, done: false },
-  };
+  const states = createEmptyStates();
+
+  let activeFiles: DataFileName[] = [
+    ...(mode.wantCore ? (mode.forceLegacyTsv ? LEGACY_DATA_FILES : DATA_FILES) : []),
+    ...(mode.wantContext ? [CONTEXT_MODEL_FILE] : []),
+  ];
 
   let lastEmit = 0;
   let maxRatio = 0;
@@ -248,7 +276,7 @@ async function fetchBundle(
     const now = Date.now();
     if (!force && now - lastEmit < PROGRESS_THROTTLE_MS) return;
     lastEmit = now;
-    const summary = summarizeDownload(states, files, file);
+    const summary = summarizeDownload(states, activeFiles, file);
     if (summary.ratio < maxRatio) {
       summary.ratio = maxRatio;
     } else {
@@ -259,23 +287,19 @@ async function fetchBundle(
 
   emit(undefined, true);
 
-  // Optional manifest.json next to the files, with each file's real size (written by the site's build). Without it,
-  // compressed responses give no total and progress can only be estimated.
+  // Optional manifest.json next to the files, with each file's real size (written by the site's build).
+  // Also tells us immediately whether the host serves the binary bundle (lexicon.bin) or legacy TSVs.
   const manifest: Partial<Record<DataFileName, number>> = await fetchFn(buildFileUrl(resolvedBase, "manifest.json"), {
     signal: options.signal,
   })
     .then((response) => (response.ok ? (response.json() as Promise<Partial<Record<DataFileName, number>>>) : {}))
     .catch(() => ({}));
 
-  const downloadOne = async <T>(
+  const readTracked = async <T>(
     file: DataFileName,
+    response: Response,
     readBody: (response: Response, onChunk: (bytes: number) => void) => Promise<T>,
   ): Promise<T> => {
-    const url = buildFileUrl(resolvedBase, file);
-    const response = await fetchFn(url, { signal: options.signal });
-    if (!response.ok) {
-      throw new Error(`autr: ${file} yüklenemedi (${response.status}) — ${url}`);
-    }
     const size = manifest[file];
     states[file].total = parseContentLength(response) ?? (typeof size === "number" && size > 0 ? size : null);
     emit(file, true);
@@ -288,6 +312,18 @@ async function fetchBundle(
     states[file].done = true;
     emit(file, true);
     return data;
+  };
+
+  const downloadOne = async <T>(
+    file: DataFileName,
+    readBody: (response: Response, onChunk: (bytes: number) => void) => Promise<T>,
+  ): Promise<T> => {
+    const url = buildFileUrl(resolvedBase, file);
+    const response = await fetchFn(url, { signal: options.signal });
+    if (!response.ok) {
+      throw new Error(`autr: ${file} yüklenemedi (${response.status}) — ${url}`);
+    }
+    return readTracked(file, response, readBody);
   };
 
   // A download can be cut off, for example while a service worker installs and fetches the same files on the first
@@ -308,18 +344,91 @@ async function fetchBundle(
     }
   };
 
-  const wantTsv = files.includes("unigrams.tsv");
-  const wantContext = files.includes(CONTEXT_MODEL_FILE);
+  const downloadOptionalMorph = async (): Promise<Uint8Array | undefined> => {
+    const url = buildFileUrl(resolvedBase, "morph.bin");
+    const response = await fetchFn(url, { signal: options.signal });
+    if (response.status === 404) {
+      states["morph.bin"].total = 0;
+      states["morph.bin"].done = true;
+      emit("morph.bin", true);
+      return undefined;
+    }
+    if (!response.ok) {
+      throw new Error(`autr: morph.bin yüklenemedi (${response.status}) — ${url}`);
+    }
+    return readTracked("morph.bin", response, readResponseBytes);
+  };
 
-  const tsvPromise = wantTsv
-    ? Promise.all([
+  const downloadCore = async (): Promise<{ binary?: BinaryData; raw?: RawData }> => {
+    if (!mode.wantCore) return {};
+
+    const manifestHasBinary = typeof manifest["lexicon.bin"] === "number";
+    const manifestHasLegacy = !manifestHasBinary && typeof manifest["unigrams.tsv"] === "number";
+
+    if (mode.forceLegacyTsv || manifestHasLegacy) {
+      activeFiles = [...LEGACY_DATA_FILES, ...(mode.wantContext ? [CONTEXT_MODEL_FILE] : [])];
+      const [unigrams, bigrams, known] = await Promise.all([
         downloadWithRetry("unigrams.tsv", readResponseText),
         downloadWithRetry("bigrams.tsv", readResponseText),
         downloadWithRetry("known.tsv", readResponseText),
-      ])
-    : Promise.resolve(null);
+      ]);
+      return { raw: { unigrams, bigrams, known } };
+    }
 
-  const contextPromise: Promise<{ bytes: Uint8Array | null; error: unknown }> = wantContext
+    if (manifestHasBinary) {
+      const hasMorph = typeof manifest["morph.bin"] === "number";
+      activeFiles = [
+        "lexicon.bin",
+        ...(hasMorph ? (["morph.bin"] as const) : []),
+        "known.tsv",
+        ...(mode.wantContext ? [CONTEXT_MODEL_FILE] : []),
+      ];
+      const [lexicon, morphology, known] = await Promise.all([
+        downloadWithRetry("lexicon.bin", readResponseBytes),
+        hasMorph ? downloadWithRetry("morph.bin", readResponseBytes) : Promise.resolve(undefined),
+        downloadWithRetry("known.tsv", readResponseText),
+      ]);
+      return { binary: { lexicon, morphology, known } };
+    }
+
+    // No manifest.json: try lexicon.bin first; if 404, seamlessly fall back to legacy TSV files.
+    const lexUrl = buildFileUrl(resolvedBase, "lexicon.bin");
+    let lexResponse: Response;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        lexResponse = await fetchFn(lexUrl, { signal: options.signal });
+        break;
+      } catch (error) {
+        const isNetworkFailure = error instanceof TypeError;
+        if (!isNetworkFailure || attempt >= DOWNLOAD_ATTEMPTS || options.signal?.aborted) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      }
+    }
+
+    if (lexResponse.status === 404) {
+      activeFiles = [...LEGACY_DATA_FILES, ...(mode.wantContext ? [CONTEXT_MODEL_FILE] : [])];
+      const [unigrams, bigrams, known] = await Promise.all([
+        downloadWithRetry("unigrams.tsv", readResponseText),
+        downloadWithRetry("bigrams.tsv", readResponseText),
+        downloadWithRetry("known.tsv", readResponseText),
+      ]);
+      return { raw: { unigrams, bigrams, known } };
+    }
+
+    if (!lexResponse.ok) {
+      throw new Error(`autr: lexicon.bin yüklenemedi (${lexResponse.status}) — ${lexUrl}`);
+    }
+
+    // Stream lexicon.bin while fetching morph.bin and known.tsv in parallel.
+    const [lexicon, morphology, known] = await Promise.all([
+      readTracked("lexicon.bin", lexResponse, readResponseBytes),
+      downloadOptionalMorph(),
+      downloadWithRetry("known.tsv", readResponseText),
+    ]);
+    return { binary: { lexicon, morphology, known } };
+  };
+
+  const contextPromise: Promise<{ bytes: Uint8Array | null; error: unknown }> = mode.wantContext
     ? downloadWithRetry(CONTEXT_MODEL_FILE, readResponseBytes)
         .then((bytes) => ({ bytes, error: null as unknown }))
         .catch((error: unknown) => {
@@ -331,81 +440,104 @@ async function fetchBundle(
         })
     : Promise.resolve({ bytes: null, error: null });
 
-  const [tsv, contextResult] = await Promise.all([tsvPromise, contextPromise]);
+  const [core, contextResult] = await Promise.all([downloadCore(), contextPromise]);
 
   return {
-    unigrams: tsv?.[0],
-    bigrams: tsv?.[1],
-    known: tsv?.[2],
+    binary: core.binary,
+    raw: core.raw,
     contextBytes: contextResult.bytes,
     contextError: contextResult.error,
   };
 }
 
-/** `baseUrl` altından `unigrams.tsv`, `bigrams.tsv` ve `known.tsv` dosyalarını indirir. */
+/** `baseUrl` altından eski ham TSV dosyalarını (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) indirir. */
 export async function fetchRawData(
   baseUrl: string | URL = DEFAULT_BASE_URL,
   options: FetchDataOptions = {},
 ): Promise<RawData> {
-  const bundle = await fetchBundle(baseUrl, DATA_FILES, options);
-  return {
-    unigrams: bundle.unigrams!,
-    bigrams: bundle.bigrams!,
-    known: bundle.known!,
-  };
+  const bundle = await fetchBundle(baseUrl, { wantCore: true, forceLegacyTsv: true, wantContext: false }, options);
+  return bundle.raw!;
 }
 
-/** Ham TSV metinlerini motorun kullandığı `Lexicon` ve `KnownMisspellings` yapılarına dönüştürür. */
+function parseMorphologyInput(input: Uint8Array | string | readonly string[] | undefined): WordValidator | undefined {
+  if (!input) return undefined;
+  if (input instanceof Uint8Array) return TurkishMorphology.fromBinary(input);
+  if (typeof input === "string") return TurkishMorphology.fromDictionaries([input]);
+  return TurkishMorphology.fromDictionaries(input);
+}
+
+/** Ham TSV metinlerini motorun kullandığı `Lexicon`, `KnownMisspellings` ve isteğe bağlı `TurkishMorphology` yapılarına dönüştürür. */
 export async function parseRawData(raw: RawData, options: ParseDataOptions = {}): Promise<LoadedData> {
   const minCount = options.minCount ?? 1;
   const minPair = options.minPair ?? 1;
   const lexicon = Lexicon.fromTsv(raw.unigrams, raw.bigrams, minCount, minPair);
   if (options.yieldToMain) await nextTask();
   const known = KnownMisspellings.fromTsv(raw.known);
-  return { lexicon, known };
+  const morphology = parseMorphologyInput(raw.morphology);
+  return { lexicon, known, morphology };
 }
 
-/** Sözlüğü (ve istenirse bağlam modelini) indirir, ayrıştırır ve yükleme ilerlemesini bildirir. */
+/** Sıkıştırılmış ikili sözlük (`lexicon.bin` + `morph.bin` + `known.tsv`) verisini motorun yapılarına dönüştürür. */
+export async function parseBinaryData(binary: BinaryData, options: ParseDataOptions = {}): Promise<LoadedData> {
+  const lexicon = Lexicon.fromBinary(binary.lexicon);
+  if (options.yieldToMain) await nextTask();
+  const known = KnownMisspellings.fromTsv(binary.known);
+  const morphology = binary.morphology ? TurkishMorphology.fromBinary(binary.morphology) : undefined;
+  return { lexicon, known, morphology };
+}
+
+/** Sözlüğü, biçimbilimi (ve istenirse bağlam modelini) indirir, ayrıştırır ve yükleme ilerlemesini bildirir. */
 export async function loadData(options: LoadDataOptions = {}): Promise<LoadedData> {
   const wantContext = Boolean(options.context);
   const prebuiltContext =
     options.contextModel && options.context !== false ? wrapContextModel(options.contextModel) : null;
   const shouldFetchContext = wantContext && !prebuiltContext;
-  const shouldFetchTsv = !options.data;
+  const shouldFetchCore = !options.data;
 
-  let raw: RawData;
+  let binaryData: BinaryData | undefined;
+  let rawData: RawData | undefined;
   let contextBytes: Uint8Array | null = null;
   let contextDownloadError: unknown = null;
   let totalBytes: number | null = null;
   let loadedBytes = 0;
 
-  if (!shouldFetchTsv && !shouldFetchContext) {
-    raw = options.data!;
+  if (options.data) {
+    if (isBinaryData(options.data)) binaryData = options.data;
+    else rawData = options.data;
+  }
+
+  if (!shouldFetchCore && !shouldFetchContext) {
     const encoder = new TextEncoder();
-    loadedBytes =
-      encoder.encode(raw.unigrams).byteLength +
-      encoder.encode(raw.bigrams).byteLength +
-      encoder.encode(raw.known).byteLength;
+    if (binaryData) {
+      loadedBytes =
+        binaryData.lexicon.byteLength +
+        (binaryData.morphology?.byteLength ?? 0) +
+        encoder.encode(binaryData.known).byteLength;
+    } else if (rawData) {
+      loadedBytes =
+        encoder.encode(rawData.unigrams).byteLength +
+        encoder.encode(rawData.bigrams).byteLength +
+        encoder.encode(rawData.known).byteLength;
+    }
     totalBytes = loadedBytes;
   } else {
-    const filesToDownload: DataFileName[] = [
-      ...(shouldFetchTsv ? DATA_FILES : []),
-      ...(shouldFetchContext ? [CONTEXT_MODEL_FILE] : []),
-    ];
     const downloadState: { last: LoadProgress | null } = { last: null };
-    const bundle = await fetchBundle(options.baseUrl ?? DEFAULT_BASE_URL, filesToDownload, {
-      fetch: options.fetch,
-      signal: options.signal,
-      onProgress: (progress) => {
-        downloadState.last = progress;
-        options.onProgress?.(progress);
+    const bundle = await fetchBundle(
+      options.baseUrl ?? DEFAULT_BASE_URL,
+      { wantCore: shouldFetchCore, wantContext: shouldFetchContext },
+      {
+        fetch: options.fetch,
+        signal: options.signal,
+        onProgress: (progress) => {
+          downloadState.last = progress;
+          options.onProgress?.(progress);
+        },
       },
-    });
-    raw = options.data ?? {
-      unigrams: bundle.unigrams!,
-      bigrams: bundle.bigrams!,
-      known: bundle.known!,
-    };
+    );
+    if (shouldFetchCore) {
+      binaryData = bundle.binary;
+      rawData = bundle.raw;
+    }
     contextBytes = bundle.contextBytes;
     contextDownloadError = bundle.contextError;
     if (downloadState.last) {
@@ -423,11 +555,13 @@ export async function loadData(options: LoadDataOptions = {}): Promise<LoadedDat
 
   if (options.yieldToMain) await nextTask();
 
-  const parsed = await parseRawData(raw, {
-    minCount: options.minCount,
-    minPair: options.minPair,
-    yieldToMain: options.yieldToMain,
-  });
+  const parsed = binaryData
+    ? await parseBinaryData(binaryData, { yieldToMain: options.yieldToMain })
+    : await parseRawData(rawData!, {
+        minCount: options.minCount,
+        minPair: options.minPair,
+        yieldToMain: options.yieldToMain,
+      });
 
   let contextSession: ContextSession | null = prebuiltContext;
 
