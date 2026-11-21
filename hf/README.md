@@ -12,6 +12,8 @@ tags:
 library_name: onnx
 ---
 
+<img src="https://huggingface.co/spaces/imhalid/README/resolve/main/banner.png" alt="tdkai: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
+
 # tdkai: Turkish autocorrect that runs offline
 
 tdkai fixes Turkish spelling as you type, following TDK spelling rules, with no server: everything runs on the
