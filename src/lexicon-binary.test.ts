@@ -74,6 +74,16 @@ describe("BinaryLexicon (ALX1)", () => {
     assert.equal(lex.count("kesinlikleyoktur123"), 0);
     assert.equal(lex.count(""), 0);
 
+    // exactCount skips Bloom tail tiers (used for typo target lookups)
+    assert.equal(lex.exactCount("zeytin"), 4);
+    assert.ok(Math.abs(lex.exactCount("ankara'ya") - 4000) / 4000 < 0.05);
+    assert.equal(lex.exactCount("nadirüç"), 0);
+    assert.equal(lex.exactCount("nadiriki"), 0);
+
+    // Apostrophe forms skip Bloom tail probes (only matched in exact table)
+    assert.equal(lex.count("nadir'üç"), 0);
+    assert.ok(Math.abs(lex.count("ankara'ya") - 4000) / 4000 < 0.05);
+
     // Non-alphabet characters safely return 0
     assert.equal(lex.count("hello123"), 0);
     assert.equal(lex.count("test@example"), 0);

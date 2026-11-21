@@ -23,10 +23,11 @@ interface Row {
 }
 
 const args = process.argv.slice(2);
-const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set", "--models"];
+const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set", "--models", "--half"];
 const target = args.find((arg, index) => !arg.startsWith("--") && !VALUE_FLAGS.includes(args[index - 1] ?? "")) ?? "dev";
 const show = args.includes("--show") ? Number(args[args.indexOf("--show") + 1]) : 0;
 const onlyClass = args.includes("--class") ? args[args.indexOf("--class") + 1] : undefined;
+const half = args.includes("--half") ? args[args.indexOf("--half") + 1] : undefined;
 const browserMode = args.includes("--browser");
 const modelsDir = args.includes("--models") ? args[args.indexOf("--models") + 1]! : "site/public/models";
 
@@ -92,7 +93,11 @@ console.log(loadSummary);
 const path = statSync(target, { throwIfNoEntry: false })?.isFile() ? target : join("bench", target);
 const files = statSync(path).isFile() ? [path] : readdirSync(path).filter((f) => f.endsWith(".jsonl")).map((f) => join(path, f));
 const rows: Row[] = files.flatMap((file) =>
-  readFileSync(file, "utf8").split("\n").filter(Boolean).map((line) => JSON.parse(line) as Row),
+  readFileSync(file, "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .filter((_, idx) => (half === "even" ? idx % 2 === 0 : half === "odd" ? idx % 2 === 1 : true))
+    .map((line) => JSON.parse(line) as Row),
 );
 
 /** Character edit distance, to tell whether a single change moves the text toward the gold sentence. */
