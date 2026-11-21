@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { FEATURE_DIM, buildContextFeatures, morphFeatureBits, pack, ContextModel } from "./context.ts";
+import {
+  FEATURE_DIM,
+  buildContextFeatures,
+  encodeSubwords,
+  morphFeatureBits,
+  pack,
+  packSubwords,
+  ContextModel,
+} from "./context.ts";
 import { CAREFUL, Corrector, type WordAnalysis, type WordValidator } from "./corrector.ts";
 import { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
@@ -597,4 +605,135 @@ test("context model v2 features, packing, and per-regime contextOffsets", async 
   assert.equal((await c.correctAsync("Adam çok oldu.", fakeModel)).text, "Adam çok oldu.");
   assert.ok(seenAsciiFlags.includes(1));
   assert.ok(seenAsciiFlags.includes(0));
+});
+
+test("Context Model v3: subword packing and typo candidate disambiguation (override, ambiguous, rescue, priorTypoOriginals)", async () => {
+  // 1. Subword tokenizer + dynamic packer checks
+  const ids1 = encodeSubwords("Ankara'ya giderken GOES-15 verilerini inceledik.");
+  assert.ok(ids1.length > 5);
+  assert.equal(ids1[0], 4); // <cap> before Ankara
+  assert.ok(ids1.includes(5)); // <allcap> before GOES
+  assert.ok(ids1.includes(6)); // <num> for 15
+  assert.notDeepEqual(encodeSubwords("içinde"), encodeSubwords("için de"));
+  assert.notDeepEqual(encodeSubwords("yıllar"), encodeSubwords("yollar"));
+  assert.notDeepEqual(encodeSubwords("oldu"), encodeSubwords("öldü"));
+
+  const subPacked = packSubwords([
+    { left: "Ondan hiç ", right: " alamadım.", candidates: ["hber", "her", "haber"] },
+  ]);
+  assert.equal(subPacked.n, 3);
+  assert.equal(subPacked.subwords[0], 2n); // <cls> at pos 0
+  assert.equal(subPacked.subSegments[0], 1n);
+  // Candidate segment (2n) and right segment (3n) must both be present
+  assert.ok(Array.from(subPacked.subSegments).includes(2n));
+  assert.ok(Array.from(subPacked.subSegments).includes(3n));
+
+  // 2. Synthetic lexicon + morphology covering override (hber->her/haber), ambiguous (etkildi->etkiledi/etkili),
+  //    and below-threshold rescue (kesintis->kesintisi)
+  const unigrams = [
+    "ondan\t5000\t100",
+    "hiç\t50000\t200",
+    "her\t100000\t500",
+    "haber\t10000\t100",
+    "alamadım\t2000\t0",
+    "film\t8000\t100",
+    "beni\t30000\t100",
+    "çok\t100000\t100",
+    "etkiledi\t1500\t0",
+    "etkili\t11800\t0",
+    "elektrik\t5000\t100",
+    "kesintisi\t80\t0",
+    "yüzünden\t8000\t0",
+  ].join("\n");
+  const validWords = new Set(["ondan", "hiç", "her", "haber", "alamadım", "film", "beni", "çok", "etkiledi", "etkili", "elektrik", "kesintisi", "yüzünden"]);
+  const morph: WordValidator = { isWord: (w) => validWords.has(w) };
+  const lex = Lexicon.fromTsv(unigrams, "", 1, 1);
+  const c = new Corrector(lex, { ...CAREFUL }, undefined, morph);
+
+  // Core without context picks higher-frequency "her" for "hber", leaves tied "etkildi" and rare "kesintis" untouched
+  assert.equal(c.correct("Ondan hiç hber alamadım.").text, "Ondan hiç her alamadım.");
+  assert.equal(c.correct("Film beni çok etkildi.").text, "Film beni çok etkildi.");
+  assert.equal(c.correct("Elektrik kesintis yüzünden.").text, "Elektrik kesintis yüzünden.");
+
+  // Check typoCandidatesFor returns both competing candidates with exact features
+  const hberCands = c.typoCandidatesFor("hber", { atSentenceStart: false, textHasMarks: true, questionAhead: false });
+  assert.deepEqual(hberCands.map((x) => x.text), ["her", "haber"]);
+
+  const seenLeft: string[] = [];
+  const scoreMap: Record<string, number> = {
+    hber: -2.0,
+    her: 1.0,
+    haber: 5.5, // delta over core pick "her" = 4.5 >= contextTypoOverride (2.5)
+    etkildi: -2.0,
+    etkili: 1.0,
+    etkiledi: 4.0, // vsTyped=6.0 >= 2.5, gap=3.0 >= 1.5
+    kesintis: -1.5,
+    kesintisi: 4.5, // vsTyped=6.0 >= contextTypoRescue (4.5)
+  };
+  const fakeTypoModel = new ContextModel(
+    async (_tok, _seg, n, features, subwords) => {
+      assert.ok(subwords && subwords.seqLen >= 4);
+      assert.equal(features?.length, n * FEATURE_DIM);
+      // Verify kind=typo feature slot 18 is 1
+      for (let i = 0; i < n; i++) assert.equal(features![i * FEATURE_DIM + 18], 1);
+      // Use a small helper by looking up candidate text via pack() isn't needed if we match via subwords;
+      // use a second model below with score() override to inspect exact strings cleanly.
+      return new Float32Array(n);
+    },
+    { subwordsOnly: true },
+  );
+  // Smoke-check subwordsOnly path runs cleanly
+  await c.correctAsync("Ondan hiç hber alamadım.", fakeTypoModel);
+
+  const namedModel = {
+    async score(queries: readonly { left: string; right: string; candidates: string[]; features?: readonly (readonly number[])[] }[]) {
+      return queries.map((q) => {
+        seenLeft.push(q.left);
+        return q.candidates.map((cand) => scoreMap[cand] ?? 0);
+      });
+    },
+  } as unknown as ContextModel;
+
+  // 3. Mode T2 (override): switches core's wrong "her" -> "haber"
+  assert.equal((await c.correctAsync("Ondan hiç hber alamadım.", namedModel)).text, "Ondan hiç haber alamadım.");
+  // When context model is NOT confident enough over core pick, core's pick stands
+  scoreMap.haber = 2.0; // delta = 1.0 < contextTypoOverride (1.2)
+  assert.equal((await c.correctAsync("Ondan hiç hber alamadım.", namedModel)).text, "Ondan hiç her alamadım.");
+  scoreMap.haber = 5.5;
+
+  // 4. Mode T1 (ambiguous): resolves tied "etkildi" -> "etkiledi"
+  assert.equal((await c.correctAsync("Film beni çok etkildi.", namedModel)).text, "Film beni çok etkiledi.");
+
+  // 5. Mode T3 (rescue): rescues low-count "kesintis" -> "kesintisi" when confident, leaves untouched if weak
+  assert.equal((await c.correctAsync("Elektrik kesintis yüzünden.", namedModel)).text, "Elektrik kesintisi yüzünden.");
+  scoreMap.kesintisi = 0.5; // vsTyped = 2.0 < contextTypoRescue (2.5)
+  assert.equal((await c.correctAsync("Elektrik kesintis yüzünden.", namedModel)).text, "Elektrik kesintis yüzünden.");
+
+  // 6. TDK SOMBAHCEMİ words ("Mademki", "illaki") are never split by the context model
+  const kiLex = Lexicon.fromTsv(
+    "mademki\t500\t10\nmadem\t500\t10\nillaki\t500\t0\nilla\t500\t0\nki\t50000\t0\n",
+    "",
+    1,
+    1,
+  );
+  const kiCorrector = new Corrector(kiLex, { ...CAREFUL }, undefined, morph);
+  const splitAllModel = {
+    async score(queries: readonly { candidates: string[] }[]) {
+      return queries.map((q) => q.candidates.map((_, i) => (i === 0 ? 0 : 10)));
+    },
+  } as unknown as ContextModel;
+  assert.equal((await kiCorrector.correctAsync("Mademki geldin, illaki konuşalım.", splitAllModel)).text, "Mademki geldin, illaki konuşalım.");
+
+  // 6. Pause-pass priorTypoOriginals: "her" (originally typed "hber") is re-evaluated with full sentence -> "haber"
+  const pauseText = "Ondan hiç her alamadım.";
+  const herStart = pauseText.indexOf("her");
+  const pauseRes = await c.correctAsync(pauseText, namedModel, {
+    priorTypoOriginals: [{ start: herStart, end: herStart + 3, original: "hber" }],
+  });
+  assert.equal(pauseRes.text, "Ondan hiç haber alamadım.");
+
+  // 7. Core-restored context: earlier core mark fix ("cok" -> "çok") is cleaned in `left` seen by context model
+  seenLeft.length = 0;
+  await c.correctAsync("Film beni cok etkildi.", namedModel);
+  assert.ok(seenLeft.some((l) => l.includes("çok")), `expected core-restored 'çok' in left context, got: ${JSON.stringify(seenLeft)}`);
 });

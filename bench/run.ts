@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
-import { ContextModel, FEATURE_DIM, SEQUENCE } from "../src/context.ts";
+import { ContextModel, FEATURE_DIM, LEGACY_FEATURE_DIM, SEQUENCE, sliceLegacyFeatures } from "../src/context.ts";
 import { Corrector } from "../src/corrector.ts";
 import { KnownMisspellings } from "../src/known.ts";
 import { Lexicon } from "../src/lexicon.ts";
@@ -23,11 +23,12 @@ interface Row {
 }
 
 const args = process.argv.slice(2);
-const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set", "--models", "--half"];
+const VALUE_FLAGS = ["--show", "--class", "--min-count", "--min-pair", "--dump", "--context", "--context-threshold", "--lexicon", "--set", "--models", "--half", "--id-half"];
 const target = args.find((arg, index) => !arg.startsWith("--") && !VALUE_FLAGS.includes(args[index - 1] ?? "")) ?? "dev";
 const show = args.includes("--show") ? Number(args[args.indexOf("--show") + 1]) : 0;
 const onlyClass = args.includes("--class") ? args[args.indexOf("--class") + 1] : undefined;
 const half = args.includes("--half") ? args[args.indexOf("--half") + 1] : undefined;
+const idHalf = args.includes("--id-half") ? args[args.indexOf("--id-half") + 1] : undefined;
 const browserMode = args.includes("--browser");
 const modelsDir = args.includes("--models") ? args[args.indexOf("--models") + 1]! : "site/public/models";
 
@@ -80,18 +81,29 @@ let contextModel: ContextModel | undefined;
 if (contextPath) {
   const ort = await import("onnxruntime-node");
   const session = await ort.InferenceSession.create(contextPath);
+  const wantsSubwords = session.inputNames.includes("subwords");
   const wantsFeatures = session.inputNames.includes("features");
-  contextModel = new ContextModel(async (tokens, segments, n, features) => {
-    const feeds: Record<string, import("onnxruntime-node").Tensor> = {
-      tokens: new ort.Tensor("int64", tokens, [n, SEQUENCE]),
-      segments: new ort.Tensor("int64", segments, [n, SEQUENCE]),
-    };
-    if (wantsFeatures) {
-      feeds.features = new ort.Tensor("float32", features ?? new Float32Array(n * FEATURE_DIM), [n, FEATURE_DIM]);
-    }
-    const result = await session.run(feeds);
-    return result.scores!.data as Float32Array;
-  });
+  contextModel = new ContextModel(
+    async (tokens, segments, n, features, subwords) => {
+      const feeds: Record<string, import("onnxruntime-node").Tensor> = {};
+      if (wantsSubwords && subwords) {
+        feeds.subwords = new ort.Tensor("int64", subwords.subwords, [n, subwords.seqLen]);
+        feeds.sub_segments = new ort.Tensor("int64", subwords.subSegments, [n, subwords.seqLen]);
+      } else {
+        feeds.tokens = new ort.Tensor("int64", tokens, [n, SEQUENCE]);
+        feeds.segments = new ort.Tensor("int64", segments, [n, SEQUENCE]);
+      }
+      if (wantsFeatures) {
+        const featArr = features ?? new Float32Array(n * FEATURE_DIM);
+        feeds.features = wantsSubwords
+          ? new ort.Tensor("float32", featArr, [n, FEATURE_DIM])
+          : new ort.Tensor("float32", sliceLegacyFeatures(featArr, n), [n, LEGACY_FEATURE_DIM]);
+      }
+      const result = await session.run(feeds);
+      return result.scores!.data as Float32Array;
+    },
+    { subwordsOnly: wantsSubwords },
+  );
   if (args.includes("--context-threshold")) corrector.settings.threshold.context = Number(args[args.indexOf("--context-threshold") + 1]);
   console.log(`context model: ${contextPath}, threshold ${corrector.settings.threshold.context}`);
 }
@@ -99,13 +111,20 @@ console.log(loadSummary);
 
 const path = statSync(target, { throwIfNoEntry: false })?.isFile() ? target : join("bench", target);
 const files = statSync(path).isFile() ? [path] : readdirSync(path).filter((f) => f.endsWith(".jsonl")).map((f) => join(path, f));
-const rows: Row[] = files.flatMap((file) =>
-  readFileSync(file, "utf8")
-    .split("\n")
-    .filter(Boolean)
-    .filter((_, idx) => (half === "even" ? idx % 2 === 0 : half === "odd" ? idx % 2 === 1 : true))
-    .map((line) => JSON.parse(line) as Row),
-);
+const rows: Row[] = files
+  .flatMap((file) =>
+    readFileSync(file, "utf8")
+      .split("\n")
+      .filter(Boolean)
+      .filter((_, idx) => (half === "even" ? idx % 2 === 0 : half === "odd" ? idx % 2 === 1 : true))
+      .map((line) => JSON.parse(line) as Row),
+  )
+  .filter((row) => {
+    if (!idHalf) return true;
+    const m = String(row.id).match(/(\d+)/);
+    if (!m) return true;
+    return idHalf === "even" ? Number(m[1]) % 2 === 0 : Number(m[1]) % 2 === 1;
+  });
 
 /** Character edit distance, to tell whether a single change moves the text toward the gold sentence. */
 function distance(first: string, second: string): number {

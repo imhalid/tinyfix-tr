@@ -1,4 +1,4 @@
-import { ContextModel, FEATURE_DIM, SEQUENCE, type RunModel } from "../../src/context.ts";
+import { ContextModel, FEATURE_DIM, LEGACY_FEATURE_DIM, SEQUENCE, sliceLegacyFeatures, type RunModel } from "../../src/context.ts";
 import type { ContextSession } from "./types.ts";
 
 export interface OnnxContextOptions {
@@ -47,23 +47,29 @@ export async function createOnnxContextSession(
     return next;
   };
 
+  const wantsSubwords = session.inputNames.includes("subwords");
   const wantsFeatures = session.inputNames.includes("features");
 
-  const run: RunModel = (tokens, segments, n, features) =>
+  const run: RunModel = (tokens, segments, n, features, subwords) =>
     enqueue(async () => {
       if (released) {
         throw new Error("autr: Bağlam modeli kapatıldı (dispose edildi).");
       }
-      const feeds: Record<string, import("onnxruntime-web/wasm").Tensor> = {
-        tokens: new ort.Tensor("int64", tokens, [n, SEQUENCE]),
-        segments: new ort.Tensor("int64", segments, [n, SEQUENCE]),
-      };
+      const feeds: Record<string, import("onnxruntime-web/wasm").Tensor> = {};
+      if (wantsSubwords && subwords) {
+        feeds["subwords"] = new ort.Tensor("int64", subwords.subwords, [n, subwords.seqLen]);
+        feeds["sub_segments"] = new ort.Tensor("int64", subwords.subSegments, [n, subwords.seqLen]);
+      } else {
+        feeds["tokens"] = new ort.Tensor("int64", tokens, [n, SEQUENCE]);
+        feeds["segments"] = new ort.Tensor("int64", segments, [n, SEQUENCE]);
+      }
       if (wantsFeatures) {
-        feeds["features"] = new ort.Tensor(
-          "float32",
-          features ?? new Float32Array(n * FEATURE_DIM),
-          [n, FEATURE_DIM],
-        );
+        const featArr = features ?? new Float32Array(n * FEATURE_DIM);
+        if (wantsSubwords) {
+          feeds["features"] = new ort.Tensor("float32", featArr, [n, FEATURE_DIM]);
+        } else {
+          feeds["features"] = new ort.Tensor("float32", sliceLegacyFeatures(featArr, n), [n, LEGACY_FEATURE_DIM]);
+        }
       }
       const result = await session.run(feeds);
       const output = result["scores"] ?? Object.values(result)[0];
@@ -77,7 +83,7 @@ export async function createOnnxContextSession(
     });
 
   return {
-    model: new ContextModel(run),
+    model: new ContextModel(run, { subwordsOnly: wantsSubwords }),
     dispose: async () => {
       if (released) return;
       released = true;

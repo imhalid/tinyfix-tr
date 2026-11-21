@@ -1,4 +1,4 @@
-import { buildContextFeatures, type ContextKind, type ContextModel } from "./context.ts";
+import { buildContextFeatures, type ContextKind, type ContextModel, type TypoCandidateMeta } from "./context.ts";
 import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
 import {
@@ -121,7 +121,15 @@ export interface Settings {
   contextWord: number;
   /** A count-based fix is dropped when the context model prefers what was typed by at least this much. */
   contextVeto: number;
-  /** Per-regime additive offsets on top of `threshold.context` (calibrated for Context Model v2). */
+  /** Minimum context-model margin over core's typo pick to switch to a competing valid typo candidate. */
+  contextTypoOverride?: number;
+  /** Minimum context-model margin between best and runner-up to resolve an ambiguous untouched typo. */
+  contextTypoAmbigGap?: number;
+  /** Minimum context-model margin over the invalid typed word to resolve an ambiguous untouched typo. */
+  contextTypoAmbigVsTyped?: number;
+  /** Minimum context-model margin over the invalid typed word to rescue a below-threshold typo candidate. */
+  contextTypoRescue?: number;
+  /** Per-regime additive offsets on top of `threshold.context`. */
   contextOffsets?: {
     marksAscii?: number;
     marksMarked?: number;
@@ -156,6 +164,10 @@ export const CAREFUL: Settings = {
   typoStemShare: 0,
   contextWord: 5,
   contextVeto: 6.0,
+  contextTypoOverride: 1.2,
+  contextTypoAmbigGap: 1.25,
+  contextTypoAmbigVsTyped: 1.5,
+  contextTypoRescue: 2.5,
   knownMarked: 20,
   markedOverride: 5.5,
   minName: 20,
@@ -168,9 +180,10 @@ interface Candidate {
   base: number;
   joinsNext: boolean;
   threshold?: number;
+  slipCost?: number;
 }
 
-type AddCandidate = (text: string, kind: CandidateKind, score: number, base?: number, threshold?: number) => void;
+type AddCandidate = (text: string, kind: CandidateKind, score: number, base?: number, threshold?: number, slipCost?: number) => void;
 
 export interface Token {
   text: string;
@@ -248,12 +261,22 @@ function keepCase(typed: string, replacement: string): string {
   return output;
 }
 
+const FOLD_TR: Record<string, string> = { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" };
+const foldTr = (word: string) => word.replace(/[çğıöşüâîû]/g, (ch) => FOLD_TR[ch] ?? ch);
+/** TDK SOMBAHCEMİ words that are always written joined and must never be split by the context model. */
+const FIXED_KI_WORDS = new Set(["oysaki", "halbuki", "mademki", "meğerki", "illaki", "sanki", "belki", "çünkü"]);
+
 export interface CorrectOptions {
   /**
    * [start, end) ranges whose Turkish letters were put there by autocorrect, not typed by the user. They don't count
    * as evidence that the user types with Turkish letters, so "hic bir sey" still gets "sey" fixed after "hiç" was.
    */
   autoMarked?: readonly (readonly [number, number])[];
+  /**
+   * Optional original typed tokens for spans already rewritten by an earlier core typing pass (e.g. "hber" -> "her"),
+   * allowing the background context pass to re-evaluate the original typo once the full sentence is available.
+   */
+  priorTypoOriginals?: readonly { readonly start: number; readonly end: number; readonly original: string }[];
 }
 
 export class Corrector {
@@ -471,8 +494,9 @@ export class Corrector {
   }
 
   /**
-   * Like correct(), but places where two real words compete ("bende" / "ben de", "oldu" / "öldü", "sevgimi" /
-   * "sevgi mi") are decided by the context model instead of by counts alone. Everything else is decided as before.
+   * Like correct(), but contested real-word ambiguities ("bende" / "ben de", "oldu" / "öldü", "sevgimi" / "sevgi mi")
+   * and ambiguous/contested typo candidates ("yllar" -> "yıllar"/"yollar", "hber" -> "her"/"haber") are scored in
+   * sentence context by the context model. Core behavior without a context model is unchanged.
    */
   async correctAsync(
     text: string,
@@ -483,14 +507,23 @@ export class Corrector {
     const evidence = stripMarksIn(text, options.autoMarked ?? []);
     const textHasMarks = hasTurkishMarks(evidence);
     const { asciiTyped, sentenceOf } = this.asciiEvidence(tokenize(evidence));
+    const priorTypoByStart = new Map<number, { start: number; end: number; original: string }>();
+    if (options.priorTypoOriginals) {
+      for (const item of options.priorTypoOriginals) priorTypoByStart.set(item.start, item);
+    }
     const decided: Correction[] = [];
     const pending: {
       start: number;
       end: number;
       typed: string;
+      /** Text currently in `text.slice(start, end)` (differs from `typed` only for priorTypoOriginals). */
+      surfaceOriginal: string;
       alternatives: string[];
       kind: ContextKind;
-      direction: "marks" | "split" | "join";
+      direction: "marks" | "split" | "join" | "typo";
+      typoMode?: "override" | "ambiguous" | "rescue";
+      coreReplacement?: string;
+      typoMeta?: TypoCandidateMeta[];
       asciiContext: boolean;
       typedHasMarks: boolean;
     }[] = [];
@@ -533,8 +566,105 @@ export class Corrector {
         prevCapitalized = false;
         continue;
       }
-      for (const option of this.contestedSpans(token, next?.token, context, tokens, index)) pending.push(option);
+      for (const option of this.contestedSpans(token, next?.token, context, tokens, index)) {
+        pending.push({ ...option, surfaceOriginal: option.typed });
+      }
       const fix = this.check(token.text, context, next?.token.text);
+      const asciiContext = !context.textHasMarks || Boolean(context.sentenceHasAsciiTurkish);
+
+      // Re-evaluate a word previously rewritten as a typo during live typing (pause-pass override).
+      const priorTypo = priorTypoByStart.get(token.start);
+      if (priorTypo && priorTypo.end === token.end && !fix) {
+        const typoCands = this.typoCandidatesFor(priorTypo.original, context, next?.token.text, 7);
+        if (typoCands.length >= 2) {
+          const alts = typoCands.map((c) => (c.kind === "typo" ? matchCase(priorTypo.original, c.text) : keepCase(priorTypo.original, c.text)));
+          if (alts.some((alt) => lowerTr(alt) === lowerTr(token.text))) {
+            pending.push({
+              start: token.start,
+              end: token.end,
+              typed: priorTypo.original,
+              surfaceOriginal: token.text,
+              alternatives: alts,
+              kind: "typo",
+              direction: "typo",
+              typoMode: "override",
+              coreReplacement: token.text,
+              typoMeta: [
+                { coreMargin: 0, slipCost: 0, isMarkVariant: false },
+                ...typoCands.map((c) => ({ coreMargin: c.margin, slipCost: c.slipCost, isMarkVariant: c.isMarkVariant })),
+              ],
+              asciiContext,
+              typedHasMarks: hasTurkishMarks(priorTypo.original),
+            });
+          }
+        }
+      }
+
+      // Contested or rescued typo candidates for invalid/rare words.
+      const typoCands = this.typoCandidatesFor(token.text, context, next?.token.text, 7);
+      if (typoCands.length > 0) {
+        const word = lowerTr(token.text);
+        const typedCount = this.lexicon.count(word);
+        const alts = typoCands.map((c) => (c.kind === "typo" ? matchCase(token.text, c.text) : keepCase(token.text, c.text)));
+        const meta: TypoCandidateMeta[] = [
+          { coreMargin: 0, slipCost: 0, isMarkVariant: false },
+          ...typoCands.map((c) => ({ coreMargin: c.margin, slipCost: c.slipCost, isMarkVariant: c.isMarkVariant })),
+        ];
+        if (
+          fix &&
+          !fix.joinsNext &&
+          typoCands.length >= 2 &&
+          fix.kind === "typo" &&
+          alts.some((alt) => lowerTr(alt) === lowerTr(fix.replacement))
+        ) {
+          pending.push({
+            start: token.start,
+            end: token.end,
+            typed: token.text,
+            surfaceOriginal: token.text,
+            alternatives: alts,
+            kind: "typo",
+            direction: "typo",
+            typoMode: "override",
+            coreReplacement: fix.replacement,
+            typoMeta: meta,
+            asciiContext,
+            typedHasMarks: hasTurkishMarks(word),
+          });
+        } else if (!fix) {
+          const top = typoCands[0]!;
+          if (typoCands.length >= 2 && (top.margin >= top.threshold || (typedCount === 0 && top.margin >= 0))) {
+            pending.push({
+              start: token.start,
+              end: token.end,
+              typed: token.text,
+              surfaceOriginal: token.text,
+              alternatives: alts,
+              kind: "typo",
+              direction: "typo",
+              typoMode: "ambiguous",
+              typoMeta: meta,
+              asciiContext,
+              typedHasMarks: hasTurkishMarks(word),
+            });
+          } else if (typedCount === 0 && token.text === word && top.margin >= -0.5) {
+            pending.push({
+              start: token.start,
+              end: token.end,
+              typed: token.text,
+              surfaceOriginal: token.text,
+              alternatives: alts,
+              kind: "typo",
+              direction: "typo",
+              typoMode: "rescue",
+              typoMeta: meta,
+              asciiContext,
+              typedHasMarks: hasTurkishMarks(word),
+            });
+          }
+        }
+      }
+
       if (!fix) {
         prevWord = lowerTr(token.text);
         prevIsName = !context.atSentenceStart && isUpperInitial(token.text);
@@ -549,33 +679,114 @@ export class Corrector {
       prevCapitalized = isUpperInitial(trailing);
       if (fix.joinsNext && next) index = next.index;
     }
+
+    // Build core-restored surrounding context so ASCII/multi-typo sentences give the context model clean neighbors.
+    const contextSlice = (spanStart: number, spanEnd: number): { left: string; right: string } => {
+      const leftFrom = Math.max(0, spanStart - 180);
+      const rightTo = Math.min(text.length, spanEnd + 150);
+      if (decided.length === 0) {
+        return { left: text.slice(leftFrom, spanStart), right: text.slice(spanEnd, rightTo) };
+      }
+      let left = "";
+      let cur = leftFrom;
+      for (const d of decided) {
+        if (d.end <= leftFrom) continue;
+        if (d.start >= spanStart) break;
+        if (d.start < cur || d.end > spanStart) continue;
+        left += text.slice(cur, d.start) + d.replacement;
+        cur = d.end;
+      }
+      left += text.slice(cur, spanStart);
+      let right = "";
+      cur = spanEnd;
+      for (const d of decided) {
+        if (d.end <= spanEnd) continue;
+        if (d.start >= rightTo) break;
+        if (d.start < cur || d.end > rightTo) continue;
+        right += text.slice(cur, d.start) + d.replacement;
+        cur = d.end;
+      }
+      right += text.slice(cur, rightTo);
+      return { left, right };
+    };
+
     const scores = await model.score(
       pending.map((option) => {
         const candidates = [option.typed, ...option.alternatives];
+        const { left, right } = contextSlice(option.start, option.end);
         return {
-          left: text.slice(Math.max(0, option.start - 80), option.start),
-          right: text.slice(option.end, option.end + 40),
+          left,
+          right,
           candidates,
-          features: buildContextFeatures(candidates, option.kind, option.asciiContext, this.lexicon, this.morphology),
+          features: buildContextFeatures(
+            candidates,
+            option.kind,
+            option.asciiContext,
+            this.lexicon,
+            this.morphology,
+            option.typoMeta,
+          ),
         };
       }),
     );
     const overlaps = (a: { start: number; end: number }, b: { start: number; end: number }) => a.start < b.end && b.start < a.end;
-    // A count-based split/join fix stands unless the context model weighed the exact span and clearly prefers what was
-    // typed ("yerler de" kept when context says "the places too"). Deterministic TDK rules ("known", "apostrophe", "typo")
-    // are never vetoed by the context model.
-    const kept = decided.filter((fix) => {
-      if (fix.kind !== "join" && fix.kind !== "split") return true;
-      const index = pending.findIndex(
-        (option) => option.start === fix.start && option.end === fix.end && option.alternatives.some((alt) => lowerTr(alt) === lowerTr(fix.replacement)),
+
+    const typoOverrideBar = this.settings.contextTypoOverride ?? 2.5;
+    const typoAmbigGap = this.settings.contextTypoAmbigGap ?? 1.5;
+    const typoAmbigVsTyped = this.settings.contextTypoAmbigVsTyped ?? 2.5;
+    const typoRescueBar = this.settings.contextTypoRescue ?? 4.5;
+
+    // 1. Keep core fixes, allowing (a) contextVeto on count-based join/split, and (b) high-confidence context switch
+    //    between competing valid typo candidates (e.g. "hber": core "her" -> context "haber").
+    const kept: Correction[] = [];
+    for (const fix of decided) {
+      if (fix.kind === "join" || fix.kind === "split") {
+        const index = pending.findIndex(
+          (option) =>
+            option.kind !== "typo" &&
+            option.start === fix.start &&
+            option.end === fix.end &&
+            option.alternatives.some((alt) => lowerTr(alt) === lowerTr(fix.replacement)),
+        );
+        if (index !== -1) {
+          const row = scores[index]!;
+          const option = pending[index]!;
+          const alternative = option.alternatives.findIndex((alt) => lowerTr(alt) === lowerTr(fix.replacement));
+          if (row[alternative + 1]! - row[0]! <= -this.settings.contextVeto) continue;
+        }
+        kept.push(fix);
+        continue;
+      }
+      const overrideIdx = pending.findIndex(
+        (option) => option.kind === "typo" && option.typoMode === "override" && option.start === fix.start && option.end === fix.end,
       );
-      if (index === -1) return true;
-      const row = scores[index]!;
-      const option = pending[index]!;
-      const alternative = option.alternatives.findIndex((alt) => lowerTr(alt) === lowerTr(fix.replacement));
-      return row[alternative + 1]! - row[0]! > -this.settings.contextVeto;
-    });
-    // Where no count-based fix touches a span, the model may change it when it is confident for that ambiguity regime.
+      if (overrideIdx !== -1) {
+        const option = pending[overrideIdx]!;
+        const row = scores[overrideIdx]!;
+        const coreAltIdx = option.alternatives.findIndex((alt) => lowerTr(alt) === lowerTr(fix.replacement));
+        if (coreAltIdx !== -1) {
+          let bestAlt = coreAltIdx;
+          for (let i = 0; i < option.alternatives.length; i++) {
+            if (row[i + 1]! > row[bestAlt + 1]!) bestAlt = i;
+          }
+          const delta = row[bestAlt + 1]! - row[coreAltIdx + 1]!;
+          if (bestAlt !== coreAltIdx && delta >= typoOverrideBar) {
+            kept.push({
+              start: fix.start,
+              end: fix.end,
+              original: fix.original,
+              replacement: option.alternatives[bestAlt]!,
+              kind: "context",
+              margin: delta,
+            });
+            continue;
+          }
+        }
+      }
+      kept.push(fix);
+    }
+
+    // 2. Where no core fix touches a span (or for priorTypoOriginals in pause-pass), apply confident context decisions.
     const offsets = this.settings.contextOffsets;
     const thresholdFor = (option: (typeof pending)[number]) => {
       const base = this.settings.threshold.context;
@@ -592,11 +803,70 @@ export class Corrector {
     pending.forEach((option, index) => {
       if (decided.some((fix) => overlaps(fix, option))) return;
       const row = scores[index]!;
+      if (option.kind === "typo") {
+        if (option.typoMode === "override" && option.coreReplacement) {
+          // Pause-pass override for a priorTypoOriginals span not touched in this pass.
+          const coreAltIdx = option.alternatives.findIndex((alt) => lowerTr(alt) === lowerTr(option.coreReplacement!));
+          if (coreAltIdx === -1) return;
+          let bestAlt = coreAltIdx;
+          for (let i = 0; i < option.alternatives.length; i++) {
+            if (row[i + 1]! > row[bestAlt + 1]!) bestAlt = i;
+          }
+          const delta = row[bestAlt + 1]! - row[coreAltIdx + 1]!;
+          if (bestAlt !== coreAltIdx && delta >= typoOverrideBar) {
+            judged.push({
+              start: option.start,
+              end: option.end,
+              original: option.surfaceOriginal,
+              replacement: option.alternatives[bestAlt]!,
+              kind: "context",
+              margin: delta,
+            });
+          }
+          return;
+        }
+        let best = 1;
+        let second = -1;
+        for (let i = 2; i < row.length; i++) {
+          if (row[i]! > row[best]!) {
+            second = best;
+            best = i;
+          } else if (second === -1 || row[i]! > row[second]!) {
+            second = i;
+          }
+        }
+        const vsTyped = row[best]! - row[0]!;
+        const gap = second !== -1 ? row[best]! - row[second]! : Infinity;
+        if (option.typoMode === "ambiguous") {
+          if (vsTyped >= typoAmbigVsTyped && gap >= typoAmbigGap) {
+            judged.push({
+              start: option.start,
+              end: option.end,
+              original: option.surfaceOriginal,
+              replacement: option.alternatives[best - 1]!,
+              kind: "context",
+              margin: Math.min(vsTyped, gap),
+            });
+          }
+        } else if (option.typoMode === "rescue") {
+          if (vsTyped >= typoRescueBar && gap >= typoAmbigGap) {
+            judged.push({
+              start: option.start,
+              end: option.end,
+              original: option.surfaceOriginal,
+              replacement: option.alternatives[best - 1]!,
+              kind: "context",
+              margin: vsTyped,
+            });
+          }
+        }
+        return;
+      }
       let best = 1;
       for (let i = 2; i < row.length; i++) if (row[i]! > row[best]!) best = i;
       const margin = row[best]! - row[0]!;
       if (margin >= thresholdFor(option)) {
-        judged.push({ start: option.start, end: option.end, original: option.typed, replacement: option.alternatives[best - 1]!, kind: "context", margin });
+        judged.push({ start: option.start, end: option.end, original: option.surfaceOriginal, replacement: option.alternatives[best - 1]!, kind: "context", margin });
       }
     });
     const all = [...kept, ...judged].sort((a, b) => a.start - b.start || b.margin - a.margin);
@@ -609,6 +879,49 @@ export class Corrector {
       cursor = correction.end;
     }
     return { text: output + text.slice(cursor), corrections };
+  }
+
+  /**
+   * Returns morphologically valid typo/mark candidates (sorted by core score) for an invalid/rare word,
+   * along with core margin, threshold, slip cost, and mark-variant flag.
+   * Used by `correctAsync()` and Stage 2 training data generation.
+   */
+  typoCandidatesFor(
+    typed: string,
+    context: WordContext,
+    nextTyped?: string,
+    maxCandidates = 7,
+  ): { text: string; kind: CandidateKind; margin: number; threshold: number; slipCost: number; isMarkVariant: boolean }[] {
+    if (this.morphology === undefined || isAllUpper(typed) || typed.length < 4) return [];
+    const word = lowerTr(typed);
+    if (word.includes("'") || typed.slice(1) !== word.slice(1)) return [];
+    if (isUpperInitial(typed) && !context.atSentenceStart) return [];
+    if (this.isRealWord(word)) return [];
+    const listed = this.knownFix(typed, word, context, nextTyped);
+    if (listed !== null) return [];
+    const typedCount = this.lexicon.count(word);
+    const rareInvalidSlip = typed === word && typedCount < 50 && this.lexicon.capitalShare(word) < 0.5;
+    if (typedCount >= this.settings.knownWord && !rareInvalidSlip) return [];
+
+    const cands = this.candidates(word, typed, context, typedCount, nextTyped);
+    const foldedWord = foldTr(word);
+    const valid: { text: string; kind: CandidateKind; margin: number; threshold: number; slipCost: number; isMarkVariant: boolean }[] = [];
+    for (const c of cands) {
+      if (c.kind !== "typo" && c.kind !== "marks") continue;
+      if (c.text.includes(" ") || !this.isRealWord(c.text) || this.lexicon.exactCount(c.text) < 1) continue;
+      const invalidTyped = c.kind === "typo" && typedCount === 0 && typed === word;
+      const threshold = c.threshold ?? (invalidTyped ? this.settings.typoInvalidThreshold : this.settings.threshold[c.kind]);
+      valid.push({
+        text: c.text,
+        kind: c.kind,
+        margin: marginOf(c),
+        threshold,
+        slipCost: c.slipCost ?? 0,
+        isMarkVariant: foldTr(c.text) === foldedWord,
+      });
+    }
+    valid.sort((a, b) => b.margin - a.margin);
+    return valid.slice(0, maxCandidates);
   }
 
   /** Places where the typed span and another real-word reading compete, for the context model to judge. */
@@ -678,7 +991,7 @@ export class Corrector {
           asciiContext: false,
           typedHasMarks,
         });
-      } else if (tail === "ki" && !SOMBAHCEMI_KI.has(word) && known(stem)) {
+      } else if (tail === "ki" && !FIXED_KI_WORDS.has(word) && !SOMBAHCEMI_KI.has(stem) && known(stem)) {
         spans.push({
           start: token.start,
           end: token.end,
@@ -692,8 +1005,6 @@ export class Corrector {
       } else if (
         /^m[ıiuü]$/.test(tail) &&
         stem.length >= 3 &&
-        context.questionAhead &&
-        !(tokens && tokenIndex !== undefined && this.questionParticleAhead(tokens, tokenIndex)) &&
         known(stem) &&
         followsHarmony(stem, tail[1]!)
       ) {
@@ -915,7 +1226,7 @@ export class Corrector {
     const { cost, knownWord, knownMarked, markedOverride } = this.settings;
     const typedScore = log(typedCount);
     const found = new Map<string, Candidate>();
-    const add: AddCandidate = (text, kind, score, base = typedScore, threshold) => {
+    const add: AddCandidate = (text, kind, score, base = typedScore, threshold, slipCost) => {
       if (!Number.isFinite(score) || !Number.isFinite(base) || text === word) return;
       const existing = found.get(text);
       // The same fix may come from two rules with different bars (plain mark restoration and the lower bar for a
@@ -926,7 +1237,7 @@ export class Corrector {
         candidate.threshold ?? this.settings.threshold[candidate.kind];
       if (!existing || score - base > marginOf(existing)) {
         const keepBar = sameKind && existing && bar(existing) < bar({ kind, threshold });
-        found.set(text, { text, kind, score, base, joinsNext: false, threshold: keepBar ? existing.threshold : threshold });
+        found.set(text, { text, kind, score, base, joinsNext: false, threshold: keepBar ? existing.threshold : threshold, slipCost });
       } else if (sameKind && bar({ kind, threshold }) < bar(existing)) {
         existing.threshold = threshold;
       }
@@ -1229,7 +1540,7 @@ export class Corrector {
           if (unseenLowerInvalid && morphValid && word.length >= 7 && slipCost <= 1.25 && count >= 20) {
             threshold = 0.6;
           }
-          add(text, "typo", log(count) - cost.typo - slipCost - morphPenalty, typedScore, threshold);
+          add(text, "typo", log(count) - cost.typo - slipCost - morphPenalty, typedScore, threshold, slipCost);
         }
         // Cautious 2-vowel-drop recovery ("gelyorm" -> "geliyorum", "çalışıyrm" -> "çalışıyorum") when 1-edit finds nothing strong.
         if (unseenLowerInvalid && word.length >= 6) {
@@ -1428,7 +1739,7 @@ export class Corrector {
             const cand = s0 + v1 + s1 + v2 + s2;
             const count = this.lexicon.exactCount(cand);
             if (count < 50 || this.lexicon.capitalShare(cand) >= 0.5 || !this.isRealWord(cand)) continue;
-            add(cand, "typo", log(count) - cost.typo - 0.8, typedScore, 1.5);
+            add(cand, "typo", log(count) - cost.typo - 0.8, typedScore, 1.5, 0.8);
           }
         }
       }
