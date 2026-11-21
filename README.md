@@ -80,6 +80,7 @@ node bench/examples.ts "Yarın Ankaraya gidiyorum."
 
 ## Test setleri
 - **`bench/dev`, `bench/test`:** Vikipedi'den, sözlüğe hiç girmemiş %2'lik belge diliminden üretildi. Her cümlede tek bir yapay hata var. **Bu sonuçlar olduğundan iyi görünür:** hataları üreten kalıplar, motorun kurallarıyla aynı kalıplar. Ayrıca kelime sıklıkları da aynı kaynaktan geliyor.
+- **`bench/dev2`, `bench/test2`:** Aynı belge diliminden, genişletilmiş üreticiyle (`py/make_tests.py`) üretilen yeni cümleler. `split_join` birleşik fiil, bileşik isim, ikileme ve klasik kalıplara ayrılıyor; `apostrophe_no`, TDK'nin kesme istemediği kurum adları ve "-lar/-ler" ekli özel adlar için "dokunma" sınıfı. `test2` hiçbir geliştirme turunda görülmedi; Neon'a verilmez.
 - **`bench/handwritten/neon-v1.jsonl`:** Gemini 4 Neon'un yazdığı 265 gerçekçi günlük cümle. Kaçırdığı örnekleri inceledim ve kuralları buna göre ayarladım; ayrıca yazım yanlışları listesini de aynı model yazdı. Bu yüzden artık **bağımsız bir test seti değil, ikinci bir dev seti**. Anadili Türkçe biri tarafından gözden geçirilmeli.
 - **`bench/sealed/neon-v2.jsonl`:** Hiç açılmamış, 265 cümlelik ikinci Neon seti. Konular farklı: spor, sağlık, kira, veli mesajları, oyun forumu, müşteri hizmetleri. Yalnızca özet tablo çalıştırılır; kaçırdığı örneklere bakılmaz. Bakılırsa artık mühürlü sayılmaz ve yeni bir set gerekir.
 
