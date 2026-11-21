@@ -20,11 +20,13 @@ import collections
 import json
 import random
 import re
+import shlex
+import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from build_lexicon import TOKEN, lower_tr  # noqa: E402
+from build_lexicon import TOKEN, lower_tr, words_with_flags  # noqa: E402
 
 ALPHABET = "abcçdefgğhıijklmnoöprsştuüvyz"
 TOGGLE = {"c": "ç", "g": "ğ", "i": "ı", "o": "ö", "s": "ş", "u": "ü", "ç": "c", "ğ": "g", "ı": "i", "ö": "o", "ş": "s", "ü": "u"}
@@ -66,23 +68,42 @@ def count_lines(lines):
     """Word counts, mid-sentence capital counts, and counts of a word followed by a separate particle ("geldin mi")."""
     counts, caps, particle_pairs = collections.Counter(), collections.Counter(), collections.Counter()
     for line in lines:
-        at_start = True
         previous = None
-        for raw in TOKEN.findall(line):
-            if not raw[0].isalpha():
-                if raw in SENTENCE_END:
-                    at_start = True
+        for item in words_with_flags(line, clean=True):
+            if item is None:
                 previous = None
                 continue
-            word = lower_tr(raw)
+            word, is_cap = item
             counts[word] += 1
-            if raw[0].isupper() and not at_start:
+            if is_cap:
                 caps[word] += 1
             if previous is not None and PARTICLE_ONLY.match(word):
                 particle_pairs[previous + word] += 1
-            at_start = False
             previous = word
     return counts, caps, particle_pairs
+
+
+def filter_with_morphology(words: list[str], cmd: str) -> tuple[set[str], set[str]]:
+    """Runs the repo's morphology validator; returns (valid_words, pure_verb_words)."""
+    if not words:
+        return set(), set()
+    proc = subprocess.run(
+        shlex.split(cmd),
+        input="\n".join(words) + "\n",
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    valid, pure_verbs = set(), set()
+    for line in proc.stdout.splitlines():
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        w = parts[0].strip()
+        valid.add(w)
+        if len(parts) > 1 and parts[1].strip() == "V":
+            pure_verbs.add(w)
+    return valid, pure_verbs
 
 
 def main():
@@ -101,6 +122,8 @@ def main():
     parser.add_argument("--trust-count", type=int, default=30)
     parser.add_argument("--bench-size", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=3)
+    parser.add_argument("--morph-cmd", default="node scripts/check-morphology.ts")
+    parser.add_argument("--no-morphology", action="store_true", help="skip morphology validation of subtitle forms")
     args = parser.parse_args()
 
     wiki, wiki_caps = {}, {}
@@ -131,12 +154,28 @@ def main():
     def combined(word: str) -> float:
         return wiki.get(word, 0) + scale * sub.get(word, 0)
 
+    eligible_words = [
+        word
+        for word, count in sub.items()
+        if count >= args.min_count and (word.isalpha() or "'" in word)
+    ]
+    if args.no_morphology:
+        morph_valid, pure_verbs = None, set()
+    else:
+        morph_valid, pure_verbs = filter_with_morphology(eligible_words, args.morph_cmd)
+        print(f"morphology accepted {len(morph_valid):,}/{len(eligible_words):,} subtitle forms ({len(pure_verbs):,} pure verbs)", flush=True)
+
     accepted, rejected = {}, collections.Counter()
     for word, count in sub.items():
         if count < args.min_count or not word.isalpha() and "'" not in word:
             continue
         if is_listed_misspelling(word):
             rejected["listed misspelling"] += 1
+            continue
+        # Reject morphologically invalid forms from subtitles ("farkettim", "terketti", OCR noise like "nasıı"),
+        # so frequent subtitle misspellings cannot enter unigrams_conv.tsv even when above --trust-count.
+        if morph_valid is not None and word not in morph_valid:
+            rejected["invalid morphology"] += 1
             continue
         # Subtitles often glue particles on ("diyorki", "gelecekmisin"). A form that could be a word plus a particle is
         # taken only when subtitles write it as one word clearly more often than as two: "olduğumu" (one word) yes,
@@ -173,8 +212,24 @@ def main():
             if wiki.get(word, 0) < args.keep_wiki_above:
                 merged[word] = max(wiki.get(word, 0), round(scale * count))
         for word, count in sorted(merged.items(), key=lambda item: -item[1]):
-            boosted = word in accepted and wiki.get(word, 0) < args.keep_wiki_above
-            caps = max(wiki_caps.get(word, 0), round(scale * sub_caps.get(word, 0))) if boosted else wiki_caps.get(word, 0)
+            w_count = wiki.get(word, 0)
+            w_caps = wiki_caps.get(word, 0)
+            boosted = word in accepted and w_count < args.keep_wiki_above
+            if boosted:
+                caps = max(w_caps, round(scale * sub_caps.get(word, 0)))
+            elif (
+                word in pure_verbs
+                and word in accepted
+                and w_count >= args.keep_wiki_above
+                and sub[word] >= 50
+                and sub_caps.get(word, 0) / sub[word] < 0.1
+                and w_caps / w_count >= 0.4
+            ):
+                # Pure inflected verbs ("geliyorum", "gördün", "yaparım") appear mostly in capitalized titles on
+                # Wikipedia; blend with subtitle capitalization so they are not mistaken for proper nouns.
+                caps = round(count * (w_caps + sub_caps.get(word, 0)) / (w_count + sub[word]))
+            else:
+                caps = w_caps
             out.write(f"{word}\t{count}\t{caps}\n")
 
     rng = random.Random(args.seed)
