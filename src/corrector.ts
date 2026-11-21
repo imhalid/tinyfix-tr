@@ -186,7 +186,9 @@ export interface WordContext {
 const VOICING_PAIRS = new Set(["dt", "td", "bp", "pb", "cç", "çc", "gk", "kg", "gğ", "ğg"]);
 const VOWELS = new Set(["a", "e", "ı", "i", "o", "ö", "u", "ü"]);
 const FINITE_VERB_MORPHEMES = new Set(["Prog1", "Prog2", "Past", "Narr", "Fut", "Aor", "Opt", "Desr", "Neces", "Imp"]);
-const NON_FINITE_DERIVATIONS = new Set(["PastPart", "NarrPart", "FutPart", "PresPart", "AorPart", "Inf1", "Inf2", "Inf3"]);
+/** Pronoun + "de" written as one word, with the verb person that proves it is the conjunction "de". */
+const PRONOUN_DE: Record<string, string> = { bende: "A1sg", sende: "A2sg", bizde: "A1pl", sizde: "A2pl" };
+const NON_FINITE_DERIVATIONS =new Set(["PastPart", "NarrPart", "FutPart", "PresPart", "AorPart", "Inf1", "Inf2", "Inf3"]);
 const TOKEN = new RegExp(`[${LETTERS}]+(?:['’][${LETTERS}]+)?|\\s+|.`, "gu");
 const SENTENCE_END = new Set([".", "!", "?", ":", "\n"]);
 const log = (count: number) => Math.log(count + 1);
@@ -817,6 +819,8 @@ export class Corrector {
     const listed = this.knownFix(typed, word, context, nextTyped);
     if (listed === "keep") return null;
     if (listed) return listed;
+    const pronoun = this.pronounAlso(typed, word, nextTyped);
+    if (pronoun) return pronoun;
     const candidates = this.candidates(word, typed, context, typedCount, nextTyped);
 
     if (nextTyped && !isAllUpper(nextTyped) && !isUpperInitial(nextTyped) && !(isUpperInitial(typed) && !context.atSentenceStart)) {
@@ -840,6 +844,26 @@ export class Corrector {
     const original = best.joinsNext ? `${typed} ${nextTyped}` : typed;
     const replacement = best.kind === "typo" ? matchCase(typed, best.text) : keepCase(original, best.text);
     return { replacement, kind: best.kind, margin, joinsNext: best.joinsNext };
+  }
+
+  /**
+   * "bende geldim" -> "ben de geldim": a pronoun glued to "de" followed by a finite verb of the same person is the
+   * conjunction, never the locative ("Kitap bende kaldı" keeps "bende": the verb there is third person).
+   */
+  private pronounAlso(
+    typed: string,
+    word: string,
+    nextTyped: string | undefined,
+  ): { replacement: string; kind: CandidateKind; margin: number; joinsNext: boolean } | null {
+    const person = PRONOUN_DE[word];
+    if (!person || !nextTyped || !this.morphology?.analyze || isUpperInitial(nextTyped) && !isUpperInitial(typed)) return null;
+    const analyses = this.morphology.analyze(lowerTr(nextTyped));
+    const finite = analyses.filter(
+      (a) => a.pos === "Verb" && a.morphemes.some((m) => FINITE_VERB_MORPHEMES.has(m)) && !a.morphemes.includes("Zero"),
+    );
+    if (!finite.some((a) => a.morphemes.at(-1) === person)) return null;
+    if (analyses.some((a) => a.morphemes.at(-1) === "A3sg" && a.morphemes.some((m) => FINITE_VERB_MORPHEMES.has(m)))) return null;
+    return { replacement: `${typed.slice(0, -2)} ${typed.slice(-2)}`, kind: "split", margin: 5, joinsNext: false };
   }
 
   /** A listed misspelling wins over everything else when the fix is clearly more common than what was typed. */

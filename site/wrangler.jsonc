@@ -1,0 +1,10 @@
+{
+  // Static site served as Worker assets: run `npm run build` first, then deploy.
+  "name": "tdkai",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "tdkai.halid.dev", "custom_domain": true }]
+}

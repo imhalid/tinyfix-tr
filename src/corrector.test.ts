@@ -408,6 +408,13 @@ const extraFixes: [string, string][] = [
   ["Bu akşam ane eve geldi.", "Bu akşam anne eve geldi."],
   ["Bugün ann e erken geldi.", "Bugün anne erken geldi."],
   ["Bunu neden yapmıyorsunanlamadim.", "Bunu neden yapmıyorsun anlamadım."],
+  // Pronoun + "de" before a verb of the same person is the conjunction; before a third-person verb it is locative.
+  ["Dün akşam bende geldim.", "Dün akşam ben de geldim."],
+  ["Bizde gittik oraya.", "Biz de gittik oraya."],
+  ["Kitap bende kaldı.", "Kitap bende kaldı."],
+  // Spoken "bişey" is written "bir şey".
+  ["Bişey yazıyorum ama düzeltmiyor.", "Bir şey yazıyorum ama düzeltmiyor."],
+  ["hiçbişey olmadı", "hiçbir şey olmadı"],
   // A doubled suffix is not a second word: "değildirdir" must not become "değil dırdır".
   ["Bu iyi değildirdir.", "Bu iyi değildirdir."],
   ["Yarın ne yapacağını biliyormusunm?", "Yarın ne yapacağını biliyor musun?"],
