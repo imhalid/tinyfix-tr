@@ -22,18 +22,29 @@ export const INSTITUTION_HEADS = new Set([
   "üniversitesi", "fakültesi", "enstitüsü", "yüksekokulu", "okulu", "ilkokulu",
   "ortaokulu", "lisesi", "koleji", "akademisi", "bölümü", "rektörlüğü", "dekanlığı",
   "meclisi", "belediyesi", "valiliği", "kaymakamlığı", "muhtarlığı", "mahkemesi",
-  "savcılığı", "barosu", "komisyonu", "komitesi", "heyeti", "konseyi", "senatosu",
+  "savcılığı", "başsavcılığı", "barosu", "komisyonu", "komitesi", "heyeti", "konseyi", "senatosu",
   "oturumu", "birleşimi", "hastanesi", "polikliniği", "kliniği", "eczanesi",
-  "kütüphanesi", "tiyatrosu", "operası", "konservatuvarı", "müzesi",
+  "kütüphanesi", "tiyatrosu", "tiyatroları", "operası", "balesi", "konservatuvarı", "müzesi",
   "bankası", "borsası", "ajansı", "vakfı", "derneği", "odası", "sendikası",
   "federasyonu", "konfederasyonu", "birliği", "partisi", "teşkilatı", "örgütü",
   "idaresi", "müsteşarlığı", "koordinatörlüğü", "temsilciliği", "konsolosluğu",
-  "büyükelçiliği", "elçiliği", "komutanlığı", "emniyeti", "şirketi", "holdingi",
-  "ortaklığı", "kooperatifi", "işletmesi", "fabrikası", "atölyesi", "matbaası",
-  "yayınevi", "kitabevi", "basımevi", "öğretmenevi", "polisevi",
+  "büyükelçiliği", "elçiliği", "komutanlığı", "emniyeti",
+  "şirketi", "holdingi", "ortaklığı", "kooperatifi", "işletmesi", "fabrikası", "atölyesi", "matbaası",
+  "yayınevi", "kitabevi", "basımevi", "öğretmenevi", "polisevi", "orduevi",
   "mağazası", "marketi", "bakkaliyesi", "pastanesi", "fırını", "lokantası",
-  "restoranı", "kafesi", "oteli", "kulübü", "yolları", "petrolleri", "enerjisi",
-  "telekomu", "cemiyeti",
+  "restoranı", "kafesi", "oteli", "kulübü", "yolları", "havayolları", "demiryolları",
+  "karayolları", "petrolleri", "enerjisi", "telekomu", "cemiyeti", "çiftliği",
+]);
+
+/** Officer/leader title heads immediately following a proper institution ("Türk Dil Kurumu Başkanı'na", "Ankara Üniversitesi Rektörü'ne"). */
+export const OFFICER_TITLE_HEADS = new Set([
+  "başkanı", "müdürü", "rektörü", "dekanı", "bakanı", "komutanı", "başsavcısı",
+  "savcısı", "sekreteri", "sözcüsü", "temsilcisi", "müsteşarı", "valisi", "kaymakamı", "yardımcısı",
+]);
+
+/** Optional preceding modifiers for a 2-word officer title after an institution ("Genel Müdürü", "Genel Başkanı", "Genel Sekreteri", "Başkan Yardımcısı"). */
+export const OFFICER_TITLE_MODS = new Set([
+  "genel", "başkan", "belediye", "okul", "bölüm", "cumhuriyet", "meclis", "yüksek",
 ]);
 
 /** Institution heads that need an explicit proper-name anchor before them to be capitalized (generic alone: "tıp fakültesi"). */
@@ -92,13 +103,15 @@ export const NON_INST_PREFIX = new Set([
 
 /** TDK geographic, urban, and landmark head words that take capitalization AND apostrophe after a proper name. */
 export const GEO_HEADS = new Set([
-  "dağı", "dağları", "gölü", "gölleri", "denizi", "okyanusu", "okyanus",
+  "dağı", "dağları", "sıradağları", "gölü", "gölleri", "denizi", "okyanusu", "okyanus",
   "nehri", "ırmağı", "deresi", "boğazı", "körfezi", "kanalı", "şelalesi",
   "yarımadası", "takımadası", "burnu",
   "ovası", "yaylası", "platosu", "kanyonu", "çölü", "ormanı", "mağarası",
   "havzası",
-  "mahallesi", "caddesi", "sokağı", "bulvarı", "meydanı", "parkı",
-  "sarayı", "köprüsü", "kulesi", "camisi", "camii", "türbesi", "anıtı",
+  "mahallesi", "caddesi", "sokağı", "bulvarı", "meydanı", "parkı", "şehitliği",
+  "sarayı", "köşkü", "hisarı", "köprüsü", "kulesi", "camisi", "camii", "türbesi", "anıtı",
+  "katedrali", "manastırı", "tapınağı", "külliyesi", "kervansarayı",
+  "havalimanı", "garı", "stadyumu",
 ]);
 
 /** State/polity head words (capitalize + apostrophe after a proper name). */
@@ -146,6 +159,9 @@ export const SAYIN_TITLES = new Set([
   "cumhurbaşkanı", "başbakan", "milletvekili", "savcı", "başsavcı", "hâkim", "hakim",
   "avukat", "profesör", "doçent", "doktor", "yargıç", "elçi", "konsolos", "başkonsolos",
   "general", "amiral", "albay", "müsteşar", "başhekim",
+  "üyeler", "konuklar", "misafirler", "veliler", "öğrenciler", "katılımcılar",
+  "dinleyiciler", "izleyiciler", "seyirciler", "milletvekilleri", "öğretmenler",
+  "meslektaşlar", "meslektaşlarım", "hanımlar", "beyler",
 ]);
 
 /** First word of a 2-word official title after "Sayın" ("Sayın Genel Müdür", "Sayın Belediye Başkanı", "Sayın Cumhuriyet Başsavcısı"). */
@@ -161,6 +177,11 @@ export const SAYIN_COMPOUND_TAIL = new Set([
 
 /** Post-nominal honorific titles (capitalized AND take apostrophe after a person name: "Ayşe Hanım'a", "Orhan Bey'de"). */
 export const POST_HONORIFICS = new Set(["bey", "hanım", "efendi", "paşa", "ağa", "beyefendi", "hanımefendi"]);
+
+/** Post-nominal occupational/historical titles capitalized + apostrophe after a person name ("Ahmet Hoca'ya", "Mehmet Usta'nın", "Ali Çavuş'un", "Seyit Onbaşı'yı", "Temel Kaptan'a"). */
+export const POST_TITLES_WITH_APOS = new Set([
+  "hoca", "usta", "öğretmen", "çavuş", "onbaşı", "reis", "çelebi", "hatun", "kaptan",
+]);
 
 /** Kinship words after a person name: stay LOWERCASE per TDK ("Tülay ablama", "Zehra halamın"), while proving the previous word is a person name. */
 export const KINSHIP_STEMS = new Set([
@@ -205,22 +226,29 @@ export const LANGUAGE_NAMES = new Set([
   "somalice", "hausaca", "yorubaca", "igboca",
 ]);
 
-/** Religion/sect/ideology derived proper nouns that take NO apostrophe per TDK ("Hristiyanlıkta", "Hinduizmde", "Müslümanlık"). */
+/** Religion/sect/ideology derived proper nouns with Turkish derivational suffixes (-lIk/-lI/-cI) that strictly take NO apostrophe per TDK ("Hristiyanlıkta", "Müslümanlık"). */
 export const NO_APOS_RELIGION_OR_DERIVED = new Set([
   "hristiyanlık", "müslümanlık", "yahudilik", "musevilik", "türklük", "osmanlılık",
-  "atatürkçülük", "hinduizm", "budizm", "taoizm", "şintoizm", "sihizm", "zerdüştlük",
-  "islamiyet", "protestanlık", "katoliklik", "ortodoksluk", "alevilik", "sünnilik",
-  "şiilik", "hanefilik", "şafiilik", "marksizm", "leninizm", "kemalizm", "osmanlıcılık",
-  "türkçülük", "avrupalı", "asyalı", "afrikalı", "amerikalı", "anadolulu",
+  "atatürkçülük", "zerdüştlük", "protestanlık", "katoliklik", "ortodoksluk",
+  "alevilik", "sünnilik", "şiilik", "hanefilik", "şafiilik", "osmanlıcılık", "türkçülük",
+  "avrupalı", "asyalı", "afrikalı", "amerikalı", "anadolulu",
   "istanbullu", "ankaralı", "izmirli", "bursalı", "adanalı", "antalyalı", "konyalı",
   "trabzonlu", "rizeli", "erzurumlu", "diyarbakırlı", "eskişehirli", "tokatlı",
   "galatasaraylı", "fenerbahçeli", "beşiktaşlı", "trabzonsporlu",
+]);
+
+/** Foreign/Arabic -izm/-iyet religion & movement names: capitalize without forcing apostrophe when joined ("hinduizmde" -> "Hinduizmde"),
+ *  but NEVER strip an existing apostrophe ("İslamiyet'e", "Budizm'in", "Hinduizm'de" stay intact). */
+export const OPTIONAL_APOS_ISM_IYET = new Set([
+  "islamiyet", "hinduizm", "budizm", "taoizm", "şintoizm", "sihizm", "marksizm", "leninizm", "kemalizm",
 ]);
 
 /** Proper names whose own root ends in -lar/-ler (places, ranges) and therefore DO keep an apostrophe. */
 export const PLURAL_PLACE_KEEP_APOS = new Set([
   "bağcılar", "avcılar", "adalar", "toroslar", "alpler", "balkanlar", "andlar",
   "himalayalar", "pireneler", "karpatlar", "kırklar", "atalar", "kavaklar",
+  "ışıklar", "çınarlar", "kayalar", "konaklar", "sarılar", "yaylalar", "pınarlar",
+  "taşlar", "kızıllar", "bayırlar", "kuzular", "doğular", "çamlar", "güller",
 ]);
 
 /** Proper names whose own root ends in -lı/-li/-lık/-ca/-ce and therefore DO keep an apostrophe. */
@@ -241,12 +269,126 @@ const INVERSE_FRONT_STEMS = new Set([
   "usul", "meşgul", "makul", "mahsul", "kefil", "sefil", "nesil", "fasıl", "asıl",
 ]);
 
-/** Returns true when `stem` is an institution head in context (accounting for TDK exceptions "Avrupa Birliği" and "Rusya Federasyonu"). */
+/** Returns true when `stem` is an institution head in context (accounting for TDK exceptions "Avrupa Birliği", "Rusya Federasyonu", "Kutup Dairesi", "Elçilerin İşleri"). */
 export function isInstitutionHead(lowerStem: string, prevLower?: string): boolean {
   if (!INSTITUTION_HEADS.has(lowerStem)) return false;
   if (lowerStem === "birliği" && prevLower === "avrupa") return false;
   if (lowerStem === "federasyonu" && prevLower === "rusya") return false;
+  if (lowerStem === "dairesi" && prevLower === "kutup") return false;
+  if (lowerStem === "işleri" && prevLower === "elçilerin") return false;
   return true;
+}
+
+/**
+ * Joins `stem + suffix` when removing a wrong apostrophe, applying Turkish final consonant softening
+ * (k->ğ, p->b, ç->c, t->d) before a vowel-initial suffix whenever appropriate ("Hristiyanlık'ın" -> "Hristiyanlığın",
+ * "Atatürkçülük'ün" -> "Atatürkçülüğün", "kitap'ı" -> "kitabı", "ağaç'a" -> "ağaca").
+ */
+export function joinWithoutApostrophe(
+  stem: string,
+  suffix: string,
+  isMorphWord: (lower: string) => boolean,
+): string {
+  if (!stem || !suffix || !/^[aeıioöuü]/.test(lowerTr(suffix))) {
+    return stem + suffix;
+  }
+  const last = lowerTr(stem.slice(-1));
+  const softMap: Record<string, string> = { k: "ğ", p: "b", ç: "c", t: "d" };
+  const soft = softMap[last];
+  if (!soft || stem.length < 4) return stem + suffix;
+  const plainJoined = stem + suffix;
+  const softJoined = stem.slice(0, -1) + soft + suffix;
+  const lowPlain = lowerTr(plainJoined);
+  const lowSoft = lowerTr(softJoined);
+  // Always soften Turkish -lIk/-lik/-luk/-lük before vowel ("Hristiyanlığın", "Atatürkçülüğün", "Başbakanlığa")
+  if (last === "k" && /l[ıiuü]k$/.test(lowerTr(stem))) {
+    return softJoined;
+  }
+  if (isMorphWord(lowSoft) && !isMorphWord(lowPlain)) {
+    return softJoined;
+  }
+  return plainJoined;
+}
+
+const NUMBER_UNIT_BLOCK = new Set([
+  "cm", "mm", "km", "kg", "mg", "gr", "lt", "ml", "gb", "mb", "kb", "tb", "pb",
+  "hz", "khz", "mhz", "ghz", "kw", "mw", "gw", "kwh", "ms", "dk", "sn", "sa",
+  "tl", "usd", "eur", "px", "pt", "em", "rem", "vh", "vw", "bit", "fps", "rpm",
+  "mp", "db", "mah", "cc", "st", "nd", "rd", "th", "am", "pm", "bc", "ad", "id",
+  "d", "k", "g", "x", "m", "s", "h", "v", "w", "a", "b", "c", "e", "f", "l", "n", "p", "r", "t",
+]);
+
+/** Returns Turkish pronunciation final properties (last vowel, ends in vowel, voiceless final) for an integer string. */
+function turkishNumberPhonology(numStr: string): { lastV: string; vowelFinal: boolean; voiceless: boolean } | null {
+  const digits = numStr.replace(/^0+/, "") || "0";
+  const last1 = digits.slice(-1);
+  if (last1 === "1") return { lastV: "i", vowelFinal: false, voiceless: false }; // bir
+  if (last1 === "2") return { lastV: "i", vowelFinal: true, voiceless: false }; // iki
+  if (last1 === "3") return { lastV: "ü", vowelFinal: false, voiceless: true }; // üç
+  if (last1 === "4") return { lastV: "ö", vowelFinal: false, voiceless: true }; // dört
+  if (last1 === "5") return { lastV: "e", vowelFinal: false, voiceless: true }; // beş
+  if (last1 === "6") return { lastV: "ı", vowelFinal: true, voiceless: false }; // altı
+  if (last1 === "7") return { lastV: "i", vowelFinal: true, voiceless: false }; // yedi
+  if (last1 === "8") return { lastV: "i", vowelFinal: false, voiceless: false }; // sekiz
+  if (last1 === "9") return { lastV: "u", vowelFinal: false, voiceless: false }; // dokuz
+  // Ends in 0
+  if (digits === "0") return { lastV: "ı", vowelFinal: false, voiceless: false }; // sıfır
+  if (digits.endsWith("000000000")) return { lastV: "a", vowelFinal: false, voiceless: false }; // milyar
+  if (digits.endsWith("000000")) return { lastV: "o", vowelFinal: false, voiceless: false }; // milyon
+  if (digits.endsWith("000")) return { lastV: "i", vowelFinal: false, voiceless: false }; // bin
+  if (digits.endsWith("00")) return { lastV: "ü", vowelFinal: false, voiceless: false }; // yüz
+  const tens = digits.slice(-2, -1);
+  if (tens === "1") return { lastV: "o", vowelFinal: false, voiceless: false }; // on
+  if (tens === "2") return { lastV: "i", vowelFinal: true, voiceless: false }; // yirmi
+  if (tens === "3") return { lastV: "u", vowelFinal: false, voiceless: false }; // otuz
+  if (tens === "4") return { lastV: "ı", vowelFinal: false, voiceless: true }; // kırk
+  if (tens === "5") return { lastV: "i", vowelFinal: true, voiceless: false }; // elli
+  if (tens === "6") return { lastV: "ı", vowelFinal: false, voiceless: true }; // altmış
+  if (tens === "7") return { lastV: "i", vowelFinal: false, voiceless: true }; // yetmiş
+  if (tens === "8") return { lastV: "e", vowelFinal: false, voiceless: false }; // seksen
+  if (tens === "9") return { lastV: "a", vowelFinal: false, voiceless: false }; // doksan
+  return null;
+}
+
+const NUMBER_INFLECTION_RE =
+  /^(?:[dt][ae]n?|[dt][ae]ki(?:l[ae]r(?:[aeıiuü]|[dt][ae]n?|[ıiuü]n)?)?|l[ae]r(?:[dt][ae]n?|[dt][ae]ki|[aeıiuü]|[ıiuü]n)?|n?[ıiuü]n|y?[aeıiuü]|y?l[ae]|(?:[ıiuü]?nc[ıiuü])(?:s[ıiuü](?:n[aeıiuü]|nd[ae]n?)?|l[ae]r)?|[dt][ıiuü]r)$/;
+
+/**
+ * Validates and fixes Turkish inflectional/ordinal suffixes attached to a number ("1985te" -> "1985'te",
+ * "2023de" -> "2023'te", "1985'de" -> "1985'te", "1990larda" -> "1990'larda", "2nci" -> "2'nci").
+ * Returns the fixed suffix (to be placed after `'`) or null if untouched/invalid.
+ */
+export function fixNumberSuffix(numStr: string, rawSuffix: string, hadApostrophe: boolean): string | null {
+  if (!rawSuffix || rawSuffix !== lowerTr(rawSuffix)) return null;
+  if (!hadApostrophe && NUMBER_UNIT_BLOCK.has(rawSuffix)) return null;
+  // Reject 1-letter glued suffixes on non-4-digit numbers ("3a", "2e", "5i" could be sections/codes)
+  if (!hadApostrophe && rawSuffix.length === 1 && !/^(?:1[0-9]{3}|20[0-9]{2})$/.test(numStr)) return null;
+  if (!NUMBER_INFLECTION_RE.test(rawSuffix)) return null;
+  const ph = turkishNumberPhonology(numStr);
+  if (!ph) return null;
+
+  // Check vowel harmony of the first vowel of the suffix against the number's final vowel
+  const firstV = [...rawSuffix].find((c) => "aeıioöuü".includes(c));
+  if (firstV && !followsHarmony(ph.lastV, firstV)) return null;
+
+  // Check buffer/initial consonant rules
+  if (ph.vowelFinal) {
+    if (/^[aeıiuü]/.test(rawSuffix)) return null;
+    if (/^l[ae](?:$|[^r])/.test(rawSuffix)) return null;
+  } else {
+    if (/^(?:n(?!c)|y)/.test(rawSuffix)) return null;
+    if (/^nc[ıiuü]/.test(rawSuffix)) return null; // consonant-final numbers take -ıncı/-inci/-uncu/-üncü
+  }
+
+  // Fix voicing assimilation on d/t-initial case/copula suffixes ("1985de" -> "1985'te", "1985'de" -> "1985'te", "2023de" -> "2023'te")
+  let fixed = rawSuffix;
+  if (fixed.startsWith("d") && ph.voiceless) {
+    fixed = "t" + fixed.slice(1);
+  } else if (fixed.startsWith("t") && !ph.voiceless) {
+    fixed = "d" + fixed.slice(1);
+  }
+  if (hadApostrophe && fixed === rawSuffix) return null;
+  return fixed;
 }
 
 /** Suffix starts with a TDK derivational or plural suffix (never preceded by an apostrophe on non-acronym proper nouns). */
@@ -477,6 +619,38 @@ export function splitHonorific(lower: string): { head: string; displayHead: stri
   return null;
 }
 
+/** Splits a post-nominal title (`POST_TITLES_WITH_APOS`: "hoca", "usta", "çavuş", "onbaşı", "kaptan", "öğretmen", ...) + optional inflectional suffix. */
+export function splitPostTitle(lower: string): { head: string; displayHead: string; suffix: string; hadApostrophe: boolean } | null {
+  const apos = lower.indexOf("'");
+  if (apos > 0) {
+    const stem = lower.slice(0, apos);
+    const suffix = lower.slice(apos + 1);
+    if (
+      POST_TITLES_WITH_APOS.has(stem) &&
+      PROPER_INFLECTIONAL_SUFFIX_RE.test(suffix) &&
+      !/^(?:[ıiuü]m|m[ıiuü]z|l[ae]r|s[ıiuü])/.test(suffix) &&
+      isPhonologicallyValidProperSuffix(stem, suffix)
+    ) {
+      return { head: stem, displayHead: capTr(stem), suffix, hadApostrophe: true };
+    }
+    return null;
+  }
+  for (const h of POST_TITLES_WITH_APOS) {
+    if (lower === h) return { head: h, displayHead: capTr(h), suffix: "", hadApostrophe: false };
+    if (lower.startsWith(h) && lower.length > h.length) {
+      const suffix = lower.slice(h.length);
+      if (
+        PROPER_INFLECTIONAL_SUFFIX_RE.test(suffix) &&
+        !/^(?:[ıiuü]m|m[ıiuü]z|l[ae]r|s[ıiuü])/.test(suffix) &&
+        isPhonologicallyValidProperSuffix(h, suffix)
+      ) {
+        return { head: h, displayHead: capTr(h), suffix, hadApostrophe: false };
+      }
+    }
+  }
+  return null;
+}
+
 /** Splits an institution/geo/state/event head word + optional inflectional suffix ("üniversitesinde" -> head="üniversitesi", suffix="nde"). */
 export function splitHeadWord(
   lower: string,
@@ -544,8 +718,12 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Gençlik ve Spor Bayramı", true],
   ["Ulusal Egemenlik ve Çocuk Bayramı", true],
   ["Atatürk'ü Anma, Gençlik ve Spor Bayramı", true],
+  ["Atatürk'ü Anma Gençlik ve Spor Bayramı", true],
   ["Demokrasi ve Millî Birlik Günü", true],
   ["Emek ve Dayanışma Günü", true],
+  ["İşçi Bayramı", true],
+  ["Kabotaj Bayramı", true],
+  ["Denizcilik ve Kabotaj Bayramı", true],
   ["Öğretmenler Günü", true],
   ["Anneler Günü", true],
   ["Babalar Günü", true],
@@ -553,7 +731,17 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Şehitler Günü", true],
   ["Kadınlar Günü", true],
   ["Dünya Kadınlar Günü", true],
+  ["Dünya Tiyatro Günü", true],
+  ["Dünya Çevre Günü", true],
+  ["Dünya Sağlık Günü", true],
+  ["Dünya Barış Günü", true],
+  ["Dünya Çocuk Günü", true],
+  ["Dünya Kitap Günü", true],
+  ["Dünya Su Günü", true],
+  ["İnsan Hakları Günü", true],
   ["Sevgililer Günü", true],
+  ["Şükran Günü", true],
+  ["Cadılar Bayramı", true],
   ["Aşure Günü", true],
   ["Tıp Bayramı", true],
   ["Nevruz Bayramı", true],
@@ -564,12 +752,22 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Mevlit Kandili", true],
   // Historical events, wars, revolutions, eras, treaties (WITH apostrophe)
   ["Kurtuluş Savaşı", true],
+  ["Millî Mücadele", true],
+  ["Millî Mücadele Dönemi", true],
+  ["Cumhuriyet Dönemi", true],
   ["Büyük Taarruz", true],
   ["Birinci Dünya Savaşı", true],
   ["İkinci Dünya Savaşı", true],
   ["I. Dünya Savaşı", true],
   ["II. Dünya Savaşı", true],
+  ["Birinci İnönü Savaşı", true],
+  ["İkinci İnönü Savaşı", true],
+  ["I. İnönü Savaşı", true],
+  ["II. İnönü Savaşı", true],
+  ["Başkomutanlık Meydan Muharebesi", true],
+  ["Dumlupınar Meydan Muharebesi", true],
   ["Çanakkale Savaşı", true],
+  ["Çanakkale Zaferi", true],
   ["Kore Savaşı", true],
   ["Kırım Savaşı", true],
   ["Mohaç Savaşı", true],
@@ -577,15 +775,20 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Malazgirt Meydan Muharebesi", true],
   ["Sakarya Meydan Muharebesi", true],
   ["Preveze Deniz Savaşı", true],
+  ["İnebahtı Deniz Savaşı", true],
   ["Balkan Savaşları", true],
   ["Trablusgarp Savaşı", true],
   ["Soğuk Savaş", true],
   ["Yüz Yıl Savaşları", true],
+  ["Otuz Yıl Savaşları", true],
+  ["Yedi Yıl Savaşları", true],
   ["Haçlı Seferleri", true],
   ["Sanayi Devrimi", true],
   ["Fransız İhtilali", true],
   ["Fransız Devrimi", true],
   ["Ekim Devrimi", true],
+  ["Harf İnkılabı", true],
+  ["Harf Devrimi", true],
   ["Kavimler Göçü", true],
   ["Fetret Devri", true],
   ["Lale Devri", true],
@@ -593,29 +796,86 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Tanzimat Fermanı", true],
   ["Islahat Fermanı", true],
   ["Meşrutiyet Dönemi", true],
+  ["Birinci Meşrutiyet", true],
+  ["İkinci Meşrutiyet", true],
+  ["Eski Çağ", true],
   ["İlk Çağ", true],
   ["Orta Çağ", true],
   ["Yeni Çağ", true],
   ["Yakın Çağ", true],
+  ["Aydınlanma Çağı", true],
   ["Taş Devri", true],
+  ["Cilalı Taş Devri", true],
+  ["Yontma Taş Devri", true],
+  ["Bakır Çağı", true],
   ["Tunç Çağı", true],
   ["Demir Çağı", true],
+  ["Maden Çağı", true],
   ["Lozan Antlaşması", true],
   ["Lozan Barış Antlaşması", true],
   ["Mondros Ateşkes Antlaşması", true],
   ["Sevr Antlaşması", true],
   ["Mudanya Ateşkes Antlaşması", true],
+  ["Karlofça Antlaşması", true],
+  ["Küçük Kaynarca Antlaşması", true],
+  ["Montrö Boğazlar Sözleşmesi", true],
+  ["Amasya Genelgesi", true],
+  ["Erzurum Kongresi", true],
+  ["Sivas Kongresi", true],
   ["Büyük Buhran", true],
   ["Coğrafi Keşifler", true],
-  // Geographic & landmark phrases whose first word is also a common word (WITH apostrophe)
+  // Geographic, monument & landmark phrases (WITH apostrophe)
   ["Kaz Dağları", true],
+  ["Toros Dağları", true],
+  ["Kaçkar Dağları", true],
+  ["Ağrı Dağı", true],
+  ["Erciyes Dağı", true],
+  ["Nemrut Dağı", true],
   ["Tuz Gölü", true],
+  ["Van Gölü", true],
+  ["Beyşehir Gölü", true],
+  ["Eğirdir Gölü", true],
+  ["İznik Gölü", true],
+  ["Sapanca Gölü", true],
+  ["Abant Gölü", true],
+  ["Salda Gölü", true],
+  ["Manyas Gölü", true],
   ["Atlas Okyanusu", true],
   ["Büyük Okyanus", true],
   ["Hint Okyanusu", true],
   ["Kızıl Deniz", true],
   ["Ölü Deniz", true],
+  ["Marmara Bölgesi", true],
+  ["Ege Bölgesi", true],
+  ["Akdeniz Bölgesi", true],
+  ["Karadeniz Bölgesi", true],
+  ["İç Anadolu Bölgesi", true],
+  ["Doğu Anadolu Bölgesi", true],
+  ["Güneydoğu Anadolu Bölgesi", true],
   ["Göller Bölgesi", true],
+  ["Topkapı Sarayı", true],
+  ["Dolmabahçe Sarayı", true],
+  ["Çırağan Sarayı", true],
+  ["Beylerbeyi Sarayı", true],
+  ["İshak Paşa Sarayı", true],
+  ["Çankaya Köşkü", true],
+  ["Rumeli Hisarı", true],
+  ["Anadolu Hisarı", true],
+  ["Galata Kulesi", true],
+  ["Kız Kulesi", true],
+  ["Boğaziçi Köprüsü", true],
+  ["Fatih Sultan Mehmet Köprüsü", true],
+  ["Yavuz Sultan Selim Köprüsü", true],
+  ["Osmangazi Köprüsü", true],
+  ["Mısır Çarşısı", true],
+  ["Sümela Manastırı", true],
+  ["Haydarpaşa Garı", true],
+  ["Sirkeci Garı", true],
+  ["Ankara Garı", true],
+  ["Sabiha Gökçen Havalimanı", true],
+  ["İstanbul Havalimanı", true],
+  ["Esenboğa Havalimanı", true],
+  ["Atatürk Havalimanı", true],
   ["Kıbrıs Şehitleri Caddesi", true],
   ["Gazi Mustafa Kemal Bulvarı", true],
   ["İstiklal Caddesi", true],
@@ -644,6 +904,9 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Beyaz Kale", true],
   ["Kürk Mantolu Madonna", true],
   ["Saatleri Ayarlama Enstitüsü", true],
+  ["Hanımın Çiftliği", true],
+  ["Kurtlar Vadisi", true],
+  ["Ölü Ozanlar Derneği", true],
   ["Aşk-ı Memnu", true],
   ["Suç ve Ceza", true],
   ["Savaş ve Barış", true],
@@ -665,11 +928,99 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Yılanların Öcü", true],
   ["Üç İstanbul", true],
   ["Ağrı Dağı Efsanesi", true],
+  ["Yaprak Dökümü", true],
+  ["Yeşil Gece", true],
+  ["Kiralık Konak", true],
+  ["Sodom ve Gomore", true],
+  ["Ateşten Gömlek", true],
+  ["Vurun Kahpeye", true],
+  ["Handan", true],
+  ["Acımak", true],
+  ["Dudaktan Kalbe", true],
+  ["Fatih-Harbiye", true],
+  ["Matmazel Noraliya'nın Koltuğu", true],
+  ["Ayaşlı ve Kiracıları", true],
+  ["Aganta Burina Burinata", true],
+  ["İçimizdeki Şeytan", true],
+  ["Esir Şehrin İnsanları", true],
+  ["Yorgun Savaşçı", true],
+  ["Hakkâri'de Bir Mevsim", true],
+  ["Fikrimin İnce Gülü", true],
+  ["Bir Düğün Gecesi", true],
+  ["Korkuyu Beklerken", true],
+  ["Lüzumsuz Adam", true],
+  ["Sırça Köşk", true],
+  ["Dede Korkut Hikâyeleri", true],
+  ["Kutadgu Bilig", true],
+  ["İstiklal Marşı", true],
+  ["Keşanlı Ali Destanı", true],
+  ["Susuz Yaz", true],
+  ["Kış Uykusu", true],
+  ["Bir Zamanlar Anadolu'da", true],
+  ["Ahlat Ağacı", true],
+  ["Babam ve Oğlum", true],
+  ["Tosun Paşa", true],
+  ["Süt Kardeşler", true],
+  ["Kapıcılar Kralı", true],
+  ["Çöpçüler Kralı", true],
+  ["Neşeli Günler", true],
+  ["Mona Lisa", true],
+  ["Kaplumbağa Terbiyecisi", true],
+  ["Yıldızlı Gece", true],
+  ["Son Akşam Yemeği", true],
+  ["Felatun Bey ile Rakım Efendi", true],
+  ["Taaşşuk-ı Talat ve Fitnat", true],
+  ["Kuyruklu Yıldız Altında Bir İzdivaç", true],
+  ["Vatan yahut Silistre", true],
+  ["Bereketli Topraklar Üzerinde", true],
+  ["Orta Direk", true],
+  ["Yer Demir Gök Bakır", true],
+  ["Ölmez Otu", true],
+  ["Yılanı Öldürseler", true],
+  ["Tehlikeli Oyunlar", true],
+  ["Sevgili Arsız Ölüm", true],
+  ["Cevdet Bey ve Oğulları", true],
+  ["Sessiz Ev", true],
+  ["Yeni Hayat", true],
+  ["Kafamda Bir Tuhaflık", true],
+  ["Veba Geceleri", true],
+  ["Memleket Hikâyeleri", true],
+  ["Gurbet Hikâyeleri", true],
+  ["Son Kuşlar", true],
+  ["Memleketimden İnsan Manzaraları", true],
   ["Bülbülü Öldürmek", true],
   ["Hayvan Çiftliği", true],
   ["Yüzüklerin Efendisi", true],
   ["Küçük Kadınlar", true],
   ["Don Kişot", true],
+  ["İlahi Komedya", true],
+  ["Genç Werther'in Acıları", true],
+  ["Romeo ve Juliet", true],
+  ["Venedik Taciri", true],
+  ["Kral Lear", true],
+  ["Bir Yaz Gecesi Rüyası", true],
+  ["Yeraltından Notlar", true],
+  ["İnsan Ne ile Yaşar", true],
+  ["Vişne Bahçesi", true],
+  ["Üç Kız Kardeş", true],
+  ["Notre Dame'ın Kamburu", true],
+  ["Üç Silahşorlar", true],
+  ["Goriot Baba", true],
+  ["Parma Manastırı", true],
+  ["Madame Bovary", true],
+  ["Aşk ve Gurur", true],
+  ["Jane Eyre", true],
+  ["Oliver Twist", true],
+  ["David Copperfield", true],
+  ["Moby Dick", true],
+  ["Yaşlı Adam ve Deniz", true],
+  ["Çanlar Kimin İçin Çalıyor", true],
+  ["Muhteşem Gatsby", true],
+  ["Çavdar Tarlasında Çocuklar", true],
+  ["Vahşetin Çağrısı", true],
+  ["Kırmızı Pazartesi", true],
+  ["Bilinmeyen Bir Kadının Mektubu", true],
+  ["Gılgamış Destanı", true],
   ["Gazap Üzümleri", true],
   ["Fareler ve İnsanlar", true],
   ["Şeker Portakalı", true],
@@ -680,18 +1031,130 @@ export const CANONICAL_PHRASES: ReadonlyArray<readonly [display: string, apos: b
   ["Kırmızı ve Siyah", true],
   ["İki Şehrin Hikâyesi", true],
   ["Beyaz Diş", true],
+  ["Anna Karenina", true],
+  ["Babalar ve Oğullar", true],
+  ["Ölü Canlar", true],
+  ["Büyük Umutlar", true],
+  ["Cesur Yeni Dünya", true],
+  ["Yüzyıllık Yalnızlık", true],
   // Iconic multi-word institutions (NO apostrophe!)
   ["Türk Dil Kurumu", false],
   ["Türk Tarih Kurumu", false],
   ["Türkiye Büyük Millet Meclisi", false],
   ["Türkiye Cumhuriyet Merkez Bankası", false],
   ["Türkiye Petrolleri Anonim Ortaklığı", false],
+  ["Türkiye İstatistik Kurumu", false],
+  ["Türkiye Bilimsel ve Teknolojik Araştırma Kurumu", false],
+  ["Türkiye Radyo Televizyon Kurumu", false],
+  ["Türk Standardları Enstitüsü", false],
   ["Türk Hava Yolları", false],
+  ["Türk Silahlı Kuvvetleri", false],
+  ["Genelkurmay Başkanlığı", false],
+  ["Türk Kızılayı", false],
+  ["Yeşilay Cemiyeti", false],
   ["Anadolu Ajansı", false],
   ["Ziraat Bankası", false],
   ["Halk Bankası", false],
   ["Vakıf Bank", false],
+  ["Türkiye İş Bankası", false],
+  ["İş Bankası", false],
+  ["Garanti Bankası", false],
+  ["Yapı Kredi Bankası", false],
   ["Bakanlar Kurulu", false],
+  ["Yüksek Seçim Kurulu", false],
+  ["Millî Güvenlik Kurulu", false],
+  ["Hakimler ve Savcılar Kurulu", false],
+  ["Anayasa Mahkemesi", false],
+  ["Atatürk Orman Çiftliği", false],
+  ["Atatürk Kültür Merkezi", false],
+  ["Devlet Tiyatroları", false],
+  ["Devlet Opera ve Balesi", false],
+  ["Devlet Malzeme Ofisi", false],
+  ["Devlet Hava Meydanları İşletmesi", false],
+  ["Kredi ve Yurtlar Kurumu", false],
+  ["Türkiye İş Kurumu", false],
+  ["Toplu Konut İdaresi", false],
+  ["Gelir İdaresi Başkanlığı", false],
+  ["Tapu ve Kadastro Genel Müdürlüğü", false],
+  ["Vakıflar Genel Müdürlüğü", false],
+  ["Türkiye Futbol Federasyonu", false],
+  ["Türkiye Basketbol Federasyonu", false],
+  ["Türkiye Voleybol Federasyonu", false],
+  ["Türk Tabipleri Birliği", false],
+  ["Türkiye Barolar Birliği", false],
+  ["İstanbul Ticaret Odası", false],
+  ["Ankara Ticaret Odası", false],
+  ["İstanbul Sanayi Odası", false],
+  ["Kişisel Verileri Koruma Kurumu", false],
+  ["Bilgi Teknolojileri ve İletişim Kurumu", false],
+  ["Enerji Piyasası Düzenleme Kurumu", false],
+  ["Cumhuriyet Halk Partisi", false],
+  ["Adalet ve Kalkınma Partisi", false],
+  ["Milliyetçi Hareket Partisi", false],
+  ["Millî Kütüphane", false],
+  ["Beyazıt Devlet Kütüphanesi", false],
+  ["Anadolu Medeniyetleri Müzesi", false],
+  ["İstanbul Arkeoloji Müzeleri", false],
+  ["Topkapı Sarayı Müzesi", false],
+  ["Pera Müzesi", false],
+  ["Rahmi Koç Müzesi", false],
+  ["Mevlana Müzesi", false],
+  ["Zeugma Mozaik Müzesi", false],
+  ["Mavi Köşe Bakkaliyesi", false],
+  ["Karadeniz Teknik Üniversitesi", false],
+  ["Çukurova Üniversitesi", false],
+  ["Akdeniz Üniversitesi", false],
+  ["Anadolu Üniversitesi", false],
+  ["Atatürk Üniversitesi", false],
+  ["Selçuk Üniversitesi", false],
+  ["Erciyes Üniversitesi", false],
+  ["Ondokuz Mayıs Üniversitesi", false],
+  ["Çanakkale Onsekiz Mart Üniversitesi", false],
+  ["Süleyman Demirel Üniversitesi", false],
+  ["Mersin Üniversitesi", false],
+  ["Kocaeli Üniversitesi", false],
+  ["Sakarya Üniversitesi", false],
+  ["Trakya Üniversitesi", false],
+  ["Pamukkale Üniversitesi", false],
+  ["Fırat Üniversitesi", false],
+  ["İnönü Üniversitesi", false],
+  ["Dicle Üniversitesi", false],
+  ["Gaziantep Üniversitesi", false],
+  ["Bilkent Üniversitesi", false],
+  ["Koç Üniversitesi", false],
+  ["Sabancı Üniversitesi", false],
+  ["Özyeğin Üniversitesi", false],
+  ["Bahçeşehir Üniversitesi", false],
+  ["Bilgi Üniversitesi", false],
+  ["Yeditepe Üniversitesi", false],
+  ["Başkent Üniversitesi", false],
+  ["Galatasaray Üniversitesi", false],
+  ["Kadir Has Üniversitesi", false],
+  ["Mimar Sinan Güzel Sanatlar Üniversitesi", false],
+  ["Gebze Teknik Üniversitesi", false],
+  ["İzmir Yüksek Teknoloji Enstitüsü", false],
+  ["İzmir Ekonomi Üniversitesi", false],
+  ["Robert Kolej", false],
+  ["Ankara Fen Lisesi", false],
+  ["İzmir Fen Lisesi", false],
+  ["İstanbul Atatürk Fen Lisesi", false],
+  ["Kadıköy Anadolu Lisesi", false],
+  ["Bornova Anadolu Lisesi", false],
+  ["Cağaloğlu Anadolu Lisesi", false],
+  ["Vefa Lisesi", false],
+  ["Pertevniyal Lisesi", false],
+  ["Haydarpaşa Lisesi", false],
+  ["Darüşşafaka Lisesi", false],
+  ["Darüşşafaka Cemiyeti", false],
+  ["Dünya Sağlık Örgütü", false],
+  ["Dünya Bankası", false],
+  ["Dünya Ticaret Örgütü", false],
+  ["Uluslararası Para Fonu", false],
+  ["Uluslararası Af Örgütü", false],
+  ["Avrupa Konseyi", false],
+  ["Avrupa Parlamentosu", false],
+  ["Avrupa İnsan Hakları Mahkemesi", false],
+  ["Birleşmiş Milletler Güvenlik Konseyi", false],
   ["Sosyal Güvenlik Kurumu", false],
   ["Yükseköğretim Kurulu", false],
   ["Radyo ve Televizyon Üst Kurulu", false],

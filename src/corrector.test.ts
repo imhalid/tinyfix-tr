@@ -26,7 +26,7 @@ import {
   matchAcronymApostrophe,
 } from "./rules/turkish-rules.ts";
 import { lowerTr, markVariants, matchCase } from "./turkish.ts";
-import { loadMorphology } from "../bench/setup.ts";
+import { loadKnownTsv, loadMorphology } from "../bench/setup.ts";
 
 test("Turkish casing", () => {
   assert.equal(lowerTr("İSTANBUL ILIK"), "istanbul ılık");
@@ -39,7 +39,7 @@ test("Turkish casing", () => {
 let corrector: Corrector | undefined;
 try {
   const lexicon = Lexicon.fromTsv(readFileSync("data/work/unigrams_conv.tsv", "utf8"), readFileSync("data/work/bigrams.tsv", "utf8"), 1, 5);
-  corrector = new Corrector(lexicon, undefined, KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8")), process.argv.includes("--no-morphology") ? undefined : loadMorphology());
+  corrector = new Corrector(lexicon, undefined, KnownMisspellings.fromTsv(loadKnownTsv()), process.argv.includes("--no-morphology") ? undefined : loadMorphology());
 } catch {
   corrector = undefined;
 }
@@ -820,4 +820,96 @@ test("inspect(): detects and ranks all 3 errors in user example, protects proper
   const ctxFlag = ctxRes.flags.find((f) => f.original === "duzenlemniyor");
   assert.ok(ctxFlag, `expected duzenlemniyor to stay flagged at moderate context margin, got fixes=${JSON.stringify(ctxRes.corrections)}`);
   assert.equal(ctxFlag.suggestions[0], "düzenleniyor", "context model should re-rank flag suggestions");
+});
+
+test("TDK proper-name, institution, title, date, number, and apostrophe rules (sentenceCase=1)", async (t) => {
+  if (!corrector) return t.skip("no lexicon built yet");
+  const prevSettings = corrector.settings;
+  corrector.settings = { ...CAREFUL, sentenceCase: true };
+  try {
+    const cases: [string, string][] = [
+      // Multi-word institutions (NO apostrophe per TDK) & exception (Avrupa Birliği'ne)
+      ["Başvuruyu türk dil kurumuna gönderdik.", "Başvuruyu Türk Dil Kurumuna gönderdik."],
+      ["Dün Türk Dil Kurumu'ndan bir mektup geldi.", "Dün Türk Dil Kurumundan bir mektup geldi."],
+      ["Ankara Üniversitesi'nde konferans var.", "Ankara Üniversitesinde konferans var."],
+      ["Türkiye Büyük Millet Meclisi'ne sunuldu.", "Türkiye Büyük Millet Meclisine sunuldu."],
+      ["Toplantı avrupa birliğine bildirildi.", "Toplantı Avrupa Birliği'ne bildirildi."],
+      // Institution officer titles (WITH apostrophe)
+      ["Dilekçeyi Türk Dil Kurumu başkanına verdik.", "Dilekçeyi Türk Dil Kurumu Başkanı'na verdik."],
+      // Geographic & monument phrases (WITH apostrophe)
+      ["Hafta sonu van gölünde yüzdük.", "Hafta sonu Van Gölü'nde yüzdük."],
+      ["Dün rumeli hisarında fotoğraf çektik.", "Dün Rumeli Hisarı'nda fotoğraf çektik."],
+      ["Kışın doğu anadolu bölgesinde kar yağar.", "Kışın Doğu Anadolu Bölgesi'nde kar yağar."],
+      // Wrong-apostrophe removal & softening + -izm/-iyet preservation
+      ["Türkçe'yi çok güzel konuşuyor.", "Türkçeyi çok güzel konuşuyor."],
+      ["Hristiyanlık'ın tarihi üzerine bir kitap okudu.", "Hristiyanlığın tarihi üzerine bir kitap okudu."],
+      ["Ankaralı'lar bu havaya alışıktır.", "Ankaralılar bu havaya alışıktır."],
+      ["Türkler'in tarihi çok eskidir.", "Türklerin tarihi çok eskidir."],
+      ["Başbakanlık'a dilekçe yazdık.", "Başbakanlığa dilekçe yazdık."],
+      ["İslamiyet'e sadakat önemlidir.", "İslamiyet'e sadakat önemlidir."],
+      // Misplaced apostrophe relocation
+      ["Selinin'kini masada bıraktım.", "Selin'inkini masada bıraktım."],
+      ["Türkiyemiz'in geleceği parlaktır.", "Türkiye'mizin geleceği parlaktır."],
+      // Number + suffix apostrophe & voicing
+      ["Bu bina 1985te inşa edilmiş.", "Bu bina 1985'te inşa edilmiş."],
+      ["Rapor 2023de tamamlandı.", "Rapor 2023'te tamamlandı."],
+      ["Olay 1985'de yaşanmış.", "Olay 1985'te yaşanmış."],
+      ["Bu tarz 80lere çok uygun.", "Bu tarz 80'lere çok uygun."],
+      // Titles, honorifics & post-titles
+      ["Toplantıyı prof. dr. ahmet yılmaz yönetti.", "Toplantıyı Prof. Dr. Ahmet Yılmaz yönetti."],
+      ["Dersi ahmet hocaya sorduk.", "Dersi Ahmet Hoca'ya sorduk."],
+      ["Sayın başkana teşekkür ederiz.", "Sayın Başkan'a teşekkür ederiz."],
+      // Specific dates, holidays & historical eras
+      ["Toplantı 17 aralıkta yapılacak.", "Toplantı 17 Aralık'ta yapılacak."],
+      ["Bu eser eski çağın izlerini taşıyor.", "Bu eser Eski Çağ'ın izlerini taşıyor."],
+      ["Tören cumhuriyet bayramında yapıldı.", "Tören Cumhuriyet Bayramı'nda yapıldı."],
+      // Clean-text protections (must stay completely untouched)
+      ["Bay Reede, ofisten aradılar.", "Bay Reede, ofisten aradılar."],
+      ["Anna, sen onun en iyi arkadaşısın.", "Anna, sen onun en iyi arkadaşısın."],
+      ["Jimi Hendrix sahneye çıktı.", "Jimi Hendrix sahneye çıktı."],
+      ["Gabrielle uzun bir yolculuğa çıktı.", "Gabrielle uzun bir yolculuğa çıktı."],
+      ["Lynne bu çalışmayı inceledi.", "Lynne bu çalışmayı inceledi."],
+      ["Michelin Rehberi ünlü bir ödüldür.", "Michelin Rehberi ünlü bir ödüldür."],
+      ["Tam 3 gün arda arda Meksika'da kaldı.", "Tam 3 gün arda arda Meksika'da kaldı."],
+      ["Lig'inde yer alan dokuz kulüpten biridir.", "Lig'inde yer alan dokuz kulüpten biridir."],
+      ["Hâlâ İngilizce kursuna gidiyor mu?", "Hâlâ İngilizce kursuna gidiyor mu?"],
+      ["Öğrencilerine olan sevgisi gözlerinden okunuyordu.", "Öğrencilerine olan sevgisi gözlerinden okunuyordu."],
+      ["Canım, yarın görüşürüz.", "Canım, yarın görüşürüz."],
+      ["Borcunu zamanında ödemiş.", "Borcunu zamanında ödemiş."],
+    ];
+    for (const [input, expected] of cases) {
+      assert.equal(corrector.correct(input).text, expected, `sentenceCase failed on: ${input}`);
+    }
+
+    // Contextual kind="name" disambiguation integration through correctAsync
+    const seenNameQueries: string[][] = [];
+    const fakeNameModel = new ContextModel(
+      async (_tokens, _segments, n, features) => {
+        assert.ok(features && features.length === n * FEATURE_DIM);
+        const out = new Float32Array(n);
+        for (let i = 0; i < n; i++) {
+          const isName =
+            features[i * FEATURE_DIM + 6] === 0 &&
+            features[i * FEATURE_DIM + 7] === 0 &&
+            features[i * FEATURE_DIM + 8] === 0 &&
+            features[i * FEATURE_DIM + 9] === 0 &&
+            features[i * FEATURE_DIM + 18] === 0;
+          const isProper = features[i * FEATURE_DIM + 19] === 1;
+          out[i] = isName ? (isProper ? 4.5 : 0.0) : 0.0;
+        }
+        return out;
+      },
+      { subwordsOnly: true },
+    );
+    const origScore = fakeNameModel.score.bind(fakeNameModel);
+    fakeNameModel.score = async (queries) => {
+      for (const q of queries) seenNameQueries.push(q.candidates);
+      return origScore(queries);
+    };
+    const ctxOut = await corrector.correctAsync("Hafta sonu özlemle sahilde yürüdük.", fakeNameModel);
+    assert.equal(ctxOut.text, "Hafta sonu Özlem'le sahilde yürüdük.");
+    assert.ok(seenNameQueries.some((c) => c[0] === "özlemle" && c[1] === "Özlem'le"));
+  } finally {
+    corrector.settings = prevSettings;
+  }
 });

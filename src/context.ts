@@ -26,7 +26,7 @@ export const MAX_SUB_LEN = 64;
 export const FEATURE_DIM = 26;
 export const LEGACY_FEATURE_DIM = 18;
 
-export type ContextKind = "marks" | "de_da" | "ki" | "mi" | "typo";
+export type ContextKind = "marks" | "de_da" | "ki" | "mi" | "typo" | "name";
 
 /** 0 is padding, 1 is any character not listed. */
 export const ALPHABET = "abcçdefgğhıijklmnoöprsştuüvyzâîûqwxABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZÂÎÛQWX0 .,;:!?'\"()-";
@@ -153,6 +153,19 @@ export interface TypoCandidateMeta {
   isMarkVariant?: boolean;
 }
 
+export interface NameCandidateMeta {
+  /** True for the proper-noun candidate ("Deniz", "Bahar'la"), false for the common-word candidate ("deniz", "baharla"). */
+  isProper: boolean;
+  /** Lexicon mid-sentence capital share of the base stem (0..1). */
+  stemCapShare: number;
+  /** Share of suffixed occurrences written with apostrophe (`count(base'suf) / (count(base'suf) + count(base+suf) + 1)`), 0 when bare. */
+  aposShare: number;
+  /** True when the base stem is a known Turkish given name. */
+  isGiven: boolean;
+  /** True when the token sits at sentence start. */
+  atSentenceStart: boolean;
+}
+
 function ids(text: string): number[] {
   return [...text.replaceAll("’", "'").replace(/\d/g, "0")].map((char) => CHAR_ID.get(char) ?? 1);
 }
@@ -178,7 +191,7 @@ export function morphFeatureBits(word: string, morphology?: MorphAnalyzerLike): 
   return bits;
 }
 
-/** Computes the 26-dim feature vector per candidate matching `py/context_data.py:build_features`. */
+/** Computes the 26-dim feature vector per candidate matching `py/context_data.py:build_features` and `py/build_name_context_data.py`. */
 export function buildContextFeatures(
   candidates: readonly string[],
   kind: ContextKind,
@@ -186,6 +199,7 @@ export function buildContextFeatures(
   lexicon: Lexicon,
   morphology?: MorphAnalyzerLike,
   typoMeta?: readonly TypoCandidateMeta[],
+  nameMeta?: readonly NameCandidateMeta[],
 ): number[][] {
   const logCounts: number[] = [];
   const minLogs: number[] = [];
@@ -247,6 +261,18 @@ export function buildContextFeatures(
         row[23] = low.length < typedLow.length ? 1 : 0;
         row[24] = low.length === typedLow.length && low !== typedLow ? 1 : 0;
         row[25] = meta.isMarkVariant ? 1 : 0;
+      }
+    } else if (kind === "name") {
+      // Slots 6..9 and 18 stay 0 -> ContextScorerV3 identifies kind === "name" without changing FEATURE_DIM=26.
+      const meta = nameMeta?.[idx];
+      if (meta) {
+        row[19] = meta.isProper ? 1 : 0;
+        row[20] = cand.includes("'") ? 1 : 0;
+        row[21] = meta.stemCapShare;
+        row[22] = meta.aposShare;
+        row[23] = meta.isGiven ? 1 : 0;
+        row[24] = meta.isGiven ? 0 : 1;
+        row[25] = meta.atSentenceStart ? 1 : 0;
       }
     }
     return row;
@@ -404,6 +430,11 @@ export class ContextModel {
   constructor(run: RunModel, options: ContextModelOptions = {}) {
     this.run = run;
     this.subwordsOnly = options.subwordsOnly ?? false;
+  }
+
+  /** True when backed by a v3 subword Transformer ONNX model (which supports `kind: "name"`). */
+  get supportsNameContext(): boolean {
+    return this.subwordsOnly;
   }
 
   async score(queries: readonly ContextQuery[]): Promise<number[][]> {

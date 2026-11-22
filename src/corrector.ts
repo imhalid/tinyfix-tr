@@ -1,7 +1,7 @@
-import { buildContextFeatures, type ContextKind, type ContextModel, type TypoCandidateMeta } from "./context.ts";
+import { buildContextFeatures, type ContextKind, type ContextModel, type NameCandidateMeta, type TypoCandidateMeta } from "./context.ts";
 import type { KnownMisspellings } from "./known.ts";
 import { Lexicon } from "./lexicon.ts";
-import { ABBREVIATIONS, NOT_A_SENTENCE_START, applySentenceRules } from "./sentence.ts";
+import { ABBREVIATIONS, NOT_A_SENTENCE_START, applySentenceRules, type AmbigCandidateQuery } from "./sentence.ts";
 import {
   PROPER_INFLECTIONAL_SUFFIX_RE,
   isPhonologicallyValidProperSuffix,
@@ -158,6 +158,8 @@ export interface Settings {
   contextTypoAmbigVsTyped?: number;
   /** Minimum context-model margin over the invalid typed word to rescue a below-threshold typo candidate. */
   contextTypoRescue?: number;
+  /** Minimum margin for the neural context model (`kind: "name"`) to disambiguate an ambiguous proper name. */
+  contextNameThreshold?: number;
   /** Per-regime additive offsets on top of `threshold.context`. */
   contextOffsets?: {
     marksAscii?: number;
@@ -199,6 +201,7 @@ export const CAREFUL: Settings = {
   contextTypoAmbigGap: 1.25,
   contextTypoAmbigVsTyped: 1.5,
   contextTypoRescue: 2.5,
+  contextNameThreshold: 2.5,
   knownMarked: 20,
   markedOverride: 5.5,
   minName: 20,
@@ -453,7 +456,18 @@ export class Corrector {
     });
   }
 
-  private withSentenceRules(text: string, corrections: Correction[]): Correction[] {
+  private withSentenceRules(
+    text: string,
+    corrections: Correction[],
+    opts?: {
+      collectAmbig?: AmbigCandidateQuery[];
+      preDecidedAmbig?: ReadonlyMap<number, string>;
+    },
+  ): Correction[] {
+    const disambiguateAmbig = opts?.preDecidedAmbig
+      ? (q: AmbigCandidateQuery): string | null => opts.preDecidedAmbig!.get(q.start) ?? null
+      : undefined;
+
     return applySentenceRules(
       text,
       corrections,
@@ -469,6 +483,8 @@ export class Corrector {
         count: (lower) => this.lexicon.count(lower),
         pair: (a, b) => this.lexicon.pair(a, b),
         isMorphWord: (lower) => this.isRealWord(lower),
+        disambiguateAmbig,
+        collectAmbig: opts?.collectAmbig,
       },
     );
   }
@@ -1020,7 +1036,60 @@ export class Corrector {
     const all = [...kept, ...judged].sort((a, b) => a.start - b.start || b.margin - a.margin);
     const corrections: Correction[] = [];
     for (const fix of all) if (!corrections.some((done) => overlaps(done, fix))) corrections.push(fix);
-    if (this.settings.sentenceCase) corrections.splice(0, corrections.length, ...this.withSentenceRules(text, corrections));
+    if (this.settings.sentenceCase) {
+      if (model.supportsNameContext && this.known?.hasProperData) {
+        const collectAmbig: AmbigCandidateQuery[] = [];
+        const pass1 = this.withSentenceRules(text, corrections, { collectAmbig });
+        if (collectAmbig.length === 0) {
+          corrections.splice(0, corrections.length, ...pass1);
+        } else {
+          const asciiCtx = !textHasMarks;
+          const nameScores = await model.score(
+            collectAmbig.map((q) => {
+              const candidates = [q.commonCand, q.properCand];
+              const stemCapShare = this.lexicon.capitalShare(q.base);
+              let aposShare = 0;
+              if (q.suffix) {
+                const cApos = this.lexicon.count(`${q.base}'${q.suffix}`);
+                const cJoin = this.lexicon.count(`${q.base}${q.suffix}`);
+                aposShare = cApos / (cApos + cJoin + 1);
+              }
+              const meta: NameCandidateMeta[] = [
+                { isProper: false, stemCapShare, aposShare, isGiven: q.isGiven, atSentenceStart: q.atStart },
+                { isProper: true, stemCapShare, aposShare, isGiven: q.isGiven, atSentenceStart: q.atStart },
+              ];
+              return {
+                left: q.leftRaw,
+                right: q.rightRaw,
+                candidates,
+                features: buildContextFeatures(candidates, "name", asciiCtx, this.lexicon, this.morphology, undefined, meta),
+              };
+            }),
+          );
+          const preDecidedAmbig = new Map<number, string>();
+          const nameBar = this.settings.contextNameThreshold ?? 2.5;
+          for (let i = 0; i < collectAmbig.length; i++) {
+            const q = collectAmbig[i]!;
+            const row = nameScores[i];
+            if (!row || row.length < 2) continue;
+            const margin = row[1]! - row[0]!;
+            if (q.hadApostrophe) {
+              if (margin >= 1.5) preDecidedAmbig.set(q.start, q.properCand);
+              else if (-margin >= 2.0) preDecidedAmbig.set(q.start, q.commonCand);
+            } else if (margin >= nameBar) {
+              preDecidedAmbig.set(q.start, q.properCand);
+            }
+          }
+          if (preDecidedAmbig.size > 0) {
+            corrections.splice(0, corrections.length, ...this.withSentenceRules(text, corrections, { preDecidedAmbig }));
+          } else {
+            corrections.splice(0, corrections.length, ...pass1);
+          }
+        }
+      } else {
+        corrections.splice(0, corrections.length, ...this.withSentenceRules(text, corrections));
+      }
+    }
     let output = "";
     let cursor = 0;
     for (const correction of corrections) {

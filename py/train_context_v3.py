@@ -274,7 +274,7 @@ def calibration_curve(cal_scores: np.ndarray, data: dict[str, np.ndarray]) -> di
             fix_regimes.append(reg)
 
     thresholds = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0]
-    regimes = ["all", "marks_ascii", "marks_marked", "de_da", "ki", "mi", "typo"]
+    regimes = ["all", "marks_ascii", "marks_marked", "de_da", "ki", "mi", "typo", "name"]
     table: dict[str, list[dict]] = {}
     for reg in regimes:
         fa_idx = [i for i in range(n) if reg == "all" or fa_regimes[i] == reg]
@@ -341,7 +341,10 @@ def export_quantized_onnx(model: ContextScorerV3, out_dir: Path, quantize: bool 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="data/work/context_v3")
+    parser.add_argument("--extra-data", default="", help="optional second NPZ dir to merge (e.g. data/work/name_context)")
+    parser.add_argument("--out", default="", help="optional output model dir (default: <data>/model)")
     parser.add_argument("--pretrained", default="data/work/context_v3/pretrained_backbone.pt")
+    parser.add_argument("--init-from", default="", help="optional warm-start full ContextScorerV3 checkpoint")
     parser.add_argument("--epochs", type=float, default=2.0)
     parser.add_argument("--batch", type=int, default=128)
     parser.add_argument("--backbone-lr", type=float, default=3.5e-4)
@@ -350,8 +353,8 @@ def main():
     parser.add_argument("--seed", type=int, default=3)
     parser.add_argument("--recalibrate-only", action="store_true")
     parser.add_argument("--no-quantize", action="store_true")
-    parser.add_argument("--prior-bias", default="0.0,0.0,0.0,0.0,0.0", help="marks_marked,de_da_sep,ki_sep,mi_sep,typo")
-    parser.add_argument("--regime-inv-temp", default="1.0,1.0,1.0,1.0,1.0,1.0", help="marks_ascii,marks_marked,de_da,ki,mi,typo")
+    parser.add_argument("--prior-bias", default="0.0,0.0,0.0,0.0,0.0,0.0", help="marks_marked,de_da_sep,ki_sep,mi_sep,typo,name_proper")
+    parser.add_argument("--regime-inv-temp", default="1.0,1.0,1.0,1.0,1.0,1.0,1.0", help="marks_ascii,marks_marked,de_da,ki,mi,typo,name")
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -359,6 +362,18 @@ def main():
     device = "mps" if torch.backends.mps.is_available() else "cpu"
     directory = Path(args.data)
     train, valid = load_npz(directory / "train.npz"), load_npz(directory / "valid.npz")
+    if args.extra_data:
+        extra_dir = Path(args.extra_data)
+        ex_tr, ex_va = load_npz(extra_dir / "train.npz"), load_npz(extra_dir / "valid.npz")
+        train = {k: np.concatenate([train[k], ex_tr[k]], axis=0) for k in train}
+        valid = {k: np.concatenate([valid[k], ex_va[k]], axis=0) for k in valid}
+        # Shuffle valid deterministically so calibration half (:half) and holdout half (half:) share ALL 6 tasks!
+        v_perm = np.random.default_rng(args.seed + 99).permutation(len(valid["label"]))
+        valid = {k: v[v_perm] for k, v in valid.items()}
+        print(
+            f"Merged extra data from {extra_dir}: train={len(train['label']):,}, valid={len(valid['label']):,}",
+            flush=True,
+        )
     vocab_size = len((directory / "vocab.txt").read_text(encoding="utf-8").splitlines())
 
     backbone = TurkishBackbone(vocab=vocab_size, emb=96, dim=192, layers=5, heads=6, ffn=512, dropout=args.dropout)
@@ -367,7 +382,7 @@ def main():
     steps = math.ceil(args.epochs * len(train["label"]) / args.batch)
     started = time.time()
 
-    out = directory / "model"
+    out = Path(args.out) if args.out else (directory / "model")
     out.mkdir(parents=True, exist_ok=True)
 
     if args.recalibrate_only:
@@ -378,8 +393,19 @@ def main():
         model.regime_inv_temp.fill_(1.0)
         model.eval()
     else:
-        pt_path = Path(args.pretrained)
-        if pt_path.is_file():
+        if args.init_from and Path(args.init_from).is_file():
+            print(f"Warm-starting full ContextScorerV3 from {args.init_from}...", flush=True)
+            ckpt = torch.load(args.init_from, map_location="cpu")
+            # Drop calibration buffers so resized 6/7 buffers start clean at 0.0/1.0
+            for buf in ("inv_temperature", "prior_bias", "regime_inv_temp"):
+                ckpt.pop(buf, None)
+            missing, unexpected = model.load_state_dict(ckpt, strict=False)
+            print(f"  loaded warm-start (missing={missing}, unexpected={unexpected})", flush=True)
+            model.inv_temperature.fill_(1.0)
+            model.prior_bias.zero_()
+            model.regime_inv_temp.fill_(1.0)
+        elif Path(args.pretrained).is_file():
+            pt_path = Path(args.pretrained)
             print(f"Loading Stage 1 pretrained backbone from {pt_path}...", flush=True)
             pt_state = torch.load(pt_path, map_location="cpu")
             backbone.load_state_dict(pt_state, strict=True)
@@ -466,9 +492,13 @@ def main():
     model.inv_temperature.fill_(1.0 / temperature)
 
     prior_vals = [float(x) for x in args.prior_bias.split(",")]
+    while len(prior_vals) < len(model.prior_bias):
+        prior_vals.append(0.0)
     regime_vals = [float(x) for x in args.regime_inv_temp.split(",")]
-    model.prior_bias.copy_(torch.tensor(prior_vals, dtype=torch.float32))
-    model.regime_inv_temp.copy_(torch.tensor(regime_vals, dtype=torch.float32))
+    while len(regime_vals) < len(model.regime_inv_temp):
+        regime_vals.append(1.0)
+    model.prior_bias.copy_(torch.tensor(prior_vals[: len(model.prior_bias)], dtype=torch.float32))
+    model.regime_inv_temp.copy_(torch.tensor(regime_vals[: len(model.regime_inv_temp)], dtype=torch.float32))
 
     cal_valid = predict_all(model, valid, "cpu")
     cal_valid_holdout = {key: val[half:] for key, val in valid.items()}

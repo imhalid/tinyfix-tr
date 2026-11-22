@@ -15,6 +15,9 @@ import {
   NO_APOS_RELIGION_OR_DERIVED,
   NON_APOSTROPHE_SUFFIX_RE,
   NON_INST_PREFIX,
+  OFFICER_TITLE_HEADS,
+  OFFICER_TITLE_MODS,
+  OPTIONAL_APOS_ISM_IYET,
   PERSON_REL_BEFORE,
   PLURAL_PLACE_KEEP_APOS,
   POST_HONORIFICS,
@@ -28,15 +31,18 @@ import {
   TITLE_CONJUNCTIONS,
   WEEKDAYS,
   capTr,
+  fixNumberSuffix,
   foldTurkish,
   harmonizeAsciiSuffix,
   isInstitutionHead,
   isKinshipWord,
   isMediaTypeWord,
   isPhonologicallyValidProperSuffix,
+  joinWithoutApostrophe,
   splitCalendarWord,
   splitHeadWord,
   splitHonorific,
+  splitPostTitle,
 } from "./rules/proper-names.ts";
 
 /**
@@ -65,6 +71,22 @@ interface AnyCorrection {
   replacement: string;
 }
 
+/** An unresolved ambiguous proper-name occurrence passed to an optional core or neural contextual disambiguator. */
+export interface AmbigCandidateQuery {
+  readonly start: number;
+  readonly end: number;
+  readonly base: string;
+  readonly displayBase: string;
+  readonly suffix: string;
+  readonly hadApostrophe: boolean;
+  readonly atStart: boolean;
+  readonly isGiven: boolean;
+  readonly commonCand: string;
+  readonly properCand: string;
+  readonly leftRaw: string;
+  readonly rightRaw: string;
+}
+
 /** Optional rich lexical/morphological resources supplied by Corrector for full TDK proper-name rules. */
 export interface SentenceResources {
   readonly known?: KnownMisspellings;
@@ -72,15 +94,10 @@ export interface SentenceResources {
   readonly count?: (lower: string) => number;
   readonly pair?: (first: string, second: string) => number;
   readonly isMorphWord?: (lower: string) => boolean;
-  /** Optional contextual disambiguator for ambiguous names (core linear model or pre-scored context). */
-  readonly disambiguateAmbig?: (
-    tokens: readonly SentenceToken[],
-    index: number,
-    base: string,
-    displayBase: string,
-    suffix: string,
-    hadApostrophe: boolean,
-  ) => string | null;
+  /** Optional contextual disambiguator for ambiguous names (core linear model or pre-scored neural context). */
+  readonly disambiguateAmbig?: (query: AmbigCandidateQuery) => string | null;
+  /** Optional sink populated with every unresolved ambiguous name query (used by Corrector.correctAsync to batch neural scoring). */
+  readonly collectAmbig?: AmbigCandidateQuery[];
 }
 
 export interface SentenceToken {
@@ -571,7 +588,8 @@ export function applySentenceRules<T extends AnyCorrection>(
     if (apos > 0) {
       const stem = low.slice(0, apos);
       const suf = low.slice(apos + 1);
-      const disp = known.surnameFor(stem) ?? known.nameFor(stem) ?? (allowCommon ? known.ambigNameFor(stem) : undefined);
+      // Strictly require a surname (never known.nameFor which matches cities/countries like "arda Meksika'da"!).
+      const disp = known.surnameFor(stem);
       if (disp && PROPER_INFLECTIONAL_SUFFIX_RE.test(suf)) {
         return { display: disp, suffix: suf, hadApos: true, isCommon: VERY_COMMON_SURNAME_COLLISIONS.has(stem) };
       }
@@ -585,17 +603,15 @@ export function applySentenceRules<T extends AnyCorrection>(
       const isCom = VERY_COMMON_SURNAME_COLLISIONS.has(low);
       if (!isCom || allowCommon) return { display: dispBare, suffix: "", hadApos: false, isCommon: isCom };
     }
-    // Never invent an apostrophe inside an already-capitalized mid-sentence foreign/Turkish name ("Fatma Aliye", "Robert Belle", "Bay Reede")
-    // unless the apostrophe form clearly dominates in the corpus.
+    // Never invent an apostrophe inside an already-capitalized mid-sentence foreign/Turkish surname ("Fatma Aliye", "Bay Reede", "Robert Belle")!
     const alreadyCapMid = isCap(tok) && !tok.atStart;
-    if (alreadyCapMid && known.givenNameFor(low)) return null;
+    if (alreadyCapMid) return null;
     for (let cut = low.length - 1; cut >= 2; cut--) {
       const base = low.slice(0, cut);
       const suf = low.slice(cut);
-      const disp = known.surnameFor(base) ?? (!alreadyCapMid ? known.nameFor(base) : undefined);
+      const disp = known.surnameFor(base);
       if (!disp) continue;
       if (isCommonWordCollision(low, base)) continue;
-      if (alreadyCapMid && !(lexCount(`${base}'${suf}`) >= 10 && lexCount(low) < 5)) continue;
       const isCom = VERY_COMMON_SURNAME_COLLISIONS.has(base);
       if (isCom && !allowCommon) continue;
       if (isMorphWord(low) && !known.nameEntry(base) && capShare(low) < 0.35 && lexCount(low) >= 20) continue;
@@ -608,6 +624,38 @@ export function applySentenceRules<T extends AnyCorrection>(
       }
     }
     return null;
+  };
+
+  /** Builds the surrounding left/right raw context around `tokIdx` reflecting all already-applied sentence/core fixes. */
+  const buildContextAround = (tokIdx: number): { leftRaw: string; rightRaw: string } => {
+    const target = tokens[tokIdx]!;
+    const leftFrom = Math.max(0, target.start - 140);
+    const rightTo = Math.min(text.length, target.end + 100);
+    let leftRaw = "";
+    let cur = leftFrom;
+    for (let k = 0; k < tokIdx; k++) {
+      const t = tokens[k]!;
+      if (t.end <= leftFrom) continue;
+      if (t.start >= target.start) break;
+      if (t.start < cur) continue;
+      const disp = t.atStart && t.isWord && LOWER.test(t.eff) ? capitalize(t.eff) : t.eff;
+      leftRaw += text.slice(cur, t.start) + disp;
+      cur = t.end;
+    }
+    leftRaw += text.slice(cur, target.start);
+    let rightRaw = "";
+    cur = target.end;
+    for (let k = tokIdx + 1; k < tokens.length; k++) {
+      const t = tokens[k]!;
+      if (t.end <= target.end) continue;
+      if (t.start >= rightTo) break;
+      if (t.start < cur) continue;
+      const disp = t.atStart && t.isWord && LOWER.test(t.eff) ? capitalize(t.eff) : t.eff;
+      rightRaw += text.slice(cur, t.start) + disp;
+      cur = t.end;
+    }
+    rightRaw += text.slice(cur, rightTo);
+    return { leftRaw, rightRaw };
   };
 
   /** Formats a proper name + suffix according to apostrophe policy. */
@@ -715,9 +763,16 @@ export function applySentenceRules<T extends AnyCorrection>(
 
       if (matchedSuffix === null) continue;
 
-      // Apply the matched multi-word phrase!
+      // Apply the matched multi-word phrase (preserving circumflex choice like "Milli" vs "Millî" when already capitalized!)
+      const stripCircumflex = (s: string) => s.replaceAll("â", "a").replaceAll("î", "i").replaceAll("û", "u").replaceAll("Â", "A").replaceAll("Î", "I").replaceAll("Û", "U");
       for (let k = 0; k < len - 1; k++) {
-        setToken(tokens[i + k]!, phrase.displayWords[k]!, true);
+        const curTok = tokens[i + k]!;
+        const targetDisp = phrase.displayWords[k]!;
+        if (isCap(curTok) && stripCircumflex(curTok.eff) === stripCircumflex(targetDisp)) {
+          curTok.locked = true;
+        } else {
+          setToken(curTok, targetDisp, true);
+        }
       }
       setToken(lastTok, formatProper(lastDisp, matchedSuffix, phrase.takesApos), true);
       i += len - 1;
@@ -762,8 +817,38 @@ export function applySentenceRules<T extends AnyCorrection>(
   }
 
   // ===========================================================================
+  // STEP 3b: Numbers + Turkish Inflectional/Ordinal Suffixes ("1985te" -> "1985'te",
+  //          "2023de" -> "2023'te", "1985'de" -> "1985'te", "19.30da" -> "19.30'da", "2nci" -> "2'nci")
+  // ===========================================================================
+  for (const m of text.matchAll(/(\d+(?:[.:]\d+)?)(')?([a-zçğıöşü]+)(?![\p{L}\p{N}_])/gu)) {
+    const start = m.index;
+    const full = m[0];
+    const end = start + full.length;
+    const numPart = m[1]!;
+    const hadApos = Boolean(m[2]);
+    const rawSuf = m[3]!;
+    if (precededByAddress(text, start) || /[\p{L}_]/u.test(text[start - 1] ?? "")) continue;
+    if (continuesAsAddress(text, end) && !spaced.has(end)) continue;
+    if (covering(start, end) !== -1) continue;
+    const lastInt = numPart.includes(".") ? numPart.slice(numPart.lastIndexOf(".") + 1) : numPart.includes(":") ? numPart.slice(numPart.lastIndexOf(":") + 1) : numPart;
+    const fixedSuf = fixNumberSuffix(lastInt, rawSuf, hadApos);
+    if (!fixedSuf) continue;
+    const rep = `${numPart}'${fixedSuf}`;
+    if (rep !== full) {
+      result.push({ start, end, original: full, replacement: rep, kind: "punct", margin: 6 });
+    }
+  }
+  result.sort((a, b) => a.start - b.start);
+
+  // ===========================================================================
   // STEP 4: Wrong-Apostrophe Removal & Relocation (TDK kesme_yanlis W1–W6)
   // ===========================================================================
+  const hasReadingOrWatchingCtx = tokens.some(
+    (t) => t.isWord && /^(?:oku|bitir|yaz|izle|seyret|roman|kitap|film|dizi|oyun|eser|tiyatro)/.test(t.low),
+  );
+  const BARE_INSTITUTION_OFFICES = new Set([
+    "başbakanlık", "bakanlık", "müdürlük", "başkanlık", "rektörlük", "dekanlık", "valilik", "kaymakamlık",
+  ]);
   for (let i = 0; i < tokens.length; i++) {
     const tok = tokens[i]!;
     if (!tok.isWord || tok.locked) continue;
@@ -775,7 +860,7 @@ export function applySentenceRules<T extends AnyCorrection>(
     const parts = norm.split("'");
     if (parts.some((p) => p.length === 0)) continue;
 
-    // W1: Multiple apostrophes ("Mehmet'le'ydim" -> "Mehmet'leydim", "Kemal'in'kiler" -> "Kemal'inkiler", "İzmir'li'ler" -> "İzmirliler")
+    // W1: Multiple apostrophes ("Mehmet'le'ydim" -> "Mehmet'leydim", "Kemal'in'kiler" -> "Kemal'inkiler", "İzmir'li'ler" -> "İzmirliler", "Türk'lük'ün" -> "Türklüğün")
     // Protect foreign names with an internal stem apostrophe ("G'Kar'a", "Teal'c'in", "d'Aragon'dan", "Goa'uld'ları")!
     if (parts.length >= 3) {
       const stem = parts[0]!;
@@ -789,7 +874,9 @@ export function applySentenceRules<T extends AnyCorrection>(
         (PROPER_INFLECTIONAL_SUFFIX_RE.test(lowRest1) || NON_APOSTROPHE_SUFFIX_RE.test(lowRest1));
       if (!isTurkishSuffixMid) continue;
       if (NON_APOSTROPHE_SUFFIX_RE.test(lowRest1) || LANGUAGE_NAMES.has(lowStem) || NO_APOS_RELIGION_OR_DERIVED.has(lowStem)) {
-        setToken(tok, stem + restAll, true);
+        const stemPlus1 = joinWithoutApostrophe(stem, rest1, isMorphWord);
+        const finalJoined = parts.length === 3 ? joinWithoutApostrophe(stemPlus1, parts[2]!, isMorphWord) : stemPlus1 + parts.slice(2).join("");
+        setToken(tok, finalJoined, true);
       } else {
         setToken(tok, `${stem}'${restAll}`, true);
       }
@@ -809,12 +896,12 @@ export function applySentenceRules<T extends AnyCorrection>(
 
     // W2: Derivational or plural suffix right after apostrophe ("İzmir'li", "Tokat'lıymış", "Türk'çe", "Müslüman'lık", "Marks'çı", "Tanrı'sal", "Alman'lar")
     if (NON_APOSTROPHE_SUFFIX_RE.test(lowSuffix)) {
-      const joined = stem + suffix;
+      const joined = joinWithoutApostrophe(stem, suffix, isMorphWord);
       const lowJoined = lowerTr(joined);
       const stemEntry = known.nameEntry(lowStem);
       const properDisp = stemEntry ? stemEntry.name : isCap(tok) ? stem : undefined;
       if (properDisp && (isMorphWord(lowJoined) || lexCount(lowJoined) >= 1 || lowSuffix.startsWith("l") || /^[cçs]/.test(lowSuffix))) {
-        setToken(tok, properDisp + suffix, true);
+        setToken(tok, joinWithoutApostrophe(properDisp, suffix, isMorphWord), true);
         continue;
       }
     }
@@ -825,33 +912,42 @@ export function applySentenceRules<T extends AnyCorrection>(
       continue;
     }
 
-    // W3b: Derived religion/ideology/demonym before apostrophe ("Hristiyanlık'ta", "Müslümanlık'ta", "Ankaralı'nın", "Atatürkçü'nün")
-    // Never strip apostrophe from a proper place/country name ("Arnavutluk'un", "Kadirli'ye", "Birleşik Krallık'ta")!
+    // W3b-opt: Foreign/Arabic -izm/-iyet religions ("İslamiyet'e", "Budizm'in", "Hinduizm'de") keep their apostrophe!
+    if (OPTIONAL_APOS_ISM_IYET.has(lowStem)) {
+      if (!isCap(tok)) setToken(tok, `${capTr(lowStem)}'${suffix}`, true);
+      else tok.locked = true;
+      continue;
+    }
+
+    // W3b: Derived religion/ideology/demonym with Turkish derivational suffix before apostrophe
+    //      ("Hristiyanlık'ta" -> "Hristiyanlıkta", "Hristiyanlık'ın" -> "Hristiyanlığın", "Atatürkçülük'ün" -> "Atatürkçülüğün", "Ankaralı'nın" -> "Ankaralının")
     if (NO_APOS_RELIGION_OR_DERIVED.has(lowStem)) {
-      setToken(tok, capTr(lowStem) + suffix, true);
+      setToken(tok, joinWithoutApostrophe(capTr(lowStem), suffix, isMorphWord), true);
       continue;
     }
     const existingProperStem = known.nameEntry(lowStem);
     if (!DERIV_LOOKING_KEEP_APOS.has(lowStem) && (!existingProperStem || existingProperStem.noApos)) {
       const aposCount = lexCount(lowStem + "'" + lowSuffix);
-      const joinCount = lexCount(lowStem + lowSuffix);
+      const softPlain = joinWithoutApostrophe(isCap(tok) ? stem : capTr(lowStem), suffix, isMorphWord);
+      const lowSoftPlain = lowerTr(softPlain);
+      const joinCount = Math.max(lexCount(lowStem + lowSuffix), lexCount(lowSoftPlain));
       if (/l[ıiuü]k$/.test(lowStem) && lowStem.length >= 6 && aposCount <= joinCount) {
         const root = lowStem.slice(0, -3);
-        if (known.nameEntry(root) && isMorphWord(lowStem + lowSuffix)) {
-          setToken(tok, (isCap(tok) ? stem : capTr(lowStem)) + suffix, true);
+        if ((known.nameEntry(root) || known.ambigNameFor(root)) && isMorphWord(lowSoftPlain)) {
+          setToken(tok, softPlain, true);
           continue;
         }
       }
       if (/(?:l[ıiuü]|[cç][ıiuü])$/.test(lowStem) && lowStem.length >= 6 && aposCount * 3 <= joinCount) {
         const root = lowStem.slice(0, -2);
-        if (known.nameEntry(root) && isMorphWord(lowStem + lowSuffix)) {
-          setToken(tok, (isCap(tok) ? stem : capTr(lowStem)) + suffix, true);
+        if ((known.nameEntry(root) || known.ambigNameFor(root)) && isMorphWord(lowSoftPlain)) {
+          setToken(tok, softPlain, true);
           continue;
         }
       }
     }
 
-    // W3c: Plural proper noun before apostrophe ("Japonlar'ın", "Almanlar'ın", "Türkler'in", "Ahmetler'e", "Yılmazlar'ın")
+    // W3c: Plural proper noun before apostrophe ("Japonlar'ın", "Almanlar'ın", "Türkler'in", "Ahmetler'e", "Yılmazlar'ın", "Atatürkçüler'in", "Ankaralılar'ın")
     if (/l[ae]r$/.test(lowStem) && lowStem.length >= 6 && !PLURAL_PLACE_KEEP_APOS.has(lowStem)) {
       const singular = lowStem.slice(0, -3);
       if (
@@ -861,32 +957,59 @@ export function applySentenceRules<T extends AnyCorrection>(
         known.ambigNameFor(singular) ||
         singular === "alman" ||
         NO_APOS_RELIGION_OR_DERIVED.has(singular) ||
-        (singular.length >= 5 && /l[ıiuü]$/.test(singular) && known.nameEntry(singular.slice(0, -2)))
+        (singular.length >= 5 && /(?:l[ıiuü]|[cç][ıiuü])$/.test(singular) && known.nameEntry(singular.slice(0, -2)))
       ) {
         setToken(tok, (isCap(tok) ? stem : capTr(lowStem)) + suffix, true);
         continue;
       }
     }
 
-    // W4: Institution head before apostrophe ("Millî Eğitim Bakanlığı'na", "Ankara Üniversitesi'ne", "Anadolu Ajansı'nın")
+    // W4: Institution head before apostrophe ("Millî Eğitim Bakanlığı'na", "Ankara Üniversitesi'ne", "Anadolu Ajansı'nın", "Başbakanlık'a" -> "Başbakanlığa")
+    //     Protect literary/film titles ending in museum/hotel/club/association/institute ("Masumiyet Müzesi'ni okudum", "Ölü Ozanlar Derneği'ni izledim").
     if (isInstitutionHead(lowStem, prevTok?.low)) {
-      const disp = isCap(tok) ? stem : capTr(lowStem);
-      setToken(tok, disp + suffix, true);
-      if (isCap(tok)) tok.locked = true;
+      const workProneHead =
+        lowStem === "müzesi" ||
+        lowStem === "oteli" ||
+        lowStem === "derneği" ||
+        lowStem === "enstitüsü" ||
+        lowStem === "çiftliği" ||
+        lowStem === "kulübü" ||
+        lowStem === "tiyatrosu";
+      if (workProneHead && hasReadingOrWatchingCtx) continue;
+      if (isCap(tok)) {
+        setToken(tok, joinWithoutApostrophe(stem, suffix, isMorphWord), true);
+      } else {
+        // Lowercase institution head with apostrophe: strip apostrophe without forcing capitalization (let Step 6a decide).
+        setToken(tok, joinWithoutApostrophe(stem, suffix, isMorphWord), false);
+      }
+      continue;
+    }
+    if (isCap(tok) && BARE_INSTITUTION_OFFICES.has(lowStem)) {
+      setToken(tok, joinWithoutApostrophe(stem, suffix, isMorphWord), true);
       continue;
     }
 
     // W5: Misplaced apostrophe inside a proper name's suffix chain ("Selinin'kini" -> "Selin'inkini",
-    //     "Ahmetin'ki" -> "Ahmet'inki", "İstanbulda'ki" -> "İstanbul'daki", "İstanbulda'n" -> "İstanbul'dan")
-    if (!known.nameEntry(lowStem) && !known.givenNameFor(lowStem) && !known.surnameFor(lowStem) && !known.ambigNameFor(lowStem)) {
+    //     "Ahmetin'ki" -> "Ahmet'inki", "İstanbulda'ki" -> "İstanbul'daki", "Türkiyemiz'in" -> "Türkiye'mizin", "Ankarad'an" -> "Ankara'dan")
+    //     NEVER split a valid standalone stem like "Savaşı'nın", "Rüyası'na", "Bayramı'na", or unknown foreign name "Jimin'in"!
+    if (
+      !known.nameEntry(lowStem) &&
+      !known.givenNameFor(lowStem) &&
+      !known.surnameFor(lowStem) &&
+      !known.ambigNameFor(lowStem)
+    ) {
       const isKiOrCop = /^(?:ki(?:l[ae]r(?:[aeıiuü]|[dt][ae]n?|[ıiuü]n)?)?|ki(?:n[aeıiuü]|nd[ae]n?|n[ıiuü]n)?|yd[ıiuü][mk]?|ym[ıiuü]ş|n|m)$/.test(lowSuffix);
-      if (isKiOrCop) {
+      const isPossReloc = /(?:m[ıiuü]z|n[ıiuü]z)$/.test(lowStem) || (!isMorphWord(lowStem) && /[dt][ae]$/.test(lowStem));
+      if (isKiOrCop || isPossReloc) {
+        const joinedLow = lowStem + lowSuffix;
         for (let cut = lowStem.length - 1; cut >= 3; cut--) {
-          const base = lowStem.slice(0, cut);
-          const firstSuf = lowStem.slice(cut);
-          const disp = known.nameFor(base) ?? known.givenNameFor(base) ?? known.surnameFor(base);
+          const base = joinedLow.slice(0, cut);
+          const combinedSuf = joinedLow.slice(cut);
+          const ne = known.nameEntry(base);
+          if (ne?.noApos) continue;
+          const disp = isKiOrCop ? (ne?.name ?? known.givenNameFor(base) ?? known.surnameFor(base)) : ne?.name;
           if (!disp) continue;
-          const combinedSuf = firstSuf + lowSuffix;
+          if (NON_APOSTROPHE_SUFFIX_RE.test(combinedSuf)) continue;
           if (PROPER_INFLECTIONAL_SUFFIX_RE.test(combinedSuf) && isPhonologicallyValidProperSuffix(lowerTr(disp), combinedSuf)) {
             setToken(tok, `${disp}'${combinedSuf}`, true);
             break;
@@ -898,6 +1021,10 @@ export function applySentenceRules<T extends AnyCorrection>(
 
     // W6: Common noun with wrong apostrophe
     const lowJoined = lowStem + lowSuffix;
+    const softenedJoined = joinWithoutApostrophe(stem, suffix, isMorphWord);
+    const lowSoftJoined = lowerTr(softenedJoined);
+    const morphValidJoined = isMorphWord(lowJoined) || isMorphWord(lowSoftJoined);
+    const effJoinedCount = Math.max(lexCount(lowJoined), lexCount(lowSoftJoined));
     if (!isCap(tok)) {
       // Lowercase stem'suffix:
       // 1) Known unconditional proper name -> capitalize ("ahmet'e" -> "Ahmet'e", "ankara'dan" -> "Ankara'dan")
@@ -909,7 +1036,7 @@ export function applySentenceRules<T extends AnyCorrection>(
       }
       // 2) Known Turkish given/surname with apostrophe that CANNOT be a common Turkish word ("emre'yi" -> "Emre'yi", "aslı'yı" -> "Aslı'yı")
       const personDisp = known.givenNameFor(lowStem) ?? known.surnameFor(lowStem);
-      if (personDisp && !isMorphWord(lowJoined)) {
+      if (personDisp && !morphValidJoined) {
         setToken(tok, `${personDisp}'${suffix}`, true);
         continue;
       }
@@ -921,38 +1048,33 @@ export function applySentenceRules<T extends AnyCorrection>(
       ) {
         continue;
       }
-      // 3) Ordinary common Turkish noun (NOT in AMBIG and NOT a foreign loanword like "single'ı", "rock'ın") -> remove apostrophe
+      // 3) Ordinary common Turkish noun (NOT in AMBIG and NOT a foreign loanword like "single'ı", "rock'ın") -> remove apostrophe (with softening: "kitap'ı" -> "kitabı")
       const lowAposCount = lexCount(lowStem + "'" + lowSuffix);
       if (
         !known.ambigNameFor(lowStem) &&
-        isMorphWord(lowJoined) &&
-        (lowAposCount === 0 || lowAposCount * 3 < lexCount(lowJoined))
+        morphValidJoined &&
+        (lowAposCount === 0 || lowAposCount * 3 < effJoinedCount)
       ) {
-        setToken(tok, stem + suffix, true);
+        setToken(tok, softenedJoined, true);
         continue;
       }
       // 4) Ambiguous lowercase stem'suffix ("deniz'e girmeye" vs "deniz'e söyle"):
-      if (known.ambigNameFor(lowStem) && isMorphWord(lowJoined)) {
+      //    Handle deterministic common-word idioms here; defer remaining unlocked ambig'suf until Step 8f
+      //    so Step 7 (titles/honorifics/person chains like "dr. şebnem koç'tan") locks surnames first!
+      if (known.ambigNameFor(lowStem) && morphValidJoined) {
         const nextTok = i + 1 < tokens.length ? tokens[i + 1] : undefined;
-        // Common idiom/collocation check for lowercase ambiguous noun with wrong apostrophe (e.g. "deniz'e girmeye/atla/yüz/dökül")
         const commonCue =
           (lowStem === "deniz" && nextTok !== undefined && /^(?:gir|yüz|atla|dökül|açıl|bak|in)/.test(nextTok.low)) ||
           (lowStem === "gül" && nextTok !== undefined && /^(?:bahçe|su|reçel|yaprak|diken|koku)/.test(nextTok.low));
         if (commonCue) {
-          setToken(tok, stem + suffix, true);
+          setToken(tok, softenedJoined, true);
           continue;
-        }
-        if (resources.disambiguateAmbig) {
-          const decided = resources.disambiguateAmbig(tokens, i, lowStem, known.ambigNameFor(lowStem)!, lowSuffix, true);
-          if (decided) {
-            setToken(tok, decided, true);
-            continue;
-          }
         }
       }
     } else if (tok.atStart) {
-      // Sentence-start capitalized common noun with wrong apostrophe ("Babam'ın", "Toplantı'ya", "Ofis'te", "Okul'da")
-      // Protects proper place/institution names like "Bebek'te", "Moda'da", "Boğaz'da", "Meclis'te".
+      // Sentence-start capitalized common noun with wrong apostrophe ("Babam'ın", "Toplantı'ya", "Ofis'te", "Okul'da", "Kitap'ı" -> "Kitabı")
+      // Protects proper place/institution/league names like "Bebek'te", "Moda'da", "Boğaz'da", "Meclis'te", "Lig'inde" via lexCount(apos) <= 25!
+      const startAposCount = lexCount(lowStem + "'" + lowSuffix);
       if (
         !known.nameEntry(lowStem) &&
         !known.ambigNameFor(lowStem) &&
@@ -961,11 +1083,12 @@ export function applySentenceRules<T extends AnyCorrection>(
         !MONTHS.has(lowStem) &&
         !WEEKDAYS.has(lowStem) &&
         capShare(lowStem) < 0.55 &&
-        isMorphWord(lowJoined) &&
-        lexCount(lowJoined) >= 10 &&
-        lexCount(lowStem + "'" + lowSuffix) * 8 < lexCount(lowJoined)
+        morphValidJoined &&
+        effJoinedCount >= 10 &&
+        startAposCount <= 25 &&
+        startAposCount * 8 < effJoinedCount
       ) {
-        setToken(tok, stem + suffix, true);
+        setToken(tok, softenedJoined, true);
         continue;
       }
     }
@@ -1016,11 +1139,12 @@ export function applySentenceRules<T extends AnyCorrection>(
         startIdx = j;
         continue;
       }
+      const neCur = known.nameEntry(lw);
       const isNameToken =
-        known.nameEntry(lw) !== undefined ||
+        (neCur !== undefined && !neCur.noApos) ||
         known.acronymFor(lw) !== undefined ||
         (isCap(cur) && !cur.atStart && !NON_INST_PREFIX.has(lw)) ||
-        (isCap(cur) && cur.atStart && (known.nameEntry(lw) !== undefined || GENERIC_INST_MODIFIERS.has(lw) || capShare(lw) >= 0.45));
+        (isCap(cur) && cur.atStart && ((neCur !== undefined && !neCur.noApos) || GENERIC_INST_MODIFIERS.has(lw) || capShare(lw) >= 0.45));
       const isInstMod = GENERIC_INST_MODIFIERS.has(lw) || INSTITUTION_HEADS.has(lw);
       const isAmbigShopName =
         j === i - 1 &&
@@ -1068,22 +1192,24 @@ export function applySentenceRules<T extends AnyCorrection>(
     ) {
       continue;
     }
-    const APPOSITIVE_INST_HEADS = new Set([
-      "şirketi", "kulübü", "kütüphanesi", "müzesi", "partisi", "elçiliği", "komisyonu", "belediyesi",
-      "hastanesi", "okulu", "mahkemesi",
-    ]);
-    // Do not capitalize generic appositive heads ("Sony Mobile şirketi", "Beta Gençlikspor kulübü",
-    // "Tiegs for Two bölümünde", "Kurbin belediyesinde") unless anchored by a canonical Turkish institution modifier
-    // ("Büyükşehir Belediyesi", "Şehir Hastanesi", "Devlet Hastanesi", "Ankara Üniversitesi ... Bölümü").
-    if (APPOSITIVE_INST_HEADS.has(hSplit.head)) {
-      const hasStrongTurkishInstMod =
-        prev.low === "büyükşehir" ||
-        prev.low === "şehir" ||
-        prev.low === "devlet" ||
-        prev.low === "genel" ||
-        prev.low === "yüksek" ||
-        (hSplit.head === "belediyesi" && known.nameEntry(prev.low) !== undefined && startIdx === i - 1 && ["istanbul", "ankara", "izmir", "bursa", "antalya", "adana", "konya", "kadıköy", "beşiktaş", "çankaya", "üsküdar", "bakırköy", "karşıyaka", "bornova", "şişli", "beyoğlu", "fatih"].includes(prev.low));
-      if (!hasStrongTurkishInstMod) continue;
+    const STRICT_APPOSITIVE_HEADS = new Set(["şirketi", "kulübü", "grubu", "holdingi"]);
+    // Do not capitalize bare brand appositives ("Sony Mobile şirketi", "Beta Gençlikspor kulübü")
+    // unless preceded by a canonical Turkish institutional modifier ("Spor Kulübü", "Jimnastik Kulübü", "Anonim Şirketi").
+    if (STRICT_APPOSITIVE_HEADS.has(hSplit.head)) {
+      const hasInstMod =
+        prev.low === "spor" ||
+        prev.low === "jimnastik" ||
+        prev.low === "anonim" ||
+        prev.low === "limited" ||
+        prev.low === "ticaret" ||
+        prev.low === "yatırım" ||
+        prev.low === "inşaat" ||
+        prev.low === "sanayi" ||
+        prev.low === "gençlik" ||
+        prev.low === "kültür" ||
+        prev.low === "denizcilik" ||
+        prev.low === "havacılık";
+      if (!hasInstMod) continue;
     }
     if (hSplit.head === "bölümü") {
       // Only capitalize "Bölümü" when preceded by an already-capitalized university/faculty/department chain ("Ankara Üniversitesi ... Bölümü")
@@ -1096,7 +1222,7 @@ export function applySentenceRules<T extends AnyCorrection>(
       }
       if (!hasUnivAnchor) continue;
     }
-    // Two-word "<Nationality> kulübü/başkanlığı/kütüphanesi/bölümü/mahkemesi/müzesi/müdürlüğü" is generic ("Alman kulübü", "Amerikan başkanlığı").
+    // Two-word "<Nationality> kulübü/başkanlığı/kütüphanesi/bölümü/mahkemesi/müzesi/müdürlüğü/..." is generic ("Alman kulübü", "Amerikan başkanlığı").
     const NATIONALITY_GENERIC_MOD = new Set([
       "alman", "fransız", "ingiliz", "amerikan", "italyan", "ispanyol", "rus", "yunan", "japon",
       "çin", "türk", "osmanlı", "sovyet", "avrupa", "asya", "afrika", "arap", "ermeni", "yahudi",
@@ -1106,12 +1232,28 @@ export function applySentenceRules<T extends AnyCorrection>(
       "kulübü", "başkanlığı", "idaresi", "müdürlüğü", "bölümü", "kütüphanesi", "müzesi",
       "mahkemesi", "komitesi", "konseyi", "partisi", "birliği", "federasyonu", "derneği",
       "vakfı", "şirketi", "tiyatrosu", "operası", "hastanesi", "okulu", "fakültesi",
+      "merkezi", "dairesi", "şubesi", "ofisi", "yurdu", "elçiliği",
     ]);
     if (
       startIdx === i - 1 &&
       NATIONALITY_GENERIC_MOD.has(tokens[startIdx]!.low) &&
       GENERIC_NAT_INST_HEADS.has(hSplit.head)
     ) {
+      continue;
+    }
+    // Protect lowercase Wikipedia appositives where an unknown foreign capitalized word precedes generic "belediyesi"/"hastanesi"/"mahkemesi"/"partisi"/"okulu"/"müzesi"/"kütüphanesi"
+    // ("Kurbin belediyesinde", "Polimer kütüphanesi", "Pontevedra müzesinin", "siyasi bilimler fakültesi")
+    if (
+      startIdx === i - 1 &&
+      (hSplit.head === "belediyesi" || hSplit.head === "hastanesi" || hSplit.head === "mahkemesi" || hSplit.head === "okulu" || hSplit.head === "müzesi" || hSplit.head === "kütüphanesi") &&
+      !known.nameEntry(prev.low) &&
+      !known.ambigNameFor(prev.low) &&
+      !GENERIC_INST_MODIFIERS.has(prev.low)
+    ) {
+      continue;
+    }
+    // Never capitalize bare "<generic_adj> bilimler fakültesi" ("siyasi bilimler fakültesi", "sosyal bilimler fakültesi") without a university/proper anchor
+    if (hSplit.head === "fakültesi" && tokens[startIdx]!.low === "bilimler") {
       continue;
     }
 
@@ -1130,15 +1272,61 @@ export function applySentenceRules<T extends AnyCorrection>(
     setToken(tok, capTr(hSplit.head) + hSplit.suffix, true);
   }
 
-  // 6b. Compositional Geographic / Landmark / State / Event Phrases
-  //     ("Sapanca gölü", "Beyşehir gölü", "Sahra çölü", "Çanakkale boğazı", "Süveyş kanalı",
-  //      "Cebelitarık boğazı", "Kaçkar dağları", "Maçka parkında", "Kocatepe camisinin", "Kore savaşı", "Mohaç savaşı")
+  // 6a-officer. TDK Institution Officer Titles ("Türk Dil Kurumu Başkanı'na", "Ankara Üniversitesi Rektörü'nden",
+  //             "Emniyet Genel Müdürü'ne", "Sağlık Bakanlığı Sözcüsü'ne", "Mühendislik Fakültesi Dekanı'na")
+  //             Per TDK, personal titles following an institution name take BOTH capitalization AND apostrophe!
+  for (let i = 1; i < tokens.length; i++) {
+    const prev = tokens[i - 1]!;
+    const tok = tokens[i]!;
+    if (!prev.isWord || !tok.isWord || tok.locked || !adjSpace(prev, tok)) continue;
+    // Preceding token must be a capitalized/locked institution or state head (not inflected with apostrophe/case!)
+    const prevIsBareInst =
+      (prev.locked || isCap(prev)) &&
+      (INSTITUTION_HEADS.has(prev.low) || STATE_HEADS.has(prev.low) || prev.low === "belediye" || prev.low === "meclis");
+    if (!prevIsBareInst) continue;
+
+    // Optional 1-word modifier ("Genel Müdürü'ne", "Başkan Yardımcısı'na")
+    let titleIdx = i;
+    if (
+      OFFICER_TITLE_MODS.has(tok.low) &&
+      i + 1 < tokens.length &&
+      tokens[i + 1]!.isWord &&
+      adjSpace(tok, tokens[i + 1]!)
+    ) {
+      const nextSplit = splitHeadWord(tokens[i + 1]!.low, OFFICER_TITLE_HEADS);
+      if (nextSplit) {
+        setToken(tok, capTr(tok.eff), true);
+        setToken(tokens[i + 1]!, formatProper(capTr(nextSplit.head), nextSplit.suffix, true), true);
+        i++;
+        continue;
+      }
+    }
+    const oSplit = splitHeadWord(tok.low, OFFICER_TITLE_HEADS);
+    if (oSplit) {
+      setToken(tokens[titleIdx]!, formatProper(capTr(oSplit.head), oSplit.suffix, true), true);
+    }
+  }
+
+  // 6b. Compositional Multi-Word Geographic / Monument / Landmark / State / Event Phrases (up to 4 words left!)
+  //     ("Sapanca gölü", "Rumeli hisarında", "Marmara bölgesinde", "Doğu Anadolu bölgesinde", "Efes antik kentinde",
+  //      "Büyük Menderes nehrinde", "Fatih Sultan Mehmet köprüsünden", "Yedigöller millî parkında", "Kore savaşı")
+  const GEO_MODIFIERS = new Set([
+    "antik", "millî", "milli", "tabiat", "büyük", "küçük", "yeni", "eski", "kızıl", "kara", "ak", "beyaz",
+    "yeşil", "mavi", "sarı", "orta", "iç", "doğu", "batı", "kuzey", "güney", "kuzeydoğu", "kuzeybatı",
+    "güneydoğu", "güneybatı", "yukarı", "aşağı", "birinci", "ikinci", "üçüncü", "meydan", "deniz", "barış",
+    "ateşkes", "şehitler", "şehitleri", "sultan", "gazi", "paşa", "mustafa", "kemal", "atatürk", "selçuklu",
+    "anadolu", "uluslararası", "devlet",
+  ]);
+  const STRICT_KNOWN_GEO_HEADS = new Set([
+    "kanalı", "sokağı", "savaşı", "dağları", "mahallesi", "hanı", "koyu", "kemeri", "feneri",
+    "istasyonu", "otogarı", "stadı", "arenası", "plajı", "tepesi", "vadisi", "kenti", "hamamı",
+    "çarşısı", "çeşmesi", "kilisesi", "otoyolu", "geçidi", "limanı", "iskelesi",
+  ]);
   for (let i = 1; i < tokens.length; i++) {
     const tok = tokens[i]!;
     if (!tok.isWord || tok.locked) continue;
     const prev = tokens[i - 1]!;
     if (!prev.isWord || !adjSpace(prev, tok) || prev.low.includes("'") || prev.gapBefore.endsWith("-")) continue;
-    // Never treat an ALL-CAPS TV/media acronym ("CBS kanalında", "TRT kanalında") as a geographic canal/place!
     if (isAllCaps(prev)) continue;
 
     const geoSplit = splitHeadWord(tok.low, GEO_HEADS);
@@ -1146,40 +1334,80 @@ export function applySentenceRules<T extends AnyCorrection>(
     const eventSplit = !geoSplit && !stateSplit ? splitHeadWord(tok.low, EVENT_HEADS) : null;
     const headSplit = geoSplit ?? stateSplit ?? eventSplit;
     if (!headSplit) continue;
-    // Skip already-capitalized words (core addApostrophes handles them; avoids rewriting clean Wikipedia forms).
     if (isCap(tok) && !headSplit.hadApostrophe) continue;
+    // "kenti" ONLY after "antik" ("Efes Antik Kenti", "Patara Antik Kenti")
+    if (headSplit.head === "kenti" && prev.low !== "antik") continue;
     // "boğazı/sokağı" after a person name or non-place word ("Ahmet boğazında") is anatomical/common, not geographic!
     if ((headSplit.head === "boğazı" || headSplit.head === "sokağı") && known.givenNameFor(prev.low) && !known.nameEntry(prev.low)) {
       continue;
     }
 
-    // Require previous word to be a proper name, capitalized mid-sentence name, or known place/nationality
-    const prevName = lookupName(prev.low, sentenceHasAsciiFixes);
-    const strictKnownHead =
-      headSplit.head === "kanalı" ||
-      headSplit.head === "sokağı" ||
-      headSplit.head === "savaşı" ||
-      headSplit.head === "dağları" ||
-      headSplit.head === "mahallesi";
-    const prevIsAnchor = strictKnownHead
-      ? prevName !== undefined || prev.locked
-      : prevName !== undefined ||
-        prev.locked ||
-        (isCap(prev) && !prev.atStart && !NON_INST_PREFIX.has(prev.low)) ||
-        (prev.atStart && capShare(prev.low) >= 0.5 && !NON_INST_PREFIX.has(prev.low));
-    if (!prevIsAnchor) continue;
-    // Do NOT treat common non-proper words before "kalesi"/"savaşı"/"devri" as proper places,
-    // and do NOT treat generic ethnic/religious quarters ("Yahudi mahallesinin", "Rum mahallesi") as named administrative mahalles.
-    if (NON_INST_PREFIX.has(prev.low)) continue;
+    // Walk left up to 4 tokens collecting proper/modifier tokens
+    let startIdx = i;
+    let hasStrongProperAnchor = false;
+    let hasCapAnchor = false;
+    for (let j = i - 1; j >= Math.max(0, i - 4); j--) {
+      const cur = tokens[j]!;
+      const right = tokens[j + 1]!;
+      if (!cur.isWord || !adjSpace(cur, right) || cur.low.includes("'") || cur.gapBefore.endsWith("-")) break;
+      const lw = cur.low;
+      const ne = lookupName(lw, sentenceHasAsciiFixes);
+      if (ne && !ne.noApos && !NON_INST_PREFIX.has(lw)) {
+        hasStrongProperAnchor = true;
+        startIdx = j;
+        continue;
+      }
+      if (cur.locked && !NON_INST_PREFIX.has(lw)) {
+        hasStrongProperAnchor = true;
+        startIdx = j;
+        continue;
+      }
+      if (isCap(cur) && !cur.atStart && !NON_INST_PREFIX.has(lw) && !isAllCaps(cur)) {
+        hasCapAnchor = true;
+        startIdx = j;
+        continue;
+      }
+      if (GEO_MODIFIERS.has(lw)) {
+        if (j === i - 1 && (lw === "büyük" || lw === "küçük" || lw === "yeni" || lw === "eski" || lw === "devlet" || lw === "uluslararası")) {
+          // Don't start a 2-word generic phrase like "büyük nehir", "eski kale", "yeni köprü"
+          break;
+        }
+        startIdx = j;
+        continue;
+      }
+      if (j === i - 1 && cur.atStart && capShare(lw) >= 0.5 && !NON_INST_PREFIX.has(lw)) {
+        hasCapAnchor = true;
+        startIdx = j;
+        continue;
+      }
+      break;
+    }
+
+    if (startIdx >= i) continue;
+    if (startIdx > 0 && tokens[startIdx - 1]!.low === "bir") continue;
+    const strictHead = STRICT_KNOWN_GEO_HEADS.has(headSplit.head);
+    if (strictHead ? !hasStrongProperAnchor : !(hasStrongProperAnchor || hasCapAnchor)) continue;
+    if (startIdx === i - 1 && NON_INST_PREFIX.has(prev.low)) continue;
     if (
       headSplit.head === "mahallesi" &&
+      startIdx === i - 1 &&
       (prev.low === "yahudi" || prev.low === "ermeni" || prev.low === "rum" || prev.low === "türk" || prev.low === "yunan" || prev.low === "arap" || prev.low === "kürt" || prev.low === "çin" || prev.low === "italyan" || prev.low === "fransız" || prev.low === "alman")
     ) {
       continue;
     }
+    if (
+      (headSplit.head === "istasyonu" || headSplit.head === "havaalanı" || headSplit.head === "havalimanı") &&
+      startIdx === i - 1 &&
+      (prev.low === "tren" || prev.low === "metro" || prev.low === "tramvay" || prev.low === "otobüs" || prev.low === "uluslararası")
+    ) {
+      continue;
+    }
 
-    if (!prev.locked) {
-      setToken(prev, prevName?.name ?? capTr(prev.eff), true);
+    for (let j = startIdx; j < i; j++) {
+      const cur = tokens[j]!;
+      if (cur.locked) continue;
+      const ne = lookupName(cur.low, sentenceHasAsciiFixes);
+      setToken(cur, ne?.name ?? capTr(cur.eff), true);
     }
     setToken(tok, formatProper(capTr(headSplit.head), headSplit.suffix, true), true);
   }
@@ -1204,11 +1432,11 @@ export function applySentenceRules<T extends AnyCorrection>(
   // STEP 7: Titles, Ranks, Honorifics, Kinship, Media Titles & Person Chains
   // ===========================================================================
   // 7a. Abbreviated title chains before a person name ("prof. dr. halil inalcık'ın", "op. dr. sinan güler'in",
-  //     "av. melike sönmez", "dr. şebnem koç'tan", "Dekan doç. dr. barış sezer", "av. ece çınar")
+  //     "dr. öğr. üyesi ahmet kaya", "av. melike sönmez", "dr. şebnem koç'tan", "Dekan doç. dr. barış sezer")
   for (let i = 0; i < tokens.length - 1; i++) {
     const t0 = tokens[i]!;
     if (!t0.isWord || !PRE_TITLES_ABBR.has(t0.low)) continue;
-    // Collect consecutive abbreviated titles ("Prof. Dr.", "Op. Dr.", "Doç. Dr.", "Yrd. Doç. Dr.")
+    // Collect consecutive abbreviated titles ("Prof. Dr.", "Op. Dr.", "Doç. Dr.", "Yrd. Doç. Dr.", "Dr. Öğr.")
     let endTitle = i;
     while (
       endTitle + 1 < tokens.length &&
@@ -1217,10 +1445,28 @@ export function applySentenceRules<T extends AnyCorrection>(
     ) {
       endTitle++;
     }
-    const nameIdx = endTitle + 1;
-    if (nameIdx >= tokens.length || !adjDotSpace(tokens[endTitle]!, tokens[nameIdx]!)) continue;
+    // Optional "Üyesi" after "Öğr." ("Dr. Öğr. Üyesi Ahmet Kaya")
+    let uyesiIdx = -1;
+    let nameIdx = endTitle + 1;
+    if (
+      nameIdx + 1 < tokens.length &&
+      (tokens[endTitle]!.low === "öğr" || tokens[endTitle]!.low === "ogr") &&
+      adjDotSpace(tokens[endTitle]!, tokens[nameIdx]!) &&
+      tokens[nameIdx]!.low === "üyesi" &&
+      adjSpace(tokens[nameIdx]!, tokens[nameIdx + 1]!)
+    ) {
+      uyesiIdx = nameIdx;
+      nameIdx = nameIdx + 1;
+    } else if (nameIdx >= tokens.length || !adjDotSpace(tokens[endTitle]!, tokens[nameIdx]!)) {
+      continue;
+    }
     const firstTok = tokens[nameIdx]!;
-    const g = resolveGivenName(firstTok) ?? resolveSurname(firstTok, false);
+    const g =
+      resolveGivenName(firstTok) ??
+      resolveSurname(firstTok, false) ??
+      (known.nameEntry(firstTok.low) && !known.nameEntry(firstTok.low)!.noApos
+        ? { display: known.nameEntry(firstTok.low)!.name, suffix: "", hadApos: false }
+        : null);
     const firstIsPerson = g !== null || (isCap(firstTok) && !firstTok.atStart);
     if (!firstIsPerson) continue;
 
@@ -1230,6 +1476,9 @@ export function applySentenceRules<T extends AnyCorrection>(
     }
     for (let k = i; k <= endTitle; k++) {
       setToken(tokens[k]!, capTr(tokens[k]!.eff), true);
+    }
+    if (uyesiIdx !== -1) {
+      setToken(tokens[uyesiIdx]!, "Üyesi", true);
     }
     if (g && !firstTok.locked) {
       setToken(firstTok, formatProper(g.display, g.suffix, true), true);
@@ -1246,7 +1495,7 @@ export function applySentenceRules<T extends AnyCorrection>(
         setToken(surTok, capTr(surTok.eff.slice(0, ap)) + surTok.eff.slice(ap), true);
       }
     }
-    i = endTitle;
+    i = uyesiIdx !== -1 ? uyesiIdx : endTitle;
   }
 
   // 7b. Pre-nominal full titles / ranks ("bayan elif tan", "cumhurbaşkanı ismet inönü'nün", "albay nurettin şahin'in",
@@ -1307,13 +1556,15 @@ export function applySentenceRules<T extends AnyCorrection>(
     }
   }
 
-  // 7c. Vocative "Sayın + <OfficialTitle>" (1–3 words: "Sayın Başkan", "Sayın Genel Müdür", "Sayın Belediye Başkanı")
+  // 7c. Vocative & Formal "Sayın + <OfficialTitle | PersonName>"
+  //     ("Sayın Başkan", "sayın başkan", "Sayın Genel Müdür", "Sayın Belediye Başkanı", "Sayın Başkan'a", "sayın ahmet yılmaz")
   for (let i = 0; i < tokens.length - 1; i++) {
     const sayin = tokens[i]!;
     const role = tokens[i + 1]!;
     if (!sayin.isWord || !role.isWord || sayin.low !== "sayın" || !adjSpace(sayin, role)) continue;
+    const roleSplit = splitHeadWord(role.low, SAYIN_TITLES);
     if (SAYIN_TITLES.has(role.low)) {
-      if (!sayin.locked && sayin.atStart) setToken(sayin, "Sayın", true);
+      if (!sayin.locked) setToken(sayin, "Sayın", true);
       setToken(role, capTr(role.eff), true);
       for (let k = i + 2; k <= Math.min(i + 3, tokens.length - 1); k++) {
         if (!adjSpace(tokens[k - 1]!, tokens[k]!)) break;
@@ -1321,33 +1572,87 @@ export function applySentenceRules<T extends AnyCorrection>(
         if (SAYIN_TITLES.has(w) || SAYIN_COMPOUND_TAIL.has(w)) {
           setToken(tokens[k]!, capTr(tokens[k]!.eff), true);
         } else {
+          const tailSplit = splitHeadWord(w, SAYIN_COMPOUND_TAIL);
+          if (tailSplit) setToken(tokens[k]!, formatProper(capTr(tailSplit.head), tailSplit.suffix, true), true);
           break;
         }
       }
+    } else if (roleSplit && roleSplit.suffix) {
+      if (!sayin.locked) setToken(sayin, "Sayın", true);
+      setToken(role, formatProper(capTr(roleSplit.head), roleSplit.suffix, true), true);
     } else if (
       SAYIN_COMPOUND_FIRST.has(role.low) &&
       i + 2 < tokens.length &&
-      adjSpace(role, tokens[i + 2]!) &&
-      (SAYIN_TITLES.has(tokens[i + 2]!.low) || SAYIN_COMPOUND_TAIL.has(tokens[i + 2]!.low))
+      adjSpace(role, tokens[i + 2]!)
     ) {
-      if (!sayin.locked && sayin.atStart) setToken(sayin, "Sayın", true);
-      setToken(role, capTr(role.eff), true);
-      setToken(tokens[i + 2]!, capTr(tokens[i + 2]!.eff), true);
-      if (i + 3 < tokens.length && adjSpace(tokens[i + 2]!, tokens[i + 3]!) && SAYIN_COMPOUND_TAIL.has(tokens[i + 3]!.low)) {
-        setToken(tokens[i + 3]!, capTr(tokens[i + 3]!.eff), true);
+      const t2 = tokens[i + 2]!;
+      const t2Split = splitHeadWord(t2.low, SAYIN_COMPOUND_TAIL) ?? splitHeadWord(t2.low, SAYIN_TITLES);
+      if (SAYIN_TITLES.has(t2.low) || SAYIN_COMPOUND_TAIL.has(t2.low) || t2Split) {
+        if (!sayin.locked) setToken(sayin, "Sayın", true);
+        setToken(role, capTr(role.eff), true);
+        if (t2Split && t2Split.suffix) {
+          setToken(t2, formatProper(capTr(t2Split.head), t2Split.suffix, true), true);
+        } else {
+          setToken(t2, capTr(t2.eff), true);
+          if (i + 3 < tokens.length && adjSpace(t2, tokens[i + 3]!)) {
+            const t3 = tokens[i + 3]!;
+            const t3Split = splitHeadWord(t3.low, SAYIN_COMPOUND_TAIL);
+            if (SAYIN_COMPOUND_TAIL.has(t3.low)) setToken(t3, capTr(t3.eff), true);
+            else if (t3Split) setToken(t3, formatProper(capTr(t3Split.head), t3Split.suffix, true), true);
+          }
+        }
+      }
+    } else {
+      // "sayın <PersonName> [Surname]" ("sayın ahmet yılmaz", "sayın ayşe hanım")
+      const g = resolveGivenName(role);
+      if (g && (known.nameEntry(lowerTr(g.display)) || !COMMON_GIVEN_ADJECTIVES.has(lowerTr(g.display)))) {
+        if (!sayin.locked) setToken(sayin, "Sayın", true);
+        if (!role.locked) setToken(role, formatProper(g.display, g.suffix, true), true);
+        if (!g.suffix && i + 2 < tokens.length && adjSpace(role, tokens[i + 2]!)) {
+          const surTok = tokens[i + 2]!;
+          const sur = resolveSurname(surTok, true);
+          if (sur && !surTok.locked) setToken(surTok, formatProper(sur.display, sur.suffix, true), true);
+        }
       }
     }
   }
 
-  // 7d. Post-nominal honorifics ("Ayşe hanım", "Mahmut efendiye", "kerem bey", "orhan beyde",
-  //     "Kâzım karabekir paşanın", "hakan beye", "Saadet hanımın", "cihan beyin", "gönül hanımda", "kaya bey", "muhsin bey")
+  // 7d. Post-nominal honorifics & titles ("Ayşe hanım", "Mahmut efendiye", "kerem bey", "orhan beyde",
+  //     "Kâzım karabekir paşanın", "Ahmet hocaya", "Mehmet ustaya", "Ali çavuşun", "Temel kaptana")
+  const PREDICATE_AFTER_BARE_TITLE = new Set([
+    "oldu", "olmuş", "olacak", "olmak", "olarak", "olur", "oluyor", "olsa", "olsun",
+    "gibi", "değil", "mı", "mi", "mu", "mü", "var", "yok", "kalmış", "kaldı",
+  ]);
   for (let i = 1; i < tokens.length; i++) {
     const honTok = tokens[i]!;
     if (!honTok.isWord || honTok.locked) continue;
-    const hSplit = splitHonorific(honTok.low);
+    const honSplit = splitHonorific(honTok.low);
+    const postTitleSplit = !honSplit ? splitPostTitle(honTok.low) : null;
+    const hSplit = honSplit ?? postTitleSplit;
     if (!hSplit) continue;
     const prev = tokens[i - 1]!;
     if (!prev.isWord || !adjSpace(prev, honTok)) continue;
+
+    // Guard bare post-nominal occupational titles ("hoca", "usta", "öğretmen", "kaptan", "sultan", "han"):
+    // never capitalize if used as a predicate ("Ahmet öğretmen oldu", "Mehmet usta gibi") or if unanchored!
+    if (postTitleSplit) {
+      const afterTok = i + 1 < tokens.length && adjSpace(honTok, tokens[i + 1]!) ? tokens[i + 1] : undefined;
+      if (!postTitleSplit.suffix && afterTok && PREDICATE_AFTER_BARE_TITLE.has(afterTok.low)) continue;
+      // Require an unmistakable person name before post-title (avoid "köy hocası", "genç öğretmen", "bir kaptan")
+      const prevIsStrongPerson =
+        (known.givenNameFor(prev.low) !== undefined && !COMMON_GIVEN_ADJECTIVES.has(prev.low)) ||
+        (known.nameEntry(prev.low) !== undefined && known.givenNameFor(prev.low) !== undefined);
+      if (!prevIsStrongPerson) continue;
+      // For "öğretmen"/"kaptan"/"han"/"sultan", require either a suffix ("Ayşe Öğretmen'e", "Temel Kaptan'a") OR a known Turkish person name NOT followed by a noun compound
+      if (
+        (postTitleSplit.head === "han" || postTitleSplit.head === "şah") &&
+        !postTitleSplit.suffix &&
+        !isCap(prev) &&
+        !known.givenNameFor(prev.low)
+      ) {
+        continue;
+      }
+    }
 
     // Guard bare "-ı/-i" suffix ("Sancak Beyi Berham Bey", "Osmanlı beyi", "Türk hanımı"):
     // only treat as accusative ("Ayşe Hanım'ı", "Kerem Bey'i") when preceded by a real person's given name and NOT followed by a given name!
@@ -1489,8 +1794,8 @@ export function applySentenceRules<T extends AnyCorrection>(
 
     // Case 2: t1 is an ambiguous/known first name AND t2 is an UNAMBIGUOUS or already-capitalized surname
     // ("barış Manço'nun", "barış mançonun", "erkin bulut", "yaşar kemalin", "yunus emrenin")
-    // NEVER match `known.nameEntry(t2)` here (that matches cities/countries like "arda Meksika'da"!).
-    if (!t1.locked && t1Given && t1.low.length >= 3 && !NON_INST_PREFIX.has(t1.low)) {
+    // NEVER match `known.nameEntry(t2)` here (that matches cities/countries like "arda Meksika'da"!) or repeated idioms ("arda arda").
+    if (!t1.locked && t1Given && t1.low.length >= 3 && t1.low !== t2.low && !NON_INST_PREFIX.has(t1.low)) {
       const surUnambig = resolveSurname(t2, false);
       const t2Base = t2.low.split("'")[0]!;
       const t2AlreadyCapSur =
@@ -1569,14 +1874,66 @@ export function applySentenceRules<T extends AnyCorrection>(
     const tok = tokens[i]!;
     if (!tok.isWord || tok.locked) continue;
     if (isAllCaps(tok) || isMixedInnerCap(tok)) continue;
-    // Skip words that still contain apostrophe (already handled in Step 4)
-    if (tok.low.includes("'")) continue;
 
     const low = tok.low;
     const prevTok = i > 0 ? tokens[i - 1] : undefined;
     const nextTok = i + 1 < tokens.length ? tokens[i + 1] : undefined;
 
-    // 8a. Special contextual rules for "alman" and "alevi" (high-frequency proper nouns with 1 rare homograph each)
+    // 8-apos: Unresolved lowercase ambiguous stem'suffix (deferred from Step 4 W6 #4 until after Step 7 titles!)
+    if (low.includes("'")) {
+      if (!isCap(tok)) {
+        const apos = low.indexOf("'");
+        const lowStem = low.slice(0, apos);
+        const lowSuf = low.slice(apos + 1);
+        const ambDisp = known.ambigNameFor(lowStem);
+        if (ambDisp && lowSuf) {
+          const softCommon = joinWithoutApostrophe(tok.eff.slice(0, apos), tok.eff.slice(apos + 1), isMorphWord);
+          const { leftRaw, rightRaw } = buildContextAround(i);
+          const q: AmbigCandidateQuery = {
+            start: tok.start,
+            end: tok.end,
+            base: lowStem,
+            displayBase: ambDisp,
+            suffix: lowSuf,
+            hadApostrophe: true,
+            atStart: tok.atStart,
+            isGiven: known.givenNameFor(lowStem) !== undefined,
+            commonCand: softCommon,
+            properCand: `${ambDisp}'${lowSuf}`,
+            leftRaw,
+            rightRaw,
+          };
+          if (resources.collectAmbig) resources.collectAmbig.push(q);
+          if (resources.disambiguateAmbig) {
+            const decided = resources.disambiguateAmbig(q);
+            if (decided) setToken(tok, decided, true);
+          }
+        }
+      }
+      continue;
+    }
+
+    // 8a. Special contextual rules for "hindistan" (not "hindistan cevizi"), "alman", "alevi", and "aliye"
+    if (low === "hindistan" && (!nextTok || !nextTok.low.startsWith("ceviz"))) {
+      setToken(tok, "Hindistan", true);
+      continue;
+    }
+    if (low.startsWith("hindistan") && low.length > 9 && (!isCap(tok) || tok.atStart)) {
+      const hSuf = low.slice(9);
+      if (PROPER_INFLECTIONAL_SUFFIX_RE.test(hSuf) && isPhonologicallyValidProperSuffix("hindistan", hSuf)) {
+        setToken(tok, `Hindistan'${hSuf}`, true);
+        continue;
+      }
+    }
+    if (low === "aliye" && (!isCap(tok) || tok.atStart)) {
+      const dativeCue =
+        nextTok !== undefined &&
+        /^(?:söyle|ver|gönder|yaz|sor|ilet|mesaj|haber|bak|uğra|telefon|git|gid|gel|dön|bırak|de|da|ulaş)/.test(nextTok.low);
+      if (dativeCue) {
+        setToken(tok, "Ali'ye", true);
+        continue;
+      }
+    }
     if (low === "alman") {
       const verbalNext = nextTok !== undefined && ALMAN_VERBAL_NEXT.has(nextTok.low);
       const accPrev = prevTok !== undefined && /(?:ini|ını|unu|ünü|yi|yı|yu|yü)$/.test(prevTok.low);
@@ -1642,9 +1999,13 @@ export function applySentenceRules<T extends AnyCorrection>(
         if (!entry) continue;
         const baseLow = lowerTr(entry.name);
 
-        // Guard against common-word collisions ("belli", "hatayı", "türkü", "hindi", "ıraklık"),
-        // while allowing strongly proper-name-dominated forms ("taksimde" vs rare "taksi+m+de").
-        const strongProperApos = lexCount(`${baseLow}'${suf}`) >= 25 && lexCount(`${baseLow}'${suf}`) >= lexCount(low) * 5;
+        // Guard against common-word collisions ("belli", "hatayı", "türkü", "hindi", "ıraklık") and standalone foreign names ("Anna", "Paula", "Jimi", "Michelin"),
+        // while allowing strongly proper-name-dominated forms ("taksimde", "murata" where "murat'a" >> "murata").
+        const aposFreq = lexCount(`${baseLow}'${suf}`);
+        const wholeFreq = lexCount(low);
+        const strongProperApos =
+          (aposFreq >= 25 && aposFreq >= wholeFreq * 5) ||
+          (!isMorphWord(low) && aposFreq >= 15 && aposFreq >= wholeFreq * 2);
         if (
           !strongProperApos &&
           isCommonWordCollision(low, baseLow) &&
@@ -1698,22 +2059,39 @@ export function applySentenceRules<T extends AnyCorrection>(
       if (matchedName) continue;
     }
 
-    // 8e. Non-softening / morphologically-impossible inflections of AMBIGUOUS names!
+    // 8e. Non-softening / morphologically-impossible inflections of AMBIGUOUS or GIVEN names!
     //     E.g. "umutun" -> "Umut'un" (common word is "umudun"), "umuta" -> "Umut'a" ("umuda"),
-    //     "emrenin" -> "Emre'nin" (dative "emre" can't take -nin), "aslıyı" -> "Aslı'yı" (common is "aslını"),
+    //     "kıvança" -> "Kıvanç'a" ("kıvanca"), "emrenin" -> "Emre'nin", "aslıyı" -> "Aslı'yı",
     //     "tokata" -> "Tokat'a" ("tokada"), "çiçeke" -> "Çiçek'e" ("çiçeğe"), "ufukun" -> "Ufuk'un" ("ufkun")!
-    if ((!isCap(tok) || tok.atStart) && low.length >= 4) {
+    //     Guard against standalone known/foreign names ("Anna", "Jimi", "Gabrielle", "Lynne", "Michelin")
+    //     and common nouns with 3sg possessive ("zümrütünü") by checking corpus counts and standalone name lists.
+    if (
+      (!isCap(tok) || tok.atStart) &&
+      low.length >= 4 &&
+      !known.givenNameFor(low) &&
+      !known.nameEntry(low) &&
+      !known.surnameFor(low) &&
+      !known.ambigNameFor(low)
+    ) {
       let matchedNonSoft = false;
       for (let cut = low.length - 1; cut >= 3; cut--) {
         const base = low.slice(0, cut);
         const suf = low.slice(cut);
-        const ambDisp = known.ambigNameFor(base);
+        const isAmbig = known.ambigNameFor(base) !== undefined;
+        const ambDisp = known.ambigNameFor(base) ?? known.givenNameFor(base);
         if (!ambDisp) continue;
+        if (!isAmbig && !/^(?:n?[ıiuü]n|[dt][ae]n?|y?l[ae]|y?[aeıiuü])$/.test(suf)) continue;
         const baseLow = lowerTr(ambDisp);
-        // Must either fail morphology completely ("umutun", "emrenin", "tokata") OR be completely dominated by the proper-name apostrophe form ("aslıyı" vs Zemberek's bogus "as+lı+yı")
+        const wholeFreq = lexCount(low);
+        const aposFreq = lexCount(`${baseLow}'${suf}`);
+        // Protect standalone foreign/brand names at sentence start ("Anna", "Jimi", "Gabrielle", "Lynne", "Michelin")
+        // and any corpus-attested word unless the apostrophized proper form strongly dominates.
+        if (tok.atStart && isCap(tok) && (aposFreq < 5 || aposFreq < wholeFreq * 3)) continue;
+        if (wholeFreq >= 5 && aposFreq < wholeFreq * 3) continue;
+        // Must either fail morphology completely ("umutun", "emrenin", "tokata", "kıvança") OR be completely dominated by the proper-name apostrophe form ("aslıyı")
         const nonCommonForm =
           !isMorphWord(low) ||
-          (lexCount(low) === 0 && lexCount(`${baseLow}'${suf}`) >= 5);
+          (wholeFreq === 0 && aposFreq >= 5);
         if (!nonCommonForm) continue;
         if (PROPER_INFLECTIONAL_SUFFIX_RE.test(suf) && isPhonologicallyValidProperSuffix(baseLow, suf)) {
           setToken(tok, `${ambDisp}'${suf}`, true);
@@ -1747,7 +2125,8 @@ export function applySentenceRules<T extends AnyCorrection>(
           const suf = low.slice(cut);
           const disp = known.ambigNameFor(base);
           if (!disp) continue;
-          if (PROPER_INFLECTIONAL_SUFFIX_RE.test(suf) && isPhonologicallyValidProperSuffix(base, suf)) {
+          // Exclude 1sg/3sg possessives ("canım", "gülüm", "sevgisi") and copulas from ambiguous-name splitting.
+          if (/^(?:n?[ıiuü]n|[dt][ae]n?|[dt][ae]ki|n?[ıiuü]nki|y?l[ae]|y?[aeıiuü])$/.test(suf) && isPhonologicallyValidProperSuffix(base, suf)) {
             ambBase = base;
             ambDisp = disp;
             ambSuf = suf;
@@ -1801,12 +2180,54 @@ export function applySentenceRules<T extends AnyCorrection>(
           setToken(tok, `${ambDisp}'${ambSuf}`, true);
           continue;
         }
-        // Optional contextual disambiguator (core linear classifier or neural context model)
-        if (resources.disambiguateAmbig) {
-          const decided = resources.disambiguateAmbig(tokens, i, ambBase, ambDisp, ambSuf, false);
-          if (decided) {
-            setToken(tok, decided, true);
-            continue;
+        // Optional contextual disambiguator (neural context model)
+        // Only query for genuine ambiguous given names or ambiguous place names (not pure surnames/colors/metals like "al", "altın", "taş").
+        // Skip bare sentence-start words (already capitalized by Step 9 -> no ambiguity!).
+        const isCtxEligible =
+          known.givenNameFor(ambBase) !== undefined ||
+          ambBase === "afyon" ||
+          ambBase === "ağrı" ||
+          ambBase === "aydın" ||
+          ambBase === "bebek" ||
+          ambBase === "bodrum" ||
+          ambBase === "boğaz" ||
+          ambBase === "çeşme" ||
+          ambBase === "kartal" ||
+          ambBase === "kaş" ||
+          ambBase === "kemer" ||
+          ambBase === "konak" ||
+          ambBase === "mısır" ||
+          ambBase === "moda" ||
+          ambBase === "ordu" ||
+          ambBase === "tokat" ||
+          ambBase === "tuzla" ||
+          ambBase === "uşak" ||
+          ambBase === "van";
+        if (isCtxEligible && !(tok.atStart && !ambSuf)) {
+          const { leftRaw, rightRaw } = buildContextAround(i);
+          const commonCand = ambSuf ? (tok.atStart ? capTr(ambBase + ambSuf) : ambBase + ambSuf) : ambBase;
+          const properCand = ambSuf ? `${ambDisp}'${ambSuf}` : ambDisp;
+          const q: AmbigCandidateQuery = {
+            start: tok.start,
+            end: tok.end,
+            base: ambBase,
+            displayBase: ambDisp,
+            suffix: ambSuf,
+            hadApostrophe: false,
+            atStart: tok.atStart,
+            isGiven: known.givenNameFor(ambBase) !== undefined,
+            commonCand,
+            properCand,
+            leftRaw,
+            rightRaw,
+          };
+          if (resources.collectAmbig) resources.collectAmbig.push(q);
+          if (resources.disambiguateAmbig) {
+            const decided = resources.disambiguateAmbig(q);
+            if (decided) {
+              setToken(tok, decided, true);
+              continue;
+            }
           }
         }
       }

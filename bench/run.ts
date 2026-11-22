@@ -15,7 +15,7 @@ import { ContextModel, FEATURE_DIM, LEGACY_FEATURE_DIM, SEQUENCE, sliceLegacyFea
 import { Corrector, tokenize, type Correction, type SpellFlag } from "../src/corrector.ts";
 import { KnownMisspellings } from "../src/known.ts";
 import { Lexicon } from "../src/lexicon.ts";
-import { loadBrowserCorrector, loadMorphology } from "./setup.ts";
+import { loadBrowserCorrector, loadKnownTsv, loadMorphology } from "./setup.ts";
 
 interface Row {
   id: string | number;
@@ -90,7 +90,7 @@ if (browserMode) {
     minCount,
     minPair,
   );
-  const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8"));
+  const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(loadKnownTsv());
   corrector = new Corrector(lexicon, undefined, known, process.argv.includes("--no-morphology") ? undefined : loadMorphology());
   const tsv = lexicon.toTsv();
   const gzipMb = (gzipSync(tsv.unigrams).length + gzipSync(tsv.bigrams).length) / 1e6;

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fixNumberSuffix, joinWithoutApostrophe } from "./rules/proper-names.ts";
 import { applySentenceRules } from "./sentence.ts";
 
 const WORDS = new Set([
@@ -97,4 +98,30 @@ test("sentence rules: merge with a fix another rule makes to the same word", () 
     fix("merhaba.cok güzel", [{ start: 8, end: 11, original: "cok", replacement: "çok" }]),
     "Merhaba. Çok güzel",
   );
+});
+
+test("proper-name helpers: number suffixes and apostrophe-removal softening", () => {
+  // Number + suffix TDK apostrophe & consonant voicing
+  assert.equal(fixNumberSuffix("1985", "te", false), "te");
+  assert.equal(fixNumberSuffix("1985", "de", false), "te");
+  assert.equal(fixNumberSuffix("1985", "de", true), "te");
+  assert.equal(fixNumberSuffix("1985", "te", true), null); // already correct
+  assert.equal(fixNumberSuffix("2023", "de", false), "te");
+  assert.equal(fixNumberSuffix("80", "lere", false), "lere");
+  assert.equal(fixNumberSuffix("2", "nci", false), "nci");
+  assert.equal(fixNumberSuffix("30", "da", false), "da");
+  // Unit and short-code guards
+  assert.equal(fixNumberSuffix("5", "cm", false), null);
+  assert.equal(fixNumberSuffix("3", "a", false), null);
+  assert.equal(fixNumberSuffix("20", "px", false), null);
+
+  // Softening when stripping an erroneous apostrophe
+  const morphWords = new Set(["kitabı", "ağaca", "tutarlılığı"]);
+  const isMorph = (w: string) => morphWords.has(w);
+  assert.equal(joinWithoutApostrophe("Hristiyanlık", "ın", isMorph), "Hristiyanlığın");
+  assert.equal(joinWithoutApostrophe("Atatürkçülük", "ün", isMorph), "Atatürkçülüğün");
+  assert.equal(joinWithoutApostrophe("Başbakanlık", "a", isMorph), "Başbakanlığa");
+  assert.equal(joinWithoutApostrophe("kitap", "ı", isMorph), "kitabı");
+  assert.equal(joinWithoutApostrophe("ağaç", "a", isMorph), "ağaca");
+  assert.equal(joinWithoutApostrophe("Türkler", "in", isMorph), "Türklerin");
 });

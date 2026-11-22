@@ -260,4 +260,33 @@ describe("autr çekirdek API", () => {
     await autr.dispose();
     await assert.rejects(() => autr.check("cok"));
   });
+
+  it("noktalama türünde özel ad, kurum, sayı eki ve kesme kurallarını uygular", async () => {
+    const dataWithNames: RawData = {
+      ...TEST_DATA,
+      known: [
+        TEST_DATA.known,
+        "ankara\tAnkara\t0\t50000\tNAME",
+        "türkçe\tTürkçe\tnoapos\t40000\tNAME",
+        "türk dil kurumu\tTürk Dil Kurumu\t0\t10000\tPHRASE_NOAPOS",
+      ].join("\n"),
+    };
+    const autr = createTdkai(dataWithNames);
+    try {
+      const text = "dün türk dil kurumuna geldi.yarın 1985te ankaraya gidiyorum, türkçe'yi sevdik.";
+      const fixes = await autr.check(text, { kinds: ["noktalama"] });
+      assert.ok(fixes.length > 0);
+      for (const fix of fixes) {
+        assert.equal(fix.kind, "noktalama");
+      }
+      assert.equal(
+        autr.apply(text, fixes),
+        "Dün Türk Dil Kurumuna geldi. Yarın 1985'te Ankara'ya gidiyorum, Türkçeyi sevdik.",
+      );
+      // noktalama kapalıyken bu değişiklikler yapılmaz
+      assert.equal(await autr.fix("1985te ankaraya geldik.", NO_PUNCT), "1985te ankaraya geldik.");
+    } finally {
+      await autr.dispose();
+    }
+  });
 });

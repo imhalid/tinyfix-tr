@@ -103,6 +103,11 @@ export async function loadBrowserCorrector(
   };
 }
 
+export function loadKnownTsv(): string {
+  const base = readFileSync("data/rules/known.tsv", "utf8");
+  return existsSync("data/rules/names.tsv") ? `${base}\n${readFileSync("data/rules/names.tsv", "utf8")}` : base;
+}
+
 /** --lexicon wiki selects the Wikipedia-only lexicon; --no-morphology leaves the morphology layer out. */
 export function createCorrector(args: readonly string[] = process.argv, minCount = 1, minPair = 5): Corrector {
   const wiki = args.includes("--lexicon") && args[args.indexOf("--lexicon") + 1] === "wiki";
@@ -112,7 +117,7 @@ export function createCorrector(args: readonly string[] = process.argv, minCount
     minCount,
     minPair,
   );
-  const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(readFileSync("data/rules/known.tsv", "utf8"));
+  const known = args.includes("--no-known") ? undefined : KnownMisspellings.fromTsv(loadKnownTsv());
   const morphology = args.includes("--no-morphology") ? undefined : loadMorphology();
   return new Corrector(lexicon, undefined, known, morphology);
 }

@@ -27,6 +27,7 @@ import {
   LANGUAGE_NAMES,
   MONTHS,
   NO_APOS_RELIGION_OR_DERIVED,
+  OPTIONAL_APOS_ISM_IYET,
   POST_HONORIFICS,
   PRE_TITLES_ABBR,
   PRE_TITLES_FULL,
@@ -121,7 +122,7 @@ const AMBIGUOUS_NAMES = new Set([
   "yasemin", "nergis", "sümbül", "papatya", "karanfil", "kiraz", "çiğdem", "kardelen",
   "yonca", "damla", "derya", "nehir", "çağla", "buse", "beste", "ezgi", "rüzgar", "poyraz",
   "kıraç", "inci", "mercan", "yakut", "elmas", "sedef", "gümüş", "altın", "bakır", "tatlı",
-  "ay", "gün", "yel", "kar", "sis", "çınar", "meşe", "sedir", "ladin", "akça", "efe",
+  "yel", "kar", "sis", "çınar", "meşe", "sedir", "ladin", "akça", "efe",
   "arda", "aras", "meriç", "tuna", "hazar", "bora", "berk", "alp", "kaan", "emir", "eren",
   "ilker", "serdar", "serkan", "volkan", "tufan", "fırtına", "doğa", "doğuş", "ışık",
   "ışıl", "aydın", "hayal", "rüya", "masal", "neşe", "sevinç", "huzur", "varlık", "öykü",
@@ -134,13 +135,13 @@ const AMBIGUOUS_NAMES = new Set([
   "korkmaz", "yılmaz", "solmaz", "durmaz", "ölmez", "dönmez", "çakır", "özkan", "aksoy",
   "aktaş", "şimşek", "kılıç", "bıçak", "ok", "yay", "kalkan", "bayrak", "sancak", "tuğ",
   // Common-word places / nationalities / sects / objects
-  "tokat", "mısır", "kaş", "ordu", "ağrı", "van", "of", "göl", "dağ", "ova", "çöl",
-  "tuz", "kaz", "atlas", "alman", "alevi", "çek", "kazak", "roman", "hindi", "macar",
+  "tokat", "mısır", "kaş", "ordu", "ağrı", "van", "bodrum", "kemer", "konak", "tuzla",
+  "bebek", "moda", "boğaz", "uşak", "afyon",
+  "atlas", "alman", "alevi", "çek", "kazak", "roman", "hindi", "macar",
   "çeşme", "yaşar", "gizem", "görkem", "leh",
-  "güneş", "dünya", "mars", "venüs", "merkür", "jüpiter", "satürn", "plüton",
-  "paskalya", "noel", "ramazan", "kurban", "bayram", "cumhuriyet", "istiklal",
-  "yıldız", "kartal", "şişli", "fatih", "beyoğlu", "tarsus", "küre", "saray", "pazar",
-  "çay", "bursa", "kanada", "ırak", "kırım", "çin", "rum", "hun", "laz", "fin",
+  "paskalya", "noel", "ramazan", "kurban", "cumhuriyet", "istiklal",
+  "yıldız", "kartal", "şişli", "fatih", "beyoğlu", "tarsus",
+  "bursa", "kanada", "ırak", "kırım", "çin", "rum", "hun", "laz", "fin",
   "kürt", "türk",
 ]);
 
@@ -156,7 +157,7 @@ const PROMOTE_TO_UNCONDITIONAL = new Set([
   "muhsin", "burak", "merve", "ayşe", "zeynep", "kenan", "yunus", "kâzım", "nazlı",
   "nurettin", "rüştü", "halil", "sinan", "mahmut", "orhan", "selin", "gökçe", "oya",
   "koray", "atakan", "songül", "hacer", "abdullah", "ahu", "hülya", "rabia",
-  "okan", "furkan", "taner", "aylin", "selda", "tansu", "melis", "hatice", "aliye",
+  "okan", "furkan", "taner", "aylin", "selda", "tansu", "melis", "hatice",
   "cemal", "recep", "selim", "ziya", "mustafa", "ahmet", "mehmet", "yusuf", "fatma",
   "allah", "islam", "islamiyet", "müslüman", "hristiyan", "yahudi", "musevi", "sünni",
   "katolik", "protestan", "ortodoks", "budist", "hindu", "hinduizm", "budizm",
@@ -165,6 +166,12 @@ const PROMOTE_TO_UNCONDITIONAL = new Set([
   "denizli", "karabük", "trabzon", "rize", "erzurum", "diyarbakır", "eskişehir", "malatya",
   "muğla", "antalya", "izmir", "istanbul", "ankara", "konya", "gaziantep", "çanakkale",
   "kocaeli", "kıbrıs", "bitlis", "mardin", "giresun", "hatay", "isparta", "ısparta",
+  "kars", "muş", "şili", "didim", "alaçatı", "seferihisar", "göreme", "avanos", "belek",
+  "assos", "abant", "kartalkaya", "uzungöl", "ayder", "sümela", "göbeklitepe", "patara",
+  "ölüdeniz", "gökova", "bozburun", "kağıthane", "çekmeköy",
+  "sultanbeyli", "sultangazi", "pursaklar", "bayraklı", "çiğli", "gaziemir", "balçova",
+  "narlıdere", "güzelbahçe", "torbalı", "finike", "sürmene", "erbaa",
+  "çerkezköy", "darıca", "soma", "kuyucak", "köyceğiz",
   "üsküdar", "beşiktaş", "kadıköy", "bakırköy", "çankaya", "karşıyaka", "bornova",
   "sarıkamış", "datça", "midyat", "harran", "safranbolu", "şirince", "hasankeyf",
   "kayaköy", "palandöken", "maçka", "karaköy", "taksim", "sultanahmet", "kuzguncuk",
@@ -219,7 +226,7 @@ const NEVER_UNCONDITIONAL = new Set<string>([
   "doğa", "doğuş", "ışık", "ışıl", "hayal", "rüya", "masal", "neşe", "sevinç", "öykü",
   "destan", "şiir", "şarkı", "melodi", "uyum", "denge", "emir", "eren", "bora", "berk",
   "alp", "efe", "tufan", "fırtına", "gazi", "mimar", "sultan", "kral", "prens", "prenses",
-  "çeşme", "yaşar", "gizem", "görkem", "leh", "tophane", "ağa", "su", "of", "bay", "bayan", "arda",
+  "çeşme", "yaşar", "gizem", "görkem", "leh", "tophane", "ağa", "su", "of", "bay", "bayan", "arda", "aliye",
   "daha", "çok", "az", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on",
   "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci",
 ]);
@@ -264,7 +271,7 @@ function addName(word: string, display: string, count: number): void {
   const noApos =
     LANGUAGE_NAMES.has(word) ||
     NO_APOS_RELIGION_OR_DERIVED.has(word) ||
-    /(?:ca|ce|ça|çe)$/.test(word) && LANGUAGE_NAMES.has(word);
+    OPTIONAL_APOS_ISM_IYET.has(word);
   const prev = namesMap.get(word);
   if (!prev || count > prev.count) {
     namesMap.set(word, { display, count, noApos });
@@ -284,7 +291,7 @@ for (const w of LANGUAGE_NAMES) {
   const cnt = Math.max(st ? st.wcl + st.wcc : 0, 2000);
   addName(w, capTr(w), cnt);
 }
-for (const w of NO_APOS_RELIGION_OR_DERIVED) {
+for (const w of [...NO_APOS_RELIGION_OR_DERIVED, ...OPTIONAL_APOS_ISM_IYET]) {
   const st = wordStats.get(w);
   const cnt = Math.max(st ? st.wcl + st.wcc : 0, 1500);
   addName(w, capTr(w), cnt);
@@ -514,7 +521,25 @@ const SEED_GIVEN = [
   "yurdagül", "zahide", "zehra", "zekiye", "zeliha", "zerrin", "zeynep", "zübeyde", "zuhal",
   "zühal", "züleyha", "zülfiye", "zümra", "zümrüt",
 ];
-for (const g of SEED_GIVEN) givenMap.set(g, { display: capTr(g), count: 500 });
+for (const g of SEED_GIVEN) {
+  givenMap.set(g, { display: capTr(g), count: 500 });
+  // Also promote completely unambiguous Turkish first names (never a common Turkish word, never a lowercase subtitle word)
+  // so modern everyday Turkish names like "Tuğçe", "Büşra", "Kübra", "Berkay", "Dilara" are always recognized!
+  if (
+    !namesMap.has(g) &&
+    !NEVER_UNCONDITIONAL.has(g) &&
+    !AMBIGUOUS_NAMES.has(g) &&
+    !commonLemmas.has(g) &&
+    !morphology.isWord(g) &&
+    g !== "okay" &&
+    g !== "tulay"
+  ) {
+    const st = wordStats.get(g);
+    if (!st || st.sl < 5) {
+      addName(g, properDict.get(g) ?? capTr(g), Math.max(st ? st.wcl + st.wcc : 0, 1000));
+    }
+  }
+}
 
 // Curated Turkish surnames (top ~120 genuine Turkish surnames; avoids leaking common adjectives/verbs like "yeni", "oldu", "olsun").
 const SEED_SURNAMES = [
@@ -579,12 +604,18 @@ for (const [display, takesApos] of CANONICAL_PHRASES) {
 
 const GENERIC_PHRASE_FIRST = new Set([
   "tıp", "hukuk", "devlet", "özel", "büyük", "yeni", "eski", "ilk", "son",
-  "yönetim", "genel", "icra", "denetim", "danışma", "bilim", "seçim", "hakem", "yürütme",
+  "yönetim", "genel", "icra", "denetim", "danışma", "bilim", "bilimler", "seçim", "hakem", "yürütme",
   "iletişim", "spor", "futbol", "basketbol", "voleybol", "kültür", "alışveriş", "sağlık",
   "iş", "ticaret", "eğitim", "araştırma", "bölge", "il", "ilçe", "emniyet", "nüfus", "tapu",
   "halk", "şehir", "köy", "mahalle", "merkez", "yüksek", "askeri", "askerî", "sanat", "müzik",
-  "fen", "edebiyat", "mühendislik", "iktisat", "işletme", "mimarlık", "eczacılık", "ilahiyat",
+  "fen", "edebiyat", "mühendislik", "mühendisliği", "iktisat", "işletme", "mimarlık", "eczacılık", "ilahiyat",
   "belediye", "büyükşehir", "valilik", "kaymakamlık",
+  "idari", "diller", "hekimliği", "kız", "erkek", "sosyal", "siyasal", "siyasi", "güzel", "yabancı", "uygulamalı",
+]);
+
+const FRAGMENT_PHRASE_FIRST = new Set([
+  "üniversitesi", "fakültesi", "enstitüsü", "bölümü", "bakanlığı", "müdürlüğü", "başkanlığı", "kurumu",
+  "hekimliği", "mühendisliği", "idari",
 ]);
 
 // Mine clean Turkish multi-word phrases from Wikipedia (institutions, places, states, events, wars)
@@ -592,18 +623,37 @@ for (const line of readFileSync(`${CORPUS_DIR}/phrases.tsv`, "utf8").split("\n")
   if (!line) continue;
   const [low, disp, capS] = line.split("\t");
   const cnt = Number(capS);
-  if (!low || !disp || cnt < 120) continue;
+  if (!low || !disp || cnt < 65) continue;
   if (phrases.has(low)) continue;
   const words = low.split(" ");
   if (words.length < 2 || words.length > 5) continue;
+  if (FRAGMENT_PHRASE_FIRST.has(words[0]!)) continue;
   // Must be Turkish letters only (no English noise words)
   if (words.some((w) => !/^[a-zçğıöşüâîû]+$/.test(w) || ENGLISH_NOISE.has(w))) continue;
   const last = words.at(-1)!;
   const prev = words.at(-2)!;
-  // Exclude generic unanchored 2-word phrases ("yönetim kurulu", "tıp fakültesi", "spor kulübü", "iletişim bölümü", "genel müdürlüğü")
-  if (words.length === 2 && GENERIC_PHRASE_FIRST.has(words[0]!)) {
+  // Exclude generic unanchored 2-word phrases ("yönetim kurulu", "tıp fakültesi", "spor kulübü", "iletişim bölümü", "genel müdürlüğü", "tren istasyonu", "antik kenti")
+  if (
+    words.length === 2 &&
+    (GENERIC_PHRASE_FIRST.has(words[0]!) ||
+      words[0] === "tren" ||
+      words[0] === "metro" ||
+      words[0] === "tramvay" ||
+      words[0] === "uluslararası" ||
+      words[0] === "antik" ||
+      words[0] === "hava" ||
+      words[0] === "kara" ||
+      words[0] === "deniz" ||
+      words[0] === "silahlı" ||
+      words[0] === "ceza" ||
+      words[0] === "işçi" ||
+      words[0] === "ilköğretim" ||
+      words[0] === "harp" ||
+      words[0] === "olimpiyat")
+  ) {
     continue;
   }
+  if (last === "kenti" && prev !== "antik") continue;
   let takesApos: boolean | null = null;
   if (isInstitutionHead(last, prev)) {
     takesApos = false;
@@ -616,6 +666,7 @@ for (const line of readFileSync(`${CORPUS_DIR}/phrases.tsv`, "utf8").split("\n")
   } else if (
     words.length === 2 &&
     (DIRECTIONS.has(words[0]!) || words[0] === "yeni" || words[0] === "suudi" || words[0] === "bosna") &&
+    !DIRECTIONS.has(last) &&
     (namesMap.has(last) || properDict.has(last))
   ) {
     takesApos = true;
@@ -627,7 +678,7 @@ for (const line of readFileSync(`${CORPUS_DIR}/phrases.tsv`, "utf8").split("\n")
     .map((w, i) => (i > 0 && i < words.length - 1 && TITLE_CONJUNCTIONS.has(lowerTr(w)) ? lowerTr(w) : w))
     .join(" ");
   phrases.set(low, { display: fixedDisp, takesApos, count: cnt });
-  if (phrases.size >= 2500) break;
+  if (phrases.size >= 4500) break;
 }
 
 // --- 5. Ambiguous Names (AMBIG) ---

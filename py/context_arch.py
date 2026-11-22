@@ -18,7 +18,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 FEATURE_DIM = 26
-KINDS = ["marks", "de_da", "ki", "mi", "typo"]
+KINDS = ["marks", "de_da", "ki", "mi", "typo", "name"]
 # Packed subword sequence layout: [CLS] + left(<=24) + cand(<=8) + right(<=20) <= 53 (max_len=64)
 LEFT_SUB = 24
 SPAN_SUB = 8
@@ -213,10 +213,10 @@ class ContextScorerV3(nn.Module):
         self.feat_skip = nn.Linear(feature_dim, 1)
         # Folded post-hoc calibration buffers:
         self.register_buffer("inv_temperature", torch.tensor(1.0, dtype=torch.float32))
-        # [marks_marked_has_mark, de_da_sep, ki_sep, mi_sep, typo_bias]
-        self.register_buffer("prior_bias", torch.zeros(5, dtype=torch.float32))
-        # [marks_ascii, marks_marked, de_da, ki, mi, typo]
-        self.register_buffer("regime_inv_temp", torch.ones(6, dtype=torch.float32))
+        # [marks_marked_has_mark, de_da_sep, ki_sep, mi_sep, typo_bias, name_proper]
+        self.register_buffer("prior_bias", torch.zeros(6, dtype=torch.float32))
+        # [marks_ascii, marks_marked, de_da, ki, mi, typo, name]
+        self.register_buffer("regime_inv_temp", torch.ones(7, dtype=torch.float32))
 
     def forward_parts(
         self,
@@ -251,13 +251,16 @@ class ContextScorerV3(nn.Module):
 
         feat_in = features
         if self.training and feat_dropout > 0.0:
-            # Randomly mask out frequency/edit scalar features (keeping kind/ascii flags 5..9 & 18 intact)
+            # Randomly mask out frequency/edit scalar features (keeping kind/ascii flags 5..9 & 18 intact,
+            # plus slot 19 = isProper on `name` rows so bare proper/common candidates stay distinguishable)
             # on 50% of rows so the model never collapses onto scalar shortcuts.
             keep = (torch.rand(features.shape[0], 1, device=features.device) >= feat_dropout).float()
+            is_name_row = (1.0 - (features[:, 6] + features[:, 7] + features[:, 8] + features[:, 9] + features[:, 18])).clamp(min=0.0)
             mask = torch.ones_like(features)
             mask[:, 0:5] = keep
             mask[:, 10:18] = keep
-            mask[:, 19:26] = keep
+            mask[:, 19] = torch.maximum(keep.squeeze(-1), is_name_row)
+            mask[:, 20:26] = keep
             feat_in = features * mask
 
         feat_vec = self.feat_proj(feat_in)
@@ -274,6 +277,8 @@ class ContextScorerV3(nn.Module):
         is_typo = features[:, 18]
         is_marks_ascii = is_marks * ascii_ctx
         is_marks_marked = is_marks * (1.0 - ascii_ctx)
+        is_name = (1.0 - (is_marks + is_deda + is_ki + is_mi + is_typo)).clamp(min=0.0)
+        is_proper_cand = features[:, 19]
 
         bias = (
             self.prior_bias[0] * is_marks_marked * has_marks
@@ -281,6 +286,7 @@ class ContextScorerV3(nn.Module):
             + self.prior_bias[2] * is_ki * is_space
             + self.prior_bias[3] * is_mi * is_space
             + self.prior_bias[4] * is_typo
+            + self.prior_bias[5] * is_name * is_proper_cand
         )
         scale = (
             self.regime_inv_temp[0] * is_marks_ascii
@@ -289,8 +295,8 @@ class ContextScorerV3(nn.Module):
             + self.regime_inv_temp[3] * is_ki
             + self.regime_inv_temp[4] * is_mi
             + self.regime_inv_temp[5] * is_typo
+            + self.regime_inv_temp[6] * is_name
         )
-        scale = scale + (1.0 - (is_marks + is_deda + is_ki + is_mi + is_typo)).clamp(min=0.0)
         return (raw_score - bias) * scale * self.inv_temperature, ctx_score
 
     def forward(
