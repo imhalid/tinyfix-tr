@@ -232,3 +232,74 @@ Yeni çok-görevli `context.onnx` mevcut görevlerde (`marks`, `de_da`, `ki`, `m
 - **Dative eylem öbeği çakışmaları (`savaşa → Savaş'a`):** Kişi adı ikamesi nedeniyle `"<Ad>'a gitmek"` kalıbı çok ender olarak `"Savaşa gitmek"` gibi yüksek sıklıklı fiil öbekleriyle çakışabilmektedir (`dev clean`'de 61.286 kelimede 2 kez). Gelecekte yüksek sıklıklı eylem-tümleç ikilileri (`savaşa git-`, `savaşa gir-`) için ek negatif madencilik ile tamamen sıfırlanabilir.
 - **Yeni/nadir kurum ve eser adları:** Sözlükte olmayan küçük/yerel kurum adları veya genel ad taşıyan yeni kitap/film adları, bileşimsel baş sözcükler dışında kalıyorsa büyük harfle başlatılmayabilir; yeni adlar `src/rules/proper-names.ts` (`CANONICAL_PHRASES`) veya yeniden madencilikle kolayca eklenebilir.
 - **Eski v3 `context.onnx` uyumluluğu:** `ContextModel.supportsNameContext` şu an `subwordsOnly` bayrağına bağlıdır; yeni yayınlanan `site/public/models/context.onnx` 6 görevli olduğu için tarayıcı ve paket sürümlerinde sorunsuzdur, ancak elle çok eski bir 5 görevli v3 `context.onnx` dosyası verilirse `kind="name"` için eğitilmemiş çıktı üretebilir.
+
+---
+
+## 10. Temiz Metin Yanlış Büyütme ve Gereksiz Değişiklik Azaltma Turu (`3a04480` → son durum)
+
+`3a04480` sonrasında `bench/dev/clean.jsonl`, `bench/dev2/clean.jsonl`, `bench/conversation/clean.jsonl` ve `bench/synth/tune.jsonl` (`clean`) üzerinde `sentenceCase=0` ile `sentenceCase=1` (hem çekirdek hem `+context`) farkları `--dump` ile tek tek çıkarılıp TDK'ya göre **doğru / yanlış / belirsiz** diye sınıflandırıldı.
+
+### 10.1 Tespit Edilen Yanlış ve Belirsiz Değişiklikler
+1. **Genel anlamda tamlama tamlayanı olan çağ adları (`dev-clean-1650`):** `"çünkü eski çağ astronomlarının kayıtlarına göre"` → `"Eski Çağ"` (**YANLIŞ** — burada belirtisiz isim tamlaması kuran genel sıfat/tamlayan; `"Eski Çağ"` dönem adı olarak kullanıldığında büyük).
+2. **Kurum adından sonra gelen görev/meslek adları (`dev-clean-636`, `dev-clean-302`):** `"Bremen Sanat Müzesi müdürü ressam Carl Horn"` → `"Müdürü"`, `"Eski Azerbaycan Millî Meclisi başkanı Resul Guliyev"` → `"Başkanı"` (**YANLIŞ** — kişi adı/meslek öncesinde görev tanımı, makam yerine geçen unvan değil).
+3. **Resmî ad olmayan yön sıfatları (`dev-clean-1026`, `dev-clean-1639`):** `"ağırlıkla orta Şili ve güney Şili’nin"` → `"Orta"`, `"Güney"`; `"güney Hint Okyanusu'na"` → `"Güney"` (**YANLIŞ** — yön bildiren sıfat, yerleşik bölge/ülke adı değil).
+4. **Yazımı belirsiz karma-büyük-harfli çok kelimeli kurum/tamlama tahminleri:**
+   - `dev-clean-1192`: `"Dicle Gençlik kulübü"` → `"Kulübü"` (**YANLIŞ**)
+   - `dev-clean-1442`: `"Sırp Listesi partisini"` → `"Partisini"` (**YANLIŞ**)
+   - `dev-clean-238`: `"Yahudi kültür Birliği"` → `"Kültür"` (**YANLIŞ**)
+   - `dev-clean-1747`: `"Millî Eğitim Özel İhtisas komisyonu"` → `"Komisyonu"` (**YANLIŞ**)
+   - `dev-clean-1350`: `"Londra Büyük elçiliği"` → `"Elçiliği"` (**YANLIŞ**)
+   - `dev-clean-485`: `"PTT genel müdürlüğünde"` → `"Genel Müdürlüğünde"` (**BELİRSİZ**)
+   - `conv-clean-2245`: `"Boston Üniversitesi iletişim bölümünden"` → `"İletişim Bölümünden"` (**YANLIŞ/BELİRSİZ**)
+   - `dev2-clean-1905`: `"(Eskimo köy odası)"` → `"Köy Odası"` (**YANLIŞ**)
+5. **Çekimli kurum adından sonra yüklem koşaçlı coğrafi baş sözcük (`dev2-clean-1825`):** `"Atatürk Lisesi’nin sokağıdır"` → Adım 4 W4 `Lisesi’nin → Lisesinin` yapınca kesme kalktığı için Adım 6b `sokağıdır → Sokağı'dır` hatası üretiyordu (**YANLIŞ**).
+6. **Tam özel ad önündeki sıfat-fiil/deyim çakışması (`dev2-clean-1886`):** `"sözleşmesi sona eren Okan Buruk"` → `"sona Eren Okan Buruk"` (**YANLIŞ** — `eren` sıfat-fiili, zaten tam `Ad Soyadı` olan `Okan Buruk` önünde kişi adı sanılıyordu).
+7. **Günlük metinde yalın iki kelimeli `<çoğul> günü` özel günleri (`synth/tune` clean `gunluk-283`, `okul-210`):** `"Bugün öğretmenler günü, çiçek almam lazım."`, `"Öğretmenler günü için sınıfımızla küçük bir sürpriz hazırladık."` (**BELİRSİZ/GEREKSİZ** — `synth/tune clean`'i `0,20 → 0,49`'a çıkaran tek kaynak).
+8. **Yabancı çoğul `-s` ve düşük büyük-harf oranlı marka çoğulları (`conv-clean-503`, `conv-clean-2525`):** `"Sharks'ların"` → `"Sharksların"`, `"Volvo'ları"` → `"Volvoları"` (**YANLIŞ/BELİRSİZ**; buna karşılık TDK kuralına uygun `"Weisse'ler" → "Weisseler"` korundu).
+9. **Noktadan sonra parantez içi küçük harfli ara cümle (`dev2-clean-1854`):** `"...verilir. (başka bir deyişle, ...)."` → `"Başka"` (**BELİRSİZ** — nokta parantez dışındayken parantez içi büyütülmemeli).
+10. **Bağlam modeli (`+CTX`) Türkçe `name` yanlış alarmları (`dev-clean-999`, `dev-clean-1105`, `dev-clean-1126`):** tırnak içi sözlük anlamı `'"güneş" anlamına gelen'` → `"Güneş"`, aynı cümlede küçük harfli kökü geçen `"savaşa ... savaş başladıktan sonra"` → `"Savaş'a"` ve cümle başındaki çok sık cins ad `"Savaşa gitme nedeni..."` → `"Savaş'a"` (**YANLIŞ**).
+
+### 10.2 Uygulanan Genel Kurallar ve Eşikler
+Tek tek kelime yasaklamak yerine her hata sınıfı için genel dilbilgisi ve derlem eşiği eklendi:
+- **Bağlamsal `PhraseContext` (`"era" | "day" | "work"`) — `src/rules/proper-names.ts`, `src/known.ts`, `scripts/build-names.ts`, `src/sentence.ts` (Adım 2):**
+  - `"era"` (`Eski Çağ`, `İlk Çağ`, `Yeni Çağ`, `Yakın Çağ`): yalın ve küçük harfliyken arkasından 3. tekil iyelikli sıradan bir ad (`astronomlarının`, `insanlarının`, `düşüncesi` vb.) geliyorsa büyütülmez; çekimli dönem adları (`Eski Çağ'ın`, `İlk Çağ'da`) ve özne dönem kullanımları (`İlk Çağ yazının icadıyla başladı`) büyütülür.
+  - `"day"` (`Öğretmenler Günü`, `Anneler Günü`, `Babalar Günü`, `Kadınlar Günü`, `Sevgililer Günü`): yalın kullanımda cümlede kutlama/tören/tarih bağlamı (`tören`, `kutlu`, `kutla`, `anma`, `hediye`, tarih vb.) ya da çekim eki (`Öğretmenler Günü'nde`) aranır; `Bayramı`, `Kandili`, `Gaziler Günü` ve 3+ kelimeli resmî günler koşulsuz kalır.
+  - `"work"` (sıradan Türkçe kelimelerden oluşan kitap/film adları: `Kış Uykusu`, `Yeni Hayat`, `Sessiz Ev`, `Büyük Umutlar`, `Küçük Prens` vb.): okuma/izleme/yazar iyeliği bağlamı veya metinde başlık sözcüklerinin zaten büyük yazılmış olması aranır.
+- **Kör yön + yer kuralının (Adım 6c) kaldırılması ve derlem eşiği (`scripts/build-names.ts`):** Adım 6c tamamen kaldırıldı; yalnızca Vikipedi'de yüksek sıklıkla (`cap_count >= 300`) kanıtlanan veya kanonik yerleşik bölge/ülke adları (`Batı Anadolu`, `Doğu Anadolu`, `Doğu Karadeniz`, `Kuzey Amerika`, `Güney Kore`, `Orta Asya` vb.) `PHRASE_APOS` üzerinden büyütülür.
+- **Bileşimsel kurum tahmininde karma-büyük-harf koruması (Adım 6a):** Baş sözcük zaten büyükse sola doğru küçük ara kelime tahmini yapılmaz (`Yahudi kültür Birliği`); `PHRASE_NOAPOS` dışında kalan karma-büyük-harfli çok kelimeli dizilerde tahminle büyütme yapılmaz (`Dicle Gençlik kulübü`, `Sırp Listesi partisini`, `Özel İhtisas komisyonu`, `Londra Büyük elçiliği`, `PTT genel müdürlüğünde`, `Boston Üniversitesi iletişim bölümünden`, `Eskimo köy odası`); yalnızca 2 kelimelik `<BilinenÖzelAd> <üniversitesi|bakanlığı|lisesi|hastanesi|belediyesi|valiliği|kaymakamlığı|pastanesi|bakkaliyesi>` ve tamamen küçük harfli kurum kalıpları işlenir.
+- **Kurum + makam unvanı ayrımı (Adım 6a-officer):** Çekimsiz küçük harfli görev adları arkasından kişi adı, meslek/unvan (`ressam Carl Horn`, `Resul Guliyev`) ya da koşaç/görev fiili (`olan`, `olarak`, `oldu`, `seçildi`) geliyorsa büyütülmez; makam yerine geçen unvanlar (`Türk Dil Kurumu Başkanı'na`, `Türk Dil Kurumu Başkanı açıklama yaptı`) korunur.
+- **Çekimli kurum gövdesi + yüklem koşaç koruması (Adım 6b):** Ham metinde kesme taşıyan veya çekim eki almış kurum baş sözcükleri (`Lisesi’nin → Lisesinin`) sola taramada durdurulur; büyük harfli kelimeden sonra gelen yüklem koşaçlı küçük coğrafi baş sözcükler (`sokağıdır`) büyütülmez.
+- **Ad + Soyadı ikilisinde sıfat-fiil/tam-ad koruması (Adım 7h Durum 2):** Belirsiz küçük harfli sözcük (`eren`), solundaki küçük harfli sözcükle güçlü ikili (`sona eren`, `lexPair >= 20`) oluşturuyorsa ya da sağındaki büyük harfli sözcük zaten iki kelimelik büyük harfli bir ad-soyadı (`Okan Buruk`) başlatıyorsa büyütülmez.
+- **Yabancı çoğul `-s` ve marka çoğulu koruması (Adım 4 W2):** Bitişik biçimi sözlükte/biçimbilimde görünmeyen, ünsüz+`s` ile biten yabancı çoğullarda (`Sharks'ların`) ve `capShare < 0,60` yabancı marka çoğul+hal eklerinde (`Volvo'ları`) kesme silinmez; TDK kuralına uygun `Weisse'ler → Weisseler`, `Alman'lar → Almanlar`, `İzmir'li → İzmirli` aynen korunur.
+- **Parantez içi ara cümle ve `+CTX` alıntı/aynı-kök/cümle-başı korumaları (Adım 8f, Adım 9, `src/corrector.ts`):** `. (başka ...).` biçimindeki parantez içi ara cümle büyütülmez; tırnak içi sözlük anlamı (`"güneş" anlamına gelen`) ve aynı cümlede küçük harfli kökü geçen kelimeler (`savaşa ... savaş`) bağlam modeline sorulmaz; cümle başındaki çok sık cins ad çekimlerinde (`count >= 1000 && capShare <= 0,05`, ör. `Savaşa`) bağlam eşiği `+1,5` (`4,0`) yükseltilir.
+
+### 10.3 Önce / Sonra Karşılaştırması (`--browser --set sentenceCase=1`)
+
+#### Temiz Metinler (`changed / 1.000 kelime` ve Türkçe yanlış büyütme/değişiklik sayısı)
+| Temiz Set | `sc=0` | `eaed335` | `3a04480` (Önce) | **Sonra (Çekirdek)** | **Sonra (`+CTX`)** | Türkçe Yanlış Büyütme / `name` FA |
+|---|---:|---:|---:|---:|---:|---|
+| `bench/synth/tune.jsonl` `clean` | 0,10 | 0,20 | 0,49 (5) | **0,20 (2)** | **0,20 (2)** | **0** (`kahvaltıda` + `Ankara'dan`) |
+| `bench/dev/clean.jsonl` | 1,82 | 2,48 | 4,54 (117) | **4,00 (103)** | **4,07 (105)** | **0** (14 çekirdek + 3 `+CTX` FA sıfırlandı)* |
+| `bench/dev2/clean.jsonl` | 1,72 | 2,34 | 3,51 (90) | **2,85 (73)** | **2,93 (75)** | **0** (17 çekirdek + 2 `+CTX` FA sıfırlandı)* |
+| `bench/conversation/clean.jsonl` | 6,66 | 8,52 | 9,27 (199) | **9,08 (195)** | **9,22 (198)** | **0** (4 yanlış/yabancı marka kaldırıldı)** |
+| `bench/handwritten/neon-v1.jsonl` `clean` | 0,00 | 0,00 | 0,00 (0) | **0,00 (0)** | **0,00 (0)** | **0** |
+| `bench/names/tune.jsonl` `clean` | — | 0,00 | 0,00 (0) | **0,00 (0)** | **0,00 (0)** | **0** |
+
+\* `dev/clean` ve `dev2/clean` üzerindeki kalan tüm `punct` değişiklikleri gerçek TDK düzeltmeleridir (`Üniversitesi'nde → Üniversitesinde`, `Fransızca'ya → Fransızcaya`, `Weisse'ler → Weisseler`, `sunucu'ların → sunucuların`, `Mustafa ağa'nın → Ağa'nın`, `Muratın → Murat'ın`, eksik boşluk ve cümle başı; ayrıca yabancı sözcük kaynaklı 2 örnek `yuri`, `helios'tan`). `+CTX` üzerinde yalnızca gerçek yazım/yer adı düzeltmeleri kalmıştır (`heme → hemen`, `İsmail-pınar → İsmail-Pınar`).
+
+\*\* **`bench/conversation/clean.jsonl` (`9,08` vs `eaed335` `8,52`) tam dökümü:** `conv/clean` (21.478 kelime) üzerinde `sc=0` zaten `143` (`6,66/1000`), `eaed335` ise `183` (`8,52/1000` = `143` + `31` cümle başı + `6` eksik boşluk + `1` `amerikan` + `2` yanlış yabancı `said`/`madame`) değişiklik yapmaktadır. Yeni sürümdeki `195` (`9,08/1000`) değişiklik `143` (`sc=0`) + `38` (`eaed335` ile ortak cümle başı/boşluk/`amerikan`) + **14 gerçek TDK düzeltmesinden** oluşur: `Windsor Üniversitesi'nde → Üniversitesinde`, `Senato İdare Kurulu'na → Kuruluna`, `Britanyalılar'ı → Britanyalıları`, `Kahireden → Kahire'den`, `80lere → 80'lere`, `Cebelitarık boğazında → Boğazı'nda`, `Sinema'dan → Sinemadan`, `bay Murray → Bay`, `Sayın yargıç → Yargıç` (×2), `Fremen'lerin → Fremenlerin` (×2), `Turner'ların → Turnerların`, `Maria'ların → Mariaların`. Yani `8,52`'nin (`183`) üzerindeki 14 değişikliğin tamamı ham OpenSubtitles metnindeki gerçek TDK hatalarının düzeltmesidir (`0` yanlış/belirsiz Türkçe değişiklik); `8,52` altına inmek ancak bu TDK kurallarını (ör. kurum/çokluk kesmesi, hitap, sayı eki, cümle başı özel ad) kapatmakla mümkündür ki bu hem korunan TDK örneklerini hem `names/tune` başarısını bozar.
+
+#### `bench/names/tune.jsonl` Önce / Sonra (Ayar & Doğrulama Yarıları)
+| Bölüm / Sınıf | `3a04480` Çekirdek | **Sonra Çekirdek** | `3a04480` `+CTX` | **Sonra `+CTX`** | Fark |
+|---|---:|---:|---:|---:|---:|
+| **Ayar (`id%4=0`, 355 hata)** | **%91,55 (325)** | **%91,55 (325)** | **%92,11 (327)** | **%92,11 (327)** | **0,00 puan** |
+| Ayar `clean` (125) | 0/125 | **0/125** | 0/125 | **0/125** | 0 |
+| **Doğrulama (`id%4=2`, 350 hata)** | **%79,71 (279)** | **%79,14 (277)** | **%80,86 (283)** | **%80,29 (281)** | **-0,57 puan** |
+| Doğrulama `clean` (130) | 0/130 | **0/130** | 0/130 | **0/130** | 0 |
+| Doğrulama `kesme_yanlis` (33) | %81,8 | **%84,8** | %81,8 | **%84,8** | **+3,0 puan** |
+| Doğrulama `tarih_zaman` (20) | %100,0 | **%85,0** | %100,0 | **%85,0** | -15,0 (3 satır) |
+| Doğrulama diğer 9 sınıf | — | **birebir aynı** | — | **birebir aynı** | **0,0 puan** |
+| **Tam Set `kesme_yanlis` (65)** | %90,8 (kes. %98,5) | **%92,3 (kes. %100,0)** | %90,8 | **%92,3 (kes. %100,0)** | **+1,5 puan** |
+
+- **Boyut ve hız:** `CORE MODELS` **3,559 MB gzip** (`known.tsv` `0,110 MB`), `context.onnx` **2,509 MB gzip**; çekirdek hızı **52–95 µs/kelime**.
+- **Test ve derleme:** `npm run typecheck`, `npm test` (tüm yeni temiz-metin korumaları [src/sentence.test.ts](src/sentence.test.ts) içinde), `cd pkg && npm test` (28/28), `npm --prefix site run build` hatasız geçti; `dev` ve `synth/tune` `sc=0` gerileme kontrolünde 0 düşüş doğrulandı.

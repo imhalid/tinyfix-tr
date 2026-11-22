@@ -36,6 +36,7 @@ import {
   WEEKDAYS,
   capTr,
   isInstitutionHead,
+  type PhraseContext,
 } from "../src/rules/proper-names.ts";
 import { lowerTr, upperTr } from "../src/turkish.ts";
 
@@ -595,11 +596,11 @@ for (const line of readFileSync(`${CORPUS_DIR}/surnames.tsv`, "utf8").split("\n"
 }
 
 // --- 4. Multi-word Proper Phrases (PHRASE_APOS / PHRASE_NOAPOS) ---
-const phrases = new Map<string, { display: string; takesApos: boolean; count: number }>();
+const phrases = new Map<string, { display: string; takesApos: boolean; count: number; context?: PhraseContext }>();
 
-for (const [display, takesApos] of CANONICAL_PHRASES) {
+for (const [display, takesApos, context] of CANONICAL_PHRASES) {
   const low = lowerTr(display);
-  phrases.set(low, { display, takesApos, count: 10000 });
+  phrases.set(low, { display, takesApos, count: 10000, context });
 }
 
 const GENERIC_PHRASE_FIRST = new Set([
@@ -665,7 +666,7 @@ for (const line of readFileSync(`${CORPUS_DIR}/phrases.tsv`, "utf8").split("\n")
     takesApos = true;
   } else if (
     words.length === 2 &&
-    (DIRECTIONS.has(words[0]!) || words[0] === "yeni" || words[0] === "suudi" || words[0] === "bosna") &&
+    ((DIRECTIONS.has(words[0]!) && cnt >= 300) || words[0] === "yeni" || words[0] === "suudi" || words[0] === "bosna") &&
     !DIRECTIONS.has(last) &&
     (namesMap.has(last) || properDict.has(last))
   ) {
@@ -710,7 +711,7 @@ for (const [w, disp] of [...ambigMap.entries()].sort((a, b) => a[0].localeCompar
   out.push(`${w}\t${disp}\t0\t0\tAMBIG`);
 }
 for (const [low, info] of [...phrases.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-  out.push(`${low}\t${info.display}\t0\t${info.count}\t${info.takesApos ? "PHRASE_APOS" : "PHRASE_NOAPOS"}`);
+  out.push(`${low}\t${info.display}\t${info.context ?? "0"}\t${info.count}\t${info.takesApos ? "PHRASE_APOS" : "PHRASE_NOAPOS"}`);
 }
 
 writeFileSync("data/rules/names.tsv", out.join("\n") + "\n");

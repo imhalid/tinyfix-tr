@@ -9296,7 +9296,7 @@ yonca	Yonca	0	0	AMBIG
 yüksel	Yüksel	0	0	AMBIG
 zafer	Zafer	0	0	AMBIG
 abant gölü	Abant Gölü	0	10000	PHRASE_APOS
-acımak	Acımak	0	10000	PHRASE_APOS
+acımak	Acımak	work	10000	PHRASE_APOS
 adalet bakanlığı	Adalet Bakanlığı	0	10000	PHRASE_NOAPOS
 adalet partisi	Adalet Partisi	0	393	PHRASE_NOAPOS
 adalet ve kalkınma partisi	Adalet ve Kalkınma Partisi	0	10000	PHRASE_NOAPOS
@@ -9310,7 +9310,7 @@ aganta burina burinata	Aganta Burina Burinata	0	10000	PHRASE_APOS
 ağrı dağı	Ağrı Dağı	0	10000	PHRASE_APOS
 ağrı dağı efsanesi	Ağrı Dağı Efsanesi	0	10000	PHRASE_APOS
 ahameniş imparatorluğu	Ahameniş İmparatorluğu	0	195	PHRASE_APOS
-ahlat ağacı	Ahlat Ağacı	0	10000	PHRASE_APOS
+ahlat ağacı	Ahlat Ağacı	work	10000	PHRASE_APOS
 aile ve sosyal hizmetler bakanlığı	Aile ve Sosyal Hizmetler Bakanlığı	0	10000	PHRASE_NOAPOS
 akdeniz bölgesi	Akdeniz Bölgesi	0	10000	PHRASE_APOS
 akdeniz üniversitesi	Akdeniz Üniversitesi	0	10000	PHRASE_NOAPOS
@@ -9343,7 +9343,7 @@ anadolu üniversitesi	Anadolu Üniversitesi	0	10000	PHRASE_NOAPOS
 anavatan partisi	Anavatan Partisi	0	281	PHRASE_NOAPOS
 anayasa konseyi	Anayasa Konseyi	0	104	PHRASE_NOAPOS
 anayasa mahkemesi	Anayasa Mahkemesi	0	10000	PHRASE_NOAPOS
-anayurt oteli	Anayurt Oteli	0	10000	PHRASE_APOS
+anayurt oteli	Anayurt Oteli	work	10000	PHRASE_APOS
 ankara büyükşehir belediyesi	Ankara Büyükşehir Belediyesi	0	10000	PHRASE_NOAPOS
 ankara devlet konservatuvarı	Ankara Devlet Konservatuvarı	0	200	PHRASE_NOAPOS
 ankara devlet tiyatrosu	Ankara Devlet Tiyatrosu	0	692	PHRASE_NOAPOS
@@ -9358,10 +9358,10 @@ ankara üniversitesi hukuk fakültesi	Ankara Üniversitesi Hukuk Fakültesi	0	26
 ankara üniversitesi siyasal bilgiler fakültesi	Ankara Üniversitesi Siyasal Bilgiler Fakültesi	0	424	PHRASE_NOAPOS
 ankara üniversitesi tıp fakültesi	Ankara Üniversitesi Tıp Fakültesi	0	70	PHRASE_NOAPOS
 anna karenina	Anna Karenina	0	10000	PHRASE_APOS
-anneler günü	Anneler Günü	0	10000	PHRASE_APOS
+anneler günü	Anneler Günü	day	10000	PHRASE_APOS
 antakya prensliği	Antakya Prensliği	0	104	PHRASE_APOS
 antalya devlet tiyatrosu	Antalya Devlet Tiyatrosu	0	84	PHRASE_NOAPOS
-araba sevdası	Araba Sevdası	0	10000	PHRASE_APOS
+araba sevdası	Araba Sevdası	work	10000	PHRASE_APOS
 arap birliği	Arap Birliği	0	157	PHRASE_NOAPOS
 arap cumhuriyeti	Arap Cumhuriyeti	0	77	PHRASE_APOS
 arap israil savaşı	Arap İsrail Savaşı	0	200	PHRASE_APOS
@@ -9371,7 +9371,7 @@ arizona üniversitesi	Arizona Üniversitesi	0	76	PHRASE_NOAPOS
 arkeoloji müzesi	Arkeoloji Müzesi	0	195	PHRASE_NOAPOS
 arktik okyanusu	Arktik Okyanusu	0	114	PHRASE_APOS
 asi nehri	Asi Nehri	0	98	PHRASE_APOS
-aşk ve gurur	Aşk ve Gurur	0	10000	PHRASE_APOS
+aşk ve gurur	Aşk ve Gurur	work	10000	PHRASE_APOS
 aşk-ı memnu	Aşk-ı Memnu	0	10000	PHRASE_APOS
 asturias prensliği	Asturias Prensliği	0	76	PHRASE_APOS
 asur imparatorluğu	Asur İmparatorluğu	0	65	PHRASE_APOS
@@ -9386,7 +9386,7 @@ atatürk stadyumu	Atatürk Stadyumu	0	109	PHRASE_APOS
 atatürk üniversitesi	Atatürk Üniversitesi	0	10000	PHRASE_NOAPOS
 atatürk'ü anma gençlik ve spor bayramı	Atatürk'ü Anma Gençlik ve Spor Bayramı	0	10000	PHRASE_APOS
 atatürk'ü anma, gençlik ve spor bayramı	Atatürk'ü Anma, Gençlik ve Spor Bayramı	0	10000	PHRASE_APOS
-ateşten gömlek	Ateşten Gömlek	0	10000	PHRASE_APOS
+ateşten gömlek	Ateşten Gömlek	work	10000	PHRASE_APOS
 atlantik okyanusu	Atlantik Okyanusu	0	283	PHRASE_APOS
 atlas okyanusu	Atlas Okyanusu	0	10000	PHRASE_APOS
 attik delos birliği	Attik Delos Birliği	0	76	PHRASE_NOAPOS
@@ -9404,7 +9404,7 @@ avusturya imparatorluğu	Avusturya İmparatorluğu	0	227	PHRASE_APOS
 avusturya macaristan imparatorluğu	Avusturya Macaristan İmparatorluğu	0	512	PHRASE_APOS
 ayaşlı ve kiracıları	Ayaşlı ve Kiracıları	0	10000	PHRASE_APOS
 aydınlanma çağı	Aydınlanma Çağı	0	10000	PHRASE_APOS
-aylak adam	Aylak Adam	0	10000	PHRASE_APOS
+aylak adam	Aylak Adam	work	10000	PHRASE_APOS
 azak denizi	Azak Denizi	0	112	PHRASE_APOS
 azerbaycan cumhuriyeti	Azerbaycan Cumhuriyeti	0	346	PHRASE_APOS
 azerbaycan demokratik cumhuriyeti	Azerbaycan Demokratik Cumhuriyeti	0	169	PHRASE_APOS
@@ -9412,9 +9412,9 @@ azerbaycan sovyet sosyalist cumhuriyeti	Azerbaycan Sovyet Sosyalist Cumhuriyeti	
 aziziye belediyesi	Aziziye Belediyesi	0	69	PHRASE_NOAPOS
 baas partisi	Baas Partisi	0	452	PHRASE_NOAPOS
 baba türbesi	Baba Türbesi	0	107	PHRASE_APOS
-babalar günü	Babalar Günü	0	10000	PHRASE_APOS
-babalar ve oğullar	Babalar ve Oğullar	0	10000	PHRASE_APOS
-babam ve oğlum	Babam ve Oğlum	0	10000	PHRASE_APOS
+babalar günü	Babalar Günü	day	10000	PHRASE_APOS
+babalar ve oğullar	Babalar ve Oğullar	work	10000	PHRASE_APOS
+babam ve oğlum	Babam ve Oğlum	work	10000	PHRASE_APOS
 babür imparatorluğu	Babür İmparatorluğu	0	165	PHRASE_APOS
 bağdat caddesi	Bağdat Caddesi	0	10000	PHRASE_APOS
 bağımsızlık savaşı	Bağımsızlık Savaşı	0	245	PHRASE_APOS
@@ -9434,38 +9434,29 @@ başkent üniversitesi	Başkent Üniversitesi	0	10000	PHRASE_NOAPOS
 başkomutanlık meydan muharebesi	Başkomutanlık Meydan Muharebesi	0	10000	PHRASE_APOS
 basra körfezi	Basra Körfezi	0	380	PHRASE_APOS
 batı afrika	Batı Afrika	0	442	PHRASE_APOS
-batı akdeniz	Batı Akdeniz	0	143	PHRASE_APOS
-batı alman	Batı Alman	0	97	PHRASE_APOS
 batı almanya	Batı Almanya	0	1303	PHRASE_APOS
-batı anadolu	Batı Anadolu	0	543	PHRASE_APOS
-batı asya	Batı Asya	0	167	PHRASE_APOS
+batı anadolu	Batı Anadolu	0	10000	PHRASE_APOS
 batı avrupa	Batı Avrupa	0	1047	PHRASE_APOS
-batı avustralya	Batı Avustralya	0	237	PHRASE_APOS
-batı azerbaycan	Batı Azerbaycan	0	74	PHRASE_APOS
-batı berlin	Batı Berlin	0	184	PHRASE_APOS
 batı göktürk kağanlığı	Batı Göktürk Kağanlığı	0	71	PHRASE_APOS
-batı gürcistan	Batı Gürcistan	0	186	PHRASE_APOS
-batı karadeniz	Batı Karadeniz	0	75	PHRASE_APOS
-batı roma	Batı Roma	0	102	PHRASE_APOS
+batı karadeniz	Batı Karadeniz	0	10000	PHRASE_APOS
 batı roma imparatorluğu	Batı Roma İmparatorluğu	0	231	PHRASE_APOS
-batı sibirya	Batı Sibirya	0	68	PHRASE_APOS
-batı trakya	Batı Trakya	0	136	PHRASE_APOS
-batı ukrayna	Batı Ukrayna	0	68	PHRASE_APOS
-batı virginia	Batı Virginia	0	211	PHRASE_APOS
+batı sahra	Batı Sahra	0	10000	PHRASE_APOS
+batı şeria	Batı Şeria	0	10000	PHRASE_APOS
+batı trakya	Batı Trakya	0	10000	PHRASE_APOS
 bayındırlık bakanlığı	Bayındırlık Bakanlığı	0	80	PHRASE_NOAPOS
 baykal gölü	Baykal Gölü	0	114	PHRASE_APOS
 bengal körfezi	Bengal Körfezi	0	67	PHRASE_APOS
-benim adım kırmızı	Benim Adım Kırmızı	0	10000	PHRASE_APOS
+benim adım kırmızı	Benim Adım Kırmızı	work	10000	PHRASE_APOS
 berat kandili	Berat Kandili	0	10000	PHRASE_APOS
-bereketli topraklar üzerinde	Bereketli Topraklar Üzerinde	0	10000	PHRASE_APOS
+bereketli topraklar üzerinde	Bereketli Topraklar Üzerinde	work	10000	PHRASE_APOS
 bering boğazı	Bering Boğazı	0	68	PHRASE_APOS
 berlin antlaşması	Berlin Antlaşması	0	442	PHRASE_APOS
 berlin olimpiyat stadyumu	Berlin Olimpiyat Stadyumu	0	75	PHRASE_APOS
 berlin üniversitesi	Berlin Üniversitesi	0	184	PHRASE_NOAPOS
 beşiktaş jimnastik kulübü	Beşiktaş Jimnastik Kulübü	0	82	PHRASE_NOAPOS
 bey camii	Bey Camii	0	79	PHRASE_APOS
-beyaz diş	Beyaz Diş	0	10000	PHRASE_APOS
-beyaz kale	Beyaz Kale	0	10000	PHRASE_APOS
+beyaz diş	Beyaz Diş	work	10000	PHRASE_APOS
+beyaz kale	Beyaz Kale	work	10000	PHRASE_APOS
 beyazıt devlet kütüphanesi	Beyazıt Devlet Kütüphanesi	0	10000	PHRASE_NOAPOS
 beylerbeyi sarayı	Beylerbeyi Sarayı	0	10000	PHRASE_APOS
 beyşehir gölü	Beyşehir Gölü	0	10000	PHRASE_APOS
@@ -9475,10 +9466,10 @@ bilgi yayınevi	Bilgi Yayınevi	0	229	PHRASE_NOAPOS
 bilim ve kültür örgütü	Bilim ve Kültür Örgütü	0	85	PHRASE_NOAPOS
 bilimleri enstitüsü	Bilimleri Enstitüsü	0	270	PHRASE_NOAPOS
 bilimleri fakültesi	Bilimleri Fakültesi	0	273	PHRASE_NOAPOS
-bilinmeyen bir kadının mektubu	Bilinmeyen Bir Kadının Mektubu	0	10000	PHRASE_APOS
+bilinmeyen bir kadının mektubu	Bilinmeyen Bir Kadının Mektubu	work	10000	PHRASE_APOS
 bilkent üniversitesi	Bilkent Üniversitesi	0	10000	PHRASE_NOAPOS
-bir düğün gecesi	Bir Düğün Gecesi	0	10000	PHRASE_APOS
-bir yaz gecesi rüyası	Bir Yaz Gecesi Rüyası	0	10000	PHRASE_APOS
+bir düğün gecesi	Bir Düğün Gecesi	work	10000	PHRASE_APOS
+bir yaz gecesi rüyası	Bir Yaz Gecesi Rüyası	work	10000	PHRASE_APOS
 bir zamanlar anadolu'da	Bir Zamanlar Anadolu'da	0	10000	PHRASE_APOS
 birinci balkan savaşı	Birinci Balkan Savaşı	0	151	PHRASE_APOS
 birinci dünya savaşı	Birinci Dünya Savaşı	0	10000	PHRASE_APOS
@@ -9503,7 +9494,7 @@ brest litovsk antlaşması	Brest Litovsk Antlaşması	0	73	PHRASE_APOS
 britanya imparatorluğu	Britanya İmparatorluğu	0	320	PHRASE_APOS
 brown üniversitesi	Brown Üniversitesi	0	86	PHRASE_NOAPOS
 buckingham sarayı	Buckingham Sarayı	0	100	PHRASE_APOS
-bülbülü öldürmek	Bülbülü Öldürmek	0	10000	PHRASE_APOS
+bülbülü öldürmek	Bülbülü Öldürmek	work	10000	PHRASE_APOS
 bulgar imparatorluğu	Bulgar İmparatorluğu	0	77	PHRASE_APOS
 bulgaristan prensliği	Bulgaristan Prensliği	0	71	PHRASE_APOS
 bursa devlet tiyatrosu	Bursa Devlet Tiyatrosu	0	131	PHRASE_NOAPOS
@@ -9514,7 +9505,7 @@ büyük okyanus	Büyük Okyanus	0	10000	PHRASE_APOS
 büyük selçuklu devleti	Büyük Selçuklu Devleti	0	194	PHRASE_APOS
 büyük selçuklu imparatorluğu	Büyük Selçuklu İmparatorluğu	0	72	PHRASE_APOS
 büyük taarruz	Büyük Taarruz	0	10000	PHRASE_APOS
-büyük umutlar	Büyük Umutlar	0	10000	PHRASE_APOS
+büyük umutlar	Büyük Umutlar	work	10000	PHRASE_APOS
 büyük vatanseverlik savaşı	Büyük Vatanseverlik Savaşı	0	144	PHRASE_APOS
 büyükdere caddesi	Büyükdere Caddesi	0	78	PHRASE_APOS
 büyükşehir belediye başkanlığı	Büyükşehir Belediye Başkanlığı	0	123	PHRASE_NOAPOS
@@ -9532,14 +9523,14 @@ cambridge üniversitesi	Cambridge Üniversitesi	0	405	PHRASE_NOAPOS
 çanakkale savaşı	Çanakkale Savaşı	0	10000	PHRASE_APOS
 çanakkale zaferi	Çanakkale Zaferi	0	10000	PHRASE_APOS
 çankaya köşkü	Çankaya Köşkü	0	10000	PHRASE_APOS
-çanlar kimin için çalıyor	Çanlar Kimin İçin Çalıyor	0	10000	PHRASE_APOS
+çanlar kimin için çalıyor	Çanlar Kimin İçin Çalıyor	work	10000	PHRASE_APOS
 cantabrian denizi	Cantabrian Denizi	0	73	PHRASE_APOS
-çavdar tarlasında çocuklar	Çavdar Tarlasında Çocuklar	0	10000	PHRASE_APOS
+çavdar tarlasında çocuklar	Çavdar Tarlasında Çocuklar	work	10000	PHRASE_APOS
 çek cumhuriyeti	Çek Cumhuriyeti	0	1020	PHRASE_APOS
 cem yayınevi	Cem Yayınevi	0	69	PHRASE_NOAPOS
 ceneviz cumhuriyeti	Ceneviz Cumhuriyeti	0	103	PHRASE_APOS
 cerrahpaşa tıp fakültesi	Cerrahpaşa Tıp Fakültesi	0	98	PHRASE_NOAPOS
-cesur yeni dünya	Cesur Yeni Dünya	0	10000	PHRASE_APOS
+cesur yeni dünya	Cesur Yeni Dünya	work	10000	PHRASE_APOS
 cevdet bey ve oğulları	Cevdet Bey ve Oğulları	0	10000	PHRASE_APOS
 çevre, şehircilik ve iklim değişikliği bakanlığı	Çevre, Şehircilik ve İklim Değişikliği Bakanlığı	0	10000	PHRASE_NOAPOS
 chicago üniversitesi	Chicago Üniversitesi	0	336	PHRASE_NOAPOS
@@ -9553,7 +9544,7 @@ cilalı taş devri	Cilalı Taş Devri	0	10000	PHRASE_APOS
 çırağan sarayı	Çırağan Sarayı	0	10000	PHRASE_APOS
 coğrafi keşifler	Coğrafi Keşifler	0	10000	PHRASE_APOS
 columbia üniversitesi	Columbia Üniversitesi	0	499	PHRASE_NOAPOS
-çöpçüler kralı	Çöpçüler Kralı	0	10000	PHRASE_APOS
+çöpçüler kralı	Çöpçüler Kralı	work	10000	PHRASE_APOS
 cornell üniversitesi	Cornell Üniversitesi	0	179	PHRASE_NOAPOS
 çoruh nehri	Çoruh Nehri	0	125	PHRASE_APOS
 çukurova üniversitesi	Çukurova Üniversitesi	0	10000	PHRASE_NOAPOS
@@ -9586,7 +9577,7 @@ demokratik partisi	Demokratik Partisi	0	165	PHRASE_NOAPOS
 deniz harp okulu	Deniz Harp Okulu	0	103	PHRASE_NOAPOS
 deniz kuvvetleri komutanlığı	Deniz Kuvvetleri Komutanlığı	0	81	PHRASE_NOAPOS
 denizcilik ve kabotaj bayramı	Denizcilik ve Kabotaj Bayramı	0	10000	PHRASE_APOS
-devlet ana	Devlet Ana	0	10000	PHRASE_APOS
+devlet ana	Devlet Ana	work	10000	PHRASE_APOS
 devlet demir yolları	Devlet Demir Yolları	0	10000	PHRASE_NOAPOS
 devlet güzel sanatlar akademisi	Devlet Güzel Sanatlar Akademisi	0	66	PHRASE_NOAPOS
 devlet hava meydanları işletmesi	Devlet Hava Meydanları İşletmesi	0	10000	PHRASE_NOAPOS
@@ -9606,28 +9597,18 @@ diyarbakır devlet tiyatrosu	Diyarbakır Devlet Tiyatrosu	0	69	PHRASE_NOAPOS
 dışişleri bakanlığı	Dışişleri Bakanlığı	0	10000	PHRASE_NOAPOS
 doğa tarihi müzesi	Doğa Tarihi Müzesi	0	91	PHRASE_NOAPOS
 doğru yol partisi	Doğru Yol Partisi	0	176	PHRASE_NOAPOS
-doğu afrika	Doğu Afrika	0	254	PHRASE_APOS
 doğu akdeniz	Doğu Akdeniz	0	414	PHRASE_APOS
-doğu alman	Doğu Alman	0	225	PHRASE_APOS
 doğu almanya	Doğu Almanya	0	899	PHRASE_APOS
-doğu anadolu	Doğu Anadolu	0	486	PHRASE_APOS
+doğu anadolu	Doğu Anadolu	0	10000	PHRASE_APOS
 doğu anadolu bölgesi	Doğu Anadolu Bölgesi	0	10000	PHRASE_APOS
 doğu asya	Doğu Asya	0	429	PHRASE_APOS
 doğu avrupa	Doğu Avrupa	0	970	PHRASE_APOS
-doğu azerbaycan	Doğu Azerbaycan	0	81	PHRASE_APOS
-doğu berlin	Doğu Berlin	0	125	PHRASE_APOS
 doğu göktürk kağanlığı	Doğu Göktürk Kağanlığı	0	81	PHRASE_APOS
-doğu gürcistan	Doğu Gürcistan	0	104	PHRASE_APOS
 doğu hindistan şirketi	Doğu Hindistan Şirketi	0	138	PHRASE_NOAPOS
-doğu karadeniz	Doğu Karadeniz	0	359	PHRASE_APOS
-doğu kudüs	Doğu Kudüs	0	156	PHRASE_APOS
-doğu ortodoks	Doğu Ortodoks	0	78	PHRASE_APOS
-doğu pakistan	Doğu Pakistan	0	80	PHRASE_APOS
-doğu prusya	Doğu Prusya	0	224	PHRASE_APOS
+doğu karadeniz	Doğu Karadeniz	0	10000	PHRASE_APOS
 doğu roma	Doğu Roma	0	425	PHRASE_APOS
 doğu roma imparatorluğu	Doğu Roma İmparatorluğu	0	373	PHRASE_APOS
-doğu slav	Doğu Slav	0	70	PHRASE_APOS
-doğu trakya	Doğu Trakya	0	141	PHRASE_APOS
+doğu trakya	Doğu Trakya	0	10000	PHRASE_APOS
 doğu türkistan	Doğu Türkistan	0	328	PHRASE_APOS
 dokuz eylül üniversitesi	Dokuz Eylül Üniversitesi	0	10000	PHRASE_NOAPOS
 dokuzuncu hariciye koğuşu	Dokuzuncu Hariciye Koğuşu	0	10000	PHRASE_APOS
@@ -9637,7 +9618,7 @@ don kişot	Don Kişot	0	10000	PHRASE_APOS
 donetsk halk cumhuriyeti	Donetsk Halk Cumhuriyeti	0	66	PHRASE_APOS
 dormen tiyatrosu	Dormen Tiyatrosu	0	119	PHRASE_NOAPOS
 dostlar tiyatrosu	Dostlar Tiyatrosu	0	130	PHRASE_NOAPOS
-dudaktan kalbe	Dudaktan Kalbe	0	10000	PHRASE_APOS
+dudaktan kalbe	Dudaktan Kalbe	work	10000	PHRASE_APOS
 duke üniversitesi	Duke Üniversitesi	0	89	PHRASE_NOAPOS
 dumlupınar meydan muharebesi	Dumlupınar Meydan Muharebesi	0	10000	PHRASE_APOS
 dünya bankası	Dünya Bankası	0	10000	PHRASE_NOAPOS
@@ -9678,15 +9659,15 @@ ermenistan demokratik cumhuriyeti	Ermenistan Demokratik Cumhuriyeti	0	74	PHRASE_
 ermenistan sovyet sosyalist cumhuriyeti	Ermenistan Sovyet Sosyalist Cumhuriyeti	0	87	PHRASE_APOS
 erzurum kongresi	Erzurum Kongresi	0	10000	PHRASE_APOS
 esenboğa havalimanı	Esenboğa Havalimanı	0	10000	PHRASE_APOS
-esir şehrin insanları	Esir Şehrin İnsanları	0	10000	PHRASE_APOS
-eski çağ	Eski Çağ	0	10000	PHRASE_APOS
+esir şehrin insanları	Esir Şehrin İnsanları	work	10000	PHRASE_APOS
+eski çağ	Eski Çağ	era	10000	PHRASE_APOS
 eskişehir büyükşehir belediyesi şehir tiyatroları	Eskişehir Büyükşehir Belediyesi Şehir Tiyatroları	0	65	PHRASE_NOAPOS
 eskişehir osmangazi üniversitesi	Eskişehir Osmangazi Üniversitesi	0	10000	PHRASE_NOAPOS
 etnografya müzesi	Etnografya Müzesi	0	87	PHRASE_NOAPOS
 everest dağı	Everest Dağı	0	74	PHRASE_APOS
 eyalet üniversitesi	Eyalet Üniversitesi	0	127	PHRASE_NOAPOS
 eyfel kulesi	Eyfel Kulesi	0	93	PHRASE_APOS
-fareler ve insanlar	Fareler ve İnsanlar	0	10000	PHRASE_APOS
+fareler ve insanlar	Fareler ve İnsanlar	work	10000	PHRASE_APOS
 fatih camii	Fatih Camii	0	186	PHRASE_APOS
 fatih sultan mehmet köprüsü	Fatih Sultan Mehmet Köprüsü	0	10000	PHRASE_APOS
 fatih-harbiye	Fatih-Harbiye	0	10000	PHRASE_APOS
@@ -9696,7 +9677,7 @@ fen edebiyat fakültesi	Fen Edebiyat Fakültesi	0	90	PHRASE_NOAPOS
 fenerbahçe spor kulübü	Fenerbahçe Spor Kulübü	0	242	PHRASE_NOAPOS
 fenerbahçe şükrü saracoğlu stadyumu	Fenerbahçe Şükrü Saracoğlu Stadyumu	0	90	PHRASE_APOS
 fetret devri	Fetret Devri	0	10000	PHRASE_APOS
-fikrimin ince gülü	Fikrimin İnce Gülü	0	10000	PHRASE_APOS
+fikrimin ince gülü	Fikrimin İnce Gülü	work	10000	PHRASE_APOS
 filistin devleti	Filistin Devleti	0	91	PHRASE_APOS
 filistin kurtuluş örgütü	Filistin Kurtuluş Örgütü	0	96	PHRASE_NOAPOS
 finlandiya körfezi	Finlandiya Körfezi	0	66	PHRASE_APOS
@@ -9718,7 +9699,7 @@ galatasaray lisesi	Galatasaray Lisesi	0	10000	PHRASE_NOAPOS
 galatasaray spor kulübü	Galatasaray Spor Kulübü	0	201	PHRASE_NOAPOS
 galatasaray üniversitesi	Galatasaray Üniversitesi	0	10000	PHRASE_NOAPOS
 garanti bankası	Garanti Bankası	0	10000	PHRASE_NOAPOS
-gazap üzümleri	Gazap Üzümleri	0	10000	PHRASE_APOS
+gazap üzümleri	Gazap Üzümleri	work	10000	PHRASE_APOS
 gazeteciler cemiyeti	Gazeteciler Cemiyeti	0	95	PHRASE_NOAPOS
 gazi eğitim enstitüsü	Gazi Eğitim Enstitüsü	0	65	PHRASE_NOAPOS
 gazi mustafa kemal bulvarı	Gazi Mustafa Kemal Bulvarı	0	10000	PHRASE_APOS
@@ -9748,43 +9729,21 @@ güney afrika cumhuriyeti	Güney Afrika Cumhuriyeti	0	395	PHRASE_APOS
 güney afrikalı	Güney Afrikalı	0	675	PHRASE_APOS
 güney amerika	Güney Amerika	0	1941	PHRASE_APOS
 güney asya	Güney Asya	0	346	PHRASE_APOS
-güney avrupa	Güney Avrupa	0	152	PHRASE_APOS
-güney avustralya	Güney Avustralya	0	164	PHRASE_APOS
-güney azerbaycan	Güney Azerbaycan	0	100	PHRASE_APOS
-güney carolina	Güney Carolina	0	141	PHRASE_APOS
-güney çin	Güney Çin	0	84	PHRASE_APOS
 güney çin denizi	Güney Çin Denizi	0	117	PHRASE_APOS
-güney ege	Güney Ege	0	75	PHRASE_APOS
-güney fransa	Güney Fransa	0	143	PHRASE_APOS
-güney galler	Güney Galler	0	91	PHRASE_APOS
-güney hindistan	Güney Hindistan	0	94	PHRASE_APOS
-güney hollanda	Güney Hollanda	0	88	PHRASE_APOS
-güney italya	Güney İtalya	0	266	PHRASE_APOS
-güney kafkas	Güney Kafkas	0	72	PHRASE_APOS
-güney kafkasya	Güney Kafkasya	0	279	PHRASE_APOS
-güney kaliforniya	Güney Kaliforniya	0	115	PHRASE_APOS
 güney kaliforniya üniversitesi	Güney Kaliforniya Üniversitesi	0	110	PHRASE_NOAPOS
-güney kıbrıs	Güney Kıbrıs	0	66	PHRASE_APOS
+güney kıbrıs	Güney Kıbrıs	0	10000	PHRASE_APOS
 güney kore	Güney Kore	0	4214	PHRASE_APOS
 güney koreli	Güney Koreli	0	2413	PHRASE_APOS
 güney okyanusu	Güney Okyanusu	0	138	PHRASE_APOS
 güney osetya savaşı	Güney Osetya Savaşı	0	75	PHRASE_APOS
-güney pasifik	Güney Pasifik	0	90	PHRASE_APOS
-güney rusya	Güney Rusya	0	70	PHRASE_APOS
-güney slav	Güney Slav	0	73	PHRASE_APOS
-güney sudan	Güney Sudan	0	235	PHRASE_APOS
-güney tirol	Güney Tirol	0	71	PHRASE_APOS
-güney vietnam	Güney Vietnam	0	191	PHRASE_APOS
-güney yemen	Güney Yemen	0	81	PHRASE_APOS
-güneydoğu anadolu	Güneydoğu Anadolu	0	141	PHRASE_APOS
+güneydoğu anadolu	Güneydoğu Anadolu	0	10000	PHRASE_APOS
 güneydoğu anadolu bölgesi	Güneydoğu Anadolu Bölgesi	0	10000	PHRASE_APOS
 güneydoğu asya	Güneydoğu Asya	0	672	PHRASE_APOS
-güneydoğu avrupa	Güneydoğu Avrupa	0	136	PHRASE_APOS
-gurbet hikâyeleri	Gurbet Hikâyeleri	0	10000	PHRASE_APOS
+gurbet hikâyeleri	Gurbet Hikâyeleri	work	10000	PHRASE_APOS
 gürcistan demokratik cumhuriyeti	Gürcistan Demokratik Cumhuriyeti	0	123	PHRASE_APOS
 gürcistan krallığı	Gürcistan Krallığı	0	249	PHRASE_APOS
 gürcü krallığı	Gürcü Krallığı	0	146	PHRASE_APOS
-gurur ve önyargı	Gurur ve Önyargı	0	10000	PHRASE_APOS
+gurur ve önyargı	Gurur ve Önyargı	work	10000	PHRASE_APOS
 güvenlik konseyi	Güvenlik Konseyi	0	444	PHRASE_NOAPOS
 güzel sanatlar akademisi	Güzel Sanatlar Akademisi	0	240	PHRASE_NOAPOS
 güzel sanatlar fakültesi	Güzel Sanatlar Fakültesi	0	82	PHRASE_NOAPOS
@@ -9799,8 +9758,8 @@ hakları izleme örgütü	Hakları İzleme Örgütü	0	127	PHRASE_NOAPOS
 halk bankası	Halk Bankası	0	10000	PHRASE_NOAPOS
 halk komiserleri konseyi	Halk Komiserleri Konseyi	0	68	PHRASE_NOAPOS
 halkların demokratik partisi	Halkların Demokratik Partisi	0	291	PHRASE_NOAPOS
-handan	Handan	0	10000	PHRASE_APOS
-hanımın çiftliği	Hanımın Çiftliği	0	10000	PHRASE_APOS
+handan	Handan	work	10000	PHRASE_APOS
+hanımın çiftliği	Hanımın Çiftliği	work	10000	PHRASE_APOS
 hansa birliği	Hansa Birliği	0	74	PHRASE_NOAPOS
 hareket partisi	Hareket Partisi	0	147	PHRASE_NOAPOS
 harf devrimi	Harf Devrimi	0	10000	PHRASE_APOS
@@ -9808,7 +9767,7 @@ harf inkılabı	Harf İnkılabı	0	10000	PHRASE_APOS
 harvard üniversitesi	Harvard Üniversitesi	0	695	PHRASE_NOAPOS
 haydarpaşa garı	Haydarpaşa Garı	0	10000	PHRASE_APOS
 haydarpaşa lisesi	Haydarpaşa Lisesi	0	10000	PHRASE_NOAPOS
-hayvan çiftliği	Hayvan Çiftliği	0	10000	PHRASE_APOS
+hayvan çiftliği	Hayvan Çiftliği	work	10000	PHRASE_APOS
 hazar denizi	Hazar Denizi	0	639	PHRASE_APOS
 hazine ve maliye bakanlığı	Hazine ve Maliye Bakanlığı	0	10000	PHRASE_NOAPOS
 heidelberg üniversitesi	Heidelberg Üniversitesi	0	114	PHRASE_NOAPOS
@@ -9825,13 +9784,12 @@ horasan belediyesi	Horasan Belediyesi	0	72	PHRASE_NOAPOS
 hun imparatorluğu	Hun İmparatorluğu	0	71	PHRASE_APOS
 iber yarımadası	İber Yarımadası	0	254	PHRASE_APOS
 ibrani üniversitesi	İbrani Üniversitesi	0	70	PHRASE_NOAPOS
-iç anadolu	İç Anadolu	0	231	PHRASE_APOS
+iç anadolu	İç Anadolu	0	10000	PHRASE_APOS
 iç anadolu bölgesi	İç Anadolu Bölgesi	0	10000	PHRASE_APOS
-iç moğolistan	İç Moğolistan	0	131	PHRASE_APOS
-içimizdeki şeytan	İçimizdeki Şeytan	0	10000	PHRASE_APOS
+içimizdeki şeytan	İçimizdeki Şeytan	work	10000	PHRASE_APOS
 içişleri bakanlığı	İçişleri Bakanlığı	0	10000	PHRASE_NOAPOS
 idil nehri	İdil Nehri	0	89	PHRASE_APOS
-iki şehrin hikâyesi	İki Şehrin Hikâyesi	0	10000	PHRASE_APOS
+iki şehrin hikâyesi	İki Şehrin Hikâyesi	work	10000	PHRASE_APOS
 ikinci bulgar imparatorluğu	İkinci Bulgar İmparatorluğu	0	66	PHRASE_APOS
 ikinci dünya savaşı	İkinci Dünya Savaşı	0	10000	PHRASE_APOS
 ikinci inönü savaşı	İkinci İnönü Savaşı	0	10000	PHRASE_APOS
@@ -9846,9 +9804,9 @@ il halk kütüphanesi	İl Halk Kütüphanesi	0	87	PHRASE_NOAPOS
 il jandarma komutanlığı	İl Jandarma Komutanlığı	0	88	PHRASE_NOAPOS
 ilahi komedya	İlahi Komedya	0	10000	PHRASE_APOS
 ilçe emniyet müdürlüğü	İlçe Emniyet Müdürlüğü	0	71	PHRASE_NOAPOS
-ilk çağ	İlk Çağ	0	10000	PHRASE_APOS
+ilk çağ	İlk Çağ	era	10000	PHRASE_APOS
 imam hatip lisesi	İmam Hatip Lisesi	0	85	PHRASE_NOAPOS
-ince memed	İnce Memed	0	10000	PHRASE_APOS
+ince memed	İnce Memed	work	10000	PHRASE_APOS
 indus nehri	İndus Nehri	0	70	PHRASE_APOS
 inebahtı deniz savaşı	İnebahtı Deniz Savaşı	0	10000	PHRASE_APOS
 ingiliz iç savaşı	İngiliz İç Savaşı	0	90	PHRASE_APOS
@@ -9860,7 +9818,7 @@ insan hakları derneği	İnsan Hakları Derneği	0	67	PHRASE_NOAPOS
 insan hakları günü	İnsan Hakları Günü	0	10000	PHRASE_APOS
 insan hakları izleme örgütü	İnsan Hakları İzleme Örgütü	0	94	PHRASE_NOAPOS
 insan hakları mahkemesi	İnsan Hakları Mahkemesi	0	71	PHRASE_NOAPOS
-insan ne ile yaşar	İnsan Ne ile Yaşar	0	10000	PHRASE_APOS
+insan ne ile yaşar	İnsan Ne ile Yaşar	work	10000	PHRASE_APOS
 iran devrimi	İran Devrimi	0	77	PHRASE_APOS
 iran islam cumhuriyeti	İran İslam Cumhuriyeti	0	94	PHRASE_APOS
 iran islam devrimi	İran İslam Devrimi	0	90	PHRASE_APOS
@@ -9945,17 +9903,17 @@ kaçkar dağları	Kaçkar Dağları	0	10000	PHRASE_APOS
 kadir gecesi	Kadir Gecesi	0	10000	PHRASE_APOS
 kadir has üniversitesi	Kadir Has Üniversitesi	0	10000	PHRASE_NOAPOS
 kadıköy anadolu lisesi	Kadıköy Anadolu Lisesi	0	10000	PHRASE_NOAPOS
-kadınlar günü	Kadınlar Günü	0	10000	PHRASE_APOS
-kafamda bir tuhaflık	Kafamda Bir Tuhaflık	0	10000	PHRASE_APOS
+kadınlar günü	Kadınlar Günü	day	10000	PHRASE_APOS
+kafamda bir tuhaflık	Kafamda Bir Tuhaflık	work	10000	PHRASE_APOS
 kafkas dağları	Kafkas Dağları	0	136	PHRASE_APOS
 kaliforniya teknoloji enstitüsü	Kaliforniya Teknoloji Enstitüsü	0	89	PHRASE_NOAPOS
 kaliforniya üniversitesi	Kaliforniya Üniversitesi	0	510	PHRASE_NOAPOS
 kalkınma partisi	Kalkınma Partisi	0	398	PHRASE_NOAPOS
 kantabria denizi	Kantabria Denizi	0	104	PHRASE_APOS
-kapıcılar kralı	Kapıcılar Kralı	0	10000	PHRASE_APOS
-kaplumbağa terbiyecisi	Kaplumbağa Terbiyecisi	0	10000	PHRASE_APOS
+kapıcılar kralı	Kapıcılar Kralı	work	10000	PHRASE_APOS
+kaplumbağa terbiyecisi	Kaplumbağa Terbiyecisi	work	10000	PHRASE_APOS
 kara harp okulu	Kara Harp Okulu	0	134	PHRASE_NOAPOS
-kara kitap	Kara Kitap	0	10000	PHRASE_APOS
+kara kitap	Kara Kitap	work	10000	PHRASE_APOS
 kara kuvvetleri komutanlığı	Kara Kuvvetleri Komutanlığı	0	82	PHRASE_NOAPOS
 karabağ cumhuriyeti	Karabağ Cumhuriyeti	0	70	PHRASE_APOS
 karabağ hanlığı	Karabağ Hanlığı	0	83	PHRASE_APOS
@@ -9974,7 +9932,7 @@ kazakistan cumhuriyeti	Kazakistan Cumhuriyeti	0	72	PHRASE_APOS
 kazan hanlığı	Kazan Hanlığı	0	78	PHRASE_APOS
 keşanlı ali destanı	Keşanlı Ali Destanı	0	10000	PHRASE_APOS
 kilikya ermeni krallığı	Kilikya Ermeni Krallığı	0	69	PHRASE_APOS
-kiralık konak	Kiralık Konak	0	10000	PHRASE_APOS
+kiralık konak	Kiralık Konak	work	10000	PHRASE_APOS
 kişisel verileri koruma kurumu	Kişisel Verileri Koruma Kurumu	0	10000	PHRASE_NOAPOS
 kıbrıs cumhuriyeti	Kıbrıs Cumhuriyeti	0	1140	PHRASE_APOS
 kıbrıs şehitleri caddesi	Kıbrıs Şehitleri Caddesi	0	10000	PHRASE_APOS
@@ -9982,11 +9940,11 @@ kıbrıs türk cumhuriyeti	Kıbrıs Türk Cumhuriyeti	0	256	PHRASE_APOS
 kırım hanlığı	Kırım Hanlığı	0	265	PHRASE_APOS
 kırım savaşı	Kırım Savaşı	0	10000	PHRASE_APOS
 kırım yarımadası	Kırım Yarımadası	0	74	PHRASE_APOS
-kırmızı pazartesi	Kırmızı Pazartesi	0	10000	PHRASE_APOS
-kırmızı saçlı kadın	Kırmızı Saçlı Kadın	0	10000	PHRASE_APOS
-kırmızı ve siyah	Kırmızı ve Siyah	0	10000	PHRASE_APOS
+kırmızı pazartesi	Kırmızı Pazartesi	work	10000	PHRASE_APOS
+kırmızı saçlı kadın	Kırmızı Saçlı Kadın	work	10000	PHRASE_APOS
+kırmızı ve siyah	Kırmızı ve Siyah	work	10000	PHRASE_APOS
 kış savaşı	Kış Savaşı	0	100	PHRASE_APOS
-kış uykusu	Kış Uykusu	0	10000	PHRASE_APOS
+kış uykusu	Kış Uykusu	work	10000	PHRASE_APOS
 kız kulesi	Kız Kulesi	0	10000	PHRASE_APOS
 kızıl deniz	Kızıl Deniz	0	10000	PHRASE_APOS
 kızılay meydanı	Kızılay Meydanı	0	10000	PHRASE_APOS
@@ -10002,24 +9960,24 @@ kopenhag üniversitesi	Kopenhag Üniversitesi	0	75	PHRASE_NOAPOS
 kore savaşı	Kore Savaşı	0	10000	PHRASE_APOS
 kore yarımadası	Kore Yarımadası	0	106	PHRASE_APOS
 körfez savaşı	Körfez Savaşı	0	253	PHRASE_APOS
-korkuyu beklerken	Korkuyu Beklerken	0	10000	PHRASE_APOS
+korkuyu beklerken	Korkuyu Beklerken	work	10000	PHRASE_APOS
 kosova savaşı	Kosova Savaşı	0	150	PHRASE_APOS
 kral lear	Kral Lear	0	10000	PHRASE_APOS
 kraliyet akademisi	Kraliyet Akademisi	0	90	PHRASE_NOAPOS
 kraliyet cemiyeti	Kraliyet Cemiyeti	0	79	PHRASE_NOAPOS
 kredi ve yurtlar kurumu	Kredi ve Yurtlar Kurumu	0	10000	PHRASE_NOAPOS
 küba devrimi	Küba Devrimi	0	84	PHRASE_APOS
-küçük kadınlar	Küçük Kadınlar	0	10000	PHRASE_APOS
+küçük kadınlar	Küçük Kadınlar	work	10000	PHRASE_APOS
 küçük kaynarca antlaşması	Küçük Kaynarca Antlaşması	0	10000	PHRASE_APOS
-küçük prens	Küçük Prens	0	10000	PHRASE_APOS
+küçük prens	Küçük Prens	work	10000	PHRASE_APOS
 kudüs krallığı	Kudüs Krallığı	0	198	PHRASE_APOS
 kudüs tapınağı	Kudüs Tapınağı	0	88	PHRASE_APOS
 kültür ve turizm bakanlığı	Kültür ve Turizm Bakanlığı	0	10000	PHRASE_NOAPOS
 kura nehri	Kura Nehri	0	146	PHRASE_APOS
 kurban bayramı	Kurban Bayramı	0	10000	PHRASE_APOS
-kürk mantolu madonna	Kürk Mantolu Madonna	0	10000	PHRASE_APOS
+kürk mantolu madonna	Kürk Mantolu Madonna	work	10000	PHRASE_APOS
 kurmay başkanlığı	Kurmay Başkanlığı	0	75	PHRASE_NOAPOS
-kurtlar vadisi	Kurtlar Vadisi	0	10000	PHRASE_APOS
+kurtlar vadisi	Kurtlar Vadisi	work	10000	PHRASE_APOS
 kurtuluş savaşı	Kurtuluş Savaşı	0	10000	PHRASE_APOS
 kutadgu bilig	Kutadgu Bilig	0	10000	PHRASE_APOS
 kutsal roma cermen imparatorluğu	Kutsal Roma Cermen İmparatorluğu	0	332	PHRASE_APOS
@@ -10028,34 +9986,21 @@ kuvvetleri komutanlığı	Kuvvetleri Komutanlığı	0	71	PHRASE_NOAPOS
 kuyruklu yıldız altında bir izdivaç	Kuyruklu Yıldız Altında Bir İzdivaç	0	10000	PHRASE_APOS
 kuyucaklı yusuf	Kuyucaklı Yusuf	0	10000	PHRASE_APOS
 kuzey afrika	Kuzey Afrika	0	1210	PHRASE_APOS
-kuzey almanya	Kuzey Almanya	0	82	PHRASE_APOS
 kuzey amerika	Kuzey Amerika	0	3976	PHRASE_APOS
-kuzey anadolu	Kuzey Anadolu	0	67	PHRASE_APOS
-kuzey atlantik	Kuzey Atlantik	0	141	PHRASE_APOS
-kuzey avrupa	Kuzey Avrupa	0	286	PHRASE_APOS
-kuzey carolina	Kuzey Carolina	0	210	PHRASE_APOS
-kuzey çin	Kuzey Çin	0	110	PHRASE_APOS
 kuzey denizi	Kuzey Denizi	0	333	PHRASE_APOS
-kuzey hindistan	Kuzey Hindistan	0	106	PHRASE_APOS
-kuzey hollanda	Kuzey Hollanda	0	74	PHRASE_APOS
-kuzey irlanda	Kuzey İrlanda	0	652	PHRASE_APOS
-kuzey irlandalı	Kuzey İrlandalı	0	213	PHRASE_APOS
-kuzey italya	Kuzey İtalya	0	275	PHRASE_APOS
+kuzey irlanda	Kuzey İrlanda	0	10000	PHRASE_APOS
 kuzey ırak	Kuzey Irak	0	314	PHRASE_APOS
 kuzey kafkasya	Kuzey Kafkasya	0	373	PHRASE_APOS
-kuzey kıbrıs	Kuzey Kıbrıs	0	380	PHRASE_APOS
+kuzey kıbrıs	Kuzey Kıbrıs	0	10000	PHRASE_APOS
 kuzey kıbrıs türk cumhuriyeti	Kuzey Kıbrıs Türk Cumhuriyeti	0	983	PHRASE_APOS
 kuzey kore	Kuzey Kore	0	1478	PHRASE_APOS
-kuzey koreli	Kuzey Koreli	0	158	PHRASE_APOS
 kuzey makedonya	Kuzey Makedonya	0	958	PHRASE_APOS
 kuzey okyanusu	Kuzey Okyanusu	0	68	PHRASE_APOS
-kuzey suriye	Kuzey Suriye	0	167	PHRASE_APOS
-kuzey vietnam	Kuzey Vietnam	0	141	PHRASE_APOS
 lale devri	Lale Devri	0	10000	PHRASE_APOS
 lehistan litvanya birliği	Lehistan Litvanya Birliği	0	174	PHRASE_NOAPOS
 leiden üniversitesi	Leiden Üniversitesi	0	78	PHRASE_NOAPOS
 leipzig üniversitesi	Leipzig Üniversitesi	0	97	PHRASE_NOAPOS
-leyla ile mecnun	Leyla ile Mecnun	0	10000	PHRASE_APOS
+leyla ile mecnun	Leyla ile Mecnun	work	10000	PHRASE_APOS
 libya iç savaşı	Libya İç Savaşı	0	74	PHRASE_APOS
 londra antlaşması	Londra Antlaşması	0	80	PHRASE_APOS
 londra ekonomi okulu	Londra Ekonomi Okulu	0	85	PHRASE_NOAPOS
@@ -10065,7 +10010,7 @@ louvre müzesi	Louvre Müzesi	0	153	PHRASE_NOAPOS
 lozan antlaşması	Lozan Antlaşması	0	10000	PHRASE_APOS
 lozan barış antlaşması	Lozan Barış Antlaşması	0	10000	PHRASE_APOS
 lübnan iç savaşı	Lübnan İç Savaşı	0	84	PHRASE_APOS
-lüzumsuz adam	Lüzumsuz Adam	0	10000	PHRASE_APOS
+lüzumsuz adam	Lüzumsuz Adam	work	10000	PHRASE_APOS
 macar devrimi	Macar Devrimi	0	88	PHRASE_APOS
 macar krallığı	Macar Krallığı	0	65	PHRASE_APOS
 macaristan imparatorluğu	Macaristan İmparatorluğu	0	86	PHRASE_APOS
@@ -10073,7 +10018,7 @@ macaristan krallığı	Macaristan Krallığı	0	327	PHRASE_APOS
 maçka parkı	Maçka Parkı	0	10000	PHRASE_APOS
 madame bovary	Madame Bovary	0	10000	PHRASE_APOS
 maden çağı	Maden Çağı	0	10000	PHRASE_APOS
-mai ve siyah	Mai ve Siyah	0	10000	PHRASE_APOS
+mai ve siyah	Mai ve Siyah	work	10000	PHRASE_APOS
 makedonya cumhuriyeti	Makedonya Cumhuriyeti	0	172	PHRASE_APOS
 malay yarımadası	Malay Yarımadası	0	73	PHRASE_APOS
 malazgirt meydan muharebesi	Malazgirt Meydan Muharebesi	0	10000	PHRASE_APOS
@@ -10086,14 +10031,14 @@ marmara bölgesi	Marmara Bölgesi	0	10000	PHRASE_APOS
 marmara denizi	Marmara Denizi	0	539	PHRASE_APOS
 marmara üniversitesi	Marmara Üniversitesi	0	10000	PHRASE_NOAPOS
 massachusetts teknoloji enstitüsü	Massachusetts Teknoloji Enstitüsü	0	227	PHRASE_NOAPOS
-masumiyet müzesi	Masumiyet Müzesi	0	10000	PHRASE_APOS
+masumiyet müzesi	Masumiyet Müzesi	work	10000	PHRASE_APOS
 matmazel noraliya'nın koltuğu	Matmazel Noraliya'nın Koltuğu	0	10000	PHRASE_APOS
 mavi köşe bakkaliyesi	Mavi Köşe Bakkaliyesi	0	10000	PHRASE_NOAPOS
 mayıs stadyumu	Mayıs Stadyumu	0	195	PHRASE_APOS
 meksika devrimi	Meksika Devrimi	0	71	PHRASE_APOS
 meksika körfezi	Meksika Körfezi	0	138	PHRASE_APOS
-memleket hikâyeleri	Memleket Hikâyeleri	0	10000	PHRASE_APOS
-memleketimden insan manzaraları	Memleketimden İnsan Manzaraları	0	10000	PHRASE_APOS
+memleket hikâyeleri	Memleket Hikâyeleri	work	10000	PHRASE_APOS
+memleketimden insan manzaraları	Memleketimden İnsan Manzaraları	work	10000	PHRASE_APOS
 memlûk devleti	Memlûk Devleti	0	106	PHRASE_APOS
 menkul kıymetler borsası	Menkul Kıymetler Borsası	0	98	PHRASE_NOAPOS
 mersin üniversitesi	Mersin Üniversitesi	0	10000	PHRASE_NOAPOS
@@ -10151,33 +10096,31 @@ napoli krallığı	Napoli Krallığı	0	183	PHRASE_APOS
 nasyonal sosyalist alman işçi partisi	Nasyonal Sosyalist Alman İşçi Partisi	0	168	PHRASE_NOAPOS
 nazi partisi	Nazi Partisi	0	596	PHRASE_NOAPOS
 nemrut dağı	Nemrut Dağı	0	10000	PHRASE_APOS
-neşeli günler	Neşeli Günler	0	10000	PHRASE_APOS
+neşeli günler	Neşeli Günler	work	10000	PHRASE_APOS
 nevruz bayramı	Nevruz Bayramı	0	10000	PHRASE_APOS
 nil nehri	Nil Nehri	0	191	PHRASE_APOS
 northwestern üniversitesi	Northwestern Üniversitesi	0	95	PHRASE_NOAPOS
 notre dame'ın kamburu	Notre Dame'ın Kamburu	0	10000	PHRASE_APOS
 oflazoğlu ankara devlet tiyatrosu	Oflazoğlu Ankara Devlet Tiyatrosu	0	72	PHRASE_NOAPOS
 öğretmen okulu	Öğretmen Okulu	0	77	PHRASE_NOAPOS
-öğretmenler günü	Öğretmenler Günü	0	10000	PHRASE_APOS
+öğretmenler günü	Öğretmenler Günü	day	10000	PHRASE_APOS
 oliver twist	Oliver Twist	0	10000	PHRASE_APOS
-ölmez otu	Ölmez Otu	0	10000	PHRASE_APOS
+ölmez otu	Ölmez Otu	work	10000	PHRASE_APOS
 oltu belediyesi	Oltu Belediyesi	0	65	PHRASE_NOAPOS
-ölü canlar	Ölü Canlar	0	10000	PHRASE_APOS
+ölü canlar	Ölü Canlar	work	10000	PHRASE_APOS
 ölü deniz	Ölü Deniz	0	10000	PHRASE_APOS
-ölü ozanlar derneği	Ölü Ozanlar Derneği	0	10000	PHRASE_APOS
+ölü ozanlar derneği	Ölü Ozanlar Derneği	work	10000	PHRASE_APOS
 ondokuz mayıs üniversitesi	Ondokuz Mayıs Üniversitesi	0	10000	PHRASE_NOAPOS
 orman genel müdürlüğü	Orman Genel Müdürlüğü	0	10000	PHRASE_NOAPOS
-orta afrika	Orta Afrika	0	130	PHRASE_APOS
 orta afrika cumhuriyeti	Orta Afrika Cumhuriyeti	0	228	PHRASE_APOS
 orta amerika	Orta Amerika	0	587	PHRASE_APOS
-orta anadolu	Orta Anadolu	0	267	PHRASE_APOS
 orta asya	Orta Asya	0	2083	PHRASE_APOS
 orta avrupa	Orta Avrupa	0	534	PHRASE_APOS
 orta çağ	Orta Çağ	0	10000	PHRASE_APOS
-orta direk	Orta Direk	0	10000	PHRASE_APOS
+orta direk	Orta Direk	work	10000	PHRASE_APOS
+orta doğu	Orta Doğu	0	10000	PHRASE_APOS
 orta doğu teknik üniversitesi	Orta Doğu Teknik Üniversitesi	0	10000	PHRASE_NOAPOS
 orta dünya	Orta Dünya	0	510	PHRASE_APOS
-orta makedonya	Orta Makedonya	0	77	PHRASE_APOS
 oslo üniversitesi	Oslo Üniversitesi	0	67	PHRASE_NOAPOS
 osmangazi köprüsü	Osmangazi Köprüsü	0	10000	PHRASE_APOS
 osmanlı anadolu demiryolları	Osmanlı Anadolu Demiryolları	0	74	PHRASE_NOAPOS
@@ -10228,7 +10171,7 @@ prado müzesi	Prado Müzesi	0	83	PHRASE_NOAPOS
 preveze deniz savaşı	Preveze Deniz Savaşı	0	10000	PHRASE_APOS
 princeton üniversitesi	Princeton Üniversitesi	0	319	PHRASE_NOAPOS
 prusya krallığı	Prusya Krallığı	0	110	PHRASE_APOS
-puslu kıtalar atlası	Puslu Kıtalar Atlası	0	10000	PHRASE_APOS
+puslu kıtalar atlası	Puslu Kıtalar Atlası	work	10000	PHRASE_APOS
 radyo ve televizyon üst kurulu	Radyo ve Televizyon Üst Kurulu	0	10000	PHRASE_NOAPOS
 rahmi koç müzesi	Rahmi Koç Müzesi	0	10000	PHRASE_NOAPOS
 ramazan bayramı	Ramazan Bayramı	0	10000	PHRASE_APOS
@@ -10258,7 +10201,7 @@ rusya sosyal demokrat işçi partisi	Rusya Sosyal Demokrat İşçi Partisi	0	130
 rusya sovyet federatif sosyalist cumhuriyeti	Rusya Sovyet Federatif Sosyalist Cumhuriyeti	0	158	PHRASE_APOS
 saadet partisi	Saadet Partisi	0	237	PHRASE_NOAPOS
 saat kulesi	Saat Kulesi	0	188	PHRASE_APOS
-saatleri ayarlama enstitüsü	Saatleri Ayarlama Enstitüsü	0	10000	PHRASE_APOS
+saatleri ayarlama enstitüsü	Saatleri Ayarlama Enstitüsü	work	10000	PHRASE_APOS
 sabancı üniversitesi	Sabancı Üniversitesi	0	10000	PHRASE_NOAPOS
 sabiha gökçen havalimanı	Sabiha Gökçen Havalimanı	0	10000	PHRASE_APOS
 safevi devleti	Safevi Devleti	0	101	PHRASE_APOS
@@ -10275,42 +10218,42 @@ sanayi devrimi	Sanayi Devrimi	0	10000	PHRASE_APOS
 sanayi ve teknoloji bakanlığı	Sanayi ve Teknoloji Bakanlığı	0	10000	PHRASE_NOAPOS
 sapanca gölü	Sapanca Gölü	0	10000	PHRASE_APOS
 sasani imparatorluğu	Sasani İmparatorluğu	0	313	PHRASE_APOS
-savaş ve barış	Savaş ve Barış	0	10000	PHRASE_APOS
+savaş ve barış	Savaş ve Barış	work	10000	PHRASE_APOS
 savunma bakanlığı	Savunma Bakanlığı	0	587	PHRASE_NOAPOS
 şehitler günü	Şehitler Günü	0	10000	PHRASE_APOS
 şeker bayramı	Şeker Bayramı	0	10000	PHRASE_APOS
-şeker portakalı	Şeker Portakalı	0	10000	PHRASE_APOS
+şeker portakalı	Şeker Portakalı	work	10000	PHRASE_APOS
 selçuk üniversitesi	Selçuk Üniversitesi	0	10000	PHRASE_NOAPOS
 selçuklu devleti	Selçuklu Devleti	0	227	PHRASE_APOS
 seleukos imparatorluğu	Seleukos İmparatorluğu	0	106	PHRASE_APOS
 selevkos imparatorluğu	Selevkos İmparatorluğu	0	66	PHRASE_APOS
 selimiye camii	Selimiye Camii	0	68	PHRASE_APOS
 selimiye camisi	Selimiye Camisi	0	10000	PHRASE_APOS
-selvi boylum al yazmalım	Selvi Boylum Al Yazmalım	0	10000	PHRASE_APOS
+selvi boylum al yazmalım	Selvi Boylum Al Yazmalım	work	10000	PHRASE_APOS
 sermaye piyasası kurulu	Sermaye Piyasası Kurulu	0	10000	PHRASE_NOAPOS
-sessiz ev	Sessiz Ev	0	10000	PHRASE_APOS
-sevgili arsız ölüm	Sevgili Arsız Ölüm	0	10000	PHRASE_APOS
-sevgililer günü	Sevgililer Günü	0	10000	PHRASE_APOS
+sessiz ev	Sessiz Ev	work	10000	PHRASE_APOS
+sevgili arsız ölüm	Sevgili Arsız Ölüm	work	10000	PHRASE_APOS
+sevgililer günü	Sevgililer Günü	day	10000	PHRASE_APOS
 sevr antlaşması	Sevr Antlaşması	0	10000	PHRASE_APOS
 shakespeare ankara devlet tiyatrosu	Shakespeare Ankara Devlet Tiyatrosu	0	118	PHRASE_NOAPOS
 shakespeare istanbul devlet tiyatrosu	Shakespeare İstanbul Devlet Tiyatrosu	0	73	PHRASE_NOAPOS
 sicilya krallığı	Sicilya Krallığı	0	112	PHRASE_APOS
 sina dağı	Sina Dağı	0	70	PHRASE_APOS
 sina yarımadası	Sina Yarımadası	0	109	PHRASE_APOS
-sinekli bakkal	Sinekli Bakkal	0	10000	PHRASE_APOS
+sinekli bakkal	Sinekli Bakkal	work	10000	PHRASE_APOS
 sinema sanatları ve bilimleri akademisi	Sinema Sanatları ve Bilimleri Akademisi	0	132	PHRASE_NOAPOS
 sirkeci garı	Sirkeci Garı	0	10000	PHRASE_APOS
 sivas kongresi	Sivas Kongresi	0	10000	PHRASE_APOS
 siyasal bilgiler enstitüsü	Siyasal Bilgiler Enstitüsü	0	154	PHRASE_NOAPOS
 siyasal bilgiler fakültesi	Siyasal Bilgiler Fakültesi	0	10000	PHRASE_NOAPOS
 sırbistan krallığı	Sırbistan Krallığı	0	82	PHRASE_APOS
-sırça köşk	Sırça Köşk	0	10000	PHRASE_APOS
+sırça köşk	Sırça Köşk	work	10000	PHRASE_APOS
 sırp cumhuriyeti	Sırp Cumhuriyeti	0	215	PHRASE_APOS
 smithsonian enstitüsü	Smithsonian Enstitüsü	0	77	PHRASE_NOAPOS
 sodom ve gomore	Sodom ve Gomore	0	10000	PHRASE_APOS
 soğuk savaş	Soğuk Savaş	0	10000	PHRASE_APOS
-son akşam yemeği	Son Akşam Yemeği	0	10000	PHRASE_APOS
-son kuşlar	Son Kuşlar	0	10000	PHRASE_APOS
+son akşam yemeği	Son Akşam Yemeği	work	10000	PHRASE_APOS
+son kuşlar	Son Kuşlar	work	10000	PHRASE_APOS
 sorbonne üniversitesi	Sorbonne Üniversitesi	0	148	PHRASE_NOAPOS
 sosyal bilimler enstitüsü	Sosyal Bilimler Enstitüsü	0	66	PHRASE_NOAPOS
 sosyal demokrat partisi	Sosyal Demokrat Partisi	0	136	PHRASE_NOAPOS
@@ -10327,7 +10270,7 @@ stalingrad muharebesi	Stalingrad Muharebesi	0	91	PHRASE_APOS
 stanford üniversitesi	Stanford Üniversitesi	0	357	PHRASE_NOAPOS
 şubat devrimi	Şubat Devrimi	0	129	PHRASE_APOS
 şube müdürlüğü	Şube Müdürlüğü	0	67	PHRASE_NOAPOS
-suç ve ceza	Suç ve Ceza	0	10000	PHRASE_APOS
+suç ve ceza	Suç ve Ceza	work	10000	PHRASE_APOS
 şükran günü	Şükran Günü	0	10000	PHRASE_APOS
 süleyman demirel üniversitesi	Süleyman Demirel Üniversitesi	0	10000	PHRASE_NOAPOS
 süleymaniye camisi	Süleymaniye Camisi	0	10000	PHRASE_APOS
@@ -10335,8 +10278,8 @@ sultan camii	Sultan Camii	0	71	PHRASE_APOS
 sultanahmet camisi	Sultanahmet Camisi	0	10000	PHRASE_APOS
 sümela manastırı	Sümela Manastırı	0	10000	PHRASE_APOS
 suriye iç savaşı	Suriye İç Savaşı	0	348	PHRASE_APOS
-susuz yaz	Susuz Yaz	0	10000	PHRASE_APOS
-süt kardeşler	Süt Kardeşler	0	10000	PHRASE_APOS
+susuz yaz	Susuz Yaz	work	10000	PHRASE_APOS
+süt kardeşler	Süt Kardeşler	work	10000	PHRASE_APOS
 suudi arabistan	Suudi Arabistan	0	2135	PHRASE_APOS
 süveyş kanalı	Süveyş Kanalı	0	200	PHRASE_APOS
 taaşşuk-ı talat ve fitnat	Taaşşuk-ı Talat ve Fitnat	0	10000	PHRASE_APOS
@@ -10353,7 +10296,7 @@ tarım havzası	Tarım Havzası	0	155	PHRASE_APOS
 tarım ve orman bakanlığı	Tarım ve Orman Bakanlığı	0	10000	PHRASE_NOAPOS
 taş devri	Taş Devri	0	10000	PHRASE_APOS
 tataristan cumhuriyeti	Tataristan Cumhuriyeti	0	93	PHRASE_APOS
-tehlikeli oyunlar	Tehlikeli Oyunlar	0	10000	PHRASE_APOS
+tehlikeli oyunlar	Tehlikeli Oyunlar	work	10000	PHRASE_APOS
 teknik üniversitesi	Teknik Üniversitesi	0	390	PHRASE_NOAPOS
 teknoloji enstitüsü	Teknoloji Enstitüsü	0	146	PHRASE_NOAPOS
 teknoloji üniversitesi	Teknoloji Üniversitesi	0	91	PHRASE_NOAPOS
@@ -10416,9 +10359,9 @@ türkiye yazarlar birliği	Türkiye Yazarlar Birliği	0	84	PHRASE_NOAPOS
 tuva cumhuriyeti	Tuva Cumhuriyeti	0	123	PHRASE_APOS
 tuz gölü	Tuz Gölü	0	10000	PHRASE_APOS
 üç istanbul	Üç İstanbul	0	10000	PHRASE_APOS
-üç kız kardeş	Üç Kız Kardeş	0	10000	PHRASE_APOS
+üç kız kardeş	Üç Kız Kardeş	work	10000	PHRASE_APOS
 üç silahşorlar	Üç Silahşorlar	0	10000	PHRASE_APOS
-uğultulu tepeler	Uğultulu Tepeler	0	10000	PHRASE_APOS
+uğultulu tepeler	Uğultulu Tepeler	work	10000	PHRASE_APOS
 ukrayna sovyet sosyalist cumhuriyeti	Ukrayna Sovyet Sosyalist Cumhuriyeti	0	96	PHRASE_APOS
 ulaştırma bakanlığı	Ulaştırma Bakanlığı	0	117	PHRASE_NOAPOS
 ulaştırma ve altyapı bakanlığı	Ulaştırma ve Altyapı Bakanlığı	0	10000	PHRASE_NOAPOS
@@ -10445,8 +10388,8 @@ uppsala üniversitesi	Uppsala Üniversitesi	0	84	PHRASE_NOAPOS
 ural dağları	Ural Dağları	0	143	PHRASE_APOS
 ürdün nehri	Ürdün Nehri	0	69	PHRASE_APOS
 uygur kağanlığı	Uygur Kağanlığı	0	102	PHRASE_APOS
-vadideki zambak	Vadideki Zambak	0	10000	PHRASE_APOS
-vahşetin çağrısı	Vahşetin Çağrısı	0	10000	PHRASE_APOS
+vadideki zambak	Vadideki Zambak	work	10000	PHRASE_APOS
+vahşetin çağrısı	Vahşetin Çağrısı	work	10000	PHRASE_APOS
 vakıf bank	Vakıf Bank	0	10000	PHRASE_NOAPOS
 vakıflar genel müdürlüğü	Vakıflar Genel Müdürlüğü	0	10000	PHRASE_NOAPOS
 van gölü	Van Gölü	0	10000	PHRASE_APOS
@@ -10454,27 +10397,27 @@ varşova üniversitesi	Varşova Üniversitesi	0	79	PHRASE_NOAPOS
 vatan partisi	Vatan Partisi	0	78	PHRASE_NOAPOS
 vatan yahut silistre	Vatan yahut Silistre	0	10000	PHRASE_APOS
 vatanseverlik savaşı	Vatanseverlik Savaşı	0	81	PHRASE_APOS
-veba geceleri	Veba Geceleri	0	10000	PHRASE_APOS
+veba geceleri	Veba Geceleri	work	10000	PHRASE_APOS
 vefa lisesi	Vefa Lisesi	0	10000	PHRASE_NOAPOS
 venedik cumhuriyeti	Venedik Cumhuriyeti	0	603	PHRASE_APOS
 venedik taciri	Venedik Taciri	0	10000	PHRASE_APOS
 versay antlaşması	Versay Antlaşması	0	136	PHRASE_APOS
 vietnam savaşı	Vietnam Savaşı	0	475	PHRASE_APOS
 virginia üniversitesi	Virginia Üniversitesi	0	94	PHRASE_NOAPOS
-vişne bahçesi	Vişne Bahçesi	0	10000	PHRASE_APOS
+vişne bahçesi	Vişne Bahçesi	work	10000	PHRASE_APOS
 viyana üniversitesi	Viyana Üniversitesi	0	188	PHRASE_NOAPOS
 volga nehri	Volga Nehri	0	72	PHRASE_APOS
-vurun kahpeye	Vurun Kahpeye	0	10000	PHRASE_APOS
+vurun kahpeye	Vurun Kahpeye	work	10000	PHRASE_APOS
 washington üniversitesi	Washington Üniversitesi	0	166	PHRASE_NOAPOS
 weimar cumhuriyeti	Weimar Cumhuriyeti	0	297	PHRASE_APOS
 wembley stadyumu	Wembley Stadyumu	0	337	PHRASE_APOS
-yakın çağ	Yakın Çağ	0	10000	PHRASE_APOS
+yakın çağ	Yakın Çağ	era	10000	PHRASE_APOS
 yale üniversitesi	Yale Üniversitesi	0	324	PHRASE_NOAPOS
 yangtze nehri	Yangtze Nehri	0	94	PHRASE_APOS
 yapı kredi bankası	Yapı Kredi Bankası	0	10000	PHRASE_NOAPOS
-yaprak dökümü	Yaprak Dökümü	0	10000	PHRASE_APOS
+yaprak dökümü	Yaprak Dökümü	work	10000	PHRASE_APOS
 yasama meclisi	Yasama Meclisi	0	65	PHRASE_NOAPOS
-yaşlı adam ve deniz	Yaşlı Adam ve Deniz	0	10000	PHRASE_APOS
+yaşlı adam ve deniz	Yaşlı Adam ve Deniz	work	10000	PHRASE_APOS
 yavuz sultan selim köprüsü	Yavuz Sultan Selim Köprüsü	0	10000	PHRASE_APOS
 yayın birliği	Yayın Birliği	0	211	PHRASE_NOAPOS
 yazarlar birliği	Yazarlar Birliği	0	150	PHRASE_NOAPOS
@@ -10483,26 +10426,26 @@ yedi yıl savaşları	Yedi Yıl Savaşları	0	10000	PHRASE_APOS
 yeditepe üniversitesi	Yeditepe Üniversitesi	0	10000	PHRASE_NOAPOS
 yehuda krallığı	Yehuda Krallığı	0	94	PHRASE_APOS
 yeni azerbaycan partisi	Yeni Azerbaycan Partisi	0	105	PHRASE_NOAPOS
-yeni çağ	Yeni Çağ	0	10000	PHRASE_APOS
-yeni hayat	Yeni Hayat	0	10000	PHRASE_APOS
-yer demir gök bakır	Yer Demir Gök Bakır	0	10000	PHRASE_APOS
-yeraltından notlar	Yeraltından Notlar	0	10000	PHRASE_APOS
-yeşil gece	Yeşil Gece	0	10000	PHRASE_APOS
+yeni çağ	Yeni Çağ	era	10000	PHRASE_APOS
+yeni hayat	Yeni Hayat	work	10000	PHRASE_APOS
+yer demir gök bakır	Yer Demir Gök Bakır	work	10000	PHRASE_APOS
+yeraltından notlar	Yeraltından Notlar	work	10000	PHRASE_APOS
+yeşil gece	Yeşil Gece	work	10000	PHRASE_APOS
 yeşilay cemiyeti	Yeşilay Cemiyeti	0	10000	PHRASE_NOAPOS
 yeşiller partisi	Yeşiller Partisi	0	97	PHRASE_NOAPOS
 yeşiller ve sol gelecek partisi	Yeşiller ve Sol Gelecek Partisi	0	76	PHRASE_NOAPOS
 yıl savaşı	Yıl Savaşı	0	110	PHRASE_APOS
-yılanı öldürseler	Yılanı Öldürseler	0	10000	PHRASE_APOS
-yılanların öcü	Yılanların Öcü	0	10000	PHRASE_APOS
+yılanı öldürseler	Yılanı Öldürseler	work	10000	PHRASE_APOS
+yılanların öcü	Yılanların Öcü	work	10000	PHRASE_APOS
 yıldız parkı	Yıldız Parkı	0	10000	PHRASE_APOS
 yıldız sarayı	Yıldız Sarayı	0	177	PHRASE_APOS
 yıldız teknik üniversitesi	Yıldız Teknik Üniversitesi	0	10000	PHRASE_NOAPOS
-yıldızlı gece	Yıldızlı Gece	0	10000	PHRASE_APOS
+yıldızlı gece	Yıldızlı Gece	work	10000	PHRASE_APOS
 yol partisi	Yol Partisi	0	87	PHRASE_NOAPOS
 yom kippur savaşı	Yom Kippur Savaşı	0	71	PHRASE_APOS
 yönetim kurulu başkanlığı	Yönetim Kurulu Başkanlığı	0	125	PHRASE_NOAPOS
 yontma taş devri	Yontma Taş Devri	0	10000	PHRASE_APOS
-yorgun savaşçı	Yorgun Savaşçı	0	10000	PHRASE_APOS
+yorgun savaşçı	Yorgun Savaşçı	work	10000	PHRASE_APOS
 york üniversitesi	York Üniversitesi	0	103	PHRASE_NOAPOS
 yugoslavya krallığı	Yugoslavya Krallığı	0	253	PHRASE_APOS
 yüksek seçim kurulu	Yüksek Seçim Kurulu	0	10000	PHRASE_NOAPOS
@@ -10513,7 +10456,7 @@ yunan bağımsızlık savaşı	Yunan Bağımsızlık Savaşı	0	84	PHRASE_APOS
 yunanistan krallığı	Yunanistan Krallığı	0	88	PHRASE_APOS
 yüz yıl savaşları	Yüz Yıl Savaşları	0	10000	PHRASE_APOS
 yüzüklerin efendisi	Yüzüklerin Efendisi	0	10000	PHRASE_APOS
-yüzyıllık yalnızlık	Yüzyıllık Yalnızlık	0	10000	PHRASE_APOS
+yüzyıllık yalnızlık	Yüzyıllık Yalnızlık	work	10000	PHRASE_APOS
 zafer bayramı	Zafer Bayramı	0	10000	PHRASE_APOS
 zeugma mozaik müzesi	Zeugma Mozaik Müzesi	0	10000	PHRASE_NOAPOS
 ziraat bankası	Ziraat Bankası	0	10000	PHRASE_NOAPOS

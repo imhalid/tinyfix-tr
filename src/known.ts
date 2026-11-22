@@ -1,7 +1,7 @@
 import type { Lexicon } from "./lexicon.ts";
 import { stripMarksIn } from "./turkish.ts";
 import { isValidKnownParticleSuffix } from "./rules/turkish-rules.ts";
-import { CANONICAL_PHRASES, foldTurkish } from "./rules/proper-names.ts";
+import { CANONICAL_PHRASES, foldTurkish, type PhraseContext } from "./rules/proper-names.ts";
 
 /** A known misspelling and its fix, checked against corpus counts by py/verify_lists.py. */
 interface Rule {
@@ -34,6 +34,8 @@ export interface PhraseEntry {
   readonly displayWords: readonly string[];
   /** True when inflectional suffixes on the final word take an apostrophe (places, events, works); false for institutions. */
   readonly takesApos: boolean;
+  /** Optional contextual gate when the phrase overlaps with ordinary Turkish prose ("era", "day", "work"). */
+  readonly context?: PhraseContext;
 }
 
 const MAX_SUFFIX = 6;
@@ -124,7 +126,9 @@ export class KnownMisspellings {
       }
       if (section === "PHRASE_APOS" || section === "PHRASE_NOAPOS") {
         hasProperSections = true;
-        known.addPhrase(wrong, right, section === "PHRASE_APOS");
+        const ctx: PhraseContext | undefined =
+          col3 === "era" || col3 === "day" || col3 === "work" ? col3 : undefined;
+        known.addPhrase(wrong, right, section === "PHRASE_APOS", ctx);
         continue;
       }
       const rule = { wrong, right, rightCount: Number(rightCount), contraction: section === "CONTRACTION" };
@@ -158,16 +162,27 @@ export class KnownMisspellings {
     return known;
   }
 
-  private addPhrase(lowerPhrase: string, displayPhrase: string, takesApos: boolean): void {
+  private addPhrase(lowerPhrase: string, displayPhrase: string, takesApos: boolean, context?: PhraseContext): void {
     const words = lowerPhrase.split(" ");
     const displayWords = displayPhrase.split(" ");
     if (words.length < 2 || words.length !== displayWords.length) return;
     const first = words[0]!;
     const existing = this.phrasesByFirst.get(first);
-    if (existing?.some((p) => p.words.length === words.length && p.words.every((w, i) => w === words[i]))) {
+    const dupIdx = existing?.findIndex((p) => p.words.length === words.length && p.words.every((w, i) => w === words[i])) ?? -1;
+    if (dupIdx !== -1 && existing) {
+      // Allow canonical contextual metadata to refine an untagged TSV entry.
+      if (context && !existing[dupIdx]!.context) {
+        const updated: PhraseEntry = { ...existing[dupIdx]!, context };
+        existing[dupIdx] = updated;
+        const pList = this.phrasesByPlainFirst.get(foldTurkish(first));
+        if (pList) {
+          const pIdx = pList.findIndex((p) => p.words.length === words.length && p.words.every((w, i) => w === words[i]));
+          if (pIdx !== -1) pList[pIdx] = updated;
+        }
+      }
       return;
     }
-    const entry: PhraseEntry = { words, displayWords, takesApos };
+    const entry: PhraseEntry = context ? { words, displayWords, takesApos, context } : { words, displayWords, takesApos };
     if (existing) existing.push(entry);
     else this.phrasesByFirst.set(first, [entry]);
 
@@ -182,11 +197,12 @@ export class KnownMisspellings {
   private ensureCanonicalPhrases(): void {
     if (this.hasCanonicalPhrases) return;
     this.hasCanonicalPhrases = true;
-    for (const [display, takesApos] of CANONICAL_PHRASES) {
+    for (const [display, takesApos, context] of CANONICAL_PHRASES) {
       this.addPhrase(
         display.replaceAll("I", "ı").replaceAll("İ", "i").toLowerCase(),
         display,
         takesApos,
+        context,
       );
     }
   }

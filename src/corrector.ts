@@ -1076,8 +1076,19 @@ export class Corrector {
             if (q.hadApostrophe) {
               if (margin >= 1.5) preDecidedAmbig.set(q.start, q.properCand);
               else if (-margin >= 2.0) preDecidedAmbig.set(q.start, q.commonCand);
-            } else if (margin >= nameBar) {
-              preDecidedAmbig.set(q.start, q.properCand);
+            } else {
+              // At sentence start, an overwhelmingly common inflected lowercase Turkish noun ("Savaşa gitme",
+              // where "savaşa" has high frequency and <=5% cap share) needs a stronger margin to split with apostrophe.
+              let effBar = nameBar;
+              if (q.atStart && q.suffix) {
+                const wholeLow = `${q.base}${q.suffix}`;
+                if (this.lexicon.count(wholeLow) >= 1000 && this.lexicon.capitalShare(wholeLow) <= 0.05) {
+                  effBar = nameBar + 1.5;
+                }
+              }
+              if (margin >= effBar) {
+                preDecidedAmbig.set(q.start, q.properCand);
+              }
             }
           }
           if (preDecidedAmbig.size > 0) {
