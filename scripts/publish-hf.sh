@@ -3,7 +3,7 @@
 #
 #   npm run build:models
 #   hf auth login
-#   scripts/publish-hf.sh imhalid/tdk-ai          (the published repo: https://huggingface.co/imhalid/tdk-ai)
+#   scripts/publish-hf.sh imhalid/tinyfix-tr          (the published repo: https://huggingface.co/imhalid/tinyfix-tr)
 #
 # Uploads: lexicon.bin, morph.bin, known.tsv, context.onnx, manifest.json from site/public/models, and hf/README.md
 # as the model card. No training data or text is uploaded.
@@ -24,5 +24,5 @@ cp "$models"/{lexicon.bin,morph.bin,known.tsv,context.onnx,manifest.json} "$stag
 cp "$root/hf/README.md" "$stage/README.md"
 
 hf repos create "$repo" --repo-type model ${visibility:+--private} --exist-ok
-hf upload "$repo" "$stage" . --repo-type model --commit-message "tdkai model $(git -C "$root" rev-parse --short HEAD)"
+hf upload "$repo" "$stage" . --repo-type model --commit-message "tinyfix-tr model $(git -C "$root" rev-parse --short HEAD)"
 echo "https://huggingface.co/$repo"

@@ -12,11 +12,11 @@ tags:
 library_name: onnx
 ---
 
-<img src="https://huggingface.co/spaces/imhalid/README/resolve/main/banner.png" alt="tdkai: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
+<img src="https://huggingface.co/spaces/imhalid/README/resolve/main/banner.png" alt="tinyfix-tr: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
 
-# tdkai: Turkish autocorrect that runs offline
+# tinyfix-tr: Turkish autocorrect that runs offline
 
-tdkai fixes Turkish spelling as you type, following TDK spelling rules, with no server: everything runs on the
+tinyfix-tr fixes Turkish spelling as you type, following TDK spelling rules, with no server: everything runs on the
 user's device (browser, Node, or any ONNX-capable runtime). When it is sure, it fixes the word; when it isn't, it
 flags the word and suggests corrections.
 
@@ -24,7 +24,7 @@ flags the word and suggests corrections.
 
 ## Türkçe özet
 
-tdkai, TDK yazım kurallarına göre çalışan, internetsiz bir Türkçe otomatik düzeltme modelidir. Sunucuya ihtiyaç
+tinyfix-tr, TDK yazım kurallarına göre çalışan, internetsiz bir Türkçe otomatik düzeltme modelidir. Sunucuya ihtiyaç
 duymaz; her şey kullanıcının cihazında çalışır. Emin olduğu hatayı düzeltir (Türkçe karakter, de/da, ki, mi,
 bitişik/ayrı yazım, kesme işareti, harf hataları); emin olamadığı hatalı kelimenin altını çizip öneri sunar.
 
@@ -40,7 +40,7 @@ bitişik/ayrı yazım, kesme işareti, harf hataları); emin olamadığı hatal�
 
 The core files (`lexicon.bin`, `morph.bin`, `known.tsv`) are 3.46 MB gzipped. `context.onnx` is optional.
 
-These files are read by the tdkai engine (TypeScript); the binary formats are not a general-purpose format.
+These files are read by the tinyfix-tr engine (TypeScript); the binary formats are not a general-purpose format.
 `context.onnx` expects the engine's subword tokenizer and candidate features.
 
 ## How it works

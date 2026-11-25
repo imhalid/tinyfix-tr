@@ -1,6 +1,6 @@
-<img src="hf/banner.png" alt="tdkai: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
+<img src="hf/banner.png" alt="tinyfix-tr: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
 
-# tdkai: tarayıcıda, internetsiz çalışan Türkçe otomatik düzeltme
+# tinyfix-tr: tarayıcıda, internetsiz çalışan Türkçe otomatik düzeltme
 
 Durum (2026-11-21):
 - **Kural motoru** (`src/`) çalışıyor.

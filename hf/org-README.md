@@ -7,13 +7,13 @@ sdk: static
 pinned: false
 ---
 
-<img src="https://huggingface.co/spaces/imhalid/README/resolve/main/banner.png" alt="tdkai: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
+<img src="https://huggingface.co/spaces/imhalid/README/resolve/main/banner.png" alt="tinyfix-tr: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="100%">
 
 <div align="center">
 
 TDK yazım kurallarına göre çalışan, tamamen cihazda koşan Türkçe otomatik düzeltme.
 
-[Canlı demo](https://tdkai.halid.dev) · [Model](https://huggingface.co/imhalid/tdk-ai)
+[Canlı demo](https://tdkai.halid.dev) · [Model](https://huggingface.co/imhalid/tinyfix-tr)
 
 </div>
 
@@ -55,7 +55,7 @@ Modelin hiç görmediği test setlerinde:
 
 <div align="center">
 
-**English:** tdkai is an offline Turkish autocorrect that follows TDK spelling rules and runs entirely on the
+**English:** tinyfix-tr is an offline Turkish autocorrect that follows TDK spelling rules and runs entirely on the
 device. It fixes what it is sure of and flags the rest with suggestions.
 
 <sub>Kelime verisi: Türkçe Vikipedi ve <a href="http://www.opensubtitles.org/">OpenSubtitles.org</a> (OPUS) ·
