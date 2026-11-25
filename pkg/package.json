@@ -1,6 +1,6 @@
 {
   "name": "tinyfix-tr",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tarayıcıda internetsiz çalışan Türkçe otomatik düzeltme paketi",
   "keywords": [
     "turkish",
