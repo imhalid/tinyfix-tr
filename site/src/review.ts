@@ -2,7 +2,7 @@ import { Extension, getSchema, type JSONContent } from "@tiptap/core";
 import { Node as PMNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Tdkai, FixKind, FixScope } from "tdkai";
+import type { Tdkai, FixKind, FixScope } from "tinyfix-tr";
 import { SCHEMA_EXTENSIONS } from "./importFiles";
 
 /**

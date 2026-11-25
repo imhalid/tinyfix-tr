@@ -3,7 +3,7 @@ import { closeHistory } from "@tiptap/pm/history";
 import { Plugin, PluginKey, type EditorState, type Transaction } from "@tiptap/pm/state";
 import { Mapping, ReplaceStep, type StepMap } from "@tiptap/pm/transform";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
-import type { Tdkai, Fix, FixKind, FixScope, FlagReason } from "tdkai";
+import type { Tdkai, Fix, FixKind, FixScope, FlagReason } from "tinyfix-tr";
 import { FIX_KIND_META } from "./settings";
 
 export interface AppliedFix {

@@ -1,11 +1,11 @@
-# tdkai
+# tinyfix-tr
 
 Tarayıcıda ve Node.js üzerinde **internetsiz** çalışan Türkçe otomatik düzeltme paketi. Sözlük ve kurallar cihazda çalışır; isteğe bağlı bağlam modeli (`context: true`) yalnızca istendiğinde dinamik `import()` ile `onnxruntime-web` yükler.
 
 ## Kurulum
 
 ```bash
-npm install tdkai
+npm install tinyfix-tr
 ```
 
 Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, `known.tsv`, isteğe bağlı `manifest.json`) ve bağlam modelini kullanacaksanız `context.onnx` dosyasını uygulamanızda sunacağınız bir klasöre (örneğin `public/models/`) yerleştirin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
@@ -13,7 +13,7 @@ Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, 
 ## Hızlı Başlangıç
 
 ```ts
-import { loadTdkai } from "tdkai";
+import { loadTdkai } from "tinyfix-tr";
 
 const tdkai = await loadTdkai({
   baseUrl: "/models/",

@@ -1,4 +1,4 @@
-import { loadTdkai, type Tdkai, type FixKind, type LoadProgress, type Mode } from "tdkai";
+import { loadTdkai, type Tdkai, type FixKind, type LoadProgress, type Mode } from "tinyfix-tr";
 import type { JSX } from "@solidjs/web";
 import { For, Show, createMemo, createSignal, onSettled } from "solid-js";
 import {

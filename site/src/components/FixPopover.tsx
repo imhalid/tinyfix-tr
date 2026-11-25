@@ -1,6 +1,6 @@
 import { Show, createEffect, onCleanup } from "solid-js";
 import { For } from "solid-js";
-import type { FixKind, FixScope } from "tdkai";
+import type { FixKind, FixScope } from "tinyfix-tr";
 import type { WordStep } from "../autocorrectExtension";
 import { FIX_KIND_META } from "../settings";
 

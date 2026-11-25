@@ -11,7 +11,7 @@ const PREFERRED_ORT_WASM_FILES = [
 
 function resolveOrtDistDir(): string | null {
   // onnxruntime-web does not export its package.json, so it can't be found with require.resolve. It is a dependency
-  // of the tdkai package (../pkg), which the site links to; look for its folder directly.
+  // of the tinyfix-tr package (../pkg), which the site links to; look for its folder directly.
   const candidates = [
     new URL("./node_modules/onnxruntime-web/dist", import.meta.url),
     new URL("../pkg/node_modules/onnxruntime-web/dist", import.meta.url),
@@ -133,12 +133,12 @@ export default defineConfig({
   plugins: [solid(), ortWasmPlugin()],
   server: {
     fs: {
-      // `../pkg` (tdkai) geliştirme sunucusundan okunabilsin.
+      // `../pkg` (tinyfix-tr) geliştirme sunucusundan okunabilsin.
       allow: ["..", "."],
     },
   },
   optimizeDeps: {
-    exclude: ["tdkai", "onnxruntime-web", "onnxruntime-web/wasm"],
+    exclude: ["tinyfix-tr", "onnxruntime-web", "onnxruntime-web/wasm"],
   },
   worker: {
     format: "es",
