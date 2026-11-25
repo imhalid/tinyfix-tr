@@ -41,7 +41,7 @@ Kod parçalarına, adreslere, sayılara ve emin olamadığı özel adlara dokunm
 - **Biçimbilim:** [Zemberek-NLP](https://github.com/ahmetaa/zemberek-nlp) sözlüğünden türetildi.
 - **Bağlam modeli:** Aynı Vikipedi ve altyazı metinlerinden üretilen, gerçekten belirsiz örneklerle eğitilmiş 2,8 milyon parametreli, int8 sıkıştırılmış bir model.
 
-Dosyalar ilk kullanımda [Hugging Face](https://huggingface.co/imhalid/tdk-ai) üzerinden indirilir (yaklaşık 6 MB, bağlam modeliyle 9 MB). Her paket sürümü depodaki belirli bir revizyonu yükler. Kendi sunucunuzdan vermek için `loadTdkai({ baseUrl: "/models/" })` yeterli.
+Dosyalar ilk kullanımda [Hugging Face](https://huggingface.co/imhalid/tinyfix-tr) üzerinden indirilir (yaklaşık 6 MB, bağlam modeliyle 9 MB). Her paket sürümü depodaki belirli bir revizyonu yükler. Kendi sunucunuzdan vermek için `loadTdkai({ baseUrl: "/models/" })` yeterli.
 
 ## Ne kadar iyi çalışıyor
 

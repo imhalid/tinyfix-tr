@@ -87,7 +87,7 @@ export function DocumentsList(props: DocumentsListProps) {
         </a>
         <br />
         Model:{" "}
-        <a href="https://huggingface.co/imhalid/tdk-ai" target="_blank" rel="noopener">
+        <a href="https://huggingface.co/imhalid/tinyfix-tr" target="_blank" rel="noopener">
           Hugging Face
         </a>
       </p>
