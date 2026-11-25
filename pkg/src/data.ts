@@ -32,8 +32,12 @@ export const LEGACY_DATA_FILES: readonly ("unigrams.tsv" | "bigrams.tsv" | "know
 
 export { CONTEXT_MODEL_FILE };
 
-/** Varsayılan sözlük ve model dizini. */
-export const DEFAULT_BASE_URL = "/models/";
+/**
+ * Varsayılan sözlük ve model dizini: Hugging Face'teki `imhalid/tdk-ai` deposu.
+ * Her paket sürümü deponun belirli bir commit'ine sabitlenir; böylece model güncellense bile eski sürümler bozulmaz.
+ */
+export const DEFAULT_BASE_URL =
+  "https://huggingface.co/imhalid/tdk-ai/resolve/d1e88233bc0c64e697a996833a21de144d4f1c18/";
 
 /** İndirme ilerlemesini tahmin etmek için dosyaların yaklaşık ağırlıkları (Content-Length yoksa). */
 const FILE_WEIGHTS: Record<DataFileName, number> = {

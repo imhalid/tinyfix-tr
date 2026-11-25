@@ -8,7 +8,9 @@ Tarayıcıda ve Node.js üzerinde **internetsiz** çalışan Türkçe otomatik d
 npm install tinyfix-tr
 ```
 
-Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, `known.tsv`, isteğe bağlı `manifest.json`) ve bağlam modelini kullanacaksanız `context.onnx` dosyasını uygulamanızda sunacağınız bir klasöre (örneğin `public/models/`) yerleştirin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
+Ek bir ayar gerekmez: sözlük dosyaları ilk kullanımda [Hugging Face](https://huggingface.co/imhalid/tdk-ai) üzerinden indirilir (yaklaşık 6 MB; bağlam modeli istenirse 3 MB daha). Her paket sürümü depodaki belirli bir revizyonu yükler.
+
+Dosyaları kendi sunucunuzdan vermek isterseniz `lexicon.bin`, `morph.bin`, `known.tsv` (ve bağlam modeli için `context.onnx`) dosyalarını Hugging Face deposundan indirip bir klasöre (örneğin `public/models/`) koyun ve `baseUrl` verin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
 
 ## Hızlı Başlangıç
 
@@ -16,7 +18,6 @@ Sıkıştırılmış tarayıcı veri dosyalarını (`lexicon.bin`, `morph.bin`, 
 import { loadTdkai } from "tinyfix-tr";
 
 const tdkai = await loadTdkai({
-  baseUrl: "/models/",
   worker: true,
   context: true, // isteğe bağlı: context.onnx + onnxruntime-web
   wasmPaths: "/ort/", // isteğe bağlı: ORT .wasm/.mjs dosyalarının konumu
@@ -99,7 +100,7 @@ tdkai.ignore(fix.original);
 
 | Seçenek | Varsayılan | Açıklama |
 |---|---|---|
-| `baseUrl` | `"/models/"` | `lexicon.bin`, `morph.bin`, `known.tsv` (veya geriye dönük `unigrams.tsv`/`bigrams.tsv`) ve isteğe bağlı `context.onnx` dosyalarının bulunduğu adres. |
+| `baseUrl` | Hugging Face `imhalid/tdk-ai` (sürüme sabit) | `lexicon.bin`, `morph.bin`, `known.tsv` (veya geriye dönük `unigrams.tsv`/`bigrams.tsv`) ve isteğe bağlı `context.onnx` dosyalarının bulunduğu adres. |
 | `data` | — | Ağ isteği yerine bellekteki ikili (`BinaryData`) veya ham TSV (`RawData`) verisini kullanır. |
 | `mode` | `"careful"` | `"careful"` motorun temkinli varsayılan ayarını, `"balanced"` biraz daha cesur eşikleri kullanır. |
 | `worker` | `false` | `true` verilirse sözlük yükleme, bağlam modeli ve denetim ayrı bir Web Worker içinde çalışır. |
