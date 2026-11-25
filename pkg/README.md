@@ -1,45 +1,26 @@
-# tinyfix-tr
+<p align="center">
+  <img src="https://raw.githubusercontent.com/imhalid/tinyfix-tr/main/hf/banner.png" alt="tinyfix-tr: Türkçe yazım, internetsiz. Yazarken bende → ben de, hber → haber düzeltiliyor; düzeltilemeyen kelimenin altı çiziliyor ve öneri sunuluyor." width="880">
+</p>
 
-Tarayıcıda ve Node.js üzerinde **internetsiz** çalışan Türkçe otomatik düzeltme paketi. Sözlük ve kurallar cihazda çalışır; isteğe bağlı bağlam modeli (`context: true`) yalnızca istendiğinde dinamik `import()` ile `onnxruntime-web` yükler.
-
-## Kurulum
+Türkçe yazım denetleyicileri yalnızca sözlükte olmayan kelimeleri yakalar; `bende` yerine `ben de`, `cok` yerine `çok` gibi hataları ise gözden kaçırır. tinyfix-tr, TDK yazım kurallarını izleyen küçük bir sözlük ve biçimbilim motorudur; isteğe bağlı bir bağlam modeliyle kelimenin çevresine de bakar. Tarayıcıda ve Node.js'te çalışır, yazdığınız metin cihazdan çıkmaz.
 
 ```bash
 npm install tinyfix-tr
 ```
 
-Ek bir ayar gerekmez: sözlük dosyaları ilk kullanımda [Hugging Face](https://huggingface.co/imhalid/tdk-ai) üzerinden indirilir (yaklaşık 6 MB; bağlam modeli istenirse 3 MB daha). Her paket sürümü depodaki belirli bir revizyonu yükler.
-
-Dosyaları kendi sunucunuzdan vermek isterseniz `lexicon.bin`, `morph.bin`, `known.tsv` (ve bağlam modeli için `context.onnx`) dosyalarını Hugging Face deposundan indirip bir klasöre (örneğin `public/models/`) koyun ve `baseUrl` verin. Eski düz metin TSV dosyaları (`unigrams.tsv`, `bigrams.tsv`, `known.tsv`) geriye dönük uyumluluk için hâlâ desteklenir.
-
-## Hızlı Başlangıç
-
 ```ts
 import { loadTdkai } from "tinyfix-tr";
 
-const tdkai = await loadTdkai({
-  worker: true,
-  context: true, // isteğe bağlı: context.onnx + onnxruntime-web
-  wasmPaths: "/ort/", // isteğe bağlı: ORT .wasm/.mjs dosyalarının konumu
-  onProgress: ({ ratio, stage, file }) => {
-    console.log(stage, file ?? "", Math.round(ratio * 100) + "%");
-  },
-  onWarning: (warning) => {
-    console.warn(warning);
-  },
-});
-
-const duzeltilmis = await tdkai.fix("Bugün cok yorgunum, Ankaraya herkez geldi.");
+const tdkai = await loadTdkai();
+await tdkai.fix("Bugün cok yorgunum, Ankaraya herkez geldi.");
 // "Bugün çok yorgunum, Ankara'ya herkes geldi."
-
-await tdkai.dispose();
 ```
 
-`context: false` (varsayılan) iken `context.onnx` indirilmez ve `onnxruntime-web` hiç yüklenmez. `context: true` verildiğinde `context.onnx` bulunamazsa veya ONNX oturumu açılamazsa paket uyarı verir (`console.warn` ve `onWarning`) ve bağlam modeli olmadan sözlük kurallarıyla çalışmaya devam eder (`tdkai.hasContext === false`).
+**[Tarayıcıda deneyin](https://tdkai.halid.dev)**
 
-## Düzeltmeleri İnceleme ve Uygulama
+## Düzeltmeleri alma
 
-`check` metodu, metinde yapılacak düzeltmeleri sıralı ve çakışmayan bir liste olarak döndürür:
+`check` yapılacak değişiklikleri ve konumlarını döndürür, `apply` bunları metne uygular:
 
 ```ts
 const metin = "Birşey söylemek istiyorum ama hiç bir fikrim yok.";
@@ -51,17 +32,69 @@ const duzeltmeler = await tdkai.check(metin);
 ]
 */
 
-const sonuc = tdkai.apply(metin, duzeltmeler);
+tdkai.apply(metin, duzeltmeler);
+// "Bir şey söylemek istiyorum ama hiçbir fikrim yok."
 ```
 
-## Yazarken Düzeltme (`range`)
+Her düzeltmenin dört türden biri olan bir `kind` değeri vardır (`FixKind`):
 
-Kullanıcı bir kelimeyi bitirdiğinde (boşluk veya noktalama girildiğinde) tüm belgeyi yeniden denetlemek yerine yalnızca ilgili aralığı kontrol edebilirsiniz. Metnin geri kalanı bağlam (cümle başı, soru işareti, Türkçe harf kullanımı ve bağlam modeli penceresi) olarak okunur:
+| Tür | Ne düzeltir | Örnekler |
+|---|---|---|
+| `"turkce-karakter"` | Eksik Türkçe karakterler | `cok → çok`, `nasil → nasıl`, `oldu → öldü` |
+| `"kesme"` | Özel adlara gelen eklerde eksik kesme işareti | `Ankaraya → Ankara'ya` |
+| `"bitisik-ayri"` | Bitişik/ayrı yazım, soru eki, `de/da`, `ki` | `birşey → bir şey`, `hiç bir → hiçbir`, `bende → ben de` |
+| `"yazim"` | Klavye hataları ve bilinen yazım yanlışları | `herkez → herkes`, `malesef → maalesef`, `yapabiliur → yapabilir` |
+
+## API
+
+| Çağrı | Ne yapar |
+|---|---|
+| `loadTdkai(options?)` | Sözlüğü (istenirse bağlam modelini de) indirir ve bir `Tdkai` örneği döndürür. |
+| `createTdkai(data, options?)` | Bellekteki veriden eşzamanlı olarak `Tdkai` oluşturur. |
+| `tdkai.check(text, options?)` | Çakışmayan, sıralı `Fix[]` listesi döndürür. |
+| `tdkai.apply(text, fixes)` | Düzeltmeleri metne uygular; konum veya metin uyuşmazsa hata fırlatır. |
+| `tdkai.fix(text, options?)` | `check` ve `apply` adımlarını birlikte çalıştırır. |
+| `tdkai.ignore(word)` | Kelimeyi bir daha değiştirmez (Türkçe büyük/küçük harf duyarsız). |
+| `tdkai.unignore(word)` | Yoksayılan kelimeyi yeniden denetime açar. |
+| `tdkai.setMode(mode)` | Hassasiyet kipini (`"careful"` veya `"balanced"`) günceller. |
+| `tdkai.hasContext` | Bağlam modelinin yüklenip yüklenmediğini belirtir. |
+| `tdkai.dispose()` | Kaynakları, ONNX oturumunu ve Web Worker'ı sonlandırır. |
+
+### `loadTdkai` seçenekleri
+
+| Seçenek | Varsayılan | Ne yapar |
+|---|---|---|
+| `baseUrl` | Hugging Face `imhalid/tdk-ai` (sürüme sabit) | Sözlük ve model dosyalarının bulunduğu adres. |
+| `context` | `false` | `true` verilirse `context.onnx` indirilir ve `onnxruntime-web` ile bağlam modeli açılır. |
+| `mode` | `"careful"` | `"careful"` temkinli, `"balanced"` biraz daha cesur eşikler kullanır. |
+| `worker` | `false` | `true` verilirse yükleme, model ve denetim ayrı bir Web Worker içinde çalışır. |
+| `wasmPaths` | ORT varsayılanı | `onnxruntime-web` `.wasm`/`.mjs` dosyalarının bulunduğu dizin. |
+| `onProgress` | — | `{ ratio, loaded, total, stage, file }` ile yükleme ilerlemesini bildirir. |
+| `onWarning` | — | Bağlam modeli yüklenemediğinde uyarı metnini bildirir. |
+| `data` | — | Ağ isteği yerine bellekteki ikili (`BinaryData`) veya ham TSV (`RawData`) verisini kullanır. |
+| `createWorker` | — | Özel `Worker` örneği sağlayan işlev. |
+| `contextModel` | — | Testler veya özel çalışma zamanları için bellekteki bağlam modeli. |
+| `loadContextSession` | `createOnnxContextSession` | `context.onnx` baytlarından oturum açan özel yükleyici. |
+| `fetch` | `globalThis.fetch` | Özel `fetch` işlevi. |
+| `signal` | — | İndirmeyi iptal etmek için `AbortSignal`. |
+| `ignored` | — | Başlangıçta yoksayılacak kelimeler. |
+
+### `check` seçenekleri
+
+| Seçenek | Ne yapar |
+|---|---|
+| `range` | Yalnızca `[from, to)` aralığıyla kesişen düzeltmeleri döndürür; metnin kalanı bağlam olarak okunur. |
+| `kinds` | Yalnızca belirtilen `FixKind` türlerini döndürür. |
+| `mode` | Yalnızca bu çağrı için geçici kip. |
+
+## Yazarken düzeltme
+
+Kullanıcı bir kelimeyi bitirdiğinde tüm belgeyi yeniden denetlemek yerine yalnızca o aralığı kontrol edin. Metnin geri kalanı (cümle başı, noktalama, çevredeki kelimeler) bağlam olarak okunur:
 
 ```ts
 const paragraf = "Sen geldinmi?";
 const fixes = await tdkai.check(paragraf, {
-  range: [4, 12], // yalnızca "geldinmi" aralığı; "?" bağlam olarak okunur
+  range: [4, 12], // yalnızca "geldinmi"; "?" bağlam olarak okunur
   kinds: ["turkce-karakter", "kesme", "bitisik-ayri", "yazim"],
 });
 ```
@@ -72,69 +105,57 @@ Kullanıcı bir düzeltmeyi geri aldığında aynı kelimeyi tekrar değiştirme
 tdkai.ignore(fix.original);
 ```
 
-## Düzeltme Türleri (`FixKind`)
+## Ne kadar iyi çalışıyor
 
-| Dış tür | Açıklama | Örnekler | İç motor karşılığı |
+Hiç ayarlanmadığı, ayrı tutulmuş test kümelerinde ölçüldü. *Düzeltilen*, otomatik düzeltilen; *bulunan* ise düzeltilen veya öneriyle işaretlenen hatalardır.
+
+| Küme | Düzeltilen (çekirdek) | Düzeltilen (bağlamla) | Bulunan |
 |---|---|---|---|
-| `"turkce-karakter"` | Eksik Türkçe karakterler | `cok → çok`, `nasil → nasıl`, `oldu → öldü` | `marks`, harf değiştiren `context`/`known` |
-| `"kesme"` | Özel adlara gelen eklerde eksik kesme işareti | `Ankaraya → Ankara'ya` | `apostrophe` |
-| `"bitisik-ayri"` | Bitişik/ayrı yazım, soru eki, `de/da`, `ki` | `birşey → bir şey`, `hiç bir → hiçbir`, `bende → ben de` | `split`, `join`, boşluk değiştiren `context`/`known` |
-| `"yazim"` | Klavye hataları ve bilinen yazım yanlışları | `herkez → herkes`, `malesef → maalesef`, `yapabiliur → yapabilir` | `typo`, tek kelimelik `known` |
+| Hatalı Vikipedi cümleleri (400) | %84,0 | %89,3 | %98,3 |
+| Sohbet yazısı, eksik harfler (811 kelime) | %69,7 | %83,6 | %99,4 |
+| Sohbet yazısı, karışık hatalar (602 kelime) | %68,8 | %75,2 | %99,5 |
 
-## API
+Doğru metinde yanlış alarm: Vikipedi cümlelerinde 1.000 kelimede yaklaşık 2 (çoğunlukla nadir özel adlar ve teknik terimler), temiz sohbet cümlelerinde 1.000 kelimede 0,1. Ayrıntılar [model kartında](https://huggingface.co/imhalid/tdk-ai).
 
-| Çağrı | Açıklama |
-|---|---|
-| `loadTdkai(options?)` | Sözlük (ve istenirse `context.onnx`) dosyalarını indirir ve bir `Tdkai` örneği döndürür. |
-| `createTdkai(data, options?)` | Bellekteki ham TSV verisinden (isteğe bağlı `contextModel` ile) eşzamanlı olarak `Tdkai` oluşturur. |
-| `tdkai.hasContext` | Bağlam modelinin etkin olarak yüklenip yüklenmediğini belirtir. |
-| `tdkai.check(text, options?)` | Çakışmayan, sıralı `Fix[]` listesi döndürür. |
-| `tdkai.apply(text, fixes)` | Düzeltmeleri metne uygular; konum veya metin uyuşmazsa hata fırlatır. |
-| `tdkai.fix(text, options?)` | `check` ve `apply` adımlarını birlikte çalıştırır. |
-| `tdkai.ignore(word)` | Belirtilen kelime veya ifadeyi bir daha değiştirmez (Türkçe büyük/küçük harf duyarsız). |
-| `tdkai.unignore(word)` | Yoksayılan kelimeyi yeniden denetime açar. |
-| `tdkai.setMode(mode)` | Hassasiyet kipini (`"careful"` veya `"balanced"`) günceller. |
-| `tdkai.dispose()` | Kaynakları, varsa ONNX oturumunu ve Web Worker'ı sonlandırır. |
+## Dokunmadıkları
 
-### `LoadOptions`
+- Kod parçaları (satır içi ve blok)
+- Adresler, dosya yolları, URL'ler ve sayılar
+- Özel adlar, yabancı kelimeler ve kısaltmalar (emin olamadığı kelimeyi düzeltmez)
+- `ignore` ile yoksayılan kelimeler
 
-| Seçenek | Varsayılan | Açıklama |
-|---|---|---|
-| `baseUrl` | Hugging Face `imhalid/tdk-ai` (sürüme sabit) | `lexicon.bin`, `morph.bin`, `known.tsv` (veya geriye dönük `unigrams.tsv`/`bigrams.tsv`) ve isteğe bağlı `context.onnx` dosyalarının bulunduğu adres. |
-| `data` | — | Ağ isteği yerine bellekteki ikili (`BinaryData`) veya ham TSV (`RawData`) verisini kullanır. |
-| `mode` | `"careful"` | `"careful"` motorun temkinli varsayılan ayarını, `"balanced"` biraz daha cesur eşikleri kullanır. |
-| `worker` | `false` | `true` verilirse sözlük yükleme, bağlam modeli ve denetim ayrı bir Web Worker içinde çalışır. |
-| `createWorker` | — | Özel `Worker` örneği sağlamak için isteğe bağlı kurucu işlev. |
-| `context` | `false` | `true` verilirse `context.onnx` indirilir ve `onnxruntime-web` ile bağlam modeli açılır. |
-| `wasmPaths` | ORT varsayılanı | `onnxruntime-web` `.wasm`/`.mjs` dosyalarının bulunduğu dizin URL'si. |
-| `contextModel` | — | Testler veya özel çalışma zamanları için bellekteki `ContextModel` ya da `RunModel` işlevi. |
-| `loadContextSession` | `createOnnxContextSession` | İndirilen `context.onnx` baytlarından oturum açan özel yükleyici. |
-| `onProgress` | — | `{ ratio, loaded, total, stage, file }` ile yükleme ilerlemesini bildirir (`context.onnx` dahil). |
-| `onWarning` | — | Bağlam modeli yüklenemediğinde oluşan uyarı metnini bildirir. |
-| `fetch` | `globalThis.fetch` | İsteğe bağlı özel `fetch` işlevi. |
-| `signal` | — | İndirmeyi iptal etmek için `AbortSignal`. |
-| `ignored` | — | Başlangıçta yoksayılacak kelimeler listesi. |
+`from` ve `to` değerleri, JavaScript dizelerindeki gibi UTF-16 kod birimi sırasıdır.
 
-### `CheckOptions`
+## Ne indirir
 
-| Seçenek | Varsayılan | Açıklama |
-|---|---|---|
-| `range` | Tüm metin | `[from, to)` aralığıyla kesişen düzeltmeler döndürülür; metnin kalanı bağlam olarak okunur. |
-| `kinds` | Tüm türler | Yalnızca belirtilen `FixKind` türlerini döndürür. |
-| `mode` | Örnek kipi | Yalnızca bu çağrı için geçici kip (`"careful"` / `"balanced"`). |
+Çekirdek sözlük ilk kullanımda [Hugging Face](https://huggingface.co/imhalid/tdk-ai) üzerinden indirilir: yaklaşık 6 MB (sıkıştırılmış 3,5 MB). `context: true` verirseniz 3 MB'lık bağlam modeli de iner. Her paket sürümü depodaki belirli bir revizyonu yükler, bu yüzden model güncellense bile eski sürümler bozulmaz.
 
-### Web Worker Girişi (`tdkai/worker`)
-
-`loadTdkai({ worker: true })` modern paketleyicilerle (Vite, webpack) paketin kendi worker dosyasını otomatik başlatır. Worker dosyasını kendiniz bağlamak isterseniz `tdkai/worker` girişini doğrudan kullanabilirsiniz:
+Dosyaları kendi sunucunuzdan vermek isterseniz `lexicon.bin`, `morph.bin`, `known.tsv` (ve bağlam modeli için `context.onnx`) dosyalarını depodan indirip bir klasöre koyun ve adresi verin:
 
 ```ts
-const worker = new Worker(new URL("tdkai/worker", import.meta.url), { type: "module" });
+const tdkai = await loadTdkai({ baseUrl: "/models/" });
 ```
+
+`context: true` verilmezse `onnxruntime-web` hiç yüklenmez. Verildiğinde dinamik `import()` ile yüklenir; `context.onnx` bulunamazsa veya ONNX oturumu açılamazsa paket uyarı verir (`console.warn` ve `onWarning`) ve sözlük kurallarıyla devam eder (`tdkai.hasContext === false`). `worker: true` Vite ve webpack gibi paketleyicilerde paketin kendi worker dosyasını otomatik başlatır. Worker dosyasını kendiniz bağlamak isterseniz `tinyfix-tr/worker` girişini kullanabilirsiniz:
+
+```ts
+const worker = new Worker(new URL("tinyfix-tr/worker", import.meta.url), { type: "module" });
+```
+
+## Nerede çalışır
+
+Tarayıcılar, Web Worker'lar ve Node.js 22 veya üstü. Yalnızca Türkçe.
 
 ## Geliştirme
 
 ```bash
+npm test        # birim testleri (node --test)
 npm run check   # TypeScript tür denetimi
-npm test        # Birim testleri (node --test)
 npm run build   # dist/ klasörüne derleme
 ```
+
+Demo sayfası: [tdkai.halid.dev](https://tdkai.halid.dev).
+
+## Lisans
+
+MIT.
